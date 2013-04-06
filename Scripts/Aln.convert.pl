@@ -14,7 +14,7 @@ Usage:
 
 Example:
    # Re-format example.fa into Stockholm
-   $o fasta stockholm < example.fa > example.stk
+   $0 fasta stockholm < example.fa > example.stk
 
 Supported formats are:
    bl2seq, clustalw, emboss, fasta, maf, mase, mega,
