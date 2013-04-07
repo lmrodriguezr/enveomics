@@ -5,23 +5,29 @@
 # @license artistic license 2.0
 #
 
-require 'trollop'
+require 'optparse'
 
-opts = Trollop::options do
-   banner "Identifies the best hits of paired-reads."
-   opt :blast, "Input BLAST file.", :type=>:string, :short=>'i'
-   opt :minscore, "Minimum (summed) Bit-Score to consider a pair-match.", :short=>'s', :default=>0
-   opt :besthits, "Outputs top best-hits only (use 0 to output all the paired hits).", :short=>'b', :default=>0
-   opt :orient, "Checks the orientation of the hit.  Values are: 0, no checking; 1, same direction; 2, " +
-   		"inwards; 3, outwards; 4, different direction (i.e., 2 or 3).", :short=>'o', :default=>0
-   opt :sisprefix, "Sister read number prefix in the name of the reads.  Escape characters as dots (\\.), " +
-   		"parenthesis (\\(, \\), \\[, \\]), or other characters with special meaning in regular expressions " +
-		"(\*, \+, \^, \$, \|).  This prefix allows regular expressions (for example, use ':|\\.' to use any of " +
-		"colon or dot).  Notice that the prefix will not be included in the base name reported in the output.", :short=>'p', :default=>"_"
-end
-
-Trollop::die :blast, "is mandatory" unless opts[:blast]
-Trollop::die :blast, "must exist" unless File.exist?(opts[:blast]) if opts[:blast]
+opts = {:minscore=>0, :besthits=>0, :orient=>0, :sisprefix=>"_"}
+OptionParser.new do |opt|
+   opt.separator "Identifies the best hits of paired-reads."
+   opt.separator ""
+   opt.on("-i", "--blast FILE", "Input BLAST file."){ |v| opts[:blast]=v }
+   opt.on("-s", "--minscore FLOAT", "Minimum (summed) Bit-Score to consider a pair-match."){ |v| opts[:minscore] = v.to_f }
+   opt.on("-b", "--besthits INT", "Outputs top best-hits only (use 0 to output all the paired hits)."){ |v| opts[:besthits]=v.to_i }
+   opt.on("-o", "--orient INT", "Checks the orientation of the hit.  Values are: 0, no checking; 1, same direction; 2, \n" +
+   		"\t\t\t\t\tinwards; 3, outwards; 4, different direction (i.e., 2 or 3)."){ |v| opts[:orient]=v.to_i }
+   opt.on("-p", "--sisprefix STR", "Sister read number prefix in the name of the reads.  Escape characters as dots (\\.), \n" +
+   		"\t\t\t\t\tparenthesis (\\(, \\), \\[, \\]), or other characters with special meaning in regular expressions \n" +
+		"\t\t\t\t\t(\\*, \\+, \\^, \\$, \\|).  This prefix allows regular expressions (for example, use ':|\\.' to use any of \n" +
+		"\t\t\t\t\tcolon or dot).  Notice that the prefix will not be included in the base name reported in the output."){ |v| opts[:sisprefix]=v }
+   opt.on("-h","--help","Display this screen") do
+      puts opt
+      exit
+   end
+   opt.separator ""
+end.parse!
+abort "-i/--blast is mandatory." if opts[:blast].nil?
+abort "-i/--blast must exist." unless File.exists? opts[:blast]
 
 class SingleHit
    attr_reader :sbj, :score, :orient, :sfrom, :sto, :qfrom, :qto
