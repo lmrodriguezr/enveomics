@@ -17,7 +17,7 @@ OptionParser.new do |opts|
    opts.on("-i", "--blast FILE", "Path to the BLAST file."){ |v| o[:blast]=v }
    opts.separator ""
    opts.separator "Optional"
-   opts.on("-c", "--cog", "If set, returns the COG ID, not the COG category."){ o[:cog]=TRUE }
+   opts.on("-g", "--cog", "If set, returns the COG ID, not the COG category."){ o[:cog]=TRUE }
 end.parse!
 
 abort "-w/--whog is mandatory." if o[:whog].nil?
