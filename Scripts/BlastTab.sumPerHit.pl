@@ -73,7 +73,7 @@ BFILE: for my $blast (@ARGV){
       
       if($qry ne $ln[0]){
 	 $qries++;
-	 ($out{$_->[0]}||=0) += ($_->[1]/($o{n}?$hits:1)) for @buf
+	 ($out{$_->[0]}||=0) += ($_->[1]/($o{n}?$hits:1)) for @buf;
 	 last BFILE if $o{m} and $qries >= $o{m};
 	 @buf = ();
 	 $qry  = $ln[0];
@@ -83,7 +83,7 @@ BFILE: for my $blast (@ARGV){
       push @buf, [$ln[1], $count{$ln[0]}];
       $hits++;
    }
-   ($out{$_->[0]}||=0) += ($_->[1]/($o{n}?$hits:1)) for @buf
+   ($out{$_->[0]}||=0) += ($_->[1]/($o{n}?$hits:1)) for @buf;
    close BLAST;
 }
 print STDERR "Warning: Couldn't find $noQry queries\n" if $noQry;
