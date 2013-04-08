@@ -8,7 +8,7 @@
 
 require 'optparse'
 
-o = {:cog=>FALSE}
+o = {:cog=>FALSE, :q=>FALSE, :w=>TRUE}
 OptionParser.new do |opts|
    opts.banner = "Replaces the COG gene IDs in a BLAST for the COG category"
    opts.separator ""
@@ -18,12 +18,15 @@ OptionParser.new do |opts|
    opts.separator ""
    opts.separator "Optional"
    opts.on("-g", "--cog", "If set, returns the COG ID, not the COG category."){ o[:cog]=TRUE }
+   opts.on("-w", "--warnsonly", "Run quietly, but show warnings."){ o[:q]=TRUE }
+   opts.on("-q", "--quiet", "Run quietly."){ o[:q]=TRUE; o[:w]=FALSE }
+   opts.separator ""
 end.parse!
 
 abort "-w/--whog is mandatory." if o[:whog].nil?
 abort "-i/--blast is mandatory." if o[:blast].nil?
 
-STDERR.puts "Parsing whog file.\n"
+STDERR.puts "Parsing whog file.\n" unless o[:q]
 cat = {}
 curCats = []
 fh = File.open o[:whog], "r"
@@ -45,12 +48,12 @@ while ln=fh.gets
 end
 fh.close
 
-STDERR.puts "Parsing BLAST.\n"
+STDERR.puts "Parsing BLAST.\n" unless o[:q]
 fh = File.open o[:blast], "r"
 while ln=fh.gets
    row = ln.split(/\t/)
    if cat[ row[1] ].nil?
-      STDERR.puts "Warning: line #{$.}: #{row[1]}: Impossible to find category.\n"
+      STDERR.puts "Warning: line #{$.}: #{row[1]}: Impossible to find category.\n" if o[:w]
    else
       cat[ row[1] ].each do |c|
          row[1] = c
