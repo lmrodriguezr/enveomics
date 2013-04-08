@@ -3,7 +3,7 @@
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @last_update: Oct 19 2012
+# @last_update: Apr 08 2013
 #
 
 use strict;
@@ -38,7 +38,7 @@ sub best_result($$){
 my $i=0;
 while(<>){
    chomp;
-   print STDERR " Reading entry $i...                             \r" unless $i%1000;
+   #print STDERR " Reading entry $i...                             \r" unless $i%1000;
    my @res = split /\t/;
    die "\nCannot parse BLAST line $.: $_\n" unless exists $res[1];
    if($last_qry eq $res[0]){
