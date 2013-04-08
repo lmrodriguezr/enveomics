@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+#
+# @author: Luis M. Rodriguez-R
+# @update: Apr-06-2013
+# @license: artistic license 2.0
+#
+
 use Bio::AlignIO;
 
 my($iformat,$oformat) = @ARGV;
