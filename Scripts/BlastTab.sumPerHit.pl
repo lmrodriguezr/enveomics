@@ -39,6 +39,7 @@ die "
 
 my %o = ();
 getopts('w:s:i:m:nqh', \%o);
+$o{h} and &HELP_MESSAGE;
 $o{w} or &HELP_MESSAGE;
 $o{s}||=0;
 $o{i}||=0;
