@@ -18,7 +18,7 @@ OptionParser.new do |opts|
    opts.separator ""
    opts.separator "Optional"
    opts.on("-g", "--cog", "If set, returns the COG ID, not the COG category."){ o[:cog]=TRUE }
-   opts.on("-w", "--warnsonly", "Run quietly, but show warnings."){ o[:q]=TRUE }
+   opts.on("-n", "--noverbose", "Run quietly, but show warnings."){ o[:q]=TRUE }
    opts.on("-q", "--quiet", "Run quietly."){ o[:q]=TRUE; o[:w]=FALSE }
    opts.separator ""
 end.parse!
