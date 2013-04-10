@@ -44,7 +44,7 @@ my $good = 0;
 while(my $ln = <FA>){
    chomp $ln;
    if($ln =~ m/^>((\S+).*)/){ $good = (exists $li{$1} or exists $li{">$1"} or exists $li{$2} or exists $li{$ln}) }
-   elsif($ln =~ m/^>/){ $good=0; print STDERR "Warning: Non-cannonical defline, line $.: $ln\n" }
+   elsif($ln =~ m/^>/){ $good=$o{r}; print STDERR "Warning: Non-cannonical defline, line $.: $ln\n" }
    print "$ln\n" if (($good and not $o{r}) or ($o{r} and not $good));
 }
 close FA;

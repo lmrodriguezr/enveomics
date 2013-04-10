@@ -3,6 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
+# @update apr-10-2013
 #
 
 require 'optparse'
@@ -122,13 +123,13 @@ begin
    f = File.open(opts[:blast], "r")
    currPair = PairedHits.new("  ")
    while(ln = f.gets)
-      m = /^(?<read>[^\s]*)(#{opts[:sisprefix]})(?<sister>[12])/.match(ln)
+      m = /^([^\s]*)(?:#{opts[:sisprefix]})([12])/.match(ln)
       raise "Impossible to parse read name in line #{$.} using sister prefix '#{opts[:sisprefix]}':\n#{ln}"  unless m
-      if m[:read] != currPair.name
+      if m[1] != currPair.name
 	 currPair.hits.each { |hit| puts hit.to_s }
-	 currPair = PairedHits.new(m[:read])
+	 currPair = PairedHits.new(m[1])
       end
-      currPair.hitsX(m[:sister].to_i).push(SingleHit.new(ln));
+      currPair.hitsX(m[2].to_i).push(SingleHit.new(ln));
    end
    currPair.hits.each { |hit| puts hit.to_s }
    f.close

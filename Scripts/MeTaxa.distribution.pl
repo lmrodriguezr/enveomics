@@ -3,6 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
+# @update apr-10-2013
 #
 use warnings;
 use strict;
@@ -67,12 +68,8 @@ open METAXA, "<", $metaxa or die "Cannot read file: $metaxa: $!\n";
 my $ctg;
 my $rank;
 my @ofh = ();
-my @n   = ();
-for my $i (1 .. 3){
-   $ofh[$i-1] = gensym;
-   open $ofh[$i-1], ">", "$base.$i.txt" or die "Cannot create file: $base.$i.txt: $!\n";
-   $n[$i-1] = 0;
-}
+my @n   = (0,0,0);
+my @out = ({},{},{});
 while(<METAXA>){
    chomp;
    if(m/^##(.*)/){
@@ -83,12 +80,21 @@ while(<METAXA>){
       exists $l[2] or die "Cannot parse metaxa file, line $.: $_\n";
       exists $count{$ctg} or die "Cannot find counts for contig $ctg.\n";
       if($l[2]>=$minScore){
-	 printf {$ofh[$rank]} "%s\t%.20f\n", $l[0], 1000*$count{$ctg}/$Nreads if $l[2]>=$minScore;
-	 $n[$rank]++;
+	 #printf {$ofh[$rank]} "%s\t%.20f\n", $l[0], 1000*$count{$ctg}/$Nreads if $l[2]>=$minScore;
+	 $out[$rank]->{$l[0]} += $count{$ctg};
+	 $n[$rank]+=$count{$ctg};
       }
       $rank++;
    }
 }
 close METAXA;
-print " Found $n[$_] results in rank $_.\n" for (0 .. 2);
+print " Found $n[$_] classified reads at rank ".($_+1).".\n" for (0 .. 2);
+
+for my $rank (0 .. 2){
+   open OUT, ">", "$base.".($rank+1).".txt" or die "Cannot create file: $base.".($rank+1).".txt: $!\n";
+   for my $class (keys %{$out[$rank]}){
+      printf OUT "%s\t%.20f\n", $class, (1000*$out[$rank]->{$class}/$n[$rank]);
+   }
+   close OUT;
+}
 
