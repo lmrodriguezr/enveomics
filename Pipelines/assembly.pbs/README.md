@@ -44,7 +44,7 @@ It assumes that the reads have been quality-checked and trimmed.
 
 2. Velvet and SOAP assembly:
    
-   2.1. Execute `./RUNME-2.bash <name>` in the head node (see [troubleshooting](#Troubleshooting) #1).
+   2.1. Execute `./RUNME-2.bash <name>` in the head node (see [troubleshooting](#troubleshooting) #1).
    
    2.2. Monitor the tasks named velvet_* and soap_*.
    
@@ -55,7 +55,7 @@ It assumes that the reads have been quality-checked and trimmed.
 ```
 
       If successful, the output of the above command should be empty.  See
-      [Troubleshooting](#Troubleshooting) #2 and #3 below if one or more of your jobs failed.
+      [Troubleshooting](#troubleshooting) #2 and #3 below if one or more of your jobs failed.
 
 3. K-mers selection:
    
