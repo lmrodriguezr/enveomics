@@ -1,0 +1,81 @@
+#!/bin/bash
+#PBS -q iw-shared-6
+#PBS -k oe
+
+# Some defaults for the parameters
+INSLEN=${INSLEN:-300};
+USECOUPLED=${USECOUPLED:-yes}
+USESINGLE=${USESINGLE:-no}
+CLEANUP=${CLEANUP:-yes}
+
+# Check mandatory variables
+if [[ "$LIB" == "" ]]; then
+   echo "Error: LIB is mandatory" >&2
+   exit 1;
+fi
+if [[ "$PDIR" == "" ]]; then
+   echo "Error: PDIR is mandatory" >&2
+   exit 1;
+fi
+if [[ "$DATA" == "" ]]; then
+   echo "Error: DATA is mandatory" >&2
+   exit 1;
+fi
+
+# Prepare input
+module load perl
+KMER=$PBS_ARRAYID
+DIR="$LIB.soap_$KMER"
+if [[ "$USECOUPLED" == "yes" ]]; then
+   MAXRDLEN=${MAXRDLEN:-$(perl $PDIR/FastA.length.pl "$DATA/$LIB.CoupledReads.fa" | head -n 200000 | awk '{if($2>MAX) MAX=$2} END{print MAX}')}
+elif [[ "$USESINGLE" == "yes" ]]; then
+   MAXRDLEN=${MAXRDLEN:-$(perl $PDIR/FastA.length.pl "$DATA/$LIB.SingleReads.fa" | head -n 200000 | awk '{if($2>MAX) MAX=$2} END{print MAX}')}
+else
+   echo "$0: Error: Nothing to do, neither USECOUPLED nor USESINGLE set to yes." >&2
+   exit 2
+fi
+NP=$(cat "$PBS_NODEFILE" | wc -l)
+
+# Config
+module load SOAP
+echo config > $DIR.proc
+echo "max_rd_len=$MAXRDLEN
+[LIB]
+reverse_seq=0
+asm_flag=3
+rank=1" > $DIR.config
+if [[ "$USECOUPLED" == "yes" ]]; then
+   echo "avg_ins=$INSLEN
+p=$DATA/$LIB.CoupledReads.fa" >> $DIR.config
+fi
+if [[ "$USESINGLE" == "yes" ]]; then
+   echo "f=$DATA/$LIB.SingleReads.fa" >> $DIR.config
+fi
+
+
+# Run
+echo pre > $DIR.proc
+if [[ -d $DIR ]] ; then rm -R $DIR ; fi
+mkdir $DIR
+echo soap > $DIR.proc
+nohup SOAPdenovo-63mer all -p $NP -K $KMER -s $DIR.config -o $DIR/O > $DIR.log
+if [[ -d $DIR ]] ; then
+   if [[ -s $DIR/O.contig ]] ; then
+      if [[ "$CLEANUP" != "no" ]] ; then
+	 echo cleanup > $DIR.proc
+	 rm $DIR/*edge
+	 rm $DIR/*vertex
+	 rm $DIR/*Arc*
+	 rm $DIR/*Graph*
+	 rm $DIR/*readInGap
+      fi
+      echo done > $DIR.proc
+   else
+      echo "$0: Error: File $DIR/O.contig doesn't exist, something went wrong" >&2
+      exit 1
+   fi
+else
+   echo "$0: Error: Directory $DIR doesn't exist, something went wrong" >&2
+   exit 1
+fi
+

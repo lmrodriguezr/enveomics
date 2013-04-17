@@ -1,0 +1,65 @@
+#!/bin/bash
+#PBS -q iw-shared-6
+#PBS -l nodes=1:ppn=1
+#PBS -k oe
+
+# Some defaults for the parameters
+BIN454=${BIN454:-"$HOME/454/bin"};
+
+# Check mandatory variables
+if [[ "$LIB" == "" ]]; then
+   echo "Error: LIB is mandatory" >&2
+   exit 1;
+fi
+if [[ "$PDIR" == "" ]]; then
+   echo "Error: PDIR is mandatory" >&2
+   exit 1;
+fi
+if [[ "$KVELVET" == "" ]]; then
+   echo "Error: KVELVET is mandatory" >&2
+   exit 1;
+fi
+if [[ "$KSOAP" == "" ]]; then
+   echo "Error: KSOAP is mandatory" >&2
+   exit 1;
+fi
+
+# Prepare input
+KVELVET=$(echo $KVELVET | sed -e 's/:/ /g')
+KSOAP=$(echo $KSOAP | sed -e 's/:/ /g')
+NP=$(cat "$PBS_NODEFILE" | wc -l)
+CWD=$(pwd)
+DIR="$CWD/$LIB.newbler"
+LOG="$DIR.log"
+module load perl
+export PATH=$PATH:$BIN454
+
+# Prepare Velvet
+echo pre-velvet > $DIR.proc
+rm $LIB.velvet.tmp1 &>/dev/null
+for K in $KVELVET ; do
+   perl "$PDIR/FastA.filterN.pl" "$LIB.velvet_$K/contigs.fa" >> $LIB.velvet.tmp1
+done
+perl "$PDIR/newbler_preparator.pl" $LIB.velvet.tmp1 $LIB.velvet.tmp2
+
+# Prepare SOAP
+echo pre-soap > $DIR.proc
+rm $LIB.soap.tmp1 &>/dev/null
+for K in $KSOAP ; do
+   cat "$LIB.soap_$K/O.contig" >> $LIB.soap.tmp1
+done
+perl "$PDIR/newbler_preparator.pl" $LIB.soap.tmp1 $LIB.soap.tmp2
+
+# Run
+echo new > $DIR.proc
+nohup newAssembly $DIR > $LOG
+cd $DIR
+echo velvet > $DIR.proc
+nohup addRun ../$LIB.velvet.tmp2 >> $LOG
+nohup runProject -cpu $NP >> $LOG
+echo soap > $DIR.proc
+nohup addRun ../$LIB.soap.tmp2 >> $LOG
+nohup runProject -cpu $NP >> $LOG
+cd $CWD
+echo done > $DIR.proc
+

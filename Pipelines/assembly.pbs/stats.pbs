@@ -1,0 +1,51 @@
+#!/bin/bash
+#PBS -q iw-shared-6
+#PBS -l nodes=1:ppn=1
+#PBS -l mem=1gb
+#PBS -l walltime=2:00:00
+#PBS -k oe
+
+# Check mandatory variables
+if [[ "$LIB" == "" ]]; then
+   echo "Error: LIB is mandatory" >&2
+   exit 1;
+fi
+if [[ "$PDIR" == "" ]]; then
+   echo "Error: PDIR is mandatory" >&2
+   exit 1;
+fi
+
+# Run
+module load perl
+echo "K N50 used reads " > $LIB.velvet.n50
+echo "K N50 used reads " > $LIB.soap.n50
+for ID in $(seq 10 31); do
+   let KMER=$ID*2+1
+   DIRV="$LIB.velvet_$KMER"
+   DIRS="$LIB.soap_$KMER"
+   echo $KMER > $LIB.velvet.n50.$KMER
+   echo $KMER > $LIB.soap.n50.$KMER
+   # N50 (>=500)
+   perl "$PDIR/FastA.N50.pl" "$DIRV/contigs.fa" 500 | grep '^N50' | sed -e 's/.*: //' >> $LIB.velvet.n50.$KMER
+   perl "$PDIR/FastA.N50.pl" "$DIRS/O.contig" 500 | grep '^N50' | sed -e 's/.*: //' >> $LIB.soap.n50.$KMER
+   # Used and Total reads
+   tail -n 1 $DIRV/Log | sed -e 's/.* using \\([0-9]*\\)\\/\\([0-9]*\\) reads.*/\\1\\n\\2/' >> $LIB.velvet.n50.$KMER
+   cat "$DIRS/O.readOnContig" | grep -vc '^read' >> $LIB.soap.n50.$KMER
+   head -n 1 $DIRS/O.peGrads | awk '{print $3}' >> $LIB.soap.n50.$KMER
+   # Join
+   (cat $LIB.velvet.n50.$KMER | tr "\\n" " "; echo) >> $LIB.velvet.n50
+   rm $LIB.velvet.n50.$KMER
+   (cat $LIB.soap.n50.$KMER | tr "\\n" " "; echo) >> $LIB.soap.n50
+   rm $LIB.soap.n50.$KMER
+done
+
+# Create plot
+module load R 2>/dev/null
+echo "
+source('$PDIR/kSelector.R');
+pdf('$LIB.n50.pdf', 13, 7);
+kSelector('$LIB.velvet.n50', '$LIB (Velvet)');
+kSelector('$LIB.soap.n50', '$LIB (SOAP)');
+dev.off();
+" | R --vanilla -q
+
