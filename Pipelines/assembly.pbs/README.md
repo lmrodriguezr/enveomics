@@ -8,18 +8,18 @@
 
 @pbs: yes
 
-== IMPORTANT
+# IMPORTANT
 
 This pipeline was developed for the [PACE cluster](http://pace.gatech.edu/).  You
 are free to use it in other platforms with adequate adjustments.  It is largely
 based on Luo _et al._ 2012, ISME J.
 
-== PURPOSE
+# PURPOSE
 
 This pipeline assemblies coupled and/or single reads from one or more libraries.
 It assumes that the reads have been quality-checked and trimmed.
 
-== HELP
+# HELP
 
 1. Files preparation:
 
@@ -44,7 +44,7 @@ It assumes that the reads have been quality-checked and trimmed.
 
 2. Velvet and SOAP assembly:
    
-   2.1. Execute `./RUNME-2.bash <name>` in the head node (see troubleshooting #1).
+   2.1. Execute `./RUNME-2.bash <name>` in the head node (see [troubleshooting](#Troubleshooting) #1).
    
    2.2. Monitor the tasks named velvet_* and soap_*.
    
@@ -55,7 +55,7 @@ It assumes that the reads have been quality-checked and trimmed.
 ```
 
       If successful, the output of the above command should be empty.  See
-      Troubleshooting #2 and #3 below if one or more of your jobs failed.
+      [Troubleshooting](#Troubleshooting) #2 and #3 below if one or more of your jobs failed.
 
 3. K-mers selection:
    
@@ -97,13 +97,13 @@ It assumes that the reads have been quality-checked and trimmed.
       relevant statistics.
 
 
-== Comments
+# Comments
 
 * Some scripts contained in this package are actually symlinks to files in the
   _Scripts_ folder.  Check the existance of these files when copied to
   the cluster.
 
-== Troubleshooting
+# Troubleshooting
 
 1. Do I really have to change directory (`cd`) to the pipeline's folder everytime
    I want to execute something?
