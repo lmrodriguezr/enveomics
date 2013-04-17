@@ -1,26 +1,37 @@
 @author: Luis Miguel Rodriguez-R <lmrodriguezr at gmail dot com>
+
 @update: Mar-17-2013
+
 @license: artistic 2.0
+
 @status: semi
+
 @pbs: yes
 
 == IMPORTANT
+
 This pipeline was developed for the (PACE cluster)[http://pace.gatech.edu/].  You
 are free to use it in other platforms with adequate adjustments.  It is largely
 based on Luo _et al._ 2012, ISME J.
 
 == PURPOSE
+
 This pipeline assemblies coupled and/or single reads from one or more libraries.
 It assumes that the reads have been quality-checked and trimmed.
 
 == HELP
+
 1. Files preparation:
+
    1.1. Copy this folder to the cluster.
+   
    1.2. Copy the sequences to the cluster.  Only trimmed/filtered reads are used.
       All the files are expected to be in the same folder, and the filenames must
       end in .CoupledReads.fa or .SingleReads.fa.
+   
    1.3. Copy the file CONFIG.mock.bash to CONFIG.<name>.bash, where <name> is a
       short name for your run (avoid characters other than alphanumeric).
+   
    1.4. Change the variables in CONFIG.<name>.bash.  Notice that this pipeline
       supports running several libraries at the same time, but it's strongly
       recomended to run only one per config file, because the insert length
@@ -30,18 +41,26 @@ It assumes that the reads have been quality-checked and trimmed.
       SOAP will use 16 CPUs by default, which means 357 CPUs will be requested
       per library in step 2.  It's a bad idea to run many libraries at the same
       time.
+
 2. Velvet and SOAP assembly:
+   
    2.1. Execute ./RUNME-2.bash <name> in the head node (see troubleshooting #1).
+   
    2.2. Monitor the tasks named velvet_* and soap_*.
+   
    2.3. Once completed, make sure the files .proc contain only the
       word "done".  To do this, you may execute:
       grep -v '^done$' *.proc
       If successful, the output of the above command should be empty.  See
       Troubleshooting #2 and #3 below if one or more of your jobs failed.
+
 3. K-mers selection:
+   
    3.1. If you completed step 2, execute ./RUNME-3.bash <name> in the head
       node.
+   
    3.2. Once completed, download and open the files *.n50.pdf.
+   
    3.3. Select the three "best" k-mers for Velvet and for SOAP (they don't
       have to be the same).  There is no well-tested method to select the
       "best", and this is why this protocol is not automated, but semi-
@@ -51,16 +70,21 @@ It assumes that the reads have been quality-checked and trimmed.
       (this is the dashed red line; usually this is a large k-mer), and pick
       one that optimizes both (something in the middle).  You can select
       more or less than three k-mers, this is just a suggestion.
+
 4. Newbler assembly:
+   
    4.1. Edit the file CONFIG.<name>.bash: set the variables K_VELVET and
       K_SOAP to contain the lists of "best" selected k-mers for Velvet and
       SOAP, respectively.
+   
    4.2. Execute ./RUNME-4.bash <name> in the head node.
+   
    4.3. Monitor the task newbler_*.  Once finished, your assembly is ready.
       Once completed, make sure the file .newbler.proc contain only the
       word "done".  To do this, you may execute:
       grep -v '^done$' *.proc
       If successful, the output should be empty.
+   
    4.4. The final assembly should be located in the SCRATCH path, in a folder
       named <lib>.newbler/assembly/.  The file 454AllContigs.fna contains
       all the assembled contigs, 454LargeContigs.fna contains the contigs
@@ -69,6 +93,7 @@ It assumes that the reads have been quality-checked and trimmed.
 
 
 == Comments
+
 * Some scripts contained in this package are actually symlinks to files in the
   DropBox > Scripts folder.  Check the existance of these files when copied to
   the cluster.
