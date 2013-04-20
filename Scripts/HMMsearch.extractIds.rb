@@ -43,7 +43,7 @@ ARGF.each_line do |ln|
       unless /^[\-\s]+$/.match(ln).nil?
          at = :list
 	 i  = 0
-	 STDERR.puts "Parsing hits against #{query}" unless o[:quiet]
+	 STDERR.print "Parsing hits against #{query}: " unless o[:quiet]
       end
    when :list
       if /^\s*$/.match(ln).nil?
@@ -55,12 +55,12 @@ ARGF.each_line do |ln|
 	 good &&= ( o[:best_evalue].nil? || row[4].to_f <= o[:best_evalue] )
 	 good &&= ( o[:best_score].nil? || row[5].to_f >= o[:best_score] )
 	 if good
-	    puts(row[9] + (o[:model]?"\t#{query}":"") + "\n")
+	    puts row[9]+(o[:model]?"\t#{query}":"")
 	    i+=1
 	 end
       else
          at = :align
-         STDERR.puts "  #{i} results." unless o[:quiet]
+         STDERR.puts "#{i} results." unless o[:quiet]
       end
    when :align
       at = :header unless /^\/\/$/.match(ln).nil?
