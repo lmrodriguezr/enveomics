@@ -45,9 +45,10 @@ ARGF.each_line do |ln|
          row = ln.split(/\s+/)
 	 raise "Unable to parse seemingly malformed list of hits in line #{$.}:\n#{ln}" unless row.length==11
 	 good = TRUE
-	 good and good = ( o[:all_evalue].nil? || row[1]<=o[:all_evalue] )
-	 good and good = ( o[:all_score].nil? || row[2]>=o[:all_score] )
-	 # TODO The rest of the filtering
+	 good &&= ( o[:all_evalue].nil? || row[1]<=o[:all_evalue] )
+	 good &&= ( o[:all_score].nil? || row[2]>=o[:all_score] )
+	 good &&= ( o[:best_evalue].nil? || row[4]<=o[:best_evalue] )
+	 good &&= ( o[:best_score].nil? || row[5]>=o[:best_score] )
 	 good and puts row[9]+(o[:model]?"\t#{query}":"")+"\n"
       else
          at = :align
