@@ -41,11 +41,12 @@ ARGF.each_line do |ln|
       qm.nil? or query=qm[1]
       at = :list unless /^[\-\s]+$/.match(ln).nil?
    when :list
-      if /^\s+$/.match(ln).nil?
+      if /^\s*$/.match(ln).nil?
          row = ln.split(/\s+/)
 	 raise "Unable to parse seemingly malformed list of hits in line #{$.}:\n#{ln}" unless row.length==11
 	 good = TRUE
 	 good and good = ( o[:all_evalue].nil? || row[1]<=o[:all_evalue] )
+	 good and good = ( o[:all_score].nil? || row[2]>=o[:all_score] )
 	 # TODO The rest of the filtering
 	 good and puts row[9]+(o[:model]?"\t#{query}":"")+"\n"
       else
