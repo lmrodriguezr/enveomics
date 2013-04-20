@@ -52,7 +52,7 @@ ARGF.each_line do |ln|
 	 good &&= ( o[:all_score].nil? || row[2].to_f >= o[:all_score] )
 	 good &&= ( o[:best_evalue].nil? || row[4].to_f <= o[:best_evalue] )
 	 good &&= ( o[:best_score].nil? || row[5].to_f >= o[:best_score] )
-	 good and puts row[9]+(o[:model]?"\t#{query}":"")+"\n"
+	 good and puts "#{row[9]}#{ o[:model] ? "\t#{query}" : "" }\n"
       else
          at = :align
       end
