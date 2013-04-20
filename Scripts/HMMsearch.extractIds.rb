@@ -33,7 +33,7 @@ end.parse!
 at = :header
 query = ""
 ARGF.each_line do |ln|
-   next unless /^(#.*|\s+)$/.match(ln).nil?
+   next unless /^(#.*)$/.match(ln).nil?
    ln.chomp!
    case at
    when :header
