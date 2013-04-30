@@ -37,7 +37,7 @@ if [[ "$USECOUPLED" == "yes" ]]; then
    CMD="$CMD -shortPaired $DATA/$LIB.CoupledReads.fa"
 fi
 if [[ "$USESINGLE" == "yes" ]]; then
-   CMD="$CMD -shortPaired $DATA/$LIB.SingleReads.fa"
+   CMD="$CMD -short $DATA/$LIB.SingleReads.fa"
 fi
 nohup $CMD > $DIR.hlog
 echo velvetg > $DIR.proc

@@ -51,12 +51,12 @@ for LIB in $LIBRARIES; do
    if [[ "$USECOUPLED" == "yes" ]] ; then
       INPUT="$DATA/$LIB.CoupledReads.fa"
    elif [[ "$USESINGLE" == "yes" ]] ; then
-      INPUT="$DATA/$LIB.CoupledReads.fa"
+      INPUT="$DATA/$LIB.SingleReads.fa"
    else
       echo "$0: Error: No task selected, neither USECOUPLED nor USESINGLE set to yes." >&2
       exit 1;
    fi
-   VARS="LIB=$LIB,PDIR=$PDIR,DATA=$DATA,INSLEN=$INSLEN.USECOUPLED=$USECOUPLED,USESINGLE=$USESINGLE,CLEANUP=$CLEANUP"
+   VARS="LIB=$LIB,PDIR=$PDIR,DATA=$DATA,INSLEN=$INSLEN,USECOUPLED=$USECOUPLED,USESINGLE=$USESINGLE,CLEANUP=$CLEANUP"
    let SIZE=$(ls -lH "$INPUT" | awk '{print $5}')/1024/1024/1024;
    let RAMS=40+$SIZE*10*$RAMMULT;
    let RAMV=50+$SIZE*15*$RAMMULT;
