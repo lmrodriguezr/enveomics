@@ -21,7 +21,7 @@ for LIB in $LIBRARIES; do
    if [[ "$USECOUPLED" == "yes" ]] ; then
       INPUT="$DATA/$LIB.CoupledReads.fa"
    elif [[ "$USESINGLE" == "yes" ]] ; then
-      INPUT="$DATA/$LIB.CoupledReads.fa"
+      INPUT="$DATA/$LIB.SingleReads.fa"
    else
       echo "$0: Error: No task selected, neither USECOUPLED nor USESINGLE set to yes." >&2
       exit 1;
