@@ -66,7 +66,7 @@ BFILE: for my $blast (@ARGV){
       my @ln = split /\t/;
       $ln1 ||= $#ln;
       die "Bad line $.: $_\n" unless $#ln==$ln1;
-      next if $ln[11]<$o{s} or $ln[2]<$o{i};
+      next if ($o{s} and $ln[11]<$o{s}) or ($o{i} and $ln[2]<$o{i});
       unless(exists $count{$ln[0]}){
 	 $noQry++;
 	 next;
