@@ -86,14 +86,16 @@ sub download_pathways($$){
    for my $id (@$ids){
       push @todownload, $id unless exists $cache->{'###:paths'}->{$id};
    }
-   return $cache unless $#todownload>=0;
-   my $path = get "http://rest.kegg.jp/list/".join("+", @todownload);
-   if($path){
-      chomp $path;
-      for my $p (split /\n/, $path){
-	 my @wl = split /\t/, $p;
-	 $wl[1] =~ s/ - /\t/;
-	 $cache->{'###:paths'}->{$wl[0]} = $wl[1];
+   while($#todownload>=0){
+      my @downloading = splice(@todownload, 0, 100);
+      my $path = get "http://rest.kegg.jp/list/".join("+", @downloading);
+      if($path){
+	 chomp $path;
+	 for my $p (split /\n/, $path){
+	    my @wl = split /\t/, $p;
+	    $wl[1] =~ s/ - /\t/;
+	    $cache->{'###:paths'}->{$wl[0]} = $wl[1];
+	 }
       }
    }
    return $cache;
