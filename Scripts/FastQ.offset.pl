@@ -2,13 +2,14 @@
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update Jun 27 2013
 # @license artistic license 2.0
 #
 
 use warnings;
 use strict;
 
-my ($in, $off) = @ARGV;
+my ($in, $off, $force) = @ARGV;
 $in or die "
 .Description:
    There are several FastQ formats (see http://en.wikipedia.org/wiki/FASTQ_format).
@@ -18,11 +19,13 @@ $in or die "
    equivalent in Phred+33 for negative values (the range of Solexa+64 is -5 to 40).
 
 .Usage:
-   $0 in.fastq[ offset] > out.fastq
+   $0 in.fastq[ offset[ force]] > out.fastq
 
    in.fastq	Input file in FastQ format (range is automatically detected).
    offset	(optional) Offset to use for the output.  Use 0 (zero) to detect
    		the input format and exit.  By default: 33.
+   force	(optional) If true, turns errors into warnings and continues.
+   		Out-of-range values are set to the closest range limit.
    out.fastq	Output file in FastQ format with the specified offset.
 
 ";
@@ -60,17 +63,24 @@ while(<IN>){
       chomp;
       for my $chr (split //){
          my $score = ord($chr) - $in_off;
+	 my $err = '';
 	 if($score < -5){
-	    die "Out-of-range value $chr ($score) in line $..\n";
+	    $err = "Out-of-range value $chr ($score) in line $..\n";
+	    $score = $off==64 ? -5 : 0;
 	 }elsif(!$Solexa64 and $score < 0){
 	    if($in_off==64){
 	       print STDERR "Format variant: Solexa+64\n";
 	       $Solexa64 = 1;
 	    }else{
-	       die "Out-of-range value $chr ($score) in line $..\n";
+	       $err = "Out-of-range value $chr ($score) in line $..\n";
+	       $score = 0;
 	    }
 	 }elsif($score>41){
-	    die "Out-of-range value $chr ($score) in line $..\n";
+	    $err = "Out-of-range value $chr ($score) in line $..\n";
+	    $score = 41;
+	 }
+	 if($err){
+	    if($force){ warn $err } else { die $err }
 	 }
 	 print chr( $score + $off );
       }
