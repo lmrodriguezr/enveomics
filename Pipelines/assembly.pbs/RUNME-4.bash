@@ -31,6 +31,6 @@ for LIB in $LIBRARIES; do
    VARS="LIB=$LIB,PDIR=$PDIR,BIN454=$BIN454,KVELVET=$K_VELVET,KSOAP=$K_SOAP"
    # Launch Newbler
    NAME="Newbler_${LIB}"
-   qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=$RAM -l walltime=12:00:00
+   qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00
 done
 
