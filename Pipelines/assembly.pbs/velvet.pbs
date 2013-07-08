@@ -39,9 +39,12 @@ fi
 if [[ "$USESINGLE" == "yes" ]]; then
    CMD="$CMD -short $DATA/$LIB.SingleReads.fa"
 fi
+if [[ "$VELVETH_EXTRA" != "" ]]; then
+   CMD="$CMD $VELVETH_EXTRA"
+fi
 nohup $CMD > $DIR.hlog
 echo velvetg > $DIR.proc
-nohup velvetg_101_omp $DIR -exp_cov auto -cov_cutoff auto -ins_length $INSLEN > $DIR.glog
+nohup velvetg_101_omp "$DIR" -exp_cov auto -cov_cutoff auto -ins_length "$INSLEN" $VELVETG_EXTRA > $DIR.glog
 if [[ -d $DIR ]] ; then
    if [[ -s $DIR/contigs.fa ]] ; then
       if [[ "$CLEANUP" != "no" ]] ; then

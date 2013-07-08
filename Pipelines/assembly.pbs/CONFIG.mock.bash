@@ -40,6 +40,17 @@ PPN=16
 # RAM multiplier: Multiply the estimated required RAM by this number:
 RAMMULT=1
 
+# Extra parameters for Velvet: Any additional parameters to be passed to
+# velvetg or velveth.  If you have MP data, consider adding the option
+# -shortMatePaired yes to VELVETG_EXTRA.  If you have Nextera, consider
+# adding the option above, plus the option -ins_length_sd <integer>, to
+# indicate the standard deviation of the insert size.  By default, the
+# SD is assumed to be 10% of the average, but Nextera produces much
+# wider distribution of sizes (i.e., larger SD).  Typically you shouldn't
+# need to add anything in VELVETH_EXTRA.
+VELVETH_EXTRA=""
+VELVETG_EXTRA=""
+
 # Clean non-essential files (yes or no):
 CLEANUP=yes
 

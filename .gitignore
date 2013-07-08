@@ -1,2 +1,4 @@
 *.swp
 */*.swp
+CONFIG.*.bash
+!CONFIG.mock.bash

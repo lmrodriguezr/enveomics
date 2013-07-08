@@ -42,6 +42,10 @@ It assumes that the reads have been quality-checked and trimmed.
       per library in step 2.  It's a bad idea to run many libraries at the same
       time.
 
+   1.5. If you have Mate-paired datasets (for example, prepared with Nextera), first
+      reverse-complement all the reads.  See also the `VELVETG_EXTRA` variable in
+      the `CONFIG.<name>.bash` file.
+
 2. Velvet and SOAP assembly:
    
    2.1. Execute `./RUNME-2.bash <name>` in the head node (see [troubleshooting](#troubleshooting) #1).
