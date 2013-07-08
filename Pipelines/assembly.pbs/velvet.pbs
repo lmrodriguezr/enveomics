@@ -1,5 +1,4 @@
 #!/bin/bash
-#PBS -q iw-shared-6
 #PBS -l nodes=1:ppn=1
 #PBS -k oe
 

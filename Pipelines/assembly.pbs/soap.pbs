@@ -1,5 +1,4 @@
 #!/bin/bash
-#PBS -q iw-shared-6
 #PBS -k oe
 
 # Some defaults for the parameters

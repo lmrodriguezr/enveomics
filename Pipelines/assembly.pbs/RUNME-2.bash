@@ -64,15 +64,15 @@ for LIB in $LIBRARIES; do
    if [[ "$RUNVELVET" == "yes" ]] ; then
       NAME="velvet_${LIB}"
       if [[ "$QUEUE" -ne "" ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=$WTIME -q $QUEUE -t $KMERARRAY
+	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l "walltime=$WTIME" -q "$QUEUE" -t $KMERARRAY
       elif [[ $RAMV -gt 150 ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=2160:00:00 -q biohimem-6 -t $KMERARRAY
+	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=360:00:00 -q biohimem-6 -t $KMERARRAY
       elif [[ $SIZE -lt 6 ]]; then
 	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=12:00:00 -q iw-shared-6 -t $KMERARRAY
       elif [[ $SIZE -lt 20 ]]; then
 	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=120:00:00 -q bioforce-6 -t $KMERARRAY
       else
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=2160:00:00 -q biocluster-6 -t $KMERARRAY
+	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=360:00:00 -q biocluster-6 -t $KMERARRAY
       fi
    fi
    # Launch SOAP

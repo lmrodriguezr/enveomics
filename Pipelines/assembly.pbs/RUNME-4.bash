@@ -31,6 +31,14 @@ for LIB in $LIBRARIES; do
    VARS="LIB=$LIB,PDIR=$PDIR,BIN454=$BIN454,KVELVET=$K_VELVET,KSOAP=$K_SOAP"
    # Launch Newbler
    NAME="Newbler_${LIB}"
-   qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00
+   if [[ "$QUEUE" -ne "" ]] ; then
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l "walltime=$WTIME" -q "$QUEUE"
+   elif [[ $RAM -gt 150 ]] ; then
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=360:00:00 -q biohimem-6
+   elif [[ $SIZE -lt 4 ]] ; then
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00 -q w-shared-6
+   else
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=120:00:00 -q biocluser-6
+   fi
 done
 
