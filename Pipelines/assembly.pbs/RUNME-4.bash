@@ -38,7 +38,7 @@ for LIB in $LIBRARIES; do
    elif [[ $SIZE -lt 4 ]] ; then
       qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00 -q iw-shared-6
    else
-      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=120:00:00 -q biocluser-6
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=120:00:00 -q biocluster-6
    fi
 done
 
