@@ -17,6 +17,20 @@ kSelector <- function(file, lib){
       xlim=c(0, length(d$K)), xaxt='n', yaxt='n', xlab='', ylab='');
    axis(4, col.axis=red);
    mtext('N50 (bp)', side=4, line=3, col=red);
+   # Suggest best k-mers
+   if(nrow(d) >= 3){
+      x = data.frame(K=d$K, l=(d$N50 - mean(d$N50))/sd(d$N50), u=(d$used - mean(d$used))/sd(d$used));
+      rownames(x) <- rownames(d)
+      d <- cbind(d, sel=FALSE);
+      k_s = c();
+      for(l_star in c(2, 1/2, 1)){
+         k_s_i = x$K[which.max(l_star*x$l + x$u)];
+	 k_s <- c(k_s, k_s_i);
+	 x <- x[x$K!=k_s_i, ];
+	 d$sel[d$K==k_s_i] <- TRUE;
+      }
+      abline(v=as.numeric(rownames(d)[d$sel])-0.5, col='darkgreen', lty=6);
+   }
    return(d);
 }
 
