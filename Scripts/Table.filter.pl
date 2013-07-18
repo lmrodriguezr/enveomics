@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Jun 11 2013
+# @update: Jul 18 2013
 # @license: artistic license 2.0
 #
 
@@ -10,7 +10,7 @@ use strict;
 use Getopt::Std;
 
 my %o;
-getopts('k:s:i', \%o);
+getopts('k:s:in', \%o);
 my($list, $table) = @ARGV;
 
 ($list and $table) or die "
@@ -23,7 +23,9 @@ my($list, $table) = @ARGV;
       -k <int>	Column of the table to use as key to filter.  By default, 1.
       -s <str>	String to use as separation between rows.  By default, tabulation.
       -i	If set, reports the inverse of the list (i.e., reports only rows
-      		absent in the list).
+      		absent in the list).  Implies -n.
+      -n	No re-order.  The output has the same order of the table.  By
+      		default, it prints in the order of the list.
 
    list.txt	List of IDs to extract.
    table.txt	Table file containing the superset.
@@ -33,17 +35,21 @@ my($list, $table) = @ARGV;
 
 $o{k} ||= 1;
 $o{s} ||= "\t";
+$o{n}=1 if $o{i};
 
-open TBL, "<", $table or die "Cannot read file: $table: $!\n";
-my %tbl = map { my $l=$_; chomp $l; my @r=split $o{s}, $l; $r[$o{k}-1] => $l } <TBL>;
+my $tbl2 = $o{n} ? $list : $table;
+open TBL, "<", $tbl2 or die "Cannot read file: $tbl2: $!\n";
+my %tbl2 = map { my $l=$_; chomp $l; my @r=split $o{s}, $l; $r[ $o{n} ? 0 : $o{k}-1] => $l } <TBL>;
 close TBL;
 
-open LI, "<", $list or die "Cannot read file: $list: $!\n";
-while(my $ln = <LI>){
+my $tbl1 = $o{n} ? $table : $list;
+open TBL, "<", $tbl1 or die "Cannot read file: $tbl1: $!\n";
+while(my $ln = <TBL>){
    chomp $ln;
-   my $good = exists $tbl{$ln};
+   my @ln = split $o{s}, $ln;
+   my $good = exists $tbl2{ $ln[$o{n} ? $o{k}-1 : 0] };
    $good = not $good if $o{i};
-   print "".$tbl{$ln}."\n" if $good;
+   print "".($o{n} ? $ln : $tbl2{$ln[0]})."\n" if $good;
 }
-close LI;
+close TBL;
 
