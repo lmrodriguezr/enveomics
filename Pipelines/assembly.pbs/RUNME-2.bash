@@ -63,7 +63,7 @@ for LIB in $LIBRARIES; do
    # Launch Velvet
    if [[ "$RUNVELVET" == "yes" ]] ; then
       NAME="velvet_${LIB}"
-      if [[ "$QUEUE" -ne "" ]]; then
+      if [[ "$QUEUE" != "" ]]; then
 	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l "walltime=$WTIME" -q "$QUEUE" -t $KMERARRAY
       elif [[ $RAMV -gt 150 ]]; then
 	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=360:00:00 -q biohimem-6 -t $KMERARRAY
@@ -78,7 +78,7 @@ for LIB in $LIBRARIES; do
    # Launch SOAP
    if [[ "$RUNSOAP" == "yes" ]] ; then
       NAME="soap_${LIB}"
-      if [[ "$QUEUE" -ne "" ]]; then
+      if [[ "$QUEUE" != "" ]]; then
 	 qsub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=$WTIME -q $QUEUE -l nodes=1:ppn=$PPN -t $KMERARRAY
       elif [[ $RAMS -gt 150 ]]; then
 	 qsub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=48:00:00 -q biohimem-6 -l nodes=1:ppn=$PPN -t $KMERARRAY
