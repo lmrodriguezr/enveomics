@@ -15,20 +15,24 @@ Usage:
    $0 [args]
 
 Mandatory:
-   -g <str>	Genes predicted in GFF2 format (as produced by
-   		MetaGeneMark).
-   -c <str>	Counts file.  Gene IDs and reads per gene in a
-   		tab-delimited file.
    -m <str>	MeTaxa output.
 
 Optional:
+   -g <str>	Genes predicted in GFF2 format (as produced by
+   		MetaGeneMark).  If not passed, abundance is assumed
+		to be based on contigs.
+   -c <str>	Counts file.  Sequence IDs (genes if -g is provided,
+   		contigs otherwise) and reads per sequence in a
+   		tab-delimited file.  If not provided, each sequence
+		counts as 1.
    -O <str>	Prefix of the output files to be generated.  By
    		default, the value of -m.
    -I <str>	File containing the complete classification of
    		all the contigs identified as 'Innominate' taxa.
 		By default, this file is not created.
    -G <str>	File containing the classification of each gene.
-		By default, this file is not created.
+		By default, this file is not created.  Requires
+		-g to be set.
    		Note: This option requires extra RAM.
    -K <str>	File containing a krona input file.  By default,
    		this file is not created.
@@ -45,48 +49,60 @@ Optional:
 my %o;
 getopts('g:c:m:O:I:G:K:k:uqh', \%o);
 $o{h} and &HELP_MESSAGE;
-$o{g} or  &HELP_MESSAGE;
-$o{c} or  &HELP_MESSAGE;
 $o{m} or  &HELP_MESSAGE;
 $o{O} ||= $o{m};
 $o{k} ||= "superkingdom,phylum,class,family,genus,species";
 my @K = split /,/,$o{k};
+($o{G} and not $o{g}) and die "-G requires -g to be set.\n";
 
-print STDERR "Reading genes collection.\n" unless $o{q};
+
 my %gene;
-my %ctg=();
-open GFF, "<", $o{g} or die "Cannot read file: $o{g}: $!\n";
-while(<GFF>){
-   next if /^#/;
-   next if /^\s*$/;
-   chomp;
-   my @ln = split /\t/;
-   exists $ln[8] or die "Cannot parse line $.: $_\n";
-   my $id = $ln[8];
-   $id =~ s/gene_id /gene_id_/;
-   $ln[0] =~ s/ .*//;
-   $gene{$id} = $ln[0];
-   push( @{$ctg{$ln[0]}||=[]}, $id ) if $o{G};
-}
-close GFF;
-print STDERR " Found ".(scalar(keys %gene))." genes.\n" unless $o{q};
-
-print STDERR "Reading read-counts.\n" unless $o{q};
 my %count;
-my $Nreads = 0;
-open COUNT, "<", $o{c} or die "Cannot read file: $o{c}: $!\n";
-while(<COUNT>){
-   chomp;
-   my @l = split /\t/;
-   exists $gene{$l[0]} or die "Cannot find gene's contig: $l[0].\n";
-   $count{ $gene{$l[0]} } += $l[1];
-   $Nreads += $l[1];
-   delete $gene{$l[0]};
+my %ctg=();
+if($o{g}){
+   print STDERR "Reading genes collection.\n" unless $o{q};
+   open GFF, "<", $o{g} or die "Cannot read file: $o{g}: $!\n";
+   while(<GFF>){
+      next if /^#/;
+      next if /^\s*$/;
+      chomp;
+      my @ln = split /\t/;
+      exists $ln[8] or die "Cannot parse line $.: $_\n";
+      my $id = $ln[8];
+      $id =~ s/gene_id /gene_id_/;
+      $ln[0] =~ s/ .*//;
+      if($o{c}){
+	 $gene{$id} = $ln[0];
+      }else{
+         $count{$ln[0]}++;
+      }
+      push( @{$ctg{$ln[0]}||=[]}, $id ) if $o{G};
+   }
+   close GFF;
+   print STDERR " Found ".(scalar(keys %gene))." genes.\n" unless $o{q};
 }
-close COUNT;
-print STDERR " Found ".scalar(keys %gene)." genes without reads.\n" if scalar(keys %gene) and not $o{q};
-$count{$_}+=0 for values %gene;
-print STDERR " Found ".scalar(keys %count)." contigs and $Nreads reads.\n" unless $o{q};
+
+my $Nreads = 0;
+if($o{c}){
+   print STDERR "Reading read-counts.\n" unless $o{q};
+   open COUNT, "<", $o{c} or die "Cannot read file: $o{c}: $!\n";
+   while(<COUNT>){
+      chomp;
+      my @l = split /\t/;
+      if($o{g}){
+	 exists $gene{$l[0]} or die "Cannot find gene's contig: $l[0].\n";
+	 $count{ $gene{$l[0]} } += $l[1];
+	 delete $gene{$l[0]};
+      }else{
+	 $count{ $l[0] } += $l[1];
+      }
+      $Nreads += $l[1];
+   }
+   close COUNT;
+   print STDERR " Found ".scalar(keys %gene)." genes without reads.\n" if scalar(keys %gene) and not $o{q};
+   $count{$_}+=0 for values %gene;
+   print STDERR " Found ".scalar(keys %count)." sequences and $Nreads reads.\n" unless $o{q};
+}
 
 print STDERR "Reading Metaxa results.\n";
 open METAXA, "<", $o{m} or die "Cannot read file: $o{m}: $!\n";
@@ -107,11 +123,17 @@ while(not eof(METAXA)){
    my @h=split /\t/, <METAXA>;
    my $t=<METAXA>; chomp $t;
    exists $h[3] or die "Cannot parse metaxa file, line $.: $_\n";
-   exists $count{$h[0]} or die "Cannot find counts for contig $h[0].\n";
+   my $count_h;
+   if($o{c} or $o{g}){
+      exists $count{$h[0]} or die "Cannot find counts for contig $h[0].\n";
+      $count_h = $count{$h[0]};
+   }else{
+      $count_h = 1;
+   }
    if($o{G}){ print OUT_G "$_\t$t\n" for @{$ctg{$h[0]}} }
-   next unless $count{$h[0]};
+   next unless $count_h;
    my $last = 'organism';
-   $n[0] += $count{$h[0]};
+   $n[0] += $count_h;
    for my $r (1 .. 3){
       if($rank{$h[1]} >= $r){
 	 if($t =~ m/$rank_tag[$r]([^;]*)/){
@@ -120,18 +142,18 @@ while(not eof(METAXA)){
 	    $last = $last=~/^Innominate / ? $last : "Innominate $last";
 	    $o{I} and print OUT_I "$h[0]\t$rank_name[$r]\t$last\t$t\n";
 	 }
-	 $out[$r]->{$last} += $count{$h[0]};
-	 $n[$r] += $count{$h[0]};
+	 $out[$r]->{$last} += $count_h;
+	 $n[$r] += $count_h;
       }else{
-         $out[$r]->{"Unknown $last"} += $count{$h[0]} if $o{u};
+         $out[$r]->{"Unknown $last"} += $count_h if $o{u};
       }
    }
    if($o{K}){
-      my $ln = $count{$h[0]};
+      my $ln = $count_h;
       for my $r (@K){ $ln.= "\t".($t=~m/<$r>([^;]+);/?$1:'') }
       print OUT_K "$ln\n";
    }
-   $Nreads_class+= $count{$h[0]};
+   $Nreads_class+= $count_h;
 }
 print OUT_K "".($Nreads-$Nreads_class)."\n" if $o{K} and $Nreads>$Nreads_class;
 close METAXA;
