@@ -3,7 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Jul-25-2013
+# @update Jul-26-2013
 #
 use warnings;
 use strict;
@@ -150,7 +150,7 @@ while(not eof(METAXA)){
    }
    if($o{K}){
       my $ln = $count_h;
-      for my $r (@K){ $ln.= "\t".($t=~m/<$r>([^;]+);/?$1:'') }
+      for my $r (@K){ $ln.= "\t".($t=~m/<$r>([^;]+)/?$1:'') }
       print OUT_K "$ln\n";
    }
    $Nreads_class+= $count_h;
