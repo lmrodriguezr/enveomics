@@ -40,6 +40,8 @@ Optional:
    		delimited by commas.  By default:
 		superkingdom,phylum,class,family,genus,species.
 		Ignored unless -K is also passed.
+   -r		If set, reports raw counts.  Otherwise, reports
+   		permil of the rank.
    -u		Report Unknown taxa.
    -q		Run quietly.
    -h		Display this help message and exits.
@@ -47,7 +49,7 @@ Optional:
 " }
 
 my %o;
-getopts('g:c:m:O:I:G:K:k:uqh', \%o);
+getopts('g:c:m:O:I:G:K:k:ruqh', \%o);
 $o{h} and &HELP_MESSAGE;
 $o{m} or  &HELP_MESSAGE;
 $o{O} ||= $o{m};
@@ -166,7 +168,7 @@ print STDERR "Generating output.\n" unless $o{q};
 for my $rank (1 .. 3){
    open OUT, ">", "$o{O}.".$rank_name[$rank].".txt" or die "Cannot create file: $o{O}.".$rank_name[$rank].".txt: $!\n";
    for my $class (keys %{$out[$rank]}){
-      printf OUT "%s\t%.20f\n", $class, (1000*$out[$rank]->{$class}/$n[$rank]);
+      printf OUT "%s\t%.20f\n", $class, ($out[$rank]->{$class}*($o{r}?1:1000/$n[$rank]));
    }
    close OUT;
 }
