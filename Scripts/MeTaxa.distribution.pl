@@ -18,30 +18,26 @@ Mandatory:
    -m <str>	MeTaxa output.
 
 Optional:
-   -g <str>	Genes predicted in GFF2 format (as produced by
-   		MetaGeneMark).  If not passed, abundance is assumed
-		to be based on contigs.
-   -c <str>	Counts file.  Sequence IDs (genes if -g is provided,
-   		contigs otherwise) and reads per sequence in a
-   		tab-delimited file.  If not provided, each sequence
-		counts as 1.
-   -O <str>	Prefix of the output files to be generated.  By
-   		default, the value of -m.
-   -I <str>	File containing the complete classification of
-   		all the contigs identified as 'Innominate' taxa.
+   -g <str>	Genes predicted in the format defined by -f.  If not passed, abundance is assumed to be based
+   		on contigs.
+   -f <str>	Format of the predicted genes.  One of:
+   		o gff2: GFF v2 as produced by MetaGeneMark.hmm (default).
+		o gff3: GFF v3, including the field id in the last column (with the Gene ID).
+		o tab: A tab-delimited file with the gene ID (col #1), the length of the gene in bp (col #2),
+		  and the ID of the corresponding contig (col #3). The length of the gene (col #2) isn't used
+		  (and it can be empty),  but the column must exist (i.e., 2 tabs per line) for compatibility
+		  with BlastTab.metaxaPrep.pl
+   -c <str>	Counts file: Sequence IDs (genes if -g is provided, contigs otherwise) and reads per sequence
+   		in a tab-delimited file.  If not provided, each sequence counts as 1.
+   -O <str>	Prefix of the output files to be generated.  By default, the value of -m.
+   -I <str>	File containing the complete classification of all the contigs identified as Innominate taxa.
 		By default, this file is not created.
-   -G <str>	File containing the classification of each gene.
-		By default, this file is not created.  Requires
-		-g to be set.
-   		Note: This option requires extra RAM.
-   -K <str>	File containing a krona input file.  By default,
-   		this file is not created.
-   -k <str>	List of ranks to include in the Krona file,
-   		delimited by commas.  By default:
-		superkingdom,phylum,class,family,genus,species.
-		Ignored unless -K is also passed.
-   -r		If set, reports raw counts.  Otherwise, reports
-   		permil of the rank.
+   -G <str>	File containing the classification of each gene.  By default, this file is not created.  This
+   		requires -g to be set.  Note: This option requires extra RAM.
+   -K <str>	File containing a krona input file.  By default, this file is not created.
+   -k <str>	List of ranks to include in the Krona file, delimited by commas.  By default:
+		'superkingdom,phylum,class,family,genus,species'.  Ignored unless -K is also passed.
+   -r		If set, reports raw counts.  Otherwise, reports permil of the rank.
    -u		Report Unknown taxa.
    -q		Run quietly.
    -h		Display this help message and exits.
@@ -49,10 +45,11 @@ Optional:
 " }
 
 my %o;
-getopts('g:c:m:O:I:G:K:k:ruqh', \%o);
+getopts('g:f:c:m:O:I:G:K:k:ruqh', \%o);
 $o{h} and &HELP_MESSAGE;
 $o{m} or  &HELP_MESSAGE;
 $o{O} ||= $o{m};
+$o{f} ||= "gff2";
 $o{k} ||= "superkingdom,phylum,class,family,genus,species";
 my @K = split /,/,$o{k};
 ($o{G} and not $o{g}) and die "-G requires -g to be set.\n";
@@ -68,17 +65,32 @@ if($o{g}){
       next if /^#/;
       next if /^\s*$/;
       chomp;
+      my($id,$ctg);
       my @ln = split /\t/;
-      exists $ln[8] or die "Cannot parse line $.: $_\n";
-      my $id = $ln[8];
-      $id =~ s/gene_id /gene_id_/;
-      $ln[0] =~ s/ .*//;
-      if($o{c}){
-	 $gene{$id} = $ln[0];
+      if($o{f} eq 'gff2'){
+	 exists $ln[8] or die "Cannot parse line $., expecting 9 columns: $_\n";
+	 my $id = $ln[8];
+	 $id =~ s/gene_id /gene_id_/;
+	 $ctg=$ln[0];
+      }elsif($o{f} eq 'gff3'){
+	 exists $ln[8] or die "Cannot parse line $., expecting 9 columns: $_\n";
+	 $ln[8] =~ /id=([^;]+)/ or die "Cannot parse line $.: $_\n";
+	 $id = $1;
+	 $ctg = $ln[0];
+      }elsif($o{f} eq 'tab'){
+         exists $ln[2] or die "Cannot parse line $., expecting 3 columns: $_\n";
+	 $id = $ln[0];
+	 $ctg = $ln[2];
       }else{
-         $count{$ln[0]}++;
+         die "Unsupported format: ".$o{f}.".\n";
       }
-      push( @{$ctg{$ln[0]}||=[]}, $id ) if $o{G};
+      $ctg =~ s/ .*//;
+      if($o{c}){
+	 $gene{$id} = $ctg;
+      }else{
+         $count{$ctg}++;
+      }
+      push( @{$ctg{$ctg}||=[]}, $id ) if $o{G};
    }
    close GFF;
    print STDERR " Found ".(scalar(keys %gene))." genes.\n" unless $o{q};
