@@ -2,13 +2,13 @@
 
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Apr-08-2013
+# @update: Aug-04-2013
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
-o = {:cog=>FALSE, :q=>FALSE, :w=>TRUE}
+o = {:cog=>FALSE, :desc=>FALSE, :q=>FALSE, :w=>TRUE}
 OptionParser.new do |opts|
    opts.banner = "Replaces the COG gene IDs in a BLAST for the COG category"
    opts.separator ""
@@ -18,6 +18,7 @@ OptionParser.new do |opts|
    opts.separator ""
    opts.separator "Optional"
    opts.on("-g", "--cog", "If set, returns the COG ID, not the COG category."){ o[:cog]=TRUE }
+   opts.on("-d", "--desc", "Includes COG description (requires -g/--cog)."){ o[:desc]=TRUE }
    opts.on("-n", "--noverbose", "Run quietly, but show warnings."){ o[:q]=TRUE }
    opts.on("-q", "--quiet", "Run quietly."){ o[:q]=TRUE; o[:w]=FALSE }
    opts.separator ""
@@ -33,8 +34,8 @@ fh = File.open o[:whog], "r"
 while ln=fh.gets
    ln.chomp!
    next if /^\s*$/.match ln
-   if m=/^\[([A-Z]+)\] (COG\d+) /.match(ln)
-      curCats = o[:cog] ? [ m[2] ] : m[1].split(//)
+   if m=/^\[([A-Z]+)\] (COG\d+) (.*)/.match(ln)
+      curCats = o[:cog] ? [ m[2]+(o[:desc]?" #{m[3]}":"") ] : m[1].split(//)
    elsif /^_+$/.match ln
       curCats = []
    elsif m=/^\s+(?:.+?:\s+)?(.*)/.match(ln)
