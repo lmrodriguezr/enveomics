@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Jul 18 2013
+# @update: Aug 11 2013
 # @license: artistic license 2.0
 #
 
@@ -10,7 +10,7 @@ use strict;
 use Getopt::Std;
 
 my %o;
-getopts('k:s:in', \%o);
+getopts('k:s:ihn', \%o);
 my($list, $table) = @ARGV;
 
 ($list and $table) or die "
@@ -24,6 +24,7 @@ my($list, $table) = @ARGV;
       -s <str>	String to use as separation between rows.  By default, tabulation.
       -i	If set, reports the inverse of the list (i.e., reports only rows
       		absent in the list).  Implies -n.
+      -h	Keep first row of the table (header) untouched.
       -n	No re-order.  The output has the same order of the table.  By
       		default, it prints in the order of the list.
 
@@ -36,14 +37,18 @@ my($list, $table) = @ARGV;
 $o{k} ||= 1;
 $o{s} ||= "\t";
 $o{n}=1 if $o{i};
+my $HEADER = "";
 
 my $tbl2 = $o{n} ? $list : $table;
 open TBL, "<", $tbl2 or die "Cannot read file: $tbl2: $!\n";
+$HEADER = <TBL> if $o{h} and not $o{n};
 my %tbl2 = map { my $l=$_; chomp $l; my @r=split $o{s}, $l; $r[ $o{n} ? 0 : $o{k}-1] => $l } <TBL>;
 close TBL;
 
 my $tbl1 = $o{n} ? $table : $list;
 open TBL, "<", $tbl1 or die "Cannot read file: $tbl1: $!\n";
+$HEADER = <TBL> if $o{h} and $o{n};
+print $HEADER;
 while(my $ln = <TBL>){
    chomp $ln;
    my @ln = split $o{s}, $ln;
