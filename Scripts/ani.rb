@@ -25,7 +25,7 @@ Usage: #{$0} [options]"
    opts.on("-s", "--step INT", "Step size in the ANI calculation (in bp).  By default: #{o[:step].to_s}."){ |v| o[:step] = v.to_i }
    opts.on("-l", "--len INT", "Minimum alignment length (in bp).  By default: #{o[:len].to_s}."){ |v| o[:len] = v.to_i }
    opts.on("-i", "--id NUM", "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."){ |v| o[:id] = v.to_f }
-   opts.on("-n", "--hits INT", "Minimum alnumber of hits.  By default: #{o[:hits].to_s}."){ |v| o[:hits] = v.to_i }
+   opts.on("-n", "--hits INT", "Minimum number of hits.  By default: #{o[:hits].to_s}."){ |v| o[:hits] = v.to_i }
    opts.separator ""
    opts.separator "Software Options"
    opts.on("-b", "--bin DIR", "Path to the directory containing the binaries of the search program."){ |v| o[:bin] = v }
@@ -33,7 +33,7 @@ Usage: #{$0} [options]"
    opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
-   opts.on("-o", "--out FILE", "Saves a file with the identity, length and bit-score of the alignmens used for two-way ANI."){ |v| o[:out] = v }
+   opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
