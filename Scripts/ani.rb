@@ -70,7 +70,7 @@ Dir.mktmpdir do |dir|
 	 abort "GI requested but rest-client not supported.  First install gem rest-client." unless has_rest_client
 	 response = RestClient.get 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi', {:params=>{:db=>'nuccore', :rettype=>'fasta', :id=>gi[1]}}
 	 abort "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
-	 o[seq] = "#{dir}/#{seq}.fa"
+	 o[seq] = "#{dir}/gi-#{seq.to_s}.fa"
 	 fo = File.open(o[seq], "w")
 	 fo.puts response.to_str
 	 fo.close
