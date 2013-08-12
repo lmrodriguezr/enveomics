@@ -1,4 +1,4 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/ruby
 
 #
 # @author: Luis M. Rodriguez-R
@@ -8,6 +8,13 @@
 
 require 'optparse'
 require 'tmpdir'
+has_rest_client = TRUE
+begin
+   require 'rubygems'
+   require 'restclient'
+rescue LoadError
+   has_rest_client = FALSE
+end
 
 o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
 OptionParser.new do |opts|
@@ -19,6 +26,11 @@ Usage: #{$0} [options]"
    opts.separator "Mandatory"
    opts.on("-1", "--seq1 FILE", "Path to the FastA file containing the genome 1."){ |v| o[:seq1] = v }
    opts.on("-2", "--seq2 FILE", "Path to the FastA file containing the genome 2."){ |v| o[:seq2] = v }
+   if has_rest_client
+      opts.separator "    Alternatively, you can supply a GI with the format gi:12345 instead of files."
+   else
+      opts.separator "    Install rest-client to enable gi support."
+   end
    opts.separator ""
    opts.separator "Search Options"
    opts.on("-w", "--win INT", "Window size in the ANI calculation (in bp).  By default: #{o[:win].to_s}."){ |v| o[:win] = v.to_i }
@@ -34,6 +46,7 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Other Options"
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
+   opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
@@ -52,6 +65,16 @@ Dir.mktmpdir do |dir|
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    [:seq1, :seq2].each do |seq|
+      gi = /^gi:(\d+)/.match(o[seq])
+      if not gi.nil?
+	 abort "GI requested but rest-client not supported.  First install gem rest-client." unless has_rest_client
+	 response = RestClient.get 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi', {:params=>{:db=>'nuccore', :rettype=>'fasta', :id=>gi[1]}}
+	 abort "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
+	 o[seq] = "#{dir}/#{seq}.fa"
+	 fo = File.open(o[seq], "w")
+	 fo.puts response.to_str
+	 fo.close
+      end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
       buffer = ""
       frgs = 0
@@ -98,6 +121,7 @@ Dir.mktmpdir do |dir|
       fo = File.open(o[:out], "w")
       fo.puts %w(identity aln.len mismatch gap.open evalue bitscore).join("\t")
    end
+   res = File.open(o[:res], "w") unless o[:res].nil?
    [1,2].each do |i|
       q = "#{dir}/seq#{i}.fa"
       s = "#{dir}/seq#{i==1?2:1}.fa"
@@ -142,11 +166,13 @@ Dir.mktmpdir do |dir|
 	 abort "Insuffient hits to estimate one-way ANI: #{n}."
       end
       printf "! One-way ANI %d: %.2f%% (SD: %.2f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
+      res.puts sprintf "<b>One-way ANI %d:</b> %.2f%% (SD: %.2f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
    end
    if n2 < o[:hits]
       abort "Insufficient hits to estimate two-way ANI: #{n2}"
    end
    printf "! Two-way ANI  : %.2f%% (SD: %.2f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
+   res.puts sprintf "<b>Two-way ANI:</b> %.2f%% (SD: %.2f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
    fo.close unless o[:out].nil?
 end
 
