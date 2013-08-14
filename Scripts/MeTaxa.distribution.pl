@@ -9,6 +9,7 @@ use warnings;
 use strict;
 use Symbol;
 use Getopt::Std;
+use List::Util qw/max/;
 
 sub HELP_MESSAGE { die "
 Usage:
@@ -35,8 +36,11 @@ Optional:
    -G <str>	File containing the classification of each gene.  By default, this file is not created.  This
    		requires -g to be set.  Note: This option requires extra RAM.
    -K <str>	File containing a krona input file.  By default, this file is not created.
-   -k <str>	List of ranks to include in the Krona file, delimited by commas.  By default:
-		'superkingdom,phylum,class,family,genus,species'.  Ignored unless -K is also passed.
+   -k <str>	List of ranks to include in the Krona file, delimited by comma.   It MUST be decreasing rank.
+   		By default: 'superkingdom,phylum,class,family,genus,species'.  This is ignored unless -K also
+		is passed.
+   -R <str>	List of taxonomic ranks for which individual reports should be generated, delimited by comma.
+   		It MUST be decreasing rank.  By default: 'phylum,genus,species'.
    -r		If set, reports raw counts.  Otherwise, reports permil of the rank.
    -u		Report Unknown taxa.
    -q		Run quietly.
@@ -45,13 +49,15 @@ Optional:
 " }
 
 my %o;
-getopts('g:f:c:m:O:I:G:K:k:ruqh', \%o);
+getopts('g:f:c:m:O:I:G:K:k:R:ruqh', \%o);
 $o{h} and &HELP_MESSAGE;
 $o{m} or  &HELP_MESSAGE;
 $o{O} ||= $o{m};
 $o{f} ||= "gff2";
 $o{k} ||= "superkingdom,phylum,class,family,genus,species";
-my @K = split /,/,$o{k};
+my @K = split /,/, lc $o{k};
+$o{R} ||= "phylum,genus,species";
+my @R = split /,/, lc $o{R};
 ($o{G} and not $o{g}) and die "-G requires -g to be set.\n";
 
 
@@ -69,7 +75,7 @@ if($o{g}){
       my @ln = split /\t/;
       if($o{f} eq 'gff2'){
 	 exists $ln[8] or die "Cannot parse line $., expecting 9 columns: $_\n";
-	 my $id = $ln[8];
+	 $id = $ln[8];
 	 $id =~ s/gene_id /gene_id_/;
 	 $ctg=$ln[0];
       }elsif($o{f} eq 'gff3'){
@@ -125,9 +131,9 @@ my $rank;
 my @ofh = ();
 my @n   = (0,0,0);
 my @out = ({},{},{});
-my %rank = (Unknown=>0, Phylum=>1, Genus=>2, Species=>3);
-my @rank_name = qw/Biota Phylum Genus Species/;
-my @rank_tag  = qw/NA <phylum> <genus> <species>/;
+my @rank_name = map { ucfirst } ('unknown', @R);
+my %rank = map { ($rank_name[$_]=>$_) } 0 .. $#rank_name;
+my @rank_tag  = ("NA", map { "<$_>" } @R);
 $o{I} and (open OUT_I, ">", $o{I} or die "Cannot create file: $o{I}: $!\n");
 $o{K} and (open OUT_K, ">", $o{K} or die "Cannot create file: $o{K}: $!\n");
 $o{G} and (open OUT_G, ">", $o{G} or die "Cannot create file: $o{G}: $!\n");
@@ -148,7 +154,7 @@ while(not eof(METAXA)){
    next unless $count_h;
    my $last = 'organism';
    $n[0] += $count_h;
-   for my $r (1 .. 3){
+   for my $r (1 .. max(values %rank)){
       if($rank{$h[1]} >= $r){
 	 if($t =~ m/$rank_tag[$r]([^;]*)/){
 	    $last = $1 if $1;
@@ -174,10 +180,11 @@ close METAXA;
 $o{I} and close OUT_I;
 $o{K} and close OUT_K;
 $o{G} and close OUT_G;
-unless($o{q}){ print " Found $n[$_] classified reads at ".$rank_name[$_]." level.\n" for (0 .. 3) }
+print " Found $n[0] unclassified reads.\n" unless $o{q};
+unless($o{q}){ print " Found $n[$_] classified reads at ".$rank_name[$_]." level.\n" for (1 .. max(values %rank)) }
 
 print STDERR "Generating output.\n" unless $o{q};
-for my $rank (1 .. 3){
+for my $rank (1 .. max(values %rank)){
    open OUT, ">", "$o{O}.".$rank_name[$rank].".txt" or die "Cannot create file: $o{O}.".$rank_name[$rank].".txt: $!\n";
    for my $class (keys %{$out[$rank]}){
       printf OUT "%s\t%.20f\n", $class, ($out[$rank]->{$class}*($o{r}?1:1000/$n[$rank]));
