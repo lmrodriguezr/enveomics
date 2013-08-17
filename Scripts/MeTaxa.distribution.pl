@@ -180,7 +180,7 @@ close METAXA;
 $o{I} and close OUT_I;
 $o{K} and close OUT_K;
 $o{G} and close OUT_G;
-print " Found $n[0] unclassified reads.\n" unless $o{q};
+print " Found $n[0] reads.\n" unless $o{q};
 unless($o{q}){ print " Found $n[$_] classified reads at ".$rank_name[$_]." level.\n" for (1 .. max(values %rank)) }
 
 print STDERR "Generating output.\n" unless $o{q};
