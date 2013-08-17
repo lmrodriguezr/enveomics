@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#
+# @author: Luis M. Rodriguez-R
+# @update: Aug-17-2013
+# @license: artistic license 2.0
+#
+
 if [[ ! $2 ]] ; then
    echo "
 .DESCRIPTION
