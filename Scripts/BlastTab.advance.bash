@@ -28,13 +28,13 @@ if [[ ! -r $2 ]]; then
 fi
 
 LAST_Q=`tail -n 2 $1 | head -n 1 | awk '{print $1}'`
-LAST_Q_NO=`grep -n "^>$LAST_Q\\($\\| \\)" $2 | sed -e 's/:.*//'`
+LAST_Q_NO=`grep -n "^>$LAST_Q\\( \\|$\\)" $2 | sed -e 's/:.*//'`
 if [[ ! $LAST_Q_NO ]]; then
    echo "Cannot find sequence: $LAST_Q";
    echo "Make sure you are providing the right query file.";
    exit 1;
 fi
-TOTAL_Q_NO=`wc -l $2 | sed -e 's/ .*//'`
+TOTAL_Q_NO=`cat $2 | wc -l | sed -e 's/ *//'`
 let PERC=100*$LAST_Q_NO/$TOTAL_Q_NO
 
 echo "$PERC%: $LAST_Q_NO / $TOTAL_Q_NO"
