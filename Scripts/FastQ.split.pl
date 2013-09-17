@@ -12,16 +12,16 @@ use Symbol;
 
 my ($file, $base, $outN) = @ARGV;
 
-$outN ||= 12;
+$outN ||= 2;
 ($file and $base) or die "
 Usage
-   $0 in_file.fastq out_base[ no_files]
+   $0 in_file.fq out_base[ no_files]
    
-   in_file.fa	Input file in FastA format.
+   in_file.fq	Input file in FastA format.
    out_base	Prefix for the name of the output files.  It will
    		be appended with .<i>.fastq, where <i> is a consecutive
 		number starting in 1.
-   no_files	Number of files to generate.  By default: 12.
+   no_files	Number of files to generate.  By default: 2.
 
 ";
 
