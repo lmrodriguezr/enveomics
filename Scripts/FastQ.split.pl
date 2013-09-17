@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+
+#
+# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @license: artistic license 2.0
+# @update: Sep-10-2013
+#
+
+use warnings;
+use strict;
+use Symbol;
+
+my ($file, $base, $outN) = @ARGV;
+
+$outN ||= 12;
+($file and $base) or die "
+Usage
+   $0 in_file.fastq out_base[ no_files]
+   
+   in_file.fa	Input file in FastA format.
+   out_base	Prefix for the name of the output files.  It will
+   		be appended with .<i>.fastq, where <i> is a consecutive
+		number starting in 1.
+   no_files	Number of files to generate.  By default: 12.
+
+";
+
+
+my @outSym = ();
+for my $i (1 .. $outN){
+   $outSym[$i-1] = gensym;
+   open $outSym[$i-1], ">", "$base.$i.fastq" or die "I can not create the file: $base.$i.fa: $!\n";
+}
+
+
+my($i, $seq) = (-1, '');
+open FILE, "<", $file or die "I can not read the file: $file: $!\n";
+while(my $ln=<FILE>){
+   if($.%4 == 1){
+      print { $outSym[$i % $outN] } $seq if $seq;
+      $i++;
+      $seq = '';
+   }
+   $seq.=$ln;
+}
+print { $outSym[$i % $outN] } $seq if $seq;
+close FILE;
+
+for(my $i=0; $i<$outN; $i++){
+   close $outSym[$i];
+}
+
+print STDERR "Sequences: $i\nFiles: $outN\n";
+

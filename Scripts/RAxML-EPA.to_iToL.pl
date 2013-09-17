@@ -1,5 +1,9 @@
 #!/usr/bin/perl
 
+# @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update: Sep-17-2013
+# @license: Artistic License 2.0
+
 use warnings;
 use strict;
 use List::Util qw(sum);
@@ -37,6 +41,8 @@ Usage:
 		a read has the name 'hco_ABCDEF/1#ACTG', it will be assumed to be
 		a read from the sample 'hco'.  If not provided, all the reads are
 		assumed to come from the same sample (called 'unknown').
+   -m <str>	Comma-delimited list of samples.  If not provided, all found samples
+   		will be used (unsorted).
    -c <str>	Comma-delimited list of colors (in RGB hexadecimal) to represent
    		the different samples.  If not provided (or if insufficient values
 		are provided) random color are generated.
@@ -57,7 +63,7 @@ Usage:
 }
 
 my %o;
-getopts('n:t:d:o:l:s:c:qh', \%o);
+getopts('n:t:d:o:l:s:m:c:qh', \%o);
 $o{d} ||= '.';
 $o{n} or &HELP_MESSAGE;
 $o{h} and &HELP_MESSAGE;
@@ -82,7 +88,7 @@ print STDERR "o Reading nodes.\n" unless $o{q};
 my %tags    = ();
 
 my $t = $tree;
-while($t =~ m/([A-Za-z0-9_-]+\[([A-Za-z0-9_-]+)\])/){
+while($t =~ m/([A-Za-z0-9_\|\.-]+\[([A-Za-z0-9_\|\.-]+)\])/){
    my $n = $1;
    my $ta = $2;
    $tags{$ta} = $n;
@@ -106,7 +112,7 @@ if($o{l}){
 	 warn "Warning: Trying to label/collapse $ori as $new, already defined as $tags{$ori}.\n";
 	 next;
       }
-      $new =~ s/[^A-Za-z0-9_\-]/_/g;
+      $new =~ s/[^A-Za-z0-9_\|\.\-]/_/g;
       $new.= "[$ori]" if $o{a};
       $tags{$ori} = $new;
       $tree =~ s/\[$ori\]/$new/;
@@ -159,7 +165,8 @@ close INCLASS;
 
 my $labs = 'LABELS';
 my $cols = 'COLORS';
-for my $sample (keys %samples){
+my @samples = $o{m} ? (split /,/, $o{m}) : (keys %samples);
+for my $sample (@samples){
    my $col = shift @{$o{c}};
    unless(defined $col and length($col)==6){
       $col = '';
@@ -177,7 +184,7 @@ open OUTCLASS, ">", $outClass or die "Cannot create file: $outClass: $!\n";
 print OUTCLASS "$labs\n$cols\n";
 for my $node (keys %nodes){
    print OUTCLASS $node.",R".sum(values %{$nodes{$node}});
-   for my $sample (keys %samples){
+   for my $sample (@samples){
       print OUTCLASS ",".($nodes{$node}->{$sample} || 0);
    }
    print OUTCLASS "\n";
