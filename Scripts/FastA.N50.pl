@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Nov 20 2012
+# @update: Seo 24 2013
 # @license: artistic license 2.0
 #
 use strict;
@@ -39,7 +39,7 @@ while(<SEQ>){
 }
 close SEQ;
 @len = sort { $a <=> $b } map { $_>=$minlen?$_:() } @len;
-my $tot = sum(@len);
+my $tot = (sum(@len) || 0);
 
 my $thr = $n__*$tot/100;
 my $pos = 0;
