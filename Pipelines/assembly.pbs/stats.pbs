@@ -30,9 +30,9 @@ for ID in $(seq 10 31); do
    perl "$PDIR/FastA.N50.pl" "$DIRS/O.contig" 500 | grep '^N50' | sed -e 's/.*: //' >> $LIB.soap.n50.$KMER
    # Used and Total reads
    tail -n 1 $DIRV/Log | sed -e 's/.* using \\([0-9]*\\)\\/\\([0-9]*\\) reads.*/\\1\\n\\2/' >> $LIB.velvet.n50.$KMER
-   if [ -e "$DIRS/O.readsOnContig" ] ; then
+   if [ -e "$DIRS/O.readOnContig" ] ; then
       cat "$DIRS/O.readOnContig" | grep -vc '^read' >> $LIB.soap.n50.$KMER
-   elif [ -e "$DIRS/O.readsOnContig.gz" ] ; then
+   elif [ -e "$DIRS/O.readOnContig.gz" ] ; then
       zcat "$DIRS/O.readOnContig.gz" | grep -vc '^read' >> $LIB.soap.n50.$KMER
    else
       echo 0 >> $LIB.soap.n50.$KMER
