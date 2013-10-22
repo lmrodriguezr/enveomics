@@ -145,9 +145,11 @@ Dir.mktmpdir do |dir|
       id = 0
       sq = 0
       n  = 0
+      last_ID = ""
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
+	 next if last_ID == row[0]
 	 if row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:bits]
 	    id += row[2].to_f
 	    sq += row[2].to_f ** 2
