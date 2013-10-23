@@ -137,7 +137,8 @@ Dir.mktmpdir do |dir|
 	 -num_threads #{o[:thr]} -outfmt 6 -out "#{dir}/#{i}.tab"`
 	 #-dust no -max_target_seqs 1 -xdrop_ungap 150 -xdrop_gap 150 \
       when "blat"
-	 `#{o[:bin]}blat "#{s}" "#{q}" -prot -out=blast8 "#{dir}/#{i}.tab"`
+	 `#{o[:bin]}blat "#{s}" "#{q}" -prot -out=blast8 "#{dir}/#{i}.tab.unsorted"`
+	 `sort -k 1 "#{dir}/#{i}.tab.unsorted" > "#{dir}/#{i}.tab"`
       else
 	 abort "Unsupported program: #{o[:program]}."
       end
