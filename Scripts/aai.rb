@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Oct-10-2013
+# @update: Oct-28-2013
 # @license: artistic license 2.0
 #
 
@@ -16,7 +16,7 @@ rescue LoadError
    has_rest_client = FALSE
 end
 
-o = {:len=>0, :id=>70, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
+o = {:len=>0, :id=>20, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Amino acid Identity between two genomes.
