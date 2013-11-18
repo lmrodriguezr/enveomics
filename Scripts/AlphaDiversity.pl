@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Aug-05-2013
+# @update: Nov-07-2013
 # @license: artistic license 2.0
 #
 
@@ -101,7 +101,7 @@ while(<TABLE>){
    push @{$values[$#ln+1]}, sum(@ln);
 }
 close TABLE;
-$names[$#values+1] = "gamma";
+$names[$#values] = "gamma";
 
 if($o{R}){
    print "".join($o{d}, qw/Sample Hprime 1_lambda qD/)."\n";
@@ -136,7 +136,7 @@ for my $i (0 .. $#values){
    if($o{R}){
       print "".join($o{d}, $H, 1/$l, $qD)."\n";
    }else{
-      print "".join($o{d}, $Q, 1/(1-$Q), $H, 1/$l, $qD)."\n";
+      print "".join($o{d}, $Q, ($Q==1 ? "NA" : 1/(1-$Q)), $H, 1/$l, $qD)."\n";
    }
 }
 
