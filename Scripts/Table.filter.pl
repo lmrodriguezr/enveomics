@@ -51,6 +51,7 @@ $HEADER = <TBL> if $o{h} and $o{n};
 print $HEADER;
 while(my $ln = <TBL>){
    chomp $ln;
+   next unless $ln;
    my @ln = split $o{s}, $ln;
    my $good = exists $tbl2{ $ln[$o{n} ? $o{k}-1 : 0] };
    $good = not $good if $o{i};
