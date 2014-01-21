@@ -24,7 +24,7 @@ if [[ "$DATA" == "" ]]; then
 fi
 
 # Prepare input
-KMER=$PBS_ARRAYID
+KMER=$MOAB_JOBARRAYINDEX
 CWD=$(pwd)
 DIR="$CWD/$LIB.velvet_$KMER"
 
