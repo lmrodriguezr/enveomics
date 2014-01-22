@@ -1,0 +1,14 @@
+Package: enveomics.R
+Title: Various R functions from the Kostas lab
+Type: Package
+Version: 2013.12.10
+Authors@R: c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
+	   email="lmrodriguezr@gmail.com"))
+Description: A collection of R functions of common use in the
+ Kostas Lab (http://enve-omics.gatech.edu/).
+URL: http://enve-omics.gatech.edu/
+Depends: R (>= 2.9)
+Suggests: splines, gplots, modeest
+License: Artistic-2
+LazyLoad: yes
+Encoding: UTF-8
