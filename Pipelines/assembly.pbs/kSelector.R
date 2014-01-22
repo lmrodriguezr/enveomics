@@ -8,6 +8,7 @@ kSelector <- function(file, lib){
    d <- d[!is.na(d$N50) & !is.na(d$used), ];
    d$reads <- max(d$reads, na.rm=T)
    d <- d[order(d$K), ];
+   rownames(d) <- 1:nrow(d);
    par(mar=c(5,4,4,5)+.1, cex=0.8);
    barplot(d$reads/1e6, names=d$K, col='white', ylab='Number of reads (in millions)', xlab='K',
       main=paste('Reads used and N50 by K-mers in the assembly of', lib));
