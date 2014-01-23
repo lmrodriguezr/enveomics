@@ -40,6 +40,12 @@ PPN=16
 # RAM multiplier: Multiply the estimated required RAM by this number:
 RAMMULT=1
 
+# Maximum number of simultaneous jobs: Uncomment and increase these values if
+# you have increased resources (e.g., a dedicated queue); uncomment and decrease
+# if the resources are scarce (e.g., a very busy queue or other simultaneous jobs).
+#VELVETSIM=22
+#SOAPSIM=8
+
 # Extra parameters for Velvet: Any additional parameters to be passed to
 # velvetg or velveth.  If you have MP data, consider adding the option
 # -shortMatePaired yes to VELVETG_EXTRA.  If you have Nextera, consider

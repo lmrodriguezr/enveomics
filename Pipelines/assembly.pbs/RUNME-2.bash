@@ -33,13 +33,15 @@ elif [[ "$2" == "soap" ]] ; then
    RUNVELVET=no
 fi
 if [[ "$3" == "" ]] ; then
-   KMERARRAY="21";
-   for i in $(seq 11 31); do
-      let k=$i*2+1
-      KMERARRAY="$KMERARRAY,$k"
-   done
+   KMERARRAY="21-63:2";
 else
    KMERARRAY=$3
+fi
+if [[ "$VELVETSIM" == "" ]] ; then
+   VELVETSIM=22
+fi
+if [[ "$SOAPSIM" == "" ]] ; then
+   let SOAPSIM=130/$PPN
 fi
 
 # Run it
@@ -64,26 +66,26 @@ for LIB in $LIBRARIES; do
    if [[ "$RUNVELVET" == "yes" ]] ; then
       NAME="velvet_${LIB}"
       if [[ "$QUEUE" != "" ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l "walltime=$WTIME" -q "$QUEUE" -t $KMERARRAY
+	 msub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l "walltime=$WTIME" -q "$QUEUE" -t "$NAME[$KMERARRAY]%$VELVETSIM"
       elif [[ $RAMV -gt 150 ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=360:00:00 -q biohimem-6 -t $KMERARRAY
+	 msub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=360:00:00 -q biohimem-6 -t "$NAME[$KMERARRAY]%$VELVETSIM"
       elif [[ $SIZE -lt 6 ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=12:00:00 -q iw-shared-6 -t $KMERARRAY
+	 msub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=12:00:00 -q iw-shared-6 -t "$NAME[$KMERARRAY]%$VELVETSIM"
       elif [[ $SIZE -lt 20 ]]; then
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=120:00:00 -q bioforce-6 -t $KMERARRAY
+	 msub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=120:00:00 -q bioforce-6 -t "$NAME[$KMERARRAY]%$VELVETSIM"
       else
-	 qsub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=360:00:00 -q biocluster-6 -t $KMERARRAY
+	 msub "$PDIR/velvet.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMV}gb -l walltime=360:00:00 -q biocluster-6 -t "$NAME[$KMERARRAY]%$VELVETSIM"
       fi
    fi
    # Launch SOAP
    if [[ "$RUNSOAP" == "yes" ]] ; then
       NAME="soap_${LIB}"
       if [[ "$QUEUE" != "" ]]; then
-	 qsub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=$WTIME -q $QUEUE -l nodes=1:ppn=$PPN -t $KMERARRAY
+	 msub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=$WTIME -q $QUEUE -l nodes=1:ppn=$PPN -t "$NAME[$KMERARRAY]%$SOAPSIM"
       elif [[ $RAMS -gt 150 ]]; then
-	 qsub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=48:00:00 -q biohimem-6 -l nodes=1:ppn=$PPN -t $KMERARRAY
+	 msub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=48:00:00 -q biohimem-6 -l nodes=1:ppn=$PPN -t "$NAME[$KMERARRAY]%$SOAPSIM"
       else
-	 qsub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=12:00:00 -q iw-shared-6 -l nodes=1:ppn=$PPN -t $KMERARRAY
+	 msub "$PDIR/soap.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l mem=${RAMS}gb -l walltime=12:00:00 -q iw-shared-6 -l nodes=1:ppn=$PPN -t "$NAME[$KMERARRAY]%$SOAPSIM"
       fi
    fi
 done
