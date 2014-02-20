@@ -13,7 +13,7 @@ if [[ ! -e "$SCRATCH/etc/01.bash" ]] ; then
    mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/active" "$SCRATCH/log/done" ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
    echo "msub -v '$MINVARS' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
-fi
+fi ;
 
 if [[ ! -e "$SCRATCH/etc/02.bash" ]] ; then
    # 01. Preparing input

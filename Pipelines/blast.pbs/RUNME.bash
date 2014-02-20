@@ -9,7 +9,7 @@ PDIR=$(dirname $(readlink -f $0));
 if [[ "$PROJ" == "" ]] ; then PROJ="$1" ; fi
 if [[ "$TASK" == "" ]] ; then TASK="$2" ; fi
 if [[ "$TASK" == "" ]] ; then TASK="check" ; fi
-NAMES=$(ls $PDIR/CONFIG.*.bash | sed -e 's/.*CONFIG\./    * /' | sed -e 's/\.bash//');
+NAMES=$(ls $PDIR/CONFIG.*.bash | sed -e 's/.*CONFIG\./    o /' | sed -e 's/\.bash//');
 if [[ "$PROJ" == "" ]] ; then
    if [[ "$HELP" == "" ]] ; then
       echo "
@@ -18,12 +18,11 @@ Usage:
    
    name		The name of the run.  CONFIG.name.bash must exist.
    task		The action to perform.  One of:
-		  run: Executes the BLAST.
-		  check: Indicates the progress of the task.
-		  pause: Cancels running jobs (resume using run).
-   		If no task is given, assumes 'check'.
+		o run: Executes the BLAST.
+		o check: Indicates the progress of the task (default).
+		o pause: Cancels running jobs (resume using run).
 
-   See $PDIR/README.txt for more information.
+   See $PDIR/README.md for more information.
    
    Available names are:
 $NAMES
