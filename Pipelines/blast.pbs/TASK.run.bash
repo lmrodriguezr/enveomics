@@ -9,10 +9,12 @@ fi
 
 if [[ ! -e "$SCRATCH/etc/01.bash" ]] ; then
    # 00. Initialize the project
-   mkdir -p "$SCRATCH/tmp" "$SCRATCH/etc" "$SCRATCH/results" ;
+   mkdir -p "$SCRATCH/tmp" "$SCRATCH/etc" "$SCRATCH/results" "$SCRATCH/success" ;
    mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/active" "$SCRATCH/log/done" ;
+   mkdir -p "$SCRATCH/log/err" "$SCRATCH/log/out" ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
-   echo "msub -v '$MINVARS' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
+   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,MEM=$RAM' -v '$MINVARS' -N '$PROJ-01' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
+   touch "$SCRATCH/success/00" ;
 fi ;
 
 if [[ ! -e "$SCRATCH/etc/02.bash" ]] ; then
@@ -30,5 +32,4 @@ else
       REGISTER_JOB "03" "00" "Concatenating results" "$JOB03"
    fi ;
 fi ;
-
 

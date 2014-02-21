@@ -2,8 +2,8 @@
 
 ##################### VARIABLES
 # Find the directory of the pipeline
+if [[ "$PDIR" == "" ]] ; then PDIR=$(dirname $(readlink -f $0)); fi ;
 CWD=$(pwd)
-PDIR=$(dirname $(readlink -f $0));
 
 # Load config
 if [[ "$PROJ" == "" ]] ; then PROJ="$1" ; fi
@@ -16,11 +16,11 @@ if [[ "$PROJ" == "" ]] ; then
 Usage:
    $0 name task
    
-   name		The name of the run.  CONFIG.name.bash must exist.
-   task		The action to perform.  One of:
-		o run: Executes the BLAST.
-		o check: Indicates the progress of the task (default).
-		o pause: Cancels running jobs (resume using run).
+   name	The name of the run.  CONFIG.name.bash must exist.
+   task	The action to perform.  One of:
+	o run: Executes the BLAST.
+	o check: Indicates the progress of the task (default).
+	o pause: Cancels running jobs (resume using run).
 
    See $PDIR/README.md for more information.
    
@@ -42,6 +42,19 @@ $NAMES" >&2
 fi
 source "$PDIR/CONFIG.$PROJ.bash"
 MINVARS="PDIR=$PDIR,SCRATCH=$SCRATCH,PROJ=$PROJ"
+case $QUEUE in
+bioforce-6)
+   MAX_H=120 ;;
+iw-shared-6)
+   MAX_H=12 ;;
+biocluster-6)
+biohimem-6)
+microcluster)
+   MAX_H=240 ;;
+*)
+   echo "Unrecognized queue: $QUEUE." >&2 ;
+   exit 1 ;;
+esac ;
 
 ##################### FUNCTIONS
 function REGISTER_JOB {
@@ -49,8 +62,9 @@ function REGISTER_JOB {
    SUBSTEP=$2
    MESSAGE=$3
    JOBID=$4
-   
-   echo "$MESSAGE: $JOBID." >> "$SCRATCH/log/status/$STEP"
+
+   if [[ "$JOBID" != "" ]] ; then MESSAGE="$MESSAGE [$JOBID]" ; fi
+   echo "$MESSAGE." >> "$SCRATCH/log/status/$STEP"
    echo "$STEP: $SUBSTEP: $(date)" > "$SCRATCH/log/active/$JOBID"
    #GUARDIAN_JOB=$(msub -l "depend=afternotok=$JOBID" -v "$MINVARS,STEP=$STEP,JOBID=$JOBID" "$PDIR/recover.pbs.bash") ;
 }

@@ -2,16 +2,16 @@
 
 ##################### VARIABLES
 # Queue and resources.
-QUEUE="biocluster-6"
-RUNNING_TIME_D=365 # <-- Estimated TOTAL number of days that the job would take in one node
-PPN=2
-RAM="9gb"
+QUEUE="iw-shared-6" ;
+MAX_JOBS=1000 ; # Maximum number of concurrent jobs. Never exceed 1990.
+PPN=2 ;
+RAM="9gb" ;
 
 # Paths
-SCRATCH="$HOME/scratch/pipelines/assembly" # Where the outputs and temporals will be created
-INPUT="$HOME/data/my-large-file.fasta" # Input query file
-DB="$HOME/data/db/nr" # Input database
-PROGRAM="blastp"
+SCRATCH="$HOME/scratch/pipelines/assembly" ; # Where the outputs and temporals will be created
+INPUT="$HOME/data/my-large-file.fasta" ; # Input query file
+DB="$HOME/data/db/nr" ; # Input database
+PROGRAM="blastp" ;
 
 ##################### FUNCTIONS
 ## All the functions below can be edited to suit your particular job.
