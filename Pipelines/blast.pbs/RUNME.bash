@@ -69,6 +69,19 @@ function REGISTER_JOB {
    echo "$MESSAGE." >> "$SCRATCH/log/status/$STEP"
 }
 
+function LAUNCH_JOB {
+   STEP=$1
+   SUBSTEP=$2
+   MESSAGE=$3
+   BASHFILE=$4
+   
+   cd "$SCRATCH/log/eo" ;
+   JOBID=$(bash "$BASHFILE" | tr -d '\n' || exit 1) ;
+   cd $CWD ;
+   REGISTER_JOB "$STEP" "$SUBSTEP" "$MESSAGE" "$JOBID" ;
+   echo $JOBID ;
+}
+
 ##################### RUN
 # Create the scratch directory
 if [[ ! -d $SCRATCH ]] ; then mkdir -p $SCRATCH ; fi;
