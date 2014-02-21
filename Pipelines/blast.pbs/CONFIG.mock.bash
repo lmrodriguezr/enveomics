@@ -30,9 +30,9 @@ PROGRAM="blastp" ;
 # Function to execute ONLY ONCE at the begining
 function BEGIN {
    ### Format the database (assuming proteins, check commands):
-   # module load ncbi_blast/2.2.25
-   # makeblastdb -in $HOME/data/some-database.faa -title $DB -dbtype prot
-   # module unload ncbi_blast/2.2.25
+   # module load ncbi_blast/2.2.25 || exit 1 ;
+   # makeblastdb -in $HOME/data/some-database.faa -title $DB -dbtype prot || exit 1 ;
+   # module unload ncbi_blast/2.2.25 || exit 1 ;
    ### Don't do anything:
    true ;
 }
@@ -72,14 +72,13 @@ function AFTER_BLAST {
 # Function to execute ONLY ONCE at the end, to concatenate the results
 function END {
    PREFIX=$1
-   SUFFIX=$2
-   OUT=$3
+   OUT=$2
    ### Simply concatenate files:
-   # cat $PREFIX.*.$SUFFIX > $OUT
+   # cat $PREFIX.*.blast > $OUT
    ### Concatenate only the filtered files (if filtering in AFTER_BLAST):
-   # cat $PREFIX.*.$SUFFIX > $OUT
+   # cat $PREFIX.*.blast.bs60 > $OUT
    ### Sort the BLAST by query (might require considerable RAM):
-   # sort -k 1 $PREFIX.*.$SUFFIX > $OUT
+   # sort -k 1 $PREFIX.*.blast > $OUT
    ### Don't do anyhthing:
    true ;
 }

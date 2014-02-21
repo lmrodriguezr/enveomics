@@ -5,6 +5,7 @@
 cd $SCRATCH ;
 TASK="dry" ;
 source "$PDIR/RUNME.bash" ;
+echo "$MOAB_JOBID" > "$SCRATCH/success/01.00" ;
 
 if [[ ! -e "$SCRATCH/success/01.01" ]] ; then
    # 01. BEGIN
@@ -26,16 +27,12 @@ fi ;
 
 if [[ ! -e "$SCRATCH/success/01.03" ]] ; then
    # 03. Finalize
-   REGISTER_JOB "01" "03" "Finalizing input preparation" && \
-      mv "$SCRATCH/tmp/split" "$SCRATCH/tmp/in" \
-      || exit 1 ;
-   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM,nodes=1:ppn=$PPN' \\
-      -v '$MINVARS' -N '$PROJ-02' -t '$PROJ-02[1-$MAX_JOBS]' '$PDIR/02.pbs.bash'|tr -d '\\n'" \
-      > "$SCRATCH/etc/02.bash" \
+   REGISTER_JOB "01" "03" "Finalizing input preparation" \
+      && mv "$SCRATCH/tmp/split" "$SCRATCH/tmp/in" \
       || exit 1 ;
    touch "$SCRATCH/success/01.03" ;
 fi ;
 
+[[ -d "$SCRATCH/tmp/out" ]] || ( mkdir "$SCRATCH/tmp/out" || exit 1 ) ;
 JOB_DONE "01" ;
-"$PDIR/RUNME.bash" "$PROJ" run || exit 1 ;
 

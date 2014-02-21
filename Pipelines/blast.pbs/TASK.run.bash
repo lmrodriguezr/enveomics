@@ -10,26 +10,53 @@ fi
 # Create the scratch directory
 if [[ ! -d "$SCRATCH" ]] ; then mkdir -p "$SCRATCH" || exit 1 ; fi;
 
-if [[ ! -e "$SCRATCH/etc/01.bash" ]] ; then
+if [[ ! -e "$SCRATCH/success/00" ]] ; then
    # 00. Initialize the project
    mkdir -p "$SCRATCH/tmp" "$SCRATCH/etc" "$SCRATCH/results" "$SCRATCH/success" || exit 1 ;
    mkdir -p "$SCRATCH/log/active" "$SCRATCH/log/done" "$SCRATCH/log/failed" || exit 1 ;
    mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/eo" || exit 1 ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
-   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
+   # Build 01.bash
+   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' \\
+      '$PDIR/01.pbs.bash'|tr -d '\\n')" \
+      > "$SCRATCH/etc/01.bash" || exit 1 ;
+   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l 'depend=afterany:\$NEW_JOBID' \\
+      -v '$MINVARS,STEP=01,AFTERJOB=\$NEW_JOBID' -N '$PROJ-01-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
+      >> "$SCRATCH/etc/01.bash" || exit 1 ;
+   # Build 02.bash
+   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM,nodes=1:ppn=$PPN' \\
+      -v '$MINVARS' -N '$PROJ-02' -t '$PROJ-02[1-$MAX_JOBS]' '$PDIR/02.pbs.bash'|tr -d '\\n')" \
+      > "$SCRATCH/etc/02.bash" \
+      || exit 1 ;
+   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l 'depend=afterany:\$NEW_JOBID' \\
+      -v '$MINVARS,STEP=02,AFTERJOB=\$NEW_JOBID' -N '$PROJ-02-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
+      >> "$SCRATCH/etc/02.bash" \
+      || exit 1 ;
+   # Build 03.bash
+   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-03' \\
+      '$PDIR/03.pbs.bash'|tr -d '\\n')" \
+      > "$SCRATCH/etc/03.bash" || exit 1 ;
+   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l 'depend=afterany:\$NEW_JOBID' \\
+      -v '$MINVARS,STEP=03,AFTERJOB=\$NEW_JOBID' -N '$PROJ-03-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
+      >> "$SCRATCH/etc/03.bash" || exit 1 ;
+   
    JOB_DONE "00" ;
 fi ;
 
-if [[ ! -e "$SCRATCH/etc/02.bash" ]] ; then
+if [[ ! -e "$SCRATCH/success/01" ]] ; then
    # 01. Preparing input
    JOB01=$(LAUNCH_JOB "01" "00" "Preparing input files" "$SCRATCH/etc/01.bash") ;
 else
-   if [[ ! -e "$SCRATCH/etc/03.bash" ]] ; then
+   if [[ ! -e "$SCRATCH/success/02" ]] ; then
       # 02. Launching BLAST
-      JOB02=$(LAUNCH_JOB "02" "00" "Launching BLAST runs" "$SCRATCH/etc/02.bash") ;
+      JOB02=$(LAUNCH_JOB "02" "00" "Running BLAST" "$SCRATCH/etc/02.bash") ;
    else
-      # 03. Finalize
-      JOB03=$(LAUNCH_JOB "03" "00" "Concatenating results" "$SCRATCH/etc/03.bash") ;
+      if [[ ! -e "$SCRATCH/success/03" ]] ; then
+	 # 03. Finalize
+	 JOB03=$(LAUNCH_JOB "03" "00" "Concatenating results" "$SCRATCH/etc/03.bash") ;
+      else
+         echo "Project complete, nothing to run." ;
+      fi ;
    fi ;
 fi ;
 
