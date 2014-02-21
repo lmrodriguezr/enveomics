@@ -40,8 +40,9 @@ if [[ ! -e "$PDIR/CONFIG.$PROJ.bash" ]] ; then
 $NAMES" >&2
    exit 1
 fi
-source "$PDIR/CONFIG.$PROJ.bash"
-MINVARS="PDIR=$PDIR,SCRATCH=$SCRATCH,PROJ=$PROJ"
+source "$PDIR/CONFIG.$PROJ.bash" ;
+SCRATCH="$SCRATCH_DIR/$PROJ" ;
+MINVARS="PDIR=$PDIR,SCRATCH=$SCRATCH,PROJ=$PROJ" ;
 case $QUEUE in
 bioforce-6)
    MAX_H=120 ;;
@@ -86,11 +87,10 @@ function JOB_DONE {
    STEP=$1
 
    echo "Done." >> "$SCRATCH/log/status/$STEP" ;
+   touch "$SCRATCH/success/$STEP" ;
 }
 
 ##################### RUN
-# Create the scratch directory
-if [[ ! -d $SCRATCH ]] ; then mkdir -p $SCRATCH ; fi;
 # Execute task
 if [[ ! -e "$PDIR/TASK.$TASK.bash" ]] ; then
    echo "Unrecognized task: $TASK." >&2 ;

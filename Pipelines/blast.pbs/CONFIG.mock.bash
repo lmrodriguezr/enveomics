@@ -8,7 +8,7 @@ PPN=2 ;
 RAM="9gb" ;
 
 # Paths
-SCRATCH="$HOME/scratch/pipelines/blast" ; # Where the outputs and temporals will be created
+SCRATCH_DIR="$HOME/scratch/pipelines/blast" ; # Where the outputs and temporals will be created
 INPUT="$HOME/data/my-large-file.fasta" ; # Input query file
 DB="$HOME/data/db/nr" ; # Input database
 PROGRAM="blastp" ;

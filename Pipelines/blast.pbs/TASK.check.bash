@@ -3,15 +3,21 @@
 ##################### RUN
 # Check if it was sourced from RUNME.bash
 if [[ "$PDIR" == "" ]] ; then
-   echo "$0: Error: This file is not stand-alone.  Execute RUNME.bash as described in the README.txt file" >&2
-   exit 1
-fi
+   echo "$0: Error: This file is not stand-alone.  Execute RUNME.bash as described in the README.txt file" >&2 ;
+   exit 1 ;
+fi ;
+
+# Check if the project exists
+if [[ ! -d "$SCRATCH" ]] ; then
+   echo "The project $PROJ doesn't exist at $SCRATCH.  Execute '$PDIR/RUNME.bash $PROJ run' first." >&2 ;
+   exit 1 ;
+fi ;
 
 # Get log:
 echo "==[ Running tasks ]==" ;
 for i in $(ls $SCRATCH/log/status/* 2>/dev/null) ; do
    echo "  $(basename $i): $(tail -n 1 $i)";
-done
+done ;
 
 # Get active jobs:
 echo "==[ Active jobs ]==" ;
