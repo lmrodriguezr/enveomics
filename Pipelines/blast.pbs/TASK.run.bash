@@ -19,14 +19,14 @@ fi ;
 
 if [[ ! -e "$SCRATCH/etc/02.bash" ]] ; then
    # 01. Preparing input
-   JOB01=$(REGISTER_JOB "01" "00" "Preparing input files" "$SCRATCH/etc/01.bash") ;
+   JOB01=$(LAUNCH_JOB "01" "00" "Preparing input files" "$SCRATCH/etc/01.bash") ;
 else
    if [[ ! -e "$SCRATCH/etc/03.bash" ]] ; then
       # 02. Launching BLAST
-      JOB02=$(REGISTER_JOB "02" "00" "Launching BLAST runs" "$SCRATCH/etc/02.bash") ;
+      JOB02=$(LAUNCH_JOB "02" "00" "Launching BLAST runs" "$SCRATCH/etc/02.bash") ;
    else
       # 03. Finalize
-      JOB03=$(REGISTER_JOB "03" "00" "Concatenating results" "$SCRATCH/etc/03.bash") ;
+      JOB03=$(LAUNCH_JOB "03" "00" "Concatenating results" "$SCRATCH/etc/03.bash") ;
    fi ;
 fi ;
 
