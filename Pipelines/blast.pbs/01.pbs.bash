@@ -36,5 +36,6 @@ if [[ ! -e "$SCRATCH/success/01.03" ]] ; then
    touch "$SCRATCH/success/01.03" ;
 fi ;
 
+JOB_DONE "01" ;
 "$PDIR/RUNME.bash" "$PROJ" run || exit 1 ;
 
