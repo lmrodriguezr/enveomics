@@ -27,7 +27,7 @@ job_c=0;
 for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
    jid=$(basename $i) ;
    stat=$(checkjob -v $jid) ;
-   state=$(echo "$stat" | grep '^State: ' | sed -e 's/^State: //') ;
+   state=$(echo "$stat" | grep '^State: ' | sed -e 's/^State: //' | sed -e 's/ *//') ;
    case $state in
    Completed)
       code=$(echo "$stat" | grep '^Completion Code: ' | sed -e 's/^Completion Code: //' | sed -e 's/ .*//') ;
@@ -46,17 +46,17 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
       echo "  Idle: $jid: $(cat "$i")" ;
       let job_i=$job_i+1 ;;
    *)
-      echo "Unrecognized state: $jid: $state." >&2 ;
-      echo "Please report this problem." >&2 ;;
+      echo "Warning: Unrecognized state: $jid: $state." >&2 ;
+      echo "  Please report this problem." >&2 ;;
    esac ;
 done ;
 echo "" ;
 if [[ $job_c -gt 0 ]] ; then
-   echo "  Completed since last check: $job_c.";
+   echo "  Completed since last check: $job_c." ;
 fi ;
-if [[ $job_r -gt 0 || $job_i -gt 0]] ; then
-   echo "  Running jobs: $job_r."
-   echo "  Idle jobs: $job_i."
+if [[ $job_r -gt 0 || $job_i -gt 0 ]] ; then
+   echo "  Running jobs: $job_r." ;
+   echo "  Idle jobs: $job_i." ;
 else
    echo "  No active jobs (running or idle), to resume execute:" ;
    echo "  $PDIR/RUNME.bash $PROJ run" ;
