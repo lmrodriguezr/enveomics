@@ -47,9 +47,7 @@ bioforce-6)
    MAX_H=120 ;;
 iw-shared-6)
    MAX_H=12 ;;
-biocluster-6)
-biohimem-6)
-microcluster)
+biocluster-6 | biohimem-6 | microcluster)
    MAX_H=240 ;;
 *)
    echo "Unrecognized queue: $QUEUE." >&2 ;

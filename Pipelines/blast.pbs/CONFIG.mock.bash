@@ -8,7 +8,7 @@ PPN=2 ;
 RAM="9gb" ;
 
 # Paths
-SCRATCH="$HOME/scratch/pipelines/assembly" ; # Where the outputs and temporals will be created
+SCRATCH="$HOME/scratch/pipelines/blast" ; # Where the outputs and temporals will be created
 INPUT="$HOME/data/my-large-file.fasta" ; # Input query file
 DB="$HOME/data/db/nr" ; # Input database
 PROGRAM="blastp" ;
@@ -50,10 +50,11 @@ function RUN_BLAST {
    IN=$1
    OUT=$2
    ### Run blastp (from BLAST+) with 13th and 14th columns (query length and subject length):
-   module load ncbi_blast/2.2.25
+   module load ncbi_blast/2.2.25 || exit 1 ;
    $PROGRAM -query $IN -db $DB -out $OUT -num_threads $PPN \
-   	-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen"
-   module unload ncbi_blast/2.2.25
+   	-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen" \
+	|| exit 1 ;
+   module unload ncbi_blast/2.2.25 || exit 1 ;
 }
 
 # Function to execute AFTER running the BLAST, for each sub-task
@@ -64,6 +65,8 @@ function AFTER_BLAST {
    # awk '$12>=60' $OUT > $OUT.bs60
    ### Filter by corrected identity 95 (only if it has the additional 13th column):
    # awk '$3*$4/$13 >= 95' $OUT > $OUT.ci95
+   ### Don't do anything:
+   true ;
 }
 
 # Function to execute ONLY ONCE at the end, to concatenate the results
