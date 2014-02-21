@@ -9,7 +9,7 @@ fi ;
 
 # Check if the project exists
 if [[ ! -d "$SCRATCH" ]] ; then
-   echo "The project $PROJ doesn't exist at $SCRATCH.  Execute '$PDIR/RUNME.bash $PROJ run' first." >&2 ;
+   echo "The project $PROJ doesn't exist at $SCRATCH_DIR.  Execute '$PDIR/RUNME.bash $PROJ run' first." >&2 ;
    exit 1 ;
 fi ;
 

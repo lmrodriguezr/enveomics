@@ -8,13 +8,13 @@ if [[ "$PDIR" == "" ]] ; then
 fi
 
 # Create the scratch directory
-if [[ ! -d $SCRATCH ]] ; then mkdir -p $SCRATCH ; fi;
+if [[ ! -d "$SCRATCH" ]] ; then mkdir -p "$SCRATCH" || exit 1 ; fi;
 
 if [[ ! -e "$SCRATCH/etc/01.bash" ]] ; then
    # 00. Initialize the project
-   mkdir -p "$SCRATCH/tmp" "$SCRATCH/etc" "$SCRATCH/results" "$SCRATCH/success" ;
-   mkdir -p "$SCRATCH/log/active" "$SCRATCH/log/done" "$SCRATCH/log/failed";
-   mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/eo" ;
+   mkdir -p "$SCRATCH/tmp" "$SCRATCH/etc" "$SCRATCH/results" "$SCRATCH/success" || exit 1 ;
+   mkdir -p "$SCRATCH/log/active" "$SCRATCH/log/done" "$SCRATCH/log/failed" || exit 1 ;
+   mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/eo" || exit 1 ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
    echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
    JOB_DONE "00" ;
