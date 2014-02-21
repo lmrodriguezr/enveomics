@@ -27,7 +27,7 @@ job_c=0;
 for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
    jid=$(basename $i) ;
    stat=$(checkjob -v $jid) ;
-   state=$(echo "$stat" | grep '^State: ' | sed -e 's/^State: //' | sed -e 's/ *//') ;
+   state=$(echo "$stat" | grep '^State: ' | sed -e 's/^State: //' | sed -e 's/.$//') ;
    case $state in
    Completed)
       code=$(echo "$stat" | grep '^Completion Code: ' | sed -e 's/^Completion Code: //' | sed -e 's/ .*//') ;
@@ -63,13 +63,23 @@ else
 fi ;
 
 # Step-specific checks:
-if [[ -e "$SCRATCH/etc/01.bash" ]] ; then
-   if [[ -e "$SCRATCH/etc/02.bash" ]] ; then
-      if [[ -e "$SCRATCH/etc/03.bash" ]] ; then
-      else
+echo "==[ Step summary ]=="
+todo=1 ;
+if [[ -e "$SCRATCH/success/00" ]] ; then
+   echo "  Successful project initialization." ;
+   if [[ -e "$SCRATCH/success/01" ]] ; then
+      echo "  Successful input preparation." ;
+      if [[ -e "$SCRATCH/etc/success/02" ]] ; then
+	 echo "  Successful BLAST execution." ;
+	 if [[ -e "$SCRATCH/etc/success/02" ]] ; then
+	    echo "  Successful concatenation." ;
+	    echo "  Project finished successfully!" ;
+	    todo=0 ;
+	 fi ;
       fi ;
-   else
    fi ;
-else
 fi ;
-
+if [[ "$todo" -eq 1 && $job_r -eq 0 && $job_i -eq 0 ]] ; then
+   echo "  Job currently paused. To resume, execute:" ;
+   echo "  $PDIR/RUNME.bash $PROJ run"
+fi ;
