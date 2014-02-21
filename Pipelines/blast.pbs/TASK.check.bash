@@ -3,13 +3,15 @@
 ##################### RUN
 # Check if it was sourced from RUNME.bash
 if [[ "$PDIR" == "" ]] ; then
-   echo "$0: Error: This file is not stand-alone.  Execute RUNME.bash as described in the README.txt file" >&2 ;
+   echo "$0: Error: This file is not stand-alone." >&2
+   echo "  Execute RUNME.bash as described in the README.txt file" >&2 ;
    exit 1 ;
 fi ;
 
 # Check if the project exists
 if [[ ! -d "$SCRATCH" ]] ; then
-   echo "The project $PROJ doesn't exist at $SCRATCH_DIR.  Execute '$PDIR/RUNME.bash $PROJ run' first." >&2 ;
+   echo "The project $PROJ doesn't exist at $SCRATCH_DIR." >&2 ;
+   echo "  Execute '$PDIR/RUNME.bash $PROJ run' first." >&2 ;
    exit 1 ;
 fi ;
 
