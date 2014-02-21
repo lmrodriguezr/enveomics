@@ -21,6 +21,7 @@ Usage:
 	o run: Executes the BLAST.
 	o check: Indicates the progress of the task (default).
 	o pause: Cancels running jobs (resume using run).
+	o dry: Checks that the parameters are correct, but doesn't run.
 
    See $PDIR/README.md for more information.
    
