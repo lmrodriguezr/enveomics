@@ -50,16 +50,14 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
       echo "  Please report this problem." >&2 ;;
    esac ;
 done ;
-echo "" ;
 if [[ $job_c -gt 0 ]] ; then
+   echo "" ;
    echo "  Completed since last check: $job_c." ;
 fi ;
 if [[ $job_r -gt 0 || $job_i -gt 0 ]] ; then
+   echo "" ;
    echo "  Running jobs: $job_r." ;
    echo "  Idle jobs: $job_i." ;
-else
-   echo "  No active jobs (running or idle), to resume execute:" ;
-   echo "  $PDIR/RUNME.bash $PROJ run" ;
 fi ;
 
 # Step-specific checks:
