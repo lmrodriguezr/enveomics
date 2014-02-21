@@ -61,10 +61,12 @@ function REGISTER_JOB {
    MESSAGE=$3
    JOBID=$4
 
-   if [[ "$JOBID" != "" ]] ; then MESSAGE="$MESSAGE [$JOBID]" ; fi
+   if [[ "$JOBID" != "" ]] ; then
+      MESSAGE="$MESSAGE [$JOBID]" ;
+      echo "$STEP: $SUBSTEP: $(date)" > "$SCRATCH/log/active/$JOBID"
+      #GUARDIAN_JOB=$(msub -l "depend=afternotok=$JOBID" -v "$MINVARS,STEP=$STEP,JOBID=$JOBID" "$PDIR/recover.pbs.bash") ;
+   fi
    echo "$MESSAGE." >> "$SCRATCH/log/status/$STEP"
-   echo "$STEP: $SUBSTEP: $(date)" > "$SCRATCH/log/active/$JOBID"
-   #GUARDIAN_JOB=$(msub -l "depend=afternotok=$JOBID" -v "$MINVARS,STEP=$STEP,JOBID=$JOBID" "$PDIR/recover.pbs.bash") ;
 }
 
 ##################### RUN

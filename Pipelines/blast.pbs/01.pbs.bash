@@ -29,7 +29,7 @@ if [[ ! -e "$SCRATCH/success/01.03" ]] ; then
    REGISTER_JOB "01" "03" "Finalizing input preparation" && \
       mv "$SCRATCH/tmp/split" "$SCRATCH/tmp/in" \
       || exit 1 ;
-   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,MEM=$RAM,nodes=1:ppn=$PPN' \\
+   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM,nodes=1:ppn=$PPN' \\
       -v '$MINVARS' -N '$PROJ-02' -t '$PROJ-02[1-$MAX_JOBS]' '$PDIR/02.pbs.bash'|tr -d '\\n'" \
       > "$SCRATCH/etc/02.bash" \
       || exit 1 ;

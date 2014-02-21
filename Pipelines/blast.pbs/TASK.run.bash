@@ -13,7 +13,7 @@ if [[ ! -e "$SCRATCH/etc/01.bash" ]] ; then
    mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/active" "$SCRATCH/log/done" ;
    mkdir -p "$SCRATCH/log/err" "$SCRATCH/log/out" ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
-   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,MEM=$RAM' -v '$MINVARS' -N '$PROJ-01' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
+   echo "msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' '$PDIR/01.pbs.bash' | tr -d '\\n'" > "$SCRATCH/etc/01.bash"
    touch "$SCRATCH/success/00" ;
 fi ;
 
