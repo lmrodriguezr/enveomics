@@ -53,11 +53,11 @@ function RUN_BLAST {
    local IN=$1
    local OUT=$2
    ### Run blastp (from BLAST+) with 13th and 14th columns (query length and subject length):
-   module load ncbi_blast/2.2.25 || exit 1 ;
+   module load ncbi_blast/2.2.28_binary || exit 1 ;
    $PROGRAM -query $IN -db $DB -out $OUT -num_threads $PPN \
    	-outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen" \
 	|| exit 1 ;
-   module unload ncbi_blast/2.2.25 || exit 1 ;
+   module unload ncbi_blast/2.2.28_binary || exit 1 ;
 }
 
 # Function to execute AFTER running the BLAST, for each sub-task

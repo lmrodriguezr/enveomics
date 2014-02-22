@@ -22,6 +22,7 @@ Usage:
 	o check: Indicates the progress of the task (default).
 	o pause: Cancels running jobs (resume using run).
 	o dry: Checks that the parameters are correct, but doesn't run.
+	o eo: Review all eo files produced in the project.
 
    See $PDIR/README.md for more information.
    
