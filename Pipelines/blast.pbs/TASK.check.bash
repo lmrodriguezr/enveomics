@@ -70,7 +70,11 @@ echo ;
 echo "==[ Auto-trials ]==" ;
 if [[ -e "$SCRATCH/etc/trials" ]] ; then
    trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g') ;
-   echo "  $trials trials attempted:" ;
+   if [[ $trials -gt 1 ]] ; then
+      echo "  $trials trials attempted:" ;
+   else
+      echo "  No recent failures in the current step, job launched:" ;
+   fi ;
    cat "$SCRATCH/etc/trials" | sed -e 's/^/  o /' ;
 fi ;
 echo ;
@@ -82,7 +86,6 @@ if [[ -e "$SCRATCH/success/00" ]] ; then
    echo "  Successful project initialization." ;
    if [[ -e "$SCRATCH/success/01" ]] ; then
       echo "  Successful input preparation." ;
-      let todo=$todo+1 ;
       if [[ -e "$SCRATCH/etc/success/02" ]] ; then
 	 echo "  Successful BLAST execution." ;
 	 if [[ -e "$SCRATCH/etc/success/02" ]] ; then
