@@ -80,7 +80,7 @@ function LAUNCH_JOB {
    cd "$SCRATCH/log/eo" ;
    source "$BASHFILE" || exit 1 ;
    cd $CWD ;
-   if [[ "$SENTINEL_JOBID" == "" ]] ; then
+   if [[ "$SENTINEL_JOBID" != "" ]] ; then
       REGISTER_JOB "$STEP" "$SUBSTEP" "Guarding job $NEW_JOBID" "$SENTINEL_JOBID" ;
    fi ;
    REGISTER_JOB "$STEP" "$SUBSTEP" "$MESSAGE" "$NEW_JOBID" ;
