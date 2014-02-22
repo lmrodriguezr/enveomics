@@ -114,5 +114,5 @@ echo ;
 # Entire log
 echo "==[ Complete log ]==" ;
 for i in $(ls $SCRATCH/log/status/* 2>/dev/null) ; do
-   cat "$i" | sed -e "s/^/$(basename $i): /"  ;
+   cat "$i" | sed -e "s/^/  $(basename $i): /"  ;
 done ;
