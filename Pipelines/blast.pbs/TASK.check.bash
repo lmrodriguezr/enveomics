@@ -80,7 +80,7 @@ fi ;
 echo ;
 
 # Step-specific checks:
-echo "==[ Step summary ]=="
+echo "==[ Step summary ]==" ;
 todo=1 ;
 if [[ -e "$SCRATCH/success/00" ]] ; then
    echo "  Successful project initialization." ;
@@ -111,3 +111,8 @@ if [[ "$todo" -eq 1 && $job_r -eq 0 && $job_i -eq 0 ]] ; then
 fi ;
 echo ;
 
+# Entire log
+echo "==[ Complete log ]==" ;
+for i in $(ls $SCRATCH/log/status/* 2>/dev/null) ; do
+   cat "$i" | sed -e "s/^/$(basename $i): /"  ;
+done ;
