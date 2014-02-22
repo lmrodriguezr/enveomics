@@ -18,5 +18,5 @@ fi ;
 # Review errors
 (echo -e "==[ Last 10 lines of all e files ]==\nPress q to exit\n" ; tail -n 10 $SCRATCH/log/eo/*.e* ) | less
 # Review output
-(echo -e "==[ Last 10 lines of all o files ]==\nPress q to exit\n" ; tail -n 10 $SCRATCH/log/eo/*.o* ) | less
+(echo -e "==[ Last 100 lines of all o files ]==\nPress q to exit\n" ; tail -n 100 $SCRATCH/log/eo/*.o* ) | less
 
