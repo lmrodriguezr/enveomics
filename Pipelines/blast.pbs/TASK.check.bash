@@ -20,6 +20,7 @@ echo "==[ Running tasks ]==" ;
 for i in $(ls $SCRATCH/log/status/* 2>/dev/null) ; do
    echo "  $(basename $i): $(tail -n 1 $i)";
 done ;
+echo ;
 
 # Get active jobs:
 echo "==[ Active jobs ]==" ;
@@ -63,15 +64,16 @@ if [[ $job_r -gt 0 || $job_i -gt 0 ]] ; then
    echo "  Running jobs: $job_r." ;
    echo "  Idle jobs: $job_i." ;
 fi ;
+echo ;
 
 # Auto-trials
 echo "==[ Auto-trials ]==" ;
-echo -n >> "$SCRATCH/etc/trials" ;
-trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g') ;
-if [[ $trials -gt 0 ]] ; then
-   echo "  $trials trials attempted on:" ;
+if [[ -e "$SCRATCH/etc/trials" ]] ; then
+   trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g') ;
+   echo "  $trials trials attempted:" ;
    cat "$SCRATCH/etc/trials" | sed -e 's/^/  o /' ;
 fi ;
+echo ;
 
 # Step-specific checks:
 echo "==[ Step summary ]=="
@@ -104,4 +106,5 @@ if [[ "$todo" -eq 1 && $job_r -eq 0 && $job_i -eq 0 ]] ; then
    echo "  Job currently paused. To resume, execute:" ;
    echo "  $PDIR/RUNME.bash $PROJ run"
 fi ;
+echo ;
 

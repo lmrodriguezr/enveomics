@@ -8,11 +8,12 @@ if [[ "$PDIR" == "" ]] ; then
 fi
 
 # Check if too many auto-trials were attempted
-echo -n >> "$SCRATCH/etc/trials" ;
-trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g');
-if [[ $trials -ge $MAX_TRIALS ]] ; then
-   echo "The maximum number of trials was already attempted, halting." >&2 ;
-   exit 1 ;
+if [[ -e "$SCRATCH/etc/trials" ]] ; then
+   trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g');
+   if [[ $trials -ge $MAX_TRIALS ]] ; then
+      echo "The maximum number of trials was already attempted, halting." >&2 ;
+      exit 1 ;
+   fi ;
 fi ;
 
 # Create the scratch directory

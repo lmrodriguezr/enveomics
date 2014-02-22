@@ -93,7 +93,7 @@ function JOB_DONE {
 
    echo "Done." >> "$SCRATCH/log/status/$STEP" ;
    touch "$SCRATCH/success/$STEP" ;
-   echo -n > "$SCRATCH/etc/trials" ;
+   echo -n '# ' > "$SCRATCH/etc/trials" ;
 }
 
 ##################### RUN
