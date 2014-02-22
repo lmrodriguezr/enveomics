@@ -7,6 +7,7 @@
 [[ "$INPUT" == "" ]] && echo "Undefined INPUT" >&2 && exit 1;
 [[ "$DB" == "" ]] && echo "Undefined DB" >&2 && exit 1;
 [[ "$PROGRAM" == "" ]] && echo "Undefined PROGRAM" >&2 && exit 1;
+[[ "$MAX_TRIALS" == "" ]] && echo "Undefined MAX_TRIALS" >&2 && exit 1;
 [[ "$(type -t BEGIN)" == "function" ]] || ( echo "Undefined function BEGIN" && exit 1 ) ;
 [[ "$(type -t BEFORE_BLAST)" == "function" ]] || ( echo "Undefined function BEFORE_BLAST" && exit 1 ) ;
 [[ "$(type -t RUN_BLAST)" == "function" ]] || ( echo "Undefined function RUN_BLAST" && exit 1 ) ;

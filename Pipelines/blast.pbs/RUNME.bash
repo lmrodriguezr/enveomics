@@ -58,10 +58,10 @@ esac ;
 
 ##################### FUNCTIONS
 function REGISTER_JOB {
-   STEP=$1
-   SUBSTEP=$2
-   MESSAGE=$3
-   JOBID=$4
+   local STEP=$1
+   local SUBSTEP=$2
+   local MESSAGE=$3
+   local JOBID=$4
 
    if [[ "$JOBID" != "" ]] ; then
       MESSAGE="$MESSAGE [$JOBID]" ;
@@ -72,12 +72,13 @@ function REGISTER_JOB {
 }
 
 function LAUNCH_JOB {
-   STEP=$1
-   SUBSTEP=$2
-   MESSAGE=$3
-   BASHFILE=$4
+   local STEP=$1
+   local SUBSTEP=$2
+   local MESSAGE=$3
+   local BASHFILE=$4
    
    cd "$SCRATCH/log/eo" ;
+   date >> "$SCRATCH/etc/trials" ;
    source "$BASHFILE" || exit 1 ;
    cd $CWD ;
    if [[ "$SENTINEL_JOBID" != "" ]] ; then
@@ -92,6 +93,7 @@ function JOB_DONE {
 
    echo "Done." >> "$SCRATCH/log/status/$STEP" ;
    touch "$SCRATCH/success/$STEP" ;
+   echo -n > "$SCRATCH/etc/trials" ;
 }
 
 ##################### RUN

@@ -12,8 +12,8 @@ if [[ "$STEP" == "02" ]] ; then
    
    # Check tasks
    INCOMPLETE=0;
-   for i in $(seq 1 MAX_JOBS) ; do
-      if [[ ! -e "$SCRATCH/success/02.$MAX_JOBS" ]] ; then
+   for i in $(seq 1 $MAX_JOBS) ; do
+      if [[ ! -e "$SCRATCH/success/02.$i" ]] ; then
 	 let INCOMPLETE=$INCOMPLETE+1 ;
       fi ;
    done

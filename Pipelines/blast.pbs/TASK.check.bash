@@ -47,6 +47,8 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
    Idle)
       echo "  Idle: $jid: $(cat "$i")" ;
       let job_i=$job_i+1 ;;
+   Canceling)
+      echo "  Canceling: $jid: $(cat "$i")" ;;
    *)
       echo "Warning: Unrecognized state: $jid: $state." >&2 ;
       echo "  Please report this problem." >&2 ;;
@@ -62,6 +64,15 @@ if [[ $job_r -gt 0 || $job_i -gt 0 ]] ; then
    echo "  Idle jobs: $job_i." ;
 fi ;
 
+# Auto-trials
+echo "==[ Auto-trials ]==" ;
+echo -n >> "$SCRATCH/etc/trials" ;
+trials=$(cat "$SCRATCH/etc/trials" | wc -l | sed -e 's/ //g') ;
+if [[ $trials -gt 0 ]] ; then
+   echo "  $trials trials attempted on:" ;
+   cat "$SCRATCH/etc/trials" | sed -e 's/^/  o /' ;
+fi ;
+
 # Step-specific checks:
 echo "==[ Step summary ]=="
 todo=1 ;
@@ -69,17 +80,28 @@ if [[ -e "$SCRATCH/success/00" ]] ; then
    echo "  Successful project initialization." ;
    if [[ -e "$SCRATCH/success/01" ]] ; then
       echo "  Successful input preparation." ;
+      let todo=$todo+1 ;
       if [[ -e "$SCRATCH/etc/success/02" ]] ; then
 	 echo "  Successful BLAST execution." ;
 	 if [[ -e "$SCRATCH/etc/success/02" ]] ; then
 	    echo "  Successful concatenation." ;
 	    echo "  Project finished successfully!" ;
 	    todo=0 ;
+	 else
+	    echo "  Concatenating results." ;
 	 fi ;
+      else
+	 echo "  Running BLAST." ;
       fi ;
+   else
+      echo "  Preparing input." ;
    fi ;
+else
+   echo "  Initializing project." ;
 fi ;
+
 if [[ "$todo" -eq 1 && $job_r -eq 0 && $job_i -eq 0 ]] ; then
    echo "  Job currently paused. To resume, execute:" ;
    echo "  $PDIR/RUNME.bash $PROJ run"
 fi ;
+
