@@ -86,9 +86,9 @@ if [[ -e "$SCRATCH/success/00" ]] ; then
    echo "  Successful project initialization." ;
    if [[ -e "$SCRATCH/success/01" ]] ; then
       echo "  Successful input preparation." ;
-      if [[ -e "$SCRATCH/etc/success/02" ]] ; then
+      if [[ -e "$SCRATCH/success/02" ]] ; then
 	 echo "  Successful BLAST execution." ;
-	 if [[ -e "$SCRATCH/etc/success/02" ]] ; then
+	 if [[ -e "$SCRATCH/success/02" ]] ; then
 	    echo "  Successful concatenation." ;
 	    echo "  Project finished successfully!" ;
 	    todo=0 ;
