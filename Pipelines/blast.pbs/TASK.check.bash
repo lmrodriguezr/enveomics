@@ -75,7 +75,7 @@ if [[ -e "$SCRATCH/etc/trials" ]] ; then
    else
       echo "  No recent failures in the current step, job launched:" ;
    fi ;
-   cat "$SCRATCH/etc/trials" | sed -e 's/^/  o /' | sed -e 's/# $//g' ;
+   cat "$SCRATCH/etc/trials" | sed -e 's/^/  o /' | sed -e 's/# $/No active trials/g' ;
 fi ;
 echo ;
 
