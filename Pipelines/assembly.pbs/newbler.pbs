@@ -14,12 +14,8 @@ if [[ "$PDIR" == "" ]]; then
    echo "Error: PDIR is mandatory" >&2
    exit 1;
 fi
-if [[ "$KVELVET" == "" ]]; then
-   echo "Error: KVELVET is mandatory" >&2
-   exit 1;
-fi
-if [[ "$KSOAP" == "" ]]; then
-   echo "Error: KSOAP is mandatory" >&2
+if [[ "$KVELVET$KSOAP" == "" ]]; then
+   echo "Error: KVELVET and/or KSOAP are mandatory" >&2
    exit 1;
 fi
 
@@ -33,31 +29,39 @@ LOG="$DIR.log"
 module load perl
 export PATH=$PATH:$BIN454
 
-# Prepare Velvet
-echo pre-velvet > $DIR.proc
-rm $LIB.velvet.tmp1 &>/dev/null
-for K in $KVELVET ; do
-   perl "$PDIR/FastA.filterN.pl" "$LIB.velvet_$K/contigs.fa" >> $LIB.velvet.tmp1
-done
-perl "$PDIR/newbler_preparator.pl" $LIB.velvet.tmp1 $LIB.velvet.tmp2
-
-# Prepare SOAP
-echo pre-soap > $DIR.proc
-rm $LIB.soap.tmp1 &>/dev/null
-for K in $KSOAP ; do
-   cat "$LIB.soap_$K/O.contig" >> $LIB.soap.tmp1
-done
-perl "$PDIR/newbler_preparator.pl" $LIB.soap.tmp1 $LIB.soap.tmp2
-
-# Run
+# Create project
 echo new > $DIR.proc
 nohup newAssembly $DIR > $LOG
+
+# Prepare Velvet
+if [[ "$KVELVET" != "" ]] ; then
+   echo pre-velvet > $DIR.proc
+   rm $LIB.velvet.tmp1 &>/dev/null
+   for K in $KVELVET ; do
+      perl "$PDIR/FastA.filterN.pl" "$LIB.velvet_$K/contigs.fa" >> $LIB.velvet.tmp1
+   done
+   perl "$PDIR/newbler_preparator.pl" $LIB.velvet.tmp1 $LIB.velvet.tmp2
+   cd $DIR
+   nohup addRun ../$LIB.velvet.tmp2 >> $LOG
+   cd $CWD
+fi ;
+
+# Prepare SOAP
+if [[ "$KSOAP" != "" ]] ; then
+   echo pre-soap > $DIR.proc
+   rm $LIB.soap.tmp1 &>/dev/null
+   for K in $KSOAP ; do
+      cat "$LIB.soap_$K/O.contig" >> $LIB.soap.tmp1
+   done
+   perl "$PDIR/newbler_preparator.pl" $LIB.soap.tmp1 $LIB.soap.tmp2
+   cd $DIR
+   nohup addRun ../$LIB.soap.tmp2 >> $LOG
+   cd $CWD
+fi ;
+
+# Run
 cd $DIR
-echo velvet > $DIR.proc
-nohup addRun ../$LIB.velvet.tmp2 >> $LOG
-nohup runProject -cpu $NP >> $LOG
-echo soap > $DIR.proc
-nohup addRun ../$LIB.soap.tmp2 >> $LOG
+echo newbler > $DIR.proc
 nohup runProject -cpu $NP >> $LOG
 cd $CWD
 echo done > $DIR.proc
