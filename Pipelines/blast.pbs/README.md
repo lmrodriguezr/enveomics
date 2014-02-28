@@ -28,7 +28,39 @@ Simplifies submitting and tracking large BLAST jobs in cluster.
    1.3. Copy the file `CONFIG.mock.bash` to `CONFIG.<name>.bash`, where `<name>` is a
       short name for your project (avoid characters other than alphanumeric).
    
-   1.4. Change the variables in `CONFIG.<name>.bash`.
+   1.4. Change the variables in `CONFIG.<name>.bash`. The **Queue and resources** and the
+      **Pipeline** variables are very standard, and can be kept unchanged. The **Paths**
+      variables indicate where your input files are and where the output files are to
+      be created, so check them carefully. Finally, the **FUNCTIONS** define the core
+      functionality of the pipeline, and should also be reviewed. By default, the
+      Pipeline simply runs BLAST+, with default parameters and tabular output with two
+      extra columns (qlen and slen). However, additional functionality can easily be
+      incorporated via these functions, such as BLAST filtering, concatenation, sorting,
+      or even execution of other programs instead of BLAST, such as BLAT, etc. Note that
+      the output MUST be BLAST-like tabular, because this is the only format supported
+      to check completeness and recover incomplete runs.
+   
+2. Pipeline execution:
+   
+   2.1. To initialize a run, execute: `./RUNME.bash <name> run`.
+
+   2.2. To check the status of a job, execute: `./RUNME.bash <name> check`.
+
+   2.3. To pause a run, execute: `./RUNME.bash <name> pause` (see 2.1 to resume).
+
+   2.4. To check if your CONFIG defines all required parameters, execute: `./RUNME.bash <name> dry`.
+
+   2.5. To review all the e/o files in the run, execute: `./RUNME.bash <name> eo`.
+
+3. Finalizing:
+   
+   3.1. `./RUNME.bash <name> check` will inform you if a project finished. If it finished successfully,
+      you can review your (split) results in $SCRATCH/results. If you concatenated the results in the
+      `END` function, you should have a file with all the results in $SCRATCH/<name>.blast.
+
+   3.2. Usually, checking the e/o files at the end is a good idea (`./RUNME.bash <name> eo`). However,
+      bear in mind that this Pipeline can overcome several errors and is robust to most failures, so
+      don't be alarmed at the first sight of errors.
 
 # Comments
 
