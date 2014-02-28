@@ -26,8 +26,8 @@ for LIB in $LIBRARIES; do
       echo "$0: Error: No task selected, neither USECOUPLED nor USESINGLE set to yes." >&2
       exit 1;
    fi
-   let SIZE=$(ls -l "$INPUT" | awk '{print $5}')/1024/1024/1024;
-   let RAM=3+$SIZE*30*$RAMMULT;
+   let SIZE=30*$(ls -l "$INPUT" | awk '{print $5}')/1024/1024/1024;
+   let RAM=\(3+$SIZE\)*$RAMMULT;
    VARS="LIB=$LIB,PDIR=$PDIR,BIN454=$BIN454,KVELVET=$K_VELVET,KSOAP=$K_SOAP"
    # Launch Newbler
    NAME="Newbler_${LIB}"
