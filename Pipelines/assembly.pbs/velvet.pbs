@@ -41,9 +41,9 @@ fi
 if [[ "$VELVETH_EXTRA" != "" ]]; then
    CMD="$CMD $VELVETH_EXTRA"
 fi
-nohup $CMD > $DIR.hlog
+$CMD &> $DIR.hlog
 echo velvetg > $DIR.proc
-nohup velvetg_101_omp "$DIR" -exp_cov auto -cov_cutoff auto -ins_length "$INSLEN" $VELVETG_EXTRA > $DIR.glog
+velvetg_101_omp "$DIR" -exp_cov auto -cov_cutoff auto -ins_length "$INSLEN" $VELVETG_EXTRA &> $DIR.glog
 if [[ -d $DIR ]] ; then
    if [[ -s $DIR/contigs.fa ]] ; then
       if [[ "$CLEANUP" != "no" ]] ; then

@@ -57,7 +57,7 @@ echo pre > $DIR.proc
 if [[ -d $DIR ]] ; then rm -R $DIR ; fi
 mkdir $DIR
 echo soap > $DIR.proc
-nohup SOAPdenovo-63mer all -s $DIR.config -p $NP -K $KMER -o $DIR/O > $DIR.log
+SOAPdenovo-63mer all -s $DIR.config -p $NP -K $KMER -o $DIR/O &> $DIR.log
 if [[ -d $DIR ]] ; then
    if [[ -s $DIR/O.contig ]] ; then
       if [[ "$CLEANUP" != "no" ]] ; then
@@ -66,7 +66,7 @@ if [[ -d $DIR ]] ; then
 	 rm $DIR/*vertex
 	 rm $DIR/*Arc*
 	 rm $DIR/*Graph*
-	 rm $DIR/*readInGap
+	 rm $DIR/*readInGap*
       fi
       echo done > $DIR.proc
    else
