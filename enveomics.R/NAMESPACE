@@ -1,1 +1,1 @@
-export(enve.barplot, enve.recplot)
+export(enve.barplot, enve.recplot, enve.prune.dist)

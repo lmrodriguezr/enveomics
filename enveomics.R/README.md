@@ -14,5 +14,6 @@ And open help messages using any of the following commands:
     > ?enveomics.R
     > ?enve.barplot
     > ?enve.recplot
+    > ?enve.prune.dist
 
 
