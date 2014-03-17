@@ -51,7 +51,8 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
    Canceling)
       echo "  Canceling: $jid: $(cat "$i")" ;;
    Removed)
-      echo "  Removed: $jid: $(cat "$i")" ;;
+      echo "  Removed: $jid: $(cat "$i")" ;
+      mv "$i" "$SCRATCH/log/failed/" ;;
    *)
       tmp_err=$(echo "$stat" | grep ERROR) ;
       if [[ "$tmp_err" == "" ]] ; then
