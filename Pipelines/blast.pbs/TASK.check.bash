@@ -58,7 +58,7 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
 	 echo "Warning: Unrecognized state: $jid: $state." >&2 ;
 	 echo "  Please report this problem." >&2 ;
       else
-	 echo "Error: $jid: $tmp_err" ;
+	 echo "  Error: $jid: $tmp_err" ;
       fi ;;
    esac ;
 done ;
