@@ -3,7 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update apr-10-2013
+# @update mar-17-2014
 #
 
 require 'optparse'
@@ -25,6 +25,19 @@ OptionParser.new do |opt|
       puts opt
       exit
    end
+   opt.separator ""
+   opt.separator "Output:"
+   opt.separator "   Tab-delimited flat file, with the following columns:"
+   opt.separator "   1. Query ID (without the \"sister\" identifier)."
+   opt.separator "   2. Subject ID."
+   opt.separator "   3. Bit score (summed from both sister reads)."
+   opt.separator "   4/5. From/To (subject) coordinates for read 1."
+   opt.separator "   6/7. From/To (subject) coordinates for read 2."
+   opt.separator "   8. Reads orientation (1: same direction, 2: inwards, 3: outwards)."
+   opt.separator ""
+   opt.separator "Important note: This script assumes that paired hits are next to each other."
+   opt.separator "   If this is not the case (e.g., because the blast was concatenated),"
+   opt.separator "   you must sort the input before running this script."
    opt.separator ""
 end.parse!
 abort "-i/--blast is mandatory." if opts[:blast].nil?
