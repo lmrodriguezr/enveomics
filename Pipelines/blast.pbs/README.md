@@ -70,12 +70,58 @@ Simplifies submitting and tracking large BLAST jobs in cluster.
 
 # Troubleshooting
 
-1. Do I really have to change directory (`cd`) to the pipeline's folder everytime
-   I want to execute something?
+1. Do I really have to change directory (`cd`) to the pipeline's folder everytime I want to execute
+   something?
    
-   No.  Not really.  For simplicity, this file tells you to execute `./RUNME.bash`.
-   However, you don't really have to be there, you can execute it
-   from any location.  For example, if you saved enveomics in your home
-   directory, you can just execute `~/enveomics/blast.pbs/RUNME.bash` insted from any
-   location in the head node.
+   No.  Not really.  For simplicity, this file tells you to execute `./RUNME.bash`.  However, you don't
+   really have to be there, you can execute it from any location.  For example, if you saved enveomics in
+   your home directory, you can just execute `~/enveomics/blast.pbs/RUNME.bash` insted from any location
+   in the head node.
+
+2. When I check a project, few sub-jobs are Active for much longer than the others. How do I know if those
+   sub-jobs are really active?
+   
+   Lets review an example of a problematic run. When you run `./RUNME.bash <name> check`, you see the
+   following in the "Active jobs" section:
+   ````
+   Idle: Moab.155829: 02: 00: Mon Mar 17 14:10:28 EDT 2014
+     Sub-jobs:500 Active:4 ( 0.8% ) Eligible:0 ( 0.0% ) Blocked:0 ( 0.0% ) Completed:496 ( 99.2% ) 
+   Idle: Moab.155830: 02: 00: Mon Mar 17 14:10:28 EDT 2014
+   
+   Running jobs: 0.
+   Idle jobs: 2.
+   ````
+   That means that the job "Moab.155829" has four Active jobs, while all the others are Completed. This is
+   a sign of something problematic.  You can see the complete status of each array using
+   `checkjob -v <JOB_NAME>`. In our example above, you would run `checkjob -v Moab.155829`. In the output
+   of checkjob, most jobs should report "Completed". In this example, there are four jobs that are not
+   complete:
+   ````
+   ...
+   387 : Moab.155829[387] : Completed
+   388 : Moab.155829[388] : Running
+   389 : Moab.155829[389] : Running
+   390 : Moab.155829[390] : Running
+   391 : Moab.155829[391] : Running
+   392 : Moab.155829[392] : Completed
+   ...
+   ````
+   So you can simply check these sub-jobs in more detail. For example, if I run `checkjob -v Moab.155829[388]`,
+   I see that the job is running in the machine `iw-k30-12.pace.gatech.edu` (Task Distribution), so I can try
+   to login to that machine to check if the job is actually running, using `top -u $(whoami)`. However, when
+   I run `ssh iw-k30-12`, I got a "Connection closed" error, which means that the machine hung up. At this point,
+   you might want to try one of the following solutions:
+
+   2.1. Pause the project using `./RUNME.bash <name> pause`, wait a few minutes, and resume using
+        `./RUNME.bash <name> run`. If you tried this a couple of times and you still have sub-jobs hanging, try:
+   
+   2.2. Check if your sub-jobs finished. Sometimes sub-jobs die too soon to return a success code, but they actually
+        finished. Just run the following command: `ls <SCRATCH>/<name>/success/02.* | wc -l`, where `<SCRATCH>` is the
+	value you set for the `SCRATCH` variable in the CONFIG file, and `<name>` is the name of your project. If the
+	output of that command is a number, and that number is exactly six times the number of jobs (`MAX_JOBS` in the
+	CONFIG file, typically 500), then your step 2 actually finished. In my case, I have 500 jobs, and the output
+	was 3000, so my job finished successfully, but the pipeline didn't notice. You can manually tell the pipeline
+	to go on running: `touch <SCRATCH>/<name>/success/02`, and pausing/resuming the project (see 2.1 above). If
+	the output is not the expected number (in my case, 3000, which is 6*500), DON'T RUN `touch`, just try the
+	solution 2.1 above once again.
 
