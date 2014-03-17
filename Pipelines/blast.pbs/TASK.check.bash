@@ -56,10 +56,10 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
       tmp_err=$(echo "$stat" | grep ERROR) ;
       if [[ "$tmp_err" == "" ]] ; then
 	 echo "Warning: Unrecognized state: $jid: $state." >&2 ;
-	 echo "  Please report this problem." >&2 ;;
+	 echo "  Please report this problem." >&2 ;
       else
 	 echo "Error: $jid: $tmp_err" ;
-      fi ;
+      fi ;;
    esac ;
 done ;
 if [[ $job_c -gt 0 ]] ; then
