@@ -47,11 +47,6 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
       let job_r=$job_r+1 ;;
    Idle)
       echo "  Idle: $jid: $(cat "$i")" ;
-      subjobs=$(echo "$stat" | grep 'Sub-jobs:' | sed -e 's/.*: *//')
-      if [[ "$subjobs" -gt 0 ]] ; then
-	 echo "$stat" | grep '^ *\(Active\|Eligible\|Blocked\|Completed\):' | sed -e 's/^ *//' | sed -e 's/  *//' | tr '\n' ' ' | sed -e 's/^/    /';
-	 echo ;
-      fi
       let job_i=$job_i+1 ;;
    Canceling)
       echo "  Canceling: $jid: $(cat "$i")" ;;
@@ -66,6 +61,11 @@ for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
 	 echo "  Error: $jid: $tmp_err" ;
       fi ;;
    esac ;
+   subjobs=$(echo "$stat" | grep 'Sub-jobs:' | sed -e 's/.*: *//')
+   if [[ "$subjobs" -gt 0 ]] ; then
+      echo "$stat" | grep '^ *\(Sub-jobs\|Active\|Eligible\|Blocked\|Completed\):' | sed -e 's/^ *//' | sed -e 's/  *//' | tr '\n' ' ' | sed -e 's/^/    /';
+      echo ;
+   fi
 done ;
 if [[ $job_c -gt 0 ]] ; then
    echo "" ;
