@@ -66,7 +66,7 @@ fi ;
 
 # 04. After BLAST
 if [[ ! -e "$SCRATCH/success/02.$ID_N.04" ]] ; then
-   AFTER_BLAST "$IN" "$OUT" || exit 1 ;
+   AFTER_BLAST "$IN" "$FINAL_OUT" || exit 1 ;
    touch "$SCRATCH/success/02.$ID_N.04" ;
 fi ;
 
