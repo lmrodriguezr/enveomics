@@ -3,7 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Jan-31-2013
+# @update Mar-18-2014
 #
 
 require 'optparse'
@@ -165,14 +165,15 @@ begin
       $stderr.puts "  o Creating nodes.dmp"
       f = File.open(File.join($opts[:ncbi], 'nodes.dmp'), 'w')
       taxo.each_internal do |n|
-	 f.puts ([n.id, n.parent.nil? ? n.id : n.parent.id, n.rank, ""] << Array.new(8,0) << "").join("\t|\t")+"\t|"
+	 rank = n.rank == "domain" ? "superkingdom" : ( n.rank == "major_clade" ? "no rank" : n.rank )
+	 f.puts ([n.id, n.parent.nil? ? n.id : n.parent.id, rank, ""] << Array.new(8,0) << "").join("\t|\t")+"\t|"
       end
       f.close
    end
 
    ## Taxtastic
    unless $opts[:seqinfo].nil?
-      $stderr.puts "Creatings seq-info file: #{$opts[:seqinfo]}"
+      $stderr.puts "Creating seq-info file: #{$opts[:seqinfo]}"
       f = File.open($opts[:seqinfo], 'w')
       f.puts "\"seqname\",\"tax_id\",\"group_name\""
       taxo.each_leaf { |n| f.puts "\"#{n.name}\",\"#{n.parent.id}\",\"#{n.parent.name}\"" }
