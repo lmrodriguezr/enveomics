@@ -33,13 +33,14 @@ abort "-f/--silvaref is mandatory." if $opts[:silvaref].nil?
 abort "-f/--silvaref must exist." unless File.exists? $opts[:silvaref]
 
 class Node
-   attr_accessor :id, :tax, :leaf
+   attr_accessor :id, :tax, :leaf, :name_type
    attr_reader :name, :rank, :parent, :children
    def initialize(name, rank=nil)
       @name = name
-      @rank = rank.nil? ? 'no rank' : rank
+      @rank = rank.nil? ? "no rank" : rank
       @children = []
       @leaf = false
+      @name_type = "scientific name";
    end
    def parent=(node)
       @parent=node
@@ -47,6 +48,13 @@ class Node
    end
    def add_child(node)
       @children << node
+   end
+   def ncbirank
+      ncbirank =
+	 self.rank == "superkingdom" ? "no rank" :
+	 self.rank == "domain" ? "superkingdom" :
+	 self.rank == "major_clade" ? "no rank" : self.rank
+      return ncbirank
    end
    def path
       if self.parent.nil?
@@ -114,12 +122,15 @@ begin
    f = File.open($opts[:silvaranks], "r")
    f.gets # header
    while(ln = f.gets)
-      m = ln.split(/\t/)
+      m = ln.chomp.split(/\t/)
       p = m[0].split(/;/)
       raise "Inconsistent path and node name at line #{$.}: #{ln}." unless m[1] == p.pop
-      node = Node.new(m[1], m[2])
-      node.parent = taxo.node(p)
-      taxo.register(node)
+      if m[3] != "w"
+	 node = Node.new(m[1], m[2])
+	 node.name_type = "common name" if m[3] == "a"
+	 node.parent = taxo.node(p)
+	 taxo.register(node)
+      end
    end
    f.close
 
@@ -158,15 +169,14 @@ begin
       $stderr.puts "  o Creating names.dmp"
       f = File.open(File.join($opts[:ncbi], 'names.dmp'), 'w')
       taxo.each_internal do |n|
-	 f.puts [n.id, n.name, "", "scientific name"].join("\t|\t")+"\t|"
+	 f.puts [n.id, n.name, "", n.name_type].join("\t|\t")+"\t|"
       end
       f.close
       # nodes.dmp
       $stderr.puts "  o Creating nodes.dmp"
       f = File.open(File.join($opts[:ncbi], 'nodes.dmp'), 'w')
       taxo.each_internal do |n|
-	 rank = n.rank == "domain" ? "superkingdom" : ( n.rank == "major_clade" ? "no rank" : n.rank )
-	 f.puts ([n.id, n.parent.nil? ? n.id : n.parent.id, rank, ""] << Array.new(8,0) << "").join("\t|\t")+"\t|"
+	 f.puts ([n.id, n.parent.nil? ? n.id : n.parent.id, n.ncbirank, ""] << Array.new(8,0) << "").join("\t|\t")+"\t|"
       end
       f.close
    end
