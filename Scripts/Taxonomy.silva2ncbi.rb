@@ -17,6 +17,7 @@ OptionParser.new do |opt|
    opt.on("-f", "--silvaref FILE", "Input Silva ref alignment file (e.g., SSURef_NR99_115_tax_silva_full_align_trunc.fasta)."){ |v| $opts[:silvaref]=v }
    opt.separator ""
    opt.separator "Additional options"
+   opt.on("-p", "--patch FILE", "If passed, it replaces the paths specified in the patch."){ |v| $opts[:patch]=v }
    opt.on("-s", "--seqinfo FILE", "If passed, it creates a CSV seq-info file compatible with taxtastic."){ |v| $opts[:seqinfo]=v }
    opt.on("-t", "--taxfile FILE", "If passed, it creates a simple TSV taxonomy file."){ |v| $opts[:taxfile]=v }
    opt.on("-n", "--ncbi FILE", "If passed, output folder for the NCBI dump files (e.g., taxdmp)."){ |v| $opts[:ncbi]=v }
@@ -117,12 +118,24 @@ end
 begin
    taxo = Taxonomy.new()
    
+   ## Read patch
+   patch = {}
+   unless $opts[:patch].nil?
+      $stderr.puts "Reading patch: #{$opts[:patch]}"
+      f = File.open($opts[:patch], "r")
+      while(ln = f.gets)
+	 m = ln.chomp.split(/\t/)
+	 patch[ m[0] ] = m[1]
+      end
+   end
+   
    ## Read the Silva ranks
    $stderr.puts "Reading Silva ranks: #{$opts[:silvaranks]}"
    f = File.open($opts[:silvaranks], "r")
    f.gets # header
    while(ln = f.gets)
       m = ln.chomp.split(/\t/)
+      m[0] = patch[ m[0] ] unless patch[ m[0] ].nil?
       p = m[0].split(/;/)
       raise "Inconsistent path and node name at line #{$.}: #{ln}." unless m[1] == p.pop
       if m[3] != "w"
@@ -146,7 +159,11 @@ begin
    while(ln = f.gets)
       m = />([^\s]+)\s(.*)/.match(ln)
       next unless m
-      node = taxo.node( m[2].split(/;/) )
+      # Patch
+      pm = /(.+);([^;]+)/.match(m[2])
+      path = "#{patch[ pm[1] ].nil? ? pm[1] : patch[ pm[1] ]};#{pm[2]}".split(/;/)
+      # Register
+      node = taxo.node(path)
       taxo.register(node)
       refseq = Node.new(m[1], 'refseq')
       refseq.parent = node
