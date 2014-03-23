@@ -20,7 +20,7 @@ if [[ ! -e "$SCRATCH/success/01.02" ]] ; then
    [[ -d "$SCRATCH/tmp/split" ]] && rm -R "$SCRATCH/tmp/split" ;
    REGISTER_JOB "01" "02" "Splitting query files" \
       && mkdir "$SCRATCH/tmp/split" \
-      && "$PDIR/FastA.split.pl" "$INPUT" "$SCRATCH/tmp/split/$PROJ" "$MAX_JOBS" \
+      && perl "$PDIR/FastA.split.pl" "$INPUT" "$SCRATCH/tmp/split/$PROJ" "$MAX_JOBS" \
       || exit 1 ;
    touch "$SCRATCH/success/01.02" ;
 fi ;

@@ -36,7 +36,7 @@ fi ;
 if [[ ! -e "$SCRATCH/success/02.$ID_N.02" ]] ; then
    # Recover previous runs, if any
    if [[ -s "$OUT" ]] ; then
-      "$PDIR/BlastTab.recover_job.pl" "$IN" "$OUT" \
+      perl "$PDIR/BlastTab.recover_job.pl" "$IN" "$OUT" \
 	 || exit 1 ;
    fi ;
    # Run BLAST
