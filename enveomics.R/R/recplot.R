@@ -1,6 +1,6 @@
 enve.recplot <- structure(function(
 	### Produces recruitment plots provided that BlastTab.catsbj.pl has
-	### been previously executed.
+	### been previously executed. Requires the gplots library.
 	prefix,
 	### Path to the prefix of the BlastTab.catsbj.pl output files. At
 	### least the files .rec and .lim must exist with this prefix.
@@ -15,9 +15,8 @@ enve.recplot <- structure(function(
 	### Size of the identity bins (vertical histograms). By default, 0.1 for
 	### identity metrics and 5 for bit score.
 	id.splines=0,
-	### Spar factor of the splines in the identity histogram. Zero (0) for no
-	### splines. A generally good value is 1/2. If non-zero, requires the package
-	### splines.
+	### Smoothing parameter for the splines in the identity histogram. Zero (0) for no
+	### splines. A generally good value is 1/2. If non-zero, requires the stats package.
 	id.metric='id',
 	### Metric of identity to be used (Y-axis). It can be any unambiguous prefix
 	### of "identity", "corrected identity", or "bit score".
@@ -31,8 +30,8 @@ enve.recplot <- structure(function(
 	pos.binsize=1e3,
 	### Size of the position bins (horizontal histograms) in bp.
 	pos.splines=0,
-	### Spar factor of the splines in the position histogram. Zero (0) for no splines.
-	### If non-zero, requires the package splines.
+	### Smoothing parameter for the splines in the position histogram. Zero (0) for no splines.
+	### If non-zero, requires the stats package.
 	
 	# Rec. plot
 	rec.col1='white',
@@ -66,8 +65,8 @@ enve.recplot <- structure(function(
    METRICS <- c('identity', 'corrected identity', 'bit score');
    if(is.null(prefix)) stop('Parameter prefix is mandatory.');
    if(!require(gplots, quietly=TRUE)) stop('Unavailable gplots library.');
-   if(id.splines + pos.splines > 0 && !require(splines, quietly=TRUE))
-   	stop('Splines requested, but the splines library is unavailable.');
+   if(id.splines + pos.splines > 0 && !require(stats, quietly=TRUE))
+   	stop('Splines requested, but the stats library is unavailable.');
    if(ret.mode && !require(modeest, quietly=TRUE))
    	stop('The mode of the identity was requested, but the modeest library is unavailable.');
 

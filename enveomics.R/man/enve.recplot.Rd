@@ -2,7 +2,7 @@
 \alias{enve.recplot}
 \title{enve recplot}
 \description{Produces recruitment plots provided that BlastTab.catsbj.pl has
-been previously executed.}
+been previously executed. Requires the gplots library.}
 \usage{enve.recplot(prefix, id.min = NULL, id.max = NULL, id.binsize = NULL, 
     id.splines = 0, id.metric = "id", pos.min = 1, pos.max = NULL, 
     pos.binsize = 1000, pos.splines = 0, rec.col1 = "white", 
@@ -16,17 +16,16 @@ identity. This value is a percentage.}
   \item{id.max}{Maximum identity to be considered. By default, 100.}
   \item{id.binsize}{Size of the identity bins (vertical histograms). By default, 0.1 for
 identity metrics and 5 for bit score.}
-  \item{id.splines}{Spar factor of the splines in the identity histogram. Zero (0) for no
-splines. A generally good value is 1/2. If non-zero, requires the package
-splines.}
+  \item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero (0) for no
+splines. A generally good value is 1/2. If non-zero, requires the stats package.}
   \item{id.metric}{Metric of identity to be used (Y-axis). It can be any unambiguous prefix
 of "identity", "corrected identity", or "bit score".}
   \item{pos.min}{Minimum (leftmost) position in the reference (concatenated) genome (in bp).}
   \item{pos.max}{Maximum (rightmost) position in the reference (concatenated) genome (in bp).
 By default: Length of the genome.}
   \item{pos.binsize}{Size of the position bins (horizontal histograms) in bp.}
-  \item{pos.splines}{Spar factor of the splines in the position histogram. Zero (0) for no splines.
-If non-zero, requires the package splines.}
+  \item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero (0) for no splines.
+If non-zero, requires the stats package.}
   \item{rec.col1}{Lightest color in the recruitment plot.}
   \item{rec.col2}{Darkest color in the recruitment plot.}
   \item{main}{Title of the plot.}
