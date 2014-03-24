@@ -65,15 +65,16 @@ else
       echo "02. Launching BLAST." >&2 ;
       JOB02=$(LAUNCH_JOB "02" "00" "Running BLAST" "$SCRATCH/etc/02.bash") ;
       echo "  New job: $JOB02." >&2 ;
-      if [[ $trials -gt 0 ]] ; then
-	 # Clean on resubmission
-	 echo "  Cleaning completed sub-jobs on $JOB02." >&2 ;
-	 for jobi in $(seq 1 $MAX_JOBS) ; do
-	    if [[ -e "$SCRATCH/success/02.$jobi" ]] ; then
-	       canceljob "$JOB02""[$jobi]" &> /dev/null
-	    fi ;
-	 done ;
-      fi
+      # Clean on resubmission
+      cleaned=0
+      echo -n "  Cleaning completed sub-jobs on $JOB02: " >&2 ;
+      for jobi in $(seq 1 $MAX_JOBS) ; do
+	 if [[ -e "$SCRATCH/success/02.$jobi" ]] ; then
+	    canceljob "$JOB02""[$jobi]" &> /dev/null ;
+	    let cleaned=$cleaned+1 ;
+	 fi ;
+      done ;
+      echo "$cleaned sub-jobs completed." >&2 ;
    else
       if [[ ! -e "$SCRATCH/success/03" ]] ; then
 	 # 03. Finalize
