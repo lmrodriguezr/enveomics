@@ -3,7 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Aug-14-2013
+# @update Apr-01-2014
 #
 use warnings;
 use strict;
@@ -139,13 +139,17 @@ $o{K} and (open OUT_K, ">", $o{K} or die "Cannot create file: $o{K}: $!\n");
 $o{G} and (open OUT_G, ">", $o{G} or die "Cannot create file: $o{G}: $!\n");
 
 my $Nreads_class = 0;
+my $Nno_read_ctg = 0;
 while(not eof(METAXA)){
    my @h=split /\t/, <METAXA>;
    my $t=<METAXA>; chomp $t;
    exists $h[3] or die "Cannot parse metaxa file, line $.: $_\n";
    my $count_h;
    if($o{c} or $o{g}){
-      exists $count{$h[0]} or die "Cannot find counts for contig $h[0].\n";
+      unless(exists $count{$h[0]}){
+         $Nno_read_ctg++;
+	 next;
+      }
       $count_h = $count{$h[0]};
    }else{
       $count_h = 1;
@@ -181,6 +185,7 @@ $o{I} and close OUT_I;
 $o{K} and close OUT_K;
 $o{G} and close OUT_G;
 print " Found $n[0] reads.\n" unless $o{q};
+print " Couldn't find counts for $Nno_read_ctg.\n" if $Nno_read_ctg;
 unless($o{q}){ print " Found $n[$_] classified reads at ".$rank_name[$_]." level.\n" for (1 .. max(values %rank)) }
 
 print STDERR "Generating output.\n" unless $o{q};
