@@ -35,11 +35,14 @@ enve.barplot <- structure(function(
 	min.report=101,
 	### Minimum percentage to report the value in the plot. Any value above 100 indicates
 	### that no values are to be reported.
-	order=NULL
+	order=NULL,
 	### Controls how the rows should be ordered. If NULL (default), sort.by is applied per
 	### row and the results are sorted decreasingly. If NA, no sorting is performed, i.e.,
 	### the original order is respected. If a vector is provided, it is assumed to be the
 	### custom order to be used (either by numeric index or by row names).
+	col
+	### Colors to use. If provided, overrides the variables `top` and `colors.per.group`,
+	### but `other.col` is still used if the vector is insufficient for all the rows.
 	){
    
    # Read input
@@ -65,9 +68,14 @@ enve.barplot <- structure(function(
    
    # Colors
    if(is.null(top)) top <- nrow(p);
-   color.col <- rainbow(min(colors.per.group, top), s=1, v=4/5);
-   if(top > colors.per.group) color.col <- c(color.col, rainbow(min(colors.per.group*2, top)-colors.per.group, s=3/4, v=3/5));
-   if(top > colors.per.group*2) color.col <- c(color.col, rainbow(top-colors.per.group*2, s=1, v=1.25/4));
+   if(missing(col)){
+      color.col <- rainbow(min(colors.per.group, top), s=1, v=4/5);
+      if(top > colors.per.group) color.col <- c(color.col, rainbow(min(colors.per.group*2, top)-colors.per.group, s=3/4, v=3/5));
+      if(top > colors.per.group*2) color.col <- c(color.col, rainbow(top-colors.per.group*2, s=1, v=1.25/4));
+   }else{
+      color.col <- col;
+      top <- length(col);
+   }
 
    # Plot
    layout(matrix(1:2, nrow=1), widths=c(bars.width,1));
