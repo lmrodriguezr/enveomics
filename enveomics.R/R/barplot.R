@@ -94,7 +94,7 @@ enve.barplot <- structure(function(
       for(i in (nrow(p)-top+1):nrow(p)){
 	 f <- as.numeric(p[i, ]);
 	 cf <- as.numeric(cf + f);
-	 if(nrow(p)-i+1 < top){
+	 if(nrow(p)-i < top){
 	    if(organic.trend){
 	       spc <- 0.5;
 	       x <- c(mp[1]-spc);
