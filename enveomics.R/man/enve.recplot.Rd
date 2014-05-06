@@ -4,8 +4,8 @@
 \description{Produces recruitment plots provided that BlastTab.catsbj.pl has
 been previously executed. Requires the gplots library.}
 \usage{enve.recplot(prefix, id.min = NULL, id.max = NULL, id.binsize = NULL, 
-    id.splines = 0, id.metric = "id", pos.min = 1, pos.max = NULL, 
-    pos.binsize = 1000, pos.splines = 0, rec.col1 = "white", 
+    id.splines = 0, id.metric = "id", id.summary = "sum", pos.min = 1, 
+    pos.max = NULL, pos.binsize = 1000, pos.splines = 0, rec.col1 = "white", 
     rec.col2 = "black", main = NULL, ret.recplot = FALSE, ret.hist = FALSE, 
     ret.mode = FALSE, id.cutoff = NULL, verbose = TRUE, ...)}
 \arguments{
@@ -20,6 +20,11 @@ identity metrics and 5 for bit score.}
 splines. A generally good value is 1/2. If non-zero, requires the stats package.}
   \item{id.metric}{Metric of identity to be used (Y-axis). It can be any unambiguous prefix
 of "identity", "corrected identity", or "bit score".}
+  \item{id.summary}{Method used to build the identity histogram (Horizontal axis of the right panel).
+It can be any unambiguous prefix of "sum", "average", "median", "90\% lower bound",
+"90\% upper bound", "95\% lower bound", and "95\% upper bound". The last four options
+correspond to the upper and lower boundaries of the 90\% and 95\% empirical confidence
+intervals.}
   \item{pos.min}{Minimum (leftmost) position in the reference (concatenated) genome (in bp).}
   \item{pos.max}{Maximum (rightmost) position in the reference (concatenated) genome (in bp).
 By default: Length of the genome.}
@@ -72,7 +77,9 @@ seqdepth.mean.low: Average sequencing depth with identity below id.cutoff.
 
 seqdepth.mean.all: Average sequencing depth without identity filtering.
 
-id.metric: Full name of the used identity metric.}
+id.metric: Full name of the used identity metric.
+
+id.summary: Full name of the summary method used to build the identity plot.}
 
 \author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
 

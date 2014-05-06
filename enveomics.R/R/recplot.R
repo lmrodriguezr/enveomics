@@ -20,6 +20,12 @@ enve.recplot <- structure(function(
 	id.metric='id',
 	### Metric of identity to be used (Y-axis). It can be any unambiguous prefix
 	### of "identity", "corrected identity", or "bit score".
+	id.summary='sum',
+	### Method used to build the identity histogram (Horizontal axis of the right panel).
+	### It can be any unambiguous prefix of "sum", "average", "median", "90% lower bound",
+	### "90% upper bound", "95% lower bound", and "95% upper bound". The last four options
+	### correspond to the upper and lower boundaries of the 90% and 95% empirical confidence
+	### intervals.
 	
 	# Pos. hist.
 	pos.min=1,
@@ -63,6 +69,7 @@ enve.recplot <- structure(function(
    
    # Settings
    METRICS <- c('identity', 'corrected identity', 'bit score');
+   SUMMARY <- c('sum', 'average', 'median', '');
    if(is.null(prefix)) stop('Parameter prefix is mandatory.');
    if(!require(gplots, quietly=TRUE)) stop('Unavailable gplots library.');
    if(id.splines + pos.splines > 0 && !require(stats, quietly=TRUE))
@@ -74,6 +81,32 @@ enve.recplot <- structure(function(
    if(verbose) cat("Reading files.\n")
    rec <- read.table(paste(prefix, '.rec', sep=''), sep="\t", comment.char='', quote='');
    lim <- read.table(paste(prefix, '.lim', sep=''), sep="\t", comment.char='', quote='');
+
+   # Configure ID summary
+   id.summary <- pmatch(id.summary, SUMMARY);
+   if(is.na(id.summary)) stop('Invalid identity summary.');
+   if(id.summary == -1) stop('Ambiguous identity summary.');
+   if(id.summary==1){
+      id.summary.func <- function(x) colSums(x);
+   }else if(id.summary==2){
+      id.summary.func <- function(x) colMeans(x);
+      id.summary.name <- 'mean'
+   }else if(id.summary==3){
+      id.summary.func <- function(x) apply(x,2,median);
+      id.summary.name <- 'median'
+   }else if(id.summary==4){
+      id.summary.func <- function(x) apply(x,2,quantile,probs=0.05,names=FALSE);
+      id.summary.name <- '90% LB'
+   }else if(id.summary==5){
+      id.summary.func <- function(x) apply(x,2,quantile,probs=0.95,names=FALSE);
+      id.summary.name <- '90% UB'
+   }else if(id.summary==6){
+      id.summary.func <- function(x) apply(x,2,quantile,probs=0.025,names=FALSE);
+      id.summary.name <- '95% LB'
+   }else if(id.summary==7){
+      id.summary.func <- function(x) apply(x,2,quantile,probs=0.975,names=FALSE);
+      id.summary.name <- '95% UB'
+   }
 
    # Configure metrics
    id.metric <- pmatch(id.metric, METRICS);
@@ -154,8 +187,8 @@ enve.recplot <- structure(function(
    # Identity histogram
    if(verbose) cat(id.shortname, " hist.\n", sep='')
    par(mar=c(5,0,0,2)+0.1);
-   id.hist <- colSums(rec.hist);
-   plot(1, t='n', xlim=c(1, max(id.hist)), ylim=id.lim, ylab='', yaxt='n', xlab='Sequences (bp)', log='x', ...);
+   id.hist <- id.summary.func(rec.hist);
+   plot(1, t='n', xlim=c(1, max(id.hist)), ylim=id.lim, ylab='', yaxt='n', xlab=paste('Sequences (bp),', id.summary.name), log='x', ...);
    id.x <- rep(id.marks, each=2)[2:(id.breaks*2+1)]
    id.f <- rep(id.hist, each=2)[1:(id.breaks*2)]
    if(sum(id.f)>0){
@@ -216,7 +249,8 @@ enve.recplot <- structure(function(
    out <- c(out, list(seqdepth.mean.top=mean(h1)));
    out <- c(out, list(seqdepth.mean.low=mean(h2)));
    out <- c(out, list(seqdepth.mean=mean(h1+h2)));
-   out <- c(out, list(id.metric=id.fullname))
+   out <- c(out, list(id.metric=id.fullname));
+   out <- c(out, list(id.summary=id.summary.name));
    
    # Legend
    par(mar=c(0,0,4,2)+0.1);
@@ -270,5 +304,7 @@ enve.recplot <- structure(function(
    ### seqdepth.mean.all: Average sequencing depth without identity filtering.
    ### 
    ### id.metric: Full name of the used identity metric.
+   ### 
+   ### id.summary: Full name of the summary method used to build the identity plot.
 });
 
