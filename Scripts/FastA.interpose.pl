@@ -9,7 +9,8 @@
 # 
 # @author Luis M. Rodriguez-R
 # @version 1.0
-# @update Nov-27-2012
+# @created Nov-27-2012
+# @update May-11-2014
 # @license artistic license 2.0
 # 
 # Usage: FastQ.interpose.pl <output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]
@@ -62,7 +63,7 @@ LINE: while(1){
       $ln =~ s/\>$//;
       if($eval_T and not $i % $eval_T){
 	 unless($name){
-	    $ln =~ m/^>(.*?)[\/ \\]\d+/ or die "Impossible to evaluate names!\n offending entry:\n$ln\n";
+	    $ln =~ m/^>(.*?)[\/ \\_]\d+/ or die "Impossible to evaluate names!\n offending entry:\n$ln\n";
 	    $name = $1;
 	 }
 	 die "Inconsistent name!\n base name is $name\n offending entry is:\n$ln\n" unless $ln =~ /^>$name/;

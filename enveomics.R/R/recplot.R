@@ -88,6 +88,7 @@ enve.recplot <- structure(function(
    if(id.summary == -1) stop('Ambiguous identity summary.');
    if(id.summary==1){
       id.summary.func <- function(x) colSums(x);
+      id.summary.name <- 'sum'
    }else if(id.summary==2){
       id.summary.func <- function(x) colMeans(x);
       id.summary.name <- 'mean'
