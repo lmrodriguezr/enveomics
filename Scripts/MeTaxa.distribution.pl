@@ -185,7 +185,7 @@ $o{I} and close OUT_I;
 $o{K} and close OUT_K;
 $o{G} and close OUT_G;
 print " Found $n[0] reads.\n" unless $o{q};
-print " Couldn't find counts for $Nno_read_ctg.\n" if $Nno_read_ctg;
+print " Couldn't find counts for $Nno_read_ctg contigs.\n" if $Nno_read_ctg;
 unless($o{q}){ print " Found $n[$_] classified reads at ".$rank_name[$_]." level.\n" for (1 .. max(values %rank)) }
 
 print STDERR "Generating output.\n" unless $o{q};

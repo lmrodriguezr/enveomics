@@ -2,7 +2,7 @@
 
 # 
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: 30-Mar-2013
+# @update: 04-Jun-2014
 # @license: artistic license 2.0
 # 
 
@@ -30,7 +30,7 @@ my $HELP = <<HELP
   Options:
     -f <float>	: Fraction of the library to be sampled (as percentage).  It can
     		  include several values (separated by comma), as well as ranges
-		  of values in the form 'from-to/by'.  For example, the -s value:
+		  of values in the form 'from-to/by'.  For example, the -f value:
 		  '1-5/1,10-50/10,75,99' will produce 12 subsamples with expected
 		  fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%, 30%, 40%, 50%, 75%, and
 		  99%.  By default: 10.
