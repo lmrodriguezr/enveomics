@@ -127,14 +127,14 @@ for my $i (0 .. $#values){
 	 }
 	 $Q += $Qi;
       }
-      my $pi = $values[$i]->[$ik]/$N;
+      my $pi = $N ? $values[$i]->[$ik]/$N : 0;
       $H  -= $pi * log($pi) if $pi;
       $l  += $pi**2;
       $qD += $pi * ($pi**($o{q}-1)) unless $o{q}==1 or not $pi;
    }
    $qD = $o{q}==1 ? exp($H) : 1/($qD**(1/($o{q}-1)));
    if($o{R}){
-      print "".join($o{d}, $H, 1/$l, $qD)."\n";
+      print "".join($o{d}, $H, $l ? 1/$l : "Inf", $qD)."\n";
    }else{
       print "".join($o{d}, $Q, ($Q==1 ? "NA" : 1/(1-$Q)), $H, 1/$l, $qD)."\n";
    }
