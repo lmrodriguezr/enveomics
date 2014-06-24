@@ -77,6 +77,12 @@ seqdepth.mean.low: Average sequencing depth with identity below id.cutoff.
 
 seqdepth.mean.all: Average sequencing depth without identity filtering.
 
+seqdepth.median.top: Median sequencing depth with identity above id.cutoff.
+
+seqdepth.median.low: Median sequencing depth with identity below id.cutoff.
+
+seqdepth.median.all: Median sequencing depth without identity filtering.
+
 id.metric: Full name of the used identity metric.
 
 id.summary: Full name of the summary method used to build the identity plot.}

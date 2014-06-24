@@ -250,6 +250,9 @@ enve.recplot <- structure(function(
    out <- c(out, list(seqdepth.mean.top=mean(h1)));
    out <- c(out, list(seqdepth.mean.low=mean(h2)));
    out <- c(out, list(seqdepth.mean=mean(h1+h2)));
+   out <- c(out, list(seqdepth.median.top=median(h1)));
+   out <- c(out, list(seqdepth.median.low=median(h2)));
+   out <- c(out, list(seqdepth.median=median(h1+h2)));
    out <- c(out, list(id.metric=id.fullname));
    out <- c(out, list(id.summary=id.summary.name));
    
@@ -303,6 +306,12 @@ enve.recplot <- structure(function(
    ### seqdepth.mean.low: Average sequencing depth with identity below id.cutoff.
    ### 
    ### seqdepth.mean.all: Average sequencing depth without identity filtering.
+   ### 
+   ### seqdepth.median.top: Median sequencing depth with identity above id.cutoff.
+   ### 
+   ### seqdepth.median.low: Median sequencing depth with identity below id.cutoff.
+   ### 
+   ### seqdepth.median.all: Median sequencing depth without identity filtering.
    ### 
    ### id.metric: Full name of the used identity metric.
    ### 
