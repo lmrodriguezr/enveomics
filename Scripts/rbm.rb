@@ -2,14 +2,14 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Aug-17-2013
+# @update: Jun-24-2014
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 require 'tmpdir'
 
-o = {:len=>0, :id=>0, :score=>0, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :nucl=>FALSE}
+o = {:len=>0, :id=>0, :fract=>0, :score=>0, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :nucl=>FALSE}
 OptionParser.new do |opts|
    opts.banner = "
 Finds the reciprocal best matches between two sets of sequences.
@@ -23,6 +23,7 @@ Usage: #{$0} [options]"
    opts.separator "Search Options"
    opts.on("-n", "--nucl", "Sequences are assumed to be nucleotides (proteins by default)."){ |v| o[:nucl] = TRUE }
    opts.on("-l", "--len INT", "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."){ |v| o[:len] = v.to_i }
+   opts.on("-f", "--fract FLOAT", "Minimum alignment length (as a fraction of the query). If set, requires BLAST+ (see -p).  By default: #{o[:fract].to_s}."){ |v| o[:fract] = v.to_i }
    opts.on("-i", "--id NUM", "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."){ |v| o[:id] = v.to_f }
    opts.on("-s", "--score NUM", "Minimum alignment score (in bits).  By default: #{o[:score].to_s}."){ |v| o[:score] = v.to_f }
    opts.separator ""
@@ -41,6 +42,7 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-1 is mandatory" if o[:seq1].nil?
 abort "-2 is mandatory" if o[:seq2].nil?
+abort "Argument -f/--fract requires -p blast+" if o[:fract]>0 and o[:program]!='blast+'
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 
 Dir.mktmpdir do |dir|
@@ -73,8 +75,8 @@ Dir.mktmpdir do |dir|
 	 -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
       when "blast+"
 	 `"#{o[:bin]}#{o[:nucl]?'blastn':'blastp'}" -db "#{s}" -query "#{q}" \
-	 -max_target_seqs 1 \
-	 -num_threads #{o[:thr]} -outfmt 6 -out "#{dir}/#{i}.tab"`
+	 -max_target_seqs 1 -num_threads #{o[:thr]} -out "#{dir}/#{i}.tab" \
+	 -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen"`
       else
 	 abort "Unsupported program: #{o[:program]}."
       end
@@ -83,7 +85,8 @@ Dir.mktmpdir do |dir|
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
-	 if row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[12].to_f >= o[:score]
+	 row[12] = "1" if o[:program]!='blast+'
+	 if row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and row[3].to_f/row[12].to_i >= o[:fract]
 	    n += 1
 	    if i==2
 	       rbh[ row[0] ] = row[1]
