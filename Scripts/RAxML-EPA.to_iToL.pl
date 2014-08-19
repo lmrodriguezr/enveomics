@@ -1,14 +1,15 @@
 #!/usr/bin/perl
 
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Sep-17-2013
+# @update: Aug-18-2014
 # @license: Artistic License 2.0
 
 use warnings;
 use strict;
-use List::Util qw(sum);
+use List::Util qw/sum max/;
 use Getopt::Std;
-our $VERSION = 1.0;
+use Math::Round qw/round/;
+our $VERSION = 1.1;
 
 sub HELP_MESSAGE {
 die "
@@ -45,7 +46,13 @@ Usage:
    		will be used (unsorted).
    -c <str>	Comma-delimited list of colors (in RGB hexadecimal) to represent
    		the different samples.  If not provided (or if insufficient values
-		are provided) random color are generated.
+		are provided) random colors are generated.
+   -N <str>	Comma-delimited list of normalizing factors per dataset.  Typically,
+   		the size of the datasets divided by a fixed value (e.g. size x 1,000,
+		to express sizes as reads per thousand).
+   -T		Use the total number of assigned reads per sample (times a constant)
+   		as the normalizing factor. The constant used corresponds to the 100
+		times the size of the largest factor. If passed, -N is ignored.
    -q		Run quietly.
    -h/--help	Displays this message and exits.
 
@@ -63,11 +70,12 @@ Usage:
 }
 
 my %o;
-getopts('n:t:d:o:l:s:m:c:qh', \%o);
+getopts('n:t:d:o:l:s:m:c:N:Tqh', \%o);
 $o{d} ||= '.';
 $o{n} or &HELP_MESSAGE;
 $o{h} and &HELP_MESSAGE;
 $o{c} = [split /,/, (defined $o{c}?$o{c}:"")];
+$o{N} = [split /,/, (defined $o{N}?$o{N}:"")];
 
 # Set files
 my $inTree   = ($o{t} || $o{d}."/RAxML_originalLabelledTree.".$o{n});
@@ -156,7 +164,7 @@ open INCLASS, "<", $inClass or die "Cannot read file: $inClass: $!\n";
 while(<INCLASS>){
    my @ln = split /\s+/;
    $ln[0] =~ s/$s.+$//; # Sample name
-   $samples{$ln[0]} = 1;
+   ($samples{$ln[0]} ||= 0)++;
    $tags{$ln[1]} ||= "[".$ln[1]."]"; # Node name
    (($nodes{$tags{$ln[1]}} ||= {})->{$ln[0]} ||= 0)++;
 }
@@ -166,6 +174,7 @@ close INCLASS;
 my $labs = 'LABELS';
 my $cols = 'COLORS';
 my @samples = $o{m} ? (split /,/, $o{m}) : (keys %samples);
+my @normfac = ();
 for my $sample (@samples){
    my $col = shift @{$o{c}};
    unless(defined $col and length($col)==6){
@@ -176,18 +185,34 @@ for my $sample (@samples){
 	 $col.="$v$v";
       }
    }
+   my $nf = shift @{$o{N}};
+   $nf = 1 unless defined $nf and $nf>0;
    $labs.= ','.($sample || 'unknown');
    $cols.= ',#'.$col;
+   push @normfac, $nf+0;
 }
 
 open OUTCLASS, ">", $outClass or die "Cannot create file: $outClass: $!\n";
 print OUTCLASS "$labs\n$cols\n";
+my $tiny=0;
 for my $node (keys %nodes){
-   print OUTCLASS $node.",R".sum(values %{$nodes{$node}});
+   my $i=0;
+   for my $s (@samples){
+      $nodes{$node}->{$s} = ($nodes{$node}->{$s} || 0)/($o{T} ? ($samples{$s}||1)/(max(values %samples)*100) : ($normfac[$i++]||1));
+   }
+   my $r = round(sum(values %{$nodes{$node}}));
+   print OUTCLASS "$node,R$r";
    for my $sample (@samples){
-      print OUTCLASS ",".($nodes{$node}->{$sample} || 0);
+      print OUTCLASS ",".round($nodes{$node}->{$sample} || 0);
    }
    print OUTCLASS "\n";
+   $tiny++ unless $r;
 }
 close OUTCLASS;
+
+unless($o{q}) {
+   print "Total counts per dataset:\n";
+   print "  $_\t".($samples{$_}||0)."\n" for @samples;
+}
+warn "$tiny node assignments are too small to represent. Decrease the values of -N or use an alternative like -T." if $tiny;
 
