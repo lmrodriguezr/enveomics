@@ -40,9 +40,11 @@ enve.barplot <- structure(function(
 	### row and the results are sorted decreasingly. If NA, no sorting is performed, i.e.,
 	### the original order is respected. If a vector is provided, it is assumed to be the
 	### custom order to be used (either by numeric index or by row names).
-	col
+	col,
 	### Colors to use. If provided, overrides the variables `top` and `colors.per.group`,
 	### but `other.col` is still used if the vector is insufficient for all the rows.
+	...
+	### Any additional parameters to be passed to `barplot`.
 	){
    
    # Read input
@@ -83,7 +85,7 @@ enve.barplot <- structure(function(
    par(mar=c(5,4,4,0)+0.1);
    mp <- barplot(as.matrix(p),
    	col=rev(c(color.col, rep(other.col, nrow(p)-length(color.col)))),
-	border=NA, space=ifelse(add.trend, ifelse(organic.trend,0.75,0.5), 0.2));
+	border=NA, space=ifelse(add.trend, ifelse(organic.trend,0.75,0.5), 0.2), ...);
    if(add.trend || min.report < max(p)){
       color.alpha <- paste(c(substr(color.col, 1, 7), other.col), '40', sep='');
       if(top < nrow(p)){

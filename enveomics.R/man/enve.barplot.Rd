@@ -5,7 +5,7 @@
 \usage{enve.barplot(x, sizes, top = 25, colors.per.group = 9, bars.width = 4, 
     legend.ncol = 1, other.col = "#000000", add.trend = FALSE, 
     organic.trend = FALSE, sort.by = median, min.report = 101, 
-    order = NULL, col)}
+    order = NULL, col, ...)}
 \arguments{
   \item{x}{Can be either the input data or the path to the file containing the table. If it
 contains the data, it must be a data frame or an object coercible to data frame.
@@ -36,6 +36,7 @@ the original order is respected. If a vector is provided, it is assumed to be th
 custom order to be used (either by numeric index or by row names).}
   \item{col}{Colors to use. If provided, overrides the variables `top` and `colors.per.group`,
 but `other.col` is still used if the vector is insufficient for all the rows.}
+  \item{\dots}{Any additional parameters to be passed to `barplot`.}
 }
 
 
