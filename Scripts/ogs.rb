@@ -188,7 +188,7 @@ begin
 	 # Parse the filename to identify the genomes.
 	 m = /#{o[:f]}/.match(rbm_file)
 	 if m.nil? or m[2].nil?
-	    warn "Cannot parse filename: #{rbm_file}."
+	    warn "Cannot parse filename: #{rbm_file} (doesn't match /#{o[:f]}/)."
 	    next
 	 end
 	 file_i += 1
