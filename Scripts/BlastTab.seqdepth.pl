@@ -3,6 +3,7 @@
 #
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
+# @update: Aug-21-2014
 #
 
 use strict;
@@ -50,7 +51,7 @@ MAP:{
    while(<>){
       my @ln = split /\t/;
       $gene->{$ln[1]} ||= [];
-      for my $pos (min($ln[3], $ln[4]) .. max($ln[3], $ln[4])){ ($gene->{$ln[1]}->[$pos]||=0)++ }
+      for my $pos (min($ln[6], $ln[7]) .. max($ln[6], $ln[7])){ ($gene->{$ln[1]}->[$pos]||=0)++ }
       ($reads->{$ln[1]} ||= 0)++;
       print STDERR " Saving hit ".($i).": $ln[1]      \r" unless ++$i%5000;
    }
