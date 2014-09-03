@@ -3,7 +3,7 @@
 #
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @update: Aug-21-2014
+# @update: Sep-03-2014
 #
 
 use strict;
@@ -37,7 +37,7 @@ SIZE:{
       next unless $g[1];
       #$g[1] =~ s/[^A-Za-z]//g;
       #$size->{$g[0]} = length $g[1];
-      $g[0] =~ s/[\s_].*//;
+      $g[0] =~ s/\s.*//;
       $size->{$g[0]} = ( $g[1] =~ tr/[A-Za-z]// );
       print STDERR " Measuring sequence ".($i).": $g[0]      \r" unless ++$i%500;
    }
@@ -62,6 +62,7 @@ OUT:{
    print STDERR "== Creating output\n";
    my $i=0;
    for my $g (keys %$gene){
+      die "Cannot find gene in $fna: $g.\n" unless exists $size->{$g};
       printf "%s\t%.6f\t%d\n", $g,
 	   $gene->{$g}/$size->{$g},
 	   $reads->{$g};
