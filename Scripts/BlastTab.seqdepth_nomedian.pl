@@ -3,7 +3,7 @@
 #
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @update: Sep-03-2014
+# @update: Sep-04-2014
 #
 
 use strict;
@@ -17,8 +17,19 @@ Usage:
 
    blast1...		One or more Tabular BLAST files of reads vs genes (or contigs).
    genes_or_ctgs.fna	A FastA file containing the genes or the contigs (db).
-   genes_or_ctgs.cov	The output file, containing the average sequencing depth, and
-   			the number of reads.
+   genes_or_ctgs.cov	The output file.
+
+Output:
+   A tab-delimited file with the following columns:
+   1. Subject ID
+   2. Average sequencing depth
+   3. Number of mapped reads
+   4. Length of the subject sequence
+
+Note:
+   The values reported by this script may differ from those of BlastTab.seqdepth.pl,
+   because this script uses the aligned length of the read while BlastTab.seqdepth.pl
+   uses the aligned length of the subject sequence. 
 
 ";
 
@@ -63,9 +74,10 @@ OUT:{
    my $i=0;
    for my $g (keys %$gene){
       die "Cannot find gene in $fna: $g.\n" unless exists $size->{$g};
-      printf "%s\t%.6f\t%d\n", $g,
+      printf "%s\t%.6f\t%d\t%d\n", $g,
 	   $gene->{$g}/$size->{$g},
-	   $reads->{$g};
+	   $reads->{$g},
+	   $size->{$g};
       print STDERR " Saving sequence $g:".($i)."\r" unless ++$i%500;
    }
    print STDERR " Saved $i sequences".(" "x30)."\n";

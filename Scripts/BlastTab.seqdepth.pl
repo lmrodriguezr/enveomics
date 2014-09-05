@@ -3,7 +3,7 @@
 #
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @update: Sep-03-2014
+# @update: Sep-04-2014
 #
 
 use strict;
@@ -17,8 +17,15 @@ Usage:
 
    blast1...		One or more Tabular BLAST files of reads vs genes (or contigs).
    genes_or_ctgs.fna	A FastA file containing the genes or the contigs (db).
-   genes_or_ctgs.cov	The output file, containing the average and the median
-   			sequencing depth, and the number of reads.
+   genes_or_ctgs.cov	The output file.
+   
+Output:
+   A tab-delimited file with the following columns:
+   1. Subject ID
+   2. Average sequencing depth
+   3. Median sequencing depth
+   4. Number of mapped reads
+   5. Length of the subject sequence
 
 ";
 
@@ -51,7 +58,7 @@ MAP:{
    while(<>){
       my @ln = split /\t/;
       $gene->{$ln[1]} ||= [];
-      for my $pos (min($ln[6], $ln[7]) .. max($ln[6], $ln[7])){ ($gene->{$ln[1]}->[$pos]||=0)++ }
+      for my $pos (min($ln[8], $ln[9]) .. max($ln[8], $ln[9])){ ($gene->{$ln[1]}->[$pos]||=0)++ }
       ($reads->{$ln[1]} ||= 0)++;
       print STDERR " Saving hit ".($i).": $ln[1]      \r" unless ++$i%5000;
    }
@@ -63,12 +70,13 @@ OUT:{
    my $i=0;
    for my $g (keys %$gene){
       $gene->{$g}->[$_] ||= 0 for (0 .. $size->{$g});
-      my @sorted = sort(@{$gene->{$g}});
+      my @sorted = sort {$a <=> $b} @{$gene->{$g}};
       die "Cannot find gene in $fna: $g.\n" unless exists $size->{$g};
-      printf "%s\t%.6f\t%d\t%d\n", $g,
+      printf "%s\t%.6f\t%d\t%d\t%d\n", $g,
 	   sum(@{$gene->{$g}})/$size->{$g},
 	   $sorted[$#sorted/2],
-	   $reads->{$g};
+	   $reads->{$g},
+	   $size->{$g};
       delete $gene->{$g};
       print STDERR " Saving sequence $g:".($i)."\r" unless ++$i%500;
    }
