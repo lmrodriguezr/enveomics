@@ -3,7 +3,7 @@
 #
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @update: Sep-05-2014
+# @update: Sep-16-2014
 #
 
 use strict;
@@ -87,7 +87,12 @@ OUT:{
    print STDERR "== Creating output\n";
    my $i=0;
    for my $g (keys %$gene){
+      unless(exists $size->{$g}){
+         warn "Warning: Cannot find gene in $fna: $g.\n";
+	 next;
+      }
       $gene->{$g}->[$_] ||= 0 for (0 .. $size->{$g});
+      die "Hits out-of-boundaries in gene $g: $#{$gene->{$g}} != $size->{$g}.\n" if $#{$gene->{$g}} != $size->{$g};
       my @sorted = sort {$a <=> $b} @{$gene->{$g}};
       my @sorted_nz = grep { $_>0 } @sorted;
       my $xbar = sum(@{$gene->{$g}})/$size->{$g};
@@ -95,7 +100,6 @@ OUT:{
       my $var = $xsqbar - $xbar**2;
       my $lambdaMM = $xbar + ($var/$xbar) - 1;
       my $piMM = $lambdaMM==0 ? 0 : 1 - $xbar/$lambdaMM;
-      die "Cannot find gene in $fna: $g.\n" unless exists $size->{$g};
       printf "%s\t%.6f\t%.6f\t%.6f\t%d\t%d\t%d\t%d\n", $g,
 	   ($xbar >= $var ? $xbar : $lambdaMM),
 	   ($xbar >= $var ? 0 : $piMM),
@@ -107,9 +111,9 @@ OUT:{
 	   $reads->{$g},
 	   $size->{$g};
       delete $gene->{$g};
-      print STDERR " Saving sequence $g:".($i)."\r" unless ++$i%500;
+      print STDERR " Saving sequence $g:".($i)."   \r" unless ++$i%500;
    }
-   print STDERR " Saved $i sequences".(" "x30)."\n";
+   print STDERR " Saved $i sequences".(" "x30)."   \n";
 }
 
 print STDERR " done.\n";
