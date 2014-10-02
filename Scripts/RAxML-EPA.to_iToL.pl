@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 # @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Aug-18-2014
+# @update: Oct-02-2014
 # @license: Artistic License 2.0
 
 use warnings;
@@ -11,6 +11,16 @@ use Getopt::Std;
 use Math::Round qw/round/;
 our $VERSION = 1.1;
 
+warn <<WARN
+
+
+┌──[ IMPORTANT ]─────────────────────────────────────────────────┐
+│ This script has been deprecated in favor of JPlace.to_iToL.rb. │
+│ Please use the new version, together with the RAxML EPA's file │
+│ RAxML_portableTree.*.jplace instead.                           │
+└────────────────────────────────────────────────────────────────┘
+WARN
+;
 sub HELP_MESSAGE {
 die "
 Description:
