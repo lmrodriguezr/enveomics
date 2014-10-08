@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Oct-02-2014
+# @update: Oct-07-2014
 # @license: artistic license 2.0
 #
 
@@ -84,6 +84,7 @@ class Node
       @@edges[node.index] = node unless node.index.nil?
    end
    def self.link_placement(placement)
+      abort "Trying to link placement in undefined edge #{placement.edge_num}: #{placement.to_s}" if @@edges[placement.edge_num].nil?
       @@edges[placement.edge_num].add_placement!(placement)
    end
    def self.unlink_placement(placement)
@@ -105,7 +106,7 @@ class Node
 	 @index = index_m[:idx].to_i
       end
       # Find name, label, and length
-      meta_m = /^(\((?<cont>.+)\))?(?<name>[^:\(\)]*)(:(?<length>[^\(\)\[\]]*)(?<label>\[[^\[\]\(\)]+\])?)?$/.match(nwk) or
+      meta_m = /^(\((?<cont>.+)\))?(?<name>[^:\(\);]*)(:(?<length>[0-9\.Ee+-]*)(?<label>\[[^\[\]\(\);]+\])?)?;?$/.match(nwk) or
 	 abort "Cannot parse node metadata:\n#{@nwk}\n"
       nwk = meta_m[:cont]
       @name = meta_m[:name]
@@ -113,7 +114,8 @@ class Node
       @label = meta_m[:label]
       # Find children
       @children = []
-      unless nwk.nil? or nwk==''
+      nwk ||= ''
+      while nwk != ''
 	 i = 0
 	 j = 0
 	 nwk.each_char do |chr|
@@ -127,7 +129,7 @@ class Node
 	 end
 	 abort "Unbalanced node at edge {#{@index}}, with leftness #{i}:\n#{@nwk}\n" unless i.nil? or i==0
 	 @children << Node.new(nwk[0 .. j-1],self)
-	 @children << Node.new(nwk[j+1 .. -1]) if i.nil?
+	 nwk = nwk.length==j ? '' : nwk[j+1 .. -1]
       end
       Node.register(self)
    end
@@ -157,6 +159,8 @@ class Node
       blk[self]
    end
    def in_order &blk
+      abort "Tree must be dycotomic to traverse in_order, node #{self.cannonical_name} "+
+	 "has #{self.children.lenght} children." unless [0,2].include? self.children.length
       self.children[0].in_order &blk unless self.children[0].nil?
       blk[self]
       self.children[1].in_order &blk unless self.children[1].nil?
@@ -232,6 +236,9 @@ class Placement
    end
    def pendant_length
       self.get_field_value('pendant_length').to_f
+   end
+   def to_s
+      "#<Placement of #{self.n}: #{self.p}>"
    end
 end
 
@@ -430,7 +437,7 @@ begin
 
    $stderr.puts "Re-formatting tree for iToL." unless o[:q]
    f = File.open(o[:out]+'.nwk', "w")
-   f.puts tree.to_s
+   f.puts tree.to_s+';'
    f.close
 
 rescue => err
