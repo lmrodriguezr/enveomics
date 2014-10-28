@@ -1,0 +1,75 @@
+#!/bin/bash
+#PBS -q iw-shared-6
+#PBS -l mem=10g
+#PBS -l walltime=12:00:00
+#PBS -l nodes=1:ppn=1
+#PBS -k eo
+
+b=$SAMPLE ;
+sqa=/nv/pmicro1/shared/bin/SolexaQA++
+enve=/nv/pmicro1/shared/apps/enveomics/Scripts
+trim=/nv/pmicro1/shared/apps/Trimmomatic-0.32/trimmomatic-0.32.jar
+SEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-SE.fa
+PEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-PE.fa
+
+#---------------------------------------------------------
+
+echo "==[ 02.trimmed_reads: $(date) ]" ;
+cd $FOLDER/02.trimmed_reads ;
+
+time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.1.fastq -p "$b-" -s "/1" -o $b.1.fastq ;
+time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.2.fastq -p "$b-" -s "/2" -o $b.2.fastq ;
+
+time $sqa dynamictrim ../01.raw_reads/$b.[12].fastq -h 20 -d . ;
+time $sqa lengthsort $b.[12].fastq.trimmed -l 50 -d . ;
+if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
+   time java -jar $trim PE -threads 1 \
+	$b.1.fastq.trimmed.paired1 \
+	$b.2.fastq.trimmed.paired2 \
+	$b.1.clipped.fastq $b.1.clipped.single.fastq \
+	$b.2.clipped.fastq $b.2.clipped.single.fastq \
+	ILLUMINACLIP:$PEadapters:2:30:10 MINLEN:50
+else
+   time java -jar $trim SE -threads 1 \
+	$b.1.fastq.trimmed.single $b.1.clipped.fastq \
+	ILLUMINACLIP:$SEadapters:2:30:10 MINLEN:50
+fi ;
+
+#---------------------------------------------------------
+
+echo "==[ 03.read_quality: $(date) ]" ;
+cd $FOLDER/03.read_quality ;
+if [ ! -d $b ] ; then mkdir $b ; fi ;
+time $sqa analysis ../01.raw_reads/$b.[12].fastq -h 20 -d $b -v -m ;
+rm $b/*.segments ;
+mv ../02.trimmed_reads/$b.[12].fastq_trimmed.segments* $b/
+mv ../02.trimmed_reads/$b.[12].fastq.trimmed.summary.txt* $b/
+
+cd $FOLDER/02.trimmed_reads ;
+rm $b.[12].fastq.trimmed.discard ;
+rm $b.[12].fastq.trimmed ;
+
+#---------------------------------------------------------
+
+echo "==[ 04.trimmed_fasta: $(date) ]" ;
+cd $FOLDER/04.trimmed_fasta ;
+cat ../02.trimmed_reads/$b.1.clipped.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{print ">"substr($1,2)"\\n"$2}' > $b.1.fasta ;
+if [[ -e ../02.trimmed_reads/$b.2.clipped.fastq ]] ; then
+   cat ../02.trimmed_reads/$b.2.clipped.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{print ">"substr($1,2)"\\n"$2}' > $b.2.fasta ;
+   time $enve/FastA.interpose.pl $b.CoupledReads.fa $b.[12].fasta ;
+   time gzip $b.2.fasta ;
+fi ;
+time gzip $b.1.fasta ;
+
+#---------------------------------------------------------
+
+echo "==[ 01.raw_reads: $(date) ]"
+cd $FOLDER/01.raw_reads ;
+for i in $b.[12].fastq ; do
+   time gzip $i ;
+done ;
+
+#---------------------------------------------------------
+
+echo "Done: $(date)." ;
+
