@@ -38,7 +38,7 @@ for i in $dir/*.1.fastq ; do
    b=$(basename $i .1.fastq) ;
    mv $b.[12].fastq 01.raw_reads/ ;
    jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir" $pac/run.pbs $EXTRA | grep .) ;
-   echo -n "$b: ${jids[$k]}" ;
+   echo "$b: ${jids[$k]}" ;
    let k=$k+1 ;
 done ;
 
