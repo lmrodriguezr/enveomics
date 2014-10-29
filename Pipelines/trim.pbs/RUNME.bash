@@ -38,14 +38,16 @@ done ;
 k=0 ;
 for i in $dir/*.1.fastq ; do
    EXTRA="" ;
+   EXTRA_MSG="" ;
    if [[ $k -ge $MAX ]] ; then
       let prek=$k-$MAX ;
       EXTRA="-l depend=afterany:${jids[$prek]}" ;
+      EXTRA_MSG=" (waiting for ${jids[$prek]})"
    fi ;
    b=$(basename $i .1.fastq) ;
    mv $b.[12].fastq 01.raw_reads/ ;
    jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" $pac/run.pbs $EXTRA | grep .) ;
-   echo "$b: ${jids[$k]}" ;
+   echo "$b: ${jids[$k]}$EXTRA_MSG" ;
    let k=$k+1 ;
 done ;
 

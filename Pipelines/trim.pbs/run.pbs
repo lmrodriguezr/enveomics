@@ -41,17 +41,15 @@ if [[ "$CLIPPER" == "trimmomatic" ]] ; then
    fi ;
 elif [[ "$CLIPPER" == "scythe" ]]; then
    if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
-      $scythe -a $PEadapters $b.1.fastq.trimmed.paired2 > $b.1.clipped.all.fastq ;
+      $scythe -a $PEadapters $b.1.fastq.trimmed.paired1 > $b.1.clipped.all.fastq ;
       $scythe -a $PEadapters $b.2.fastq.trimmed.paired2 > $b.2.clipped.all.fastq ;
       time $sqa lengthsort $b.[12].clipped.all.fastq -l 50 -d . ;
       rm $b.[12].clipped.all.fastq ;
-      mv $b.1.clipped.all.fastq.single $b.1.clipped.single.fastq ;
-      mv $b.2.clipped.all.fastq.single $b.2.clipped.single.fastq ;
+      [[ -e $b.1.clipped.all.fastq.single ]] && mv $b.1.clipped.all.fastq.single $b.1.clipped.single.fastq ;
+      [[ -e $b.2.clipped.all.fastq.single ]] && mv $b.2.clipped.all.fastq.single $b.2.clipped.single.fastq ;
       mv $b.1.clipped.all.fastq.paired1 $b.1.clipped.fastq ;
       mv $b.2.clipped.all.fastq.paired2 $b.2.clipped.fastq ;
-      rm $b.1.clipped.all.fastq.summary.txt ;
-      rm $b.1.clipped.all.fastq.summary.txt.pdf ;
-      rm $b.1.clipped.all.fastq.discard ;
+      rm $b.1.clipped.all.fastq.summary.txt $b.1.clipped.all.fastq.summary.txt.pdf $b.1.clipped.all.fastq.discard &>/dev/null ;
    else
       $scythe -a $PEadapters $b.1.fastq.trimmed.single > $b.1.clipped.fastq ;
    fi ;
