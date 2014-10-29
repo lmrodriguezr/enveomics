@@ -5,6 +5,8 @@
 #PBS -l nodes=1:ppn=1
 #PBS -k eo
 
+module load fastqc/0.11.2 ;
+
 b=$SAMPLE ;
 sqa=/nv/pmicro1/shared/bin/SolexaQA++
 enve=/nv/pmicro1/shared/apps/enveomics/Scripts
@@ -45,6 +47,9 @@ rm $b/*.segments ;
 mv ../02.trimmed_reads/$b.[12].fastq_trimmed.segments* $b/
 mv ../02.trimmed_reads/$b.[12].fastq.trimmed.summary.txt* $b/
 
+if [ ! -d $b.fastqc ] ; then mkdir $b.fastqc ; fi ;
+fastqc ../02.trimmed_reads/$b.[12].clipped.fastq -o $b.fastqc ;
+
 cd $FOLDER/02.trimmed_reads ;
 rm $b.[12].fastq.trimmed.discard ;
 rm $b.[12].fastq.trimmed ;
@@ -58,8 +63,10 @@ if [[ -e ../02.trimmed_reads/$b.2.clipped.fastq ]] ; then
    cat ../02.trimmed_reads/$b.2.clipped.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{print ">"substr($1,2)"\\n"$2}' > $b.2.fasta ;
    time $enve/FastA.interpose.pl $b.CoupledReads.fa $b.[12].fasta ;
    time gzip $b.2.fasta ;
+   time gzip $b.1.fasta ;
+else
+   mv $b.1.fasta $b.SingleReads.fa ;
 fi ;
-time gzip $b.1.fasta ;
 
 #---------------------------------------------------------
 
