@@ -106,10 +106,10 @@ fi ;
 echo "==[  zz.info: $(date) ]" ;
 cd $FOLDER/zz.info ;
 echo "
-RAW_LENGTH	$RAW_LENGTH
-RAW_READS	$RAW_READS
-TRIMMED_LENGTH	$TRIMMED_LENGTH
-TRIMMED_READS	$TRIMMED_READS
+RAW_LENGTH      $RAW_LENGTH
+RAW_READS       $RAW_READS
+TRIMMED_LENGTH  $TRIMMED_LENGTH
+TRIMMED_READS   $TRIMMED_READS
 " > $b.summary.txt ;
 
 #---------------------------------------------------------
