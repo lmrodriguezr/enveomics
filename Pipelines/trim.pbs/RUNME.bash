@@ -2,28 +2,28 @@
 
 if [[ "$1" == "" ]] ; then
    echo "
-   Usage: ./RUNME.bash folder [max_jobs [clipper]]
+   Usage: ./RUNME.bash folder [clipper [max_jobs]]
 
    folder	Path to the folder containing the raw reads. The raw reads must be in FastQ format,
    		and filenames must follow the format: <name>.<sis>.fastq, where <name> is the name
 		of the sample, and <sis> is 1 or 2 indicating which sister read the file contains.
 		Use only '1' as <sis> if you have single reads.
+   clipper	(optional) One of: trimmomatic, scythe, or none. By default: trimmomatic.
    max_jobs	(optional) Maximum number of jobs to run in parallel. This number can be increased,
    		but bear in mind that this process is highly I/O-intensive, and likely to crash or
 		significantly slow down the hard drive if many jobs are running simultaneously. By
 		default: 5.
-   clipper	(optional) One of: trimmomatic, scythe, or none.
    " >&2 ;
    exit 1 ;
 fi ;
-if [[ "$2" == "" ]] ; then
-   MAX=5 ;
-else
-   let MAX=$2+0 ;
-fi ;
-CLIPPER=$3
+CLIPPER=$2
 if [[ "$CLIPPER" == "" ]] ; then
    CLIPPER="trimmomatic"
+fi ;
+if [[ "$3" == "" ]] ; then
+   MAX=5 ;
+else
+   let MAX=$3+0 ;
 fi ;
 
 dir=$(readlink -f $1) ;
