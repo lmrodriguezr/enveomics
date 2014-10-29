@@ -9,6 +9,7 @@ module load fastqc/0.11.2 ;
 
 b=$SAMPLE ;
 sqa=/nv/pmicro1/shared/bin/SolexaQA++
+scythe=/nv/pmicro1/shared/bin/scythe
 enve=/nv/pmicro1/shared/apps/enveomics/Scripts
 trim=/nv/pmicro1/shared/apps/Trimmomatic-0.32/trimmomatic-0.32.jar
 SEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-SE.fa
@@ -22,33 +23,59 @@ cd $FOLDER/02.trimmed_reads ;
 time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.1.fastq -p "$b-" -s "/1" -o $b.1.fastq ;
 time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.2.fastq -p "$b-" -s "/2" -o $b.2.fastq ;
 
-time $sqa dynamictrim ../01.raw_reads/$b.[12].fastq -h 20 -d . ;
+time $sqa dynamictrim $b.[12].fastq -h 20 -d . ;
 time $sqa lengthsort $b.[12].fastq.trimmed -l 50 -d . ;
-if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
-   time java -jar $trim PE -threads 1 \
-	$b.1.fastq.trimmed.paired1 \
-	$b.2.fastq.trimmed.paired2 \
-	$b.1.clipped.fastq $b.1.clipped.single.fastq \
-	$b.2.clipped.fastq $b.2.clipped.single.fastq \
-	ILLUMINACLIP:$PEadapters:2:30:10 MINLEN:50
+
+if [[ "$CLIPPER" == "trimmomatic" ]] ; then
+   if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
+      time java -jar $trim PE -threads 1 \
+	 $b.1.fastq.trimmed.paired1 \
+	 $b.2.fastq.trimmed.paired2 \
+	 $b.1.clipped.fastq $b.1.clipped.single.fastq \
+	 $b.2.clipped.fastq $b.2.clipped.single.fastq \
+	 ILLUMINACLIP:$PEadapters:2:30:10 MINLEN:50
+   else
+      time java -jar $trim SE -threads 1 \
+	 $b.1.fastq.trimmed.single $b.1.clipped.fastq \
+	 ILLUMINACLIP:$SEadapters:2:30:10 MINLEN:50
+   fi ;
+elif [[ "$CLIPPER" == "scythe" ]]; then
+   if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
+      $scythe -a $PEadapters $b.1.fastq.trimmed.paired2 > $b.1.clipped.all.fastq ;
+      $scythe -a $PEadapters $b.2.fastq.trimmed.paired2 > $b.2.clipped.all.fastq ;
+      time $sqa lengthsort $b.[12].clipped.all.fastq -l 50 -d . ;
+      rm $b.[12].clipped.all.fastq ;
+      mv $b.1.clipped.all.fastq.single $b.1.clipped.single.fastq ;
+      mv $b.2.clipped.all.fastq.single $b.2.clipped.single.fastq ;
+      mv $b.1.clipped.all.fastq.paired1 $b.1.clipped.fastq ;
+      mv $b.2.clipped.all.fastq.paired2 $b.2.clipped.fastq ;
+      rm $b.1.clipped.all.fastq.summary.txt ;
+      rm $b.1.clipped.all.fastq.summary.txt.pdf ;
+      rm $b.1.clipped.all.fastq.discard ;
+   else
+      $scythe -a $PEadapters $b.1.fastq.trimmed.single > $b.1.clipped.fastq ;
+   fi ;
 else
-   time java -jar $trim SE -threads 1 \
-	$b.1.fastq.trimmed.single $b.1.clipped.fastq \
-	ILLUMINACLIP:$SEadapters:2:30:10 MINLEN:50
+   if [[ -e $b.2.fastq.trimmed.paired2 ]] ; then
+      ln -s $b.1.fastq.trimmed.paired1 $b.1.clipped.fastq ;
+      ln -s $b.2.fastq.trimmed.paired2 $b.2.clipped.fastq ;
+   else
+      ln -s $b.1.fastq.trimmed.single $b.1.clipped.fastq ;
+   fi ;
 fi ;
 
 #---------------------------------------------------------
 
 echo "==[ 03.read_quality: $(date) ]" ;
 cd $FOLDER/03.read_quality ;
+if [ ! -d $b.fastqc ] ; then mkdir $b.fastqc ; fi ;
+fastqc ../02.trimmed_reads/$b.[12].clipped.fastq -o $b.fastqc ;
+
 if [ ! -d $b ] ; then mkdir $b ; fi ;
 time $sqa analysis ../01.raw_reads/$b.[12].fastq -h 20 -d $b -v -m ;
 rm $b/*.segments ;
 mv ../02.trimmed_reads/$b.[12].fastq_trimmed.segments* $b/
 mv ../02.trimmed_reads/$b.[12].fastq.trimmed.summary.txt* $b/
-
-if [ ! -d $b.fastqc ] ; then mkdir $b.fastqc ; fi ;
-fastqc ../02.trimmed_reads/$b.[12].clipped.fastq -o $b.fastqc ;
 
 cd $FOLDER/02.trimmed_reads ;
 rm $b.[12].fastq.trimmed.discard ;
