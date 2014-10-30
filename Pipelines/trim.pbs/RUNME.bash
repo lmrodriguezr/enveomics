@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [[ "$1" == "" | "$1" == "-h" ]] ; then
+if [[ "$1" == "" || "$1" == "-h" ]] ; then
    echo "
    Usage: ./RUNME.bash folder [clipper [max_jobs]]
 
