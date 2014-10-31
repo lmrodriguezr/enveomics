@@ -112,21 +112,26 @@ class OG
       self.genes[gene.genome_id].include? gene.id
    end
    # Adds a note that will be printed after the last column
-   def add_note note
-      @notes << note
+   def add_note note, note_idx=nil
+      if note_idx.nil?
+	 @notes << note
+      else
+	 @notes[note_idx] = (@notes[note_idx].nil? ? '' : (@notes[note_idx]+' || ')) + note
+      end
    end
    def to_s
       (0 .. Gene.genomes.length-1).map do |genome_id|
 	 self.genes[genome_id].nil? ? "-" : self.genes[genome_id].join(",")
-      end.join("\t") + ((self.notes.size==0) ? '' : ("\t"+self.notes.join("\t")))
+      end.join("\t") + ((self.notes.size==0) ? '' : ("\t#\t"+self.notes.join("\t")))
    end
 end
 
 # OGCollection.new(): Initializes an empty collection of OGs.
 class OGCollection
-   attr_reader :ogs
+   attr_reader :ogs, :note_srcs
    def initialize
       @ogs = []
+      @note_srcs = []
    end
    # Add an OG to the collection
    def <<(og)
@@ -165,8 +170,13 @@ class OGCollection
       idx = self.ogs.index { |og| og.include? gene }
       idx.nil? ? nil : self.ogs[idx]
    end
+   # Add annotation sources
+   def add_note_src src
+      @note_srcs << src
+   end
    def to_s
-      Gene.genomes.join("\t") + "\n" + self.ogs.map{ |og| og.to_s }.join("\n")
+      Gene.genomes.join("\t") + ((self.note_srcs.length>0) ? ("\t#\t"+self.note_srcs.join("\t")) : '') +
+	 "\n" + self.ogs.map{ |og| og.to_s }.join("\n")
    end
 end
 
@@ -192,6 +202,7 @@ begin
       end
       f = File.open(annot, 'r')
       no_og = 0
+      collection.add_note_src m[1]+' annotation'
       while ln=f.gets
 	 r = ln.chomp.split /\t/
 	 g = Gene.new m[1], r[0]
@@ -199,7 +210,7 @@ begin
 	 if og.nil?
 	    no_og += 1
 	 else
-	    og.add_note g.to_s + '::' + r[1]
+	    og.add_note g.id + ': ' + r[1], collection.note_srcs.length-1
 	 end
       end
       warn "Warning: Cannot find #{no_og} genes from #{m[1]} in OG collection." if no_og>0
