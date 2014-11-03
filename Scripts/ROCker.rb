@@ -21,6 +21,7 @@ WARN
 #================================[ Options parsing ]
 $o = {
    :q=>false, :r=>'R',
+   :positive=>[], :negative=>[],
    :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s"',
@@ -65,6 +66,8 @@ opts = OptionParser.new do |opt|
       opt.separator "BUILDING ARGUMENTS"
       opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required."){ |v| $o[:positive]=v }
       opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set."){ |v| $o[:negative]=v }
+      opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line."){ |v| $o[:posfile]=v }
+      opt.on("-N", "--negative-file PATH", "File containing the negative set (see -n), one GI per line."){ |v| $o[:negfile]=v }
       opt.on("-o", "--baseout PATH", "Prefix for the output files to be generated. Required."){ |v| $o[:baseout]=v }
       opt.on("-s", "--seqdepth NUMBER", "Sequencing depth to be used in building the in silico metagenome. By default: '#{$o[:seqdepth]}'."){ |v| $o[:seqdepth]=v.to_f }
       opt.on("-v", "--overlap NUMBER", "Minimum overlap with reference gene to tag a read as positive. By default: '#{$o[:minovl]}'."){ |v| $o[:minovl]=v.to_f }
@@ -424,7 +427,9 @@ begin
       puts "Testing environment." unless $o[:q]
       $o[:noblast]=true if $o[:nomg]
       abort "Unsatisfied requirements." unless has_build_gems
-      abort "-p/--positive is mandatory." if $o[:positive].nil?
+      $o[:positive] += File.readlines($o[:posfile]).map{ |l| l.chomp } unless $o[:posfile].nil?
+      $o[:negative] += File.readlines($o[:negfile]).map{ |l| l.chomp } unless $o[:negfile].nil?
+      abort "-p or -P are mandatory." if $o[:positive].size==0
       abort "-o/--baseout is mandatory." if $o[:baseout].nil?
       if $o[:positive].size == 1 and not $o[:noaln]
 	 warn "\nWARNING: Positive set contains only one protein, turning off alignment.\n\n"
@@ -439,7 +444,7 @@ begin
       efetch({:db=>'protein', :id=>$o[:positive].join(','), :rettype=>'fasta', :retmode=>'text'}, $o[:baseout] + '.ref.fasta')
       genome_gis = {:positive=>[], :negative=>[]}
       [:positive, :negative].each do |set|
-         unless $o[set].nil?
+         unless $o[set].size==0
 	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} protein(s)." unless $o[:q]
 	    doc = Nokogiri::XML( elink({:dbfrom=>'protein', :db=>'nuccore', :id=>$o[set]}) )
 	    genome_gis[set] = doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }.uniq
