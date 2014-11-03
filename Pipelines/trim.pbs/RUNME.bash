@@ -46,7 +46,23 @@ for i in $dir/*.1.fastq ; do
    fi ;
    b=$(basename $i .1.fastq) ;
    mv $b.[12].fastq 01.raw_reads/ ;
-   jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" $pac/run.pbs $EXTRA | grep .) ;
+   # Predict time (in hours)
+   TIME_H=$(($(ls -pl 01.raw_reads/$b.1.fastq | awk '{print $5}')/1000000)) ;
+   if [[ -e 01.raw_reads/$b.2.fastq ]] ; then
+      let TIME_H=$TIME_H*5/1000 ;
+   else
+      let TIME_H=$TIME_H*5/2000 ;
+   fi ;
+   # Find the right queue
+   if [[ $TIME_H -lt 12 ]] ; then
+      QUEUE="-q iw-shared-6 -l walltime=12:00:00" ;
+   elif [[ $TIME_H -lt 120 ]] ; then
+      QUEUE="-q microcluster -l walltime=120:00:00" ;
+   else
+      QUEUE="-q microcluster -l walltime=2000:00:00" ;
+   fi ;
+   # Launch job
+   jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" $QUEUE $EXTRA $pac/run.pbs | grep .) ;
    echo "$b: ${jids[$k]}$EXTRA_MSG" ;
    let k=$k+1 ;
 done ;
