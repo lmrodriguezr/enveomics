@@ -22,7 +22,7 @@ time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.1.fastq -p "$b-" -s "/1" -o $b.1.f
 time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.2.fastq -p "$b-" -s "/2" -o $b.2.fastq ;
 
 RAW_READS=$(cat $b.1.fastq | paste - - - - | wc -l | sed -e 's/ *//') ;
-RAW_LENGTH=$(head -n 40000 $b.1.fastq | paste - - - - | awk 'BEGIN{FS="\t"}{SUM+=length($2)}END{print SUM/NR}') ;
+RAW_LENGTH=$(head -n 40000 $b.1.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{SUM+=length($2)}END{print SUM/NR}') ;
 
 time $sqa dynamictrim $b.[12].fastq -h 20 -d . ;
 time $sqa lengthsort $b.[12].fastq.trimmed -l 50 -d . ;
@@ -64,7 +64,7 @@ else
 fi ;
 
 TRIMMED_READS=$(cat $b.1.clipped.fastq | paste - - - - | wc -l | sed -e 's/ *//') ;
-TRIMMED_LENGTH=$(head -n 40000 $b.1.clipped.fastq | paste - - - - | awk 'BEGIN{FS="\t"}{SUM+=length($2)}END{print SUM/NR}') ;
+TRIMMED_LENGTH=$(head -n 40000 $b.1.clipped.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{SUM+=length($2)}END{print SUM/NR}') ;
 
 #---------------------------------------------------------
 
@@ -104,10 +104,10 @@ fi ;
 echo "==[  zz.info: $(date) ]" ;
 cd $FOLDER/zz.info ;
 echo "
-RAW_LENGTH      $RAW_LENGTH
-RAW_READS       $RAW_READS
-TRIMMED_LENGTH  $TRIMMED_LENGTH
-TRIMMED_READS   $TRIMMED_READS
+RAW_LENGTH:      $RAW_LENGTH
+RAW_READS:       $RAW_READS
+TRIMMED_LENGTH:  $TRIMMED_LENGTH
+TRIMMED_READS:   $TRIMMED_READS
 " > $b.summary.txt ;
 
 #---------------------------------------------------------
