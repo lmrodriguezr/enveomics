@@ -8,6 +8,7 @@
 #
 
 require 'optparse'
+require 'tmpdir'
 has_build_gems = TRUE
 warn <<WARN
 
@@ -21,7 +22,7 @@ WARN
 #================================[ Options parsing ]
 $o = {
    :q=>false, :r=>'R',
-   :positive=>[], :negative=>[],
+   :positive=>[], :negative=>[], :sbj=>[],:color=>false,
    :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s"',
@@ -129,9 +130,10 @@ opts = OptionParser.new do |opt|
       		"Tabular BLAST (blastx) of the test reads vs. the reference dataset. Required unless -t exists."){ |v| $o[:blast]=v }
       opt.on("-t", "--table FILE", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
       opt.on("-o", "--plot-file FILE", "File to be created with the plot. By default: value of -k + '.' + value of -f."){ |v| $o[:gout]=v }
+      opt.on(      "--color", "Color alignment by amino acid."){ $o[:color]=true }
       opt.on(      "--min-score NUMBER", "Minimum Bit-Score to consider a hit. By default: #{$o[:minscore]}"){ |v| $o[:minscore]=v.to_f }
-      opt.on("-s", "--subject STRING",
-      	"Plot only information regarding this(ese) subject(s). If multiple, separate by spaces. By default, all hits are plotted."){ |v| $o[:sbj]=v }
+      opt.on("-s", "--subject SBJ1,SBJ2,...", Array,
+      	"Plot only information regarding this(ese) subject(s). If multiple, separate by comma. By default, all hits are plotted."){ |v| $o[:sbj]=v }
       opt.on("-f", "--plot-format STRING",
       	"Format of the plot file. Supported values: pdf (default), png, jpeg, and tiff."){ |v| $o[:gformat]=v }
       opt.on("-W", "--width NUMBER", "Width of the plot in inches. By default: #{$o[:width]}."){ |v| $o[:width]=v.to_f }
@@ -163,8 +165,8 @@ class Sequence
    attr_reader :id, :seq, :aln
    def initialize(id, aln)
       @id = id
-      @aln = aln.gsub(/[-\.]/,'-').gsub(/[^A-Za-z-]/, '')
-      @seq = aln.gsub(/[^A-Za-z]/, '')
+      @aln = aln.gsub(/[-\.]/,'-').gsub(/[^A-Za-z-]/, '').upcase
+      @seq = aln.gsub(/[^A-Za-z]/, '').upcase
    end
    def pos2col(pos)
       col = 0
@@ -229,7 +231,7 @@ class Alignment
    def <<(seq)
       @seqs[seq.id] = seq
       @cols = seq.cols if self.cols.nil?
-      abort "Aligned sequence #{seq.id} has a different length (#{seq.cols} vs #{self.cols})" unless seq.cols == self.cols
+      raise "Aligned sequence #{seq.id} has a different length (#{seq.cols} vs #{self.cols})" unless seq.cols == self.cols
    end
    def seq(id)
       @seqs[id]
@@ -293,13 +295,18 @@ class ROCWindow
       end
    end
    def compute!
-      @hits = self.rrun "y <- x[x$V6>=#{self.from} & x$V6<=#{self.to},]; nrow(y);", :int
+      self.load_hits
+      @hits = self.rrun "nrow(y);", :int
       @tps = self.rrun "sum(y$V5);", :int
       unless self.almost_empty
 	 self.rrun "rocobj <- roc(y$V5, y$V4);"
-	 thr = self.rrun 'coords(rocobj,"best", ret="threshold", best.method="youden");', :float
+	 thr = self.rrun 'coords(rocobj, "best", ret="threshold", best.method="youden", best.weights=c(0.5, sum(y$V5)/nrow(y)))[1];', :float
 	 @thr = thr.to_f
+	 @thr = nil if @thr==0.0 or @thr.infinite?
       end
+   end
+   def load_hits
+      self.rrun "y <- x[x$V6>=#{self.from} & x$V6<=#{self.to},];"
    end
    def previous
       return nil if self.from == 1
@@ -330,7 +337,7 @@ class ROCWindow
       self.hits - self.tps
    end
    def almost_empty
-      self.fps < 2 or self.tps < 2
+      self.fps < 3 or self.tps < 3
    end
    def length
       self.to - self.from + 1
@@ -347,9 +354,9 @@ class ROCData
    attr_reader :aln, :windows, :r
    # Use ROCData.new(table,aln,window) to re-compute from table, use ROCData.new(data) to load
    def initialize(val, aln=nil, window=nil)
+      @r = RInterface.new
       if not aln.nil?
 	 @aln = aln
-	 @r = RInterface.new
 	 self.rrun "library('pROC');"
 	 self.rrun "x <- read.table('#{val}', sep='\\t', h=F);"
 	 self.init_windows! window
@@ -367,6 +374,74 @@ class ROCData
    end
    def win_at_col(col)
       self.windows.select{|w| (w.from<=col) and (w.to>=col)}.first
+   end
+   def refine! table
+      while true
+	 return false unless self.load_table! table
+	 break if self._refine_iter(table)==0
+      end
+      return true
+   end
+   def _refine_iter table
+      to_refine = []
+      self.windows.each do |w|
+	 next if w.almost_empty or w.length <= 5
+	 self.rrun "acc <- w$accuracy[w$V1==#{w.from}];"
+	 to_refine << w if self.rrun("ifelse(is.na(acc), 100, acc)", :float) < 95.0
+      end
+      n = to_refine.size
+      return 0 unless n > 0
+      to_refine.each do |w|
+	 w1 = ROCWindow.new(self, w.from, (w.from+w.to)/2)
+	 w2 = ROCWindow.new(self, (w.from+w.to)/2, w.to)
+	 if w1.almost_empty or w2.almost_empty
+	    n -= 1
+	 else
+	    @windows << w1
+	    @windows << w2
+	    @windows.delete w
+	 end
+      end
+      @windows.sort!{ |x,y| x.from <=> y.from }
+      n
+   end
+   def load_table! table, sbj=[], min_score=0
+      self.rrun "x <- read.table('#{table}', sep='\\t', h=F);"
+      self.rrun "x <- x[x$V1 %in% c('#{sbj.join("','")}'),];" if sbj.size > 0
+      self.rrun "x <- x[x$V4 >= #{minscore.to_s},];" if min_score > 0
+      Dir.mktmpdir do |dir|
+         self.save(dir + "/rocker")
+	 self.rrun "w <- read.table('#{dir}/rocker', sep='\\t', h=F);"
+      end
+      self.rrun "w <- w[!is.na(w$V5),];"
+      if self.rrun("nrow(w)", :int)==0
+         warn "\nWARNING: Insufficient windows with estimated thresholds.\n\n"
+         return false
+      end
+      self.rrun <<-EOC
+	 w$tp<-0; w$fp<-0; w$tn<-0; w$fn<-0;
+	 for(i in 1:nrow(x)){
+	    m <- x$V6[i];
+	    win <- which( (m>=w$V1) & (m<=w$V2))[1];
+	    if(!is.na(win)){
+	       if(x$V4[i] >= w$V5[win]){
+		  if(x$V5[i]==1){ w$tp[win] <- w$tp[win]+1 }else{ w$fp[win] <- w$fp[win]+1 };
+	       }else{
+		  if(x$V5[i]==1){ w$fn[win] <- w$fn[win]+1 }else{ w$tn[win] <- w$tn[win]+1 };
+	       }
+	    }
+	 }
+      EOC
+      r.run <<-EOC
+	 w$p <- w$tp + w$fp;
+	 w$n <- w$tn + w$fn;
+	 w$sensitivity <- 100*w$tp/(w$tp+w$fn);
+	 w$specificity <- 100*w$tn/(w$fp+w$tn);
+	 w$accuracy <- 100*(w$tp+w$tn)/(w$p+w$n);
+	 w$precision <- 100*w$tp/(w$tp+w$fp);
+      EOC
+      
+      return true
    end
    def init_windows!(size)
       @windows = []
@@ -399,18 +474,18 @@ class RInterface
       o = ""
       while true
          l = @handler.gets
-	 abort "R failed on command:\n#{cmd}\n\nError:\n#{o}" if l.nil?
+	 raise "R failed on command:\n#{cmd}\n\nError:\n#{o}" if l.nil?
 	 break unless /^---FIN---/.match(l).nil?
 	 o += l
       end
       o.chomp!
       case type
       when :float
-	 /^\s*\[1\]\s+([0-9\.Ee+-]+|Inf).*/.match(o).nil? and abort "R error: expecting float, got #{o}"
+	 /^\s*\[1\]\s+([0-9\.Ee+-]+|Inf).*/.match(o).nil? and raise "R error: expecting float, got #{o}"
 	 return Float::INFINITY if $1=='Inf'
 	 return $1.to_f
       when :int
-	 /^\s*\[1\]\s+([0-9\.Ee+-]+).*/.match(o).nil? and abort "R error: expecting integer, got #{o}"
+	 /^\s*\[1\]\s+([0-9\.Ee+-]+).*/.match(o).nil? and raise "R error: expecting integer, got #{o}"
 	 return $1.to_i
       else
 	 return o
@@ -422,7 +497,8 @@ end
 class Numeric
    def ordinalize
       n= self.to_s
-      s= n[-1]=='1' ? 'st' :
+      s= n[-2]=='1' ? 'th' :
+	 n[-1]=='1' ? 'st' :
 	 n[-1]=='2' ? 'nd' :
 	 n[-1]=='3' ? 'rd' : 'th'
       n + s
@@ -441,7 +517,7 @@ def blast2table(blast_f, table_f, aln, minscore)
 end
 def eutils(script, params={}, outfile=nil)
    response = RestClient.get "#{$eutils}/#{script}", {:params=>params}
-   abort "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
+   raise "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
    unless outfile.nil?
       ohf = File.open(outfile, 'w')
       ohf.print response.to_s
@@ -457,7 +533,7 @@ def elink(*etc)
 end
 def bash(cmd, err_msg=nil)
    o = `#{cmd} 2>&1 && echo '{'`
-   abort (err_msg.nil? ? "Error executing: #{cmd}\n\n#{o}" : err_msg) unless o[-2]=='{'
+   raise (err_msg.nil? ? "Error executing: #{cmd}\n\n#{o}" : err_msg) unless o[-2]=='{'
    true
 end
 #================================[ Main ]
@@ -468,11 +544,11 @@ begin
       # Check requirements
       puts "Testing environment." unless $o[:q]
       $o[:noblast]=true if $o[:nomg]
-      abort "Unsatisfied requirements." unless has_build_gems
+      raise "Unsatisfied requirements." unless has_build_gems
       $o[:positive] += File.readlines($o[:posfile]).map{ |l| l.chomp } unless $o[:posfile].nil?
       $o[:negative] += File.readlines($o[:negfile]).map{ |l| l.chomp } unless $o[:negfile].nil?
-      abort "-p or -P are mandatory." if $o[:positive].size==0
-      abort "-o/--baseout is mandatory." if $o[:baseout].nil?
+      raise "-p or -P are mandatory." if $o[:positive].size==0
+      raise "-o/--baseout is mandatory." if $o[:baseout].nil?
       if $o[:positive].size == 1 and not $o[:noaln]
 	 warn "\nWARNING: Positive set contains only one protein, turning off alignment.\n\n"
 	 $o[:noaln] = true
@@ -605,14 +681,14 @@ begin
 	 sff.each { |sf| File.unlink $o[:baseout] + sf if File.exists? $o[:baseout] + sf }
       end
    when 'compile'
-      abort "-a/--alignment is mandatory." if $o[:aln].nil?
-      abort "-a/--alignment must exist." unless File.exists? $o[:aln]
+      raise "-a/--alignment is mandatory." if $o[:aln].nil?
+      raise "-a/--alignment must exist." unless File.exists? $o[:aln]
       if $o[:table].nil?
-	 abort "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
+	 raise "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
 	 $o[:table] = "#{$o[:blast]}.table"
       end
-      abort "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
-      abort "-k/--rocker is mandatory." if $o[:rocker].nil?
+      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
+      raise "-k/--rocker is mandatory." if $o[:rocker].nil?
       bash "echo \"library('pROC')\" | #{$o[:r]} --vanilla", "Please install the 'pROC' library for R first."
 
       puts "Reading files." unless $o[:q]
@@ -630,12 +706,14 @@ begin
       puts "Analyzing data." unless $o[:q]
       puts "  * computing windows." unless $o[:q]
       data = ROCData.new($o[:table], aln, $o[:win])
+      puts "  * refining windows." unless $o[:q]
+      warn "Insufficient hits to refine results." unless data.refine! $o[:table]
       puts "  * saving ROCker file: #{$o[:rocker]}." unless $o[:q]
       data.save $o[:rocker]
    when 'filter'
-      abort "-k/--rocker is mandatory." if $o[:rocker].nil?
-      abort "-x/--query-blast is mandatory." if $o[:qblast].nil?
-      abort "-o/--out-blast is mandatory." if $o[:oblast].nil?
+      raise "-k/--rocker is mandatory." if $o[:rocker].nil?
+      raise "-x/--query-blast is mandatory." if $o[:qblast].nil?
+      raise "-o/--out-blast is mandatory." if $o[:oblast].nil?
       
       puts "Reading ROCker file." unless $o[:q]
       data = ROCData.new $o[:rocker]
@@ -650,12 +728,12 @@ begin
       ih.close
       oh.close
    when 'plot'
-      abort "-k/--rocker is mandatory." if $o[:rocker].nil?
+      raise "-k/--rocker is mandatory." if $o[:rocker].nil?
       if $o[:table].nil?
-	 abort "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
+	 raise "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
 	 $o[:table] = "#{$o[:blast]}.table"
       end
-      abort "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
+      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
 
       puts "Reading files." unless $o[:q]
       puts "  * loding ROCker file: #{$o[:rocker]}." unless $o[:q]
@@ -668,95 +746,56 @@ begin
       end
 
       puts "Plotting hits." unless $o[:q]
-      r = RInterface.new
       extra = $o[:gformat]=='pdf' ? "" : ", units='in', res=300"
       $o[:gout] ||= "#{$o[:rocker]}.#{$o[:gformat]}"
       # Open file
-      r.run "#{$o[:gformat]}('#{$o[:gout]}', #{$o[:width]}, #{$o[:height]}#{extra});"
-      r.run "layout(c(2,1,3), heights=c(2-1/#{data.aln.size},3,1));"
+      data.rrun "#{$o[:gformat]}('#{$o[:gout]}', #{$o[:width]}, #{$o[:height]}#{extra});"
+      data.rrun "layout(c(2,1,3), heights=c(2-1/#{data.aln.size},3,1));"
       # Read table
-      r.run "x <- read.table('#{$o[:table]}', sep='\\t', h=F);"
-      # Filter table (if necessary)
-      if $o[:sbj].nil?
-         $o[:sbj] = []
-      else
-	 $o[:sbj] = $o[:sbj].split(/\s+/)
-	 r.run "x <- x[x$V1 %in% c('#{$o[:sbj].join("','")}'),];"
-      end
-      if $o[:minscore]>0
-	 r.run "x <- x[x$V4 >= #{$o[:minscore].to_s},];"
-      end
+      some_thr = data.load_table! $o[:table], $o[:sbj], $o[:minscore]
       # Plot
-      r.run "par(mar=c(0,4,0,0.5)+.1);"
-      r.run "plot(1, t='n', xlim=c(0.5,#{data.aln.cols}+0.5), ylim=range(x$V4)+c(-0.04,0.04)*diff(range(x$V4)), xlab='', ylab='Bit score', xaxs='i', xaxt='n');"
-      r.run "noise <- runif(ncol(x),-.2,.2)"
-      r.run "arrows(x0=x$V2, x1=x$V3, y0=x$V4+noise, col=ifelse(x$V5==1, rgb(0,0,.5,.2), rgb(.5,0,0,.2)), length=0);"
-      r.run "points(x$V6, x$V4+noise, col=ifelse(x$V5==1, rgb(0,0,.5,.5), rgb(.5,0,0,.5)), pch=19, cex=1/4);"
+      data.rrun "par(mar=c(0,4,0,0.5)+.1);"
+      data.rrun "plot(1, t='n', xlim=c(0.5,#{data.aln.cols}+0.5), ylim=range(x$V4)+c(-0.04,0.04)*diff(range(x$V4)), xlab='', ylab='Bit score', xaxs='i', xaxt='n');"
+      data.rrun "noise <- runif(ncol(x),-.2,.2)"
+      data.rrun "arrows(x0=x$V2, x1=x$V3, y0=x$V4+noise, col=ifelse(x$V5==1, rgb(0,0,.5,.2), rgb(.5,0,0,.2)), length=0);"
+      data.rrun "points(x$V6, x$V4+noise, col=ifelse(x$V5==1, rgb(0,0,.5,.5), rgb(.5,0,0,.5)), pch=19, cex=1/4);"
 
       puts "Plotting windows." unless $o[:q]
-      r.run "w <- read.table('#{$o[:rocker]}', sep='\\t', h=F);"
-      r.run "w <- w[!is.na(w$V5),];"
-      some_thr = true
-      if r.run("nrow(w)", :int)==0
-         warn "\nWARNING: Insufficient windows with estimated thersholds.\n\n"
-	 some_thr = false
-      end
       if some_thr
-	 r.run "arrows(x0=w$V1, x1=w$V2, y0=w$V5, lwd=2, length=0)"
-	 r.run "arrows(x0=w$V2[-nrow(w)], x1=w$V1[-1], y0=w$V5[-nrow(w)], y1=w$V5[-1], lwd=2, length=0)"
+	 data.rrun "arrows(x0=w$V1, x1=w$V2, y0=w$V5, lwd=2, length=0)"
+	 data.rrun "arrows(x0=w$V2[-nrow(w)], x1=w$V1[-1], y0=w$V5[-nrow(w)], y1=w$V5[-1], lwd=2, length=0)"
       end
-      r.run "legend('bottomright',legend=c('Hit span','Hit mid-point','Reference','Non-reference')," +
+      data.rrun "legend('bottomright',legend=c('Hit span','Hit mid-point','Reference','Non-reference')," +
 	 "lwd=c(1,NA,1,1),pch=c(NA,19,19,19),col=c('black','black','darkblue','darkred'),ncol=4,bty='n')"
 
       puts "Plotting alignment." unless $o[:q]
-      r.run "par(mar=c(0,4,0.5,0.5)+0.1);"
-      r.run "plot(1, t='n', xlim=c(0,#{data.aln.cols}),ylim=c(1,#{data.aln.seqs.size}),xlab='',ylab='Alignment',xaxs='i',xaxt='n',yaxs='i',yaxt='n',bty='n');"
+      data.rrun "par(mar=c(0,4,0.5,0.5)+0.1);"
+      data.rrun "plot(1, t='n', xlim=c(0,#{data.aln.cols}),ylim=c(1,#{data.aln.seqs.size}),xlab='',ylab='Alignment',xaxs='i',xaxt='n',yaxs='i',yaxt='n',bty='n');"
       i = 0
+      data.rrun "clr <- rainbow(26, v=1/2, s=3/4);" if $o[:color]
       data.aln.seqs.values.each do |s|
-         color = s.aln.split(//).map{|c| c=="-" ? "'grey80'" : ($o[:sbj].include?(s.id) ? "'red'" : "'black'")}.join(',')
-	 r.run "rect((1:#{data.aln.cols-1})-0.5, rep(#{i}, #{data.aln.cols-1}), (1:#{data.aln.cols-1})+0.5, rep(#{i+1}, #{data.aln.cols-1}), col=c(#{color}), border=NA);"
+         color = s.aln.split(//).map{|c| c=="-" ? "'grey80'" : ($o[:sbj].include?(s.id) ? "'red'" : ($o[:color] ? "clr[#{c.ord-64}]" : 'black'))}.join(',')
+	 data.rrun "rect((1:#{data.aln.cols-1})-0.5, rep(#{i}, #{data.aln.cols-1}), (1:#{data.aln.cols-1})+0.5, rep(#{i+1}, #{data.aln.cols-1}), col=c(#{color}), border=NA);"
 	 i += 1
       end
 
       puts "Plotting statistics." unless $o[:q]
-      r.run "par(mar=c(5,4,0,0.5)+.1);"
-      if some_thr
-	 r.run <<-EOC
-	    w$tp<-0; w$fp<-0; w$tn<-0; w$fn<-0;
-	    for(i in 1:nrow(x)){
-	       m <- x$V6[i];
-	       win <- which( (m>=w$V1) & (m<=w$V2))[1];
-	       if(!is.na(win)){
-		  if(x$V4[i] >= w$V5[win]){
-		     if(x$V5[i]==1){ w$tp[win] <- w$tp[win]+1 }else{ w$fp[win] <- w$fp[win]+1 };
-		  }else{
-		     if(x$V5[i]==1){ w$fn[win] <- w$fn[win]+1 }else{ w$tn[win] <- w$tn[win]+1 };
-		  }
-	       }
-	    }
-	 EOC
-	 r.run <<-EOC
-	    w$p <- w$tp + w$fp;
-	    w$n <- w$tn + w$fn;
-	    w$sensitivity <- 100*w$tp/(w$tp+w$fn);
-	    w$specificity <- 100*w$tn/(w$fp+w$tn);
-	    w$accuracy <- 100*(w$tp+w$tn)/(w$p+w$n);
-	 EOC
-      end
+      data.rrun "par(mar=c(5,4,0,0.5)+.1);"
       unless $o[:q] or not some_thr
-	 puts "  * sensitivity: #{r.run "100*sum(w$tp)/(sum(w$tp)+sum(w$fn))", :float}%"
-	 puts "  * specificity: #{r.run "100*sum(w$tn)/(sum(w$fp)+sum(w$tn))", :float}%"
-	 puts "  * accuracy: #{r.run "100*(sum(w$tp)+sum(w$tn))/(sum(w$p)+sum(w$n))", :float}%"
+	 puts "  * sensitivity: #{data.rrun "100*sum(w$tp)/(sum(w$tp)+sum(w$fn))", :float}%"
+	 puts "  * specificity: #{data.rrun "100*sum(w$tn)/(sum(w$fp)+sum(w$tn))", :float}%"
+	 puts "  * accuracy: #{data.rrun "100*(sum(w$tp)+sum(w$tn))/(sum(w$p)+sum(w$n))", :float}%"
       end
-      r.run "plot(1, t='n', xlim=c(0,#{data.aln.cols}),ylim=c(50,100),xlab='Alignment position (amino acids)',ylab='Precision',xaxs='i');"
+      data.rrun "plot(1, t='n', xlim=c(0,#{data.aln.cols}),ylim=c(50,100),xlab='Alignment position (amino acids)',ylab='Precision',xaxs='i');"
       if some_thr
-	 r.run "pos <- (w$V1+w$V2)/2"
-	 r.run "lines(pos[!is.na(w$specificity)], w$specificity[!is.na(w$specificity)], col='darkred', lwd=2, t='o', cex=1/3, pch=19);"
-	 r.run "lines(pos[!is.na(w$sensitivity)], w$sensitivity[!is.na(w$sensitivity)], col='darkgreen', lwd=2, t='o', cex=1/3, pch=19);"
-	 r.run "lines(pos[!is.na(w$accuracy)], w$accuracy[!is.na(w$accuracy)], col='darkblue', lwd=2, t='o', cex=1/3, pch=19);"
+	 data.rrun "pos <- (w$V1+w$V2)/2"
+	 data.rrun "lines(pos[!is.na(w$specificity)], w$specificity[!is.na(w$specificity)], col='darkred', lwd=2, t='o', cex=1/3, pch=19);"
+	 data.rrun "lines(pos[!is.na(w$sensitivity)], w$sensitivity[!is.na(w$sensitivity)], col='darkgreen', lwd=2, t='o', cex=1/3, pch=19);"
+	 data.rrun "lines(pos[!is.na(w$accuracy)], w$accuracy[!is.na(w$accuracy)], col='darkblue', lwd=2, t='o', cex=1/3, pch=19);"
+	 #data.rrun "lines(pos[!is.na(w$precision)], w$precision[!is.na(w$precision)], col='purple', lwd=2, t='o', cex=1/3, pch=19);"
       end
-      r.run "legend('bottomright',legend=c('Specificity','Sensitivity','Accuracy'),lwd=2,col=c('darkred','darkgreen','darkblue'),ncol=3,bty='n')"
-      r.run "dev.off();"
+      data.rrun "legend('bottomright',legend=c('Specificity','Sensitivity','Accuracy'),lwd=2,col=c('darkred','darkgreen','darkblue'),ncol=3,bty='n')"
+      data.rrun "dev.off();"
    end
 rescue => err
    $stderr.puts "Exception: #{err}\n\n"
