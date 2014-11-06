@@ -774,7 +774,7 @@ begin
       i = 0
       data.rrun "clr <- rainbow(26, v=1/2, s=3/4);" if $o[:color]
       data.aln.seqs.values.each do |s|
-         color = s.aln.split(//).map{|c| c=="-" ? "'grey80'" : ($o[:sbj].include?(s.id) ? "'red'" : ($o[:color] ? "clr[#{c.ord-64}]" : 'black'))}.join(',')
+         color = s.aln.split(//).map{|c| c=="-" ? "'grey80'" : ($o[:sbj].include?(s.id) ? "'red'" : ($o[:color] ? "clr[#{c.ord-64}]" : "'black'"))}.join(',')
 	 data.rrun "rect((1:#{data.aln.cols-1})-0.5, rep(#{i}, #{data.aln.cols-1}), (1:#{data.aln.cols-1})+0.5, rep(#{i+1}, #{data.aln.cols-1}), col=c(#{color}), border=NA);"
 	 i += 1
       end
