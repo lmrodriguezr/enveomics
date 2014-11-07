@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Dec 02 2013
+# @update: Nov 07 2014
 # @license: artistic license 2.0
 #
 
@@ -45,7 +45,7 @@ while(<IN>){
       for my $l (@row){
          $l =~ s/[\.\/:]/_/g;
 	 my $gs = gensym;
-	 open($gs, $o{o}.$l.".txt") or die "Cannot create file: $o{o}$l.txt: $!\n";
+	 open($gs, '>', $o{o}.$l.".txt") or die "Cannot create file: $o{o}$l.txt: $!\n";
 	 push @fhs, $gs;
       }
    }
