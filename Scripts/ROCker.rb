@@ -65,10 +65,11 @@ opts = OptionParser.new do |opt|
 	 opt.separator ""
       end
       opt.separator "BUILDING ARGUMENTS"
-      opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required."){ |v| $o[:positive]=v }
+      opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required unless -P or -a are used."){ |v| $o[:positive]=v }
       opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set."){ |v| $o[:negative]=v }
-      opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line."){ |v| $o[:posfile]=v }
+      opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line. If used, -p is not required."){ |v| $o[:posfile]=v }
       opt.on("-N", "--negative-file PATH", "File containing the negative set (see -n), one GI per line."){ |v| $o[:negfile]=v }
+      opt.on("-a", "--alignment FILE", "Protein alignment of the reference sequences. The defline must contain GI numbers. If used, -p is not required."){ |v| $o[:aln]=v }
       opt.on("-o", "--baseout PATH", "Prefix for the output files to be generated. Required."){ |v| $o[:baseout]=v }
       opt.on("-s", "--seqdepth NUMBER", "Sequencing depth to be used in building the in silico metagenome. By default: '#{$o[:seqdepth]}'."){ |v| $o[:seqdepth]=v.to_f }
       opt.on("-v", "--overlap NUMBER", "Minimum overlap with reference gene to tag a read as positive. By default: '#{$o[:minovl]}'."){ |v| $o[:minovl]=v.to_f }
@@ -235,6 +236,21 @@ class Alignment
    end
    def seq(id)
       @seqs[id]
+   end
+   def get_gis
+      regexps = [/^gi\|(\d+)\|/, /^(\d+)\|/, /^(\d+)$/, /^gi\|(\d+)$/, /\|gi\|(\d+)\|/, /\|gi\|(\d+)$/]
+      gis = []
+      self.seqs.keys.each do |id|
+	 gi = nil
+	 regexps.each do |regexp|
+	    unless regexp.match(id).nil?
+	       gi = $1
+	       break
+	    end
+	 end
+	 gis << gi unless gi.nil?
+      end
+      gis
    end
    def size
       self.seqs.size
@@ -547,6 +563,11 @@ begin
       raise "Unsatisfied requirements." unless has_build_gems
       $o[:positive] += File.readlines($o[:posfile]).map{ |l| l.chomp } unless $o[:posfile].nil?
       $o[:negative] += File.readlines($o[:negfile]).map{ |l| l.chomp } unless $o[:negfile].nil?
+      unless $o[:aln].nil?
+         aln = Alignment.new
+	 aln.read_fasta $o[:aln]
+	 $o[:positive] += aln.get_gis
+      end
       raise "-p or -P are mandatory." if $o[:positive].size==0
       raise "-o/--baseout is mandatory." if $o[:baseout].nil?
       if $o[:positive].size == 1 and not $o[:noaln]
