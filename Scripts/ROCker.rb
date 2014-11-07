@@ -21,14 +21,14 @@ WARN
 
 #================================[ Options parsing ]
 $o = {
-   :q=>false, :r=>'R',
+   :q=>false, :r=>'R', :nucl=>false,
    :positive=>[], :negative=>[], :sbj=>[],:color=>false,
    :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s"',
    :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
-   :blastcmd=>'%1$sblastx -query "%2$s" -db "%3$s" -out "%4$s" -outfmt 6 -max_target_seqs 1',
-   :makedbcmd=>'%1$smakeblastdb -in "%2$s" -out "%3$s" -dbtype prot'
+   :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -outfmt 6 -max_target_seqs 1',
+   :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"'
 }
 $t = {
    'build'   => 'Creates in silico metagenomes and training sets from reference genomes.',
@@ -65,7 +65,7 @@ opts = OptionParser.new do |opt|
 	 opt.separator ""
       end
       opt.separator "BUILDING ARGUMENTS"
-      opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required unless -P or -a are used."){ |v| $o[:positive]=v }
+      opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required unless -P or -a are used."){ |v| $o[:posori]=v }
       opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set."){ |v| $o[:negative]=v }
       opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line. If used, -p is not required."){ |v| $o[:posfile]=v }
       opt.on("-N", "--negative-file PATH", "File containing the negative set (see -n), one GI per line."){ |v| $o[:negfile]=v }
@@ -76,7 +76,8 @@ opts = OptionParser.new do |opt|
       opt.on("-G", "--grinder PATH", "Path to the grinder executable. By default: '#{$o[:grinder]}' (in the $PATH)."){ |v| $o[:grinder]=v }
       opt.on("-M", "--muscle PATH", "Path to the muscle executable. By default: '#{$o[:muscle]}' (in the $PATH)."){ |v| $o[:muscle]=v }
       opt.on("-B", "--blastbins PATH", "Path to the Blast+ executables. By default: '#{$o[:blastbins]}' (in the $PATH)."){ |v| $o[:blastbins]=v }
-      opt.on(      "--nometagenome", "Do not create metagenome. Implies --no-blast. By default, metagenome is created."){ |v| $o[:nomg]=v }
+      opt.on(      "--nucleotides", "If set, it assumes that the input sequences are in nucleotides. By default, proteins are assumed."){ |v| $o[:nucl]=true }
+      opt.on(      "--nometagenome", "Do not create metagenome. Implies --noblast. By default, metagenome is created."){ |v| $o[:nomg]=v }
       opt.on(      "--noblast", "Do not execute BLAST. By default, BLAST is executed."){ |v| $o[:noblast]=v }
       opt.on(      "--noalignment", "Do not align reference set. By default, references are aligned."){ |v| $o[:noaln]=v }
       opt.on(      "--nocleanup", "Keep all intermediate files. By default, intermediate files are removed."){ |v| $o[:noclean]=v }
@@ -85,9 +86,9 @@ opts = OptionParser.new do |opt|
 	 "By default: '#{$o[:grindercmd]}'."){ |v| $o[:grindercmd]=v }
       opt.on("--muscle-cmd STR", "Command calling muscle, where %1$s: muscle bin, %2$s: input, %3$s: output.",
 	 "By default: '#{$o[:musclecmd]}'."){ |v| $o[:musclecmd]=v }
-      opt.on("--blast-cmd STR", "Command calling BLAST search, where %1$s: blast bins, %2$s: input, %3$s: database, %4$s: output.",
+      opt.on("--blast-cmd STR", "Command calling BLAST search, where %1$s: blast bins, %2$s: program, %3$s: input, %4$s: database, %5$s: output.",
 	 "By default: '#{$o[:blastcmd]}'."){ |v| $o[:blastcmd]=v }
-      opt.on("--makedb-cmd STR", "Command calling BLAST format, where %1$s: blast bins, %2$s: input, %3$s: database.",
+      opt.on("--makedb-cmd STR", "Command calling BLAST format, where %1$s: blast bins, %2$s: dbtype, %3$s: input, %4$s: database.",
 	 "By default: '#{$o[:makedbcmd]}'."){ |v| $o[:makedbcmd]=v }
    when 'compile'
       opt.separator "COMPILATION ARGUMENTS"
@@ -193,6 +194,9 @@ class Sequence
    def length
       self.seq.length
    end
+   def to_seq_s
+      ">#{self.id}\n#{self.seq}\n"
+   end
    def to_s
       "#:>#{self.id}\n#:#{self.aln}\n"
    end
@@ -254,6 +258,9 @@ class Alignment
    end
    def size
       self.seqs.size
+   end
+   def to_seq_s
+      self.seqs.values.map{|s| s.to_seq_s}.join + "\n"
    end
    def to_s
       self.seqs.values.map{|s| s.to_s}.join + "\n"
@@ -561,6 +568,7 @@ begin
       puts "Testing environment." unless $o[:q]
       $o[:noblast]=true if $o[:nomg]
       raise "Unsatisfied requirements." unless has_build_gems
+      $o[:positive] += $o[:posori] unless $o[:posori].nil?
       $o[:positive] += File.readlines($o[:posfile]).map{ |l| l.chomp } unless $o[:posfile].nil?
       $o[:negative] += File.readlines($o[:negfile]).map{ |l| l.chomp } unless $o[:negfile].nil?
       unless $o[:aln].nil?
@@ -571,7 +579,7 @@ begin
       raise "-p or -P are mandatory." if $o[:positive].size==0
       raise "-o/--baseout is mandatory." if $o[:baseout].nil?
       if $o[:positive].size == 1 and not $o[:noaln]
-	 warn "\nWARNING: Positive set contains only one protein, turning off alignment.\n\n"
+	 warn "\nWARNING: Positive set contains only one sequence, turning off alignment.\n\n"
 	 $o[:noaln] = true
       end
       bash "#{$o[:grinder]} --version", "-G/--grinder must be executable. Is Grinder installed?" unless $o[:nomg]
@@ -579,14 +587,30 @@ begin
       bash "#{$o[:blastbins]}makeblastdb -version", "-B/--blastbins must contain executables. Is BLAST+ installed?" unless $o[:noblast]
       # Download genes and genomes
       puts "Downloading data." unless $o[:q]
-      puts "  * downloading #{$o[:positive].size} sequence(s) in positive set." unless $o[:q]
-      efetch({:db=>'protein', :id=>$o[:positive].join(','), :rettype=>'fasta', :retmode=>'text'}, $o[:baseout] + '.ref.fasta')
+      f = File.open($o[:baseout] + '.ref.fasta', 'w')
+      if $o[:posori].nil? and $o[:posfile].nil? and not $o[:aln].nil?
+	 puts "  * re-using aligned sequences as positive set." unless $o[:q]
+	 f.print aln.to_seq_s
+	 $o[:noaln] = true
+      else
+	 puts "  * downloading #{$o[:positive].size} sequence(s) in positive set." unless $o[:q]
+	 ids = $o[:positive]
+	 while ids.size>0
+	    f.print efetch({:db=>($o[:nucl] ? 'nuccore' : 'protein'), :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
+	 end
+      end
+      f.close
       genome_gis = {:positive=>[], :negative=>[]}
       [:positive, :negative].each do |set|
          unless $o[set].size==0
-	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} protein(s)." unless $o[:q]
-	    doc = Nokogiri::XML( elink({:dbfrom=>'protein', :db=>'nuccore', :id=>$o[set]}) )
-	    genome_gis[set] = doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }.uniq
+	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} sequence(s)." unless $o[:q]
+	    genome_gis[set] = []
+	    ids = $o[set]
+	    while ids.size>0
+	       doc = Nokogiri::XML( elink({:dbfrom=>($o[:nucl]?'nuccore':'protein'), :db=>'nuccore', :id=>ids.shift(200).join(',')}) )
+	       genome_gis[set] += doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }
+	    end
+	    genome_gis[set].uniq!
 	 end
       end
       all_gis = genome_gis.values.reduce(:+).uniq
@@ -597,8 +621,8 @@ begin
 	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
 	 efetch({:db=>'nuccore', :id=>all_gis.join(','), :rettype=>'fasta', :retmode=>'text'}, genomes_file)
       end
-      # Locate proteins
-      puts "Locating proteins in genomes." unless $o[:q]
+      # Locate genes
+      puts "Locating sequences in genomes." unless $o[:q]
       puts "  * downloading and parsing #{genome_gis[:positive].size} XML file(s)." unless $o[:q]
       positive_coords = {}
       i = 0
@@ -637,7 +661,7 @@ begin
       end
       print "\n" unless $o[:q]
       missing = $o[:positive] - positive_coords.values.map{ |a| a.map{ |b| b[:gi] } }.reduce(:+)
-      warn "\nWARNING: Cannot find genomic location of protein(s) #{missing.join(',')}.\n\n" unless missing.size==0
+      warn "\nWARNING: Cannot find genomic location of sequence(s) #{missing.join(',')}.\n\n" unless missing.size==0
       # Generate metagenome
       unless $o[:nomg]
 	 puts "Generating in silico metagenome" unless $o[:q]
@@ -688,9 +712,9 @@ begin
 	    puts "  * reusing existing file: #{$o[:baseout]}.ref.blast." unless $o[:q]
 	 else
 	    puts "  * preparing database." unless $o[:q]
-	    bash sprintf($o[:makedbcmd], $o[:blastbins], "#{$o[:baseout]}.ref.fasta", "#{$o[:baseout]}.ref")
+	    bash sprintf($o[:makedbcmd], $o[:blastbins], ($o[:nucl]?'nucl':'prot'), "#{$o[:baseout]}.ref.fasta", "#{$o[:baseout]}.ref")
 	    puts "  * running BLAST." unless $o[:q]
-	    bash sprintf($o[:blastcmd], $o[:blastbins], "#{$o[:baseout]}.mg.fasta", "#{$o[:baseout]}.ref", "#{$o[:baseout]}.ref.blast")
+	    bash sprintf($o[:blastcmd], $o[:blastbins], ($o[:nucl]?'blastn':'blastx'), "#{$o[:baseout]}.mg.fasta", "#{$o[:baseout]}.ref", "#{$o[:baseout]}.ref.blast")
 	 end
       end
       # Clean
