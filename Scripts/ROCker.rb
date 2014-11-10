@@ -4,7 +4,7 @@
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @author Luis (Coto) Orellana
 # @license artistic license 2.0
-# @update Oct-28-2014
+# @update Nov-10-2014
 #
 
 require 'optparse'
@@ -594,7 +594,7 @@ begin
 	 $o[:noaln] = true
       else
 	 puts "  * downloading #{$o[:positive].size} sequence(s) in positive set." unless $o[:q]
-	 ids = $o[:positive]
+	 ids = Array.new($o[:positive])
 	 while ids.size>0
 	    f.print efetch({:db=>($o[:nucl] ? 'nuccore' : 'protein'), :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
 	 end
@@ -605,7 +605,7 @@ begin
          unless $o[set].size==0
 	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} sequence(s)." unless $o[:q]
 	    genome_gis[set] = []
-	    ids = $o[set]
+	    ids = Array.new($o[set])
 	    while ids.size>0
 	       doc = Nokogiri::XML( elink({:dbfrom=>($o[:nucl]?'nuccore':'protein'), :db=>'nuccore', :id=>ids.shift(200).join(',')}) )
 	       genome_gis[set] += doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }
@@ -613,6 +613,7 @@ begin
 	    genome_gis[set].uniq!
 	 end
       end
+      abort "No genomes associated with the positive set." if genome_gis[:positive].size==0
       all_gis = genome_gis.values.reduce(:+).uniq
       genomes_file = $o[:baseout] + '.src.fasta'
       if $o[:reuse] and File.exists? genomes_file
