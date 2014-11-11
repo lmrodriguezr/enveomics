@@ -640,25 +640,30 @@ begin
 	    res = efetch({:db=>'nuccore', :id=>gi, :rettype=>'xml', :retmode=>'text'}, genome_file)
 	    doc = Nokogiri::XML( res )
 	 end
-	 doc.xpath('/Bioseq-set/Bioseq-set_seq-set/Seq-entry').each do |genome|
-	    genome_gi = genome.at_xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_seq-set/Seq-entry/Seq-entry_seq/Bioseq/Bioseq_id/Seq-id/Seq-id_gi').content
-	    warn "\nWARNING: GI mismatch, expecting '#{gi}', got '#{genome_gi}'.\n\n" unless gi==genome_gi
-	    positive_coords[genome_gi] ||= []
-	    genome.xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_annot/Seq-annot/Seq-annot_data/Seq-annot_data_ftable/Seq-feat').each do |pr|
-	       pr_gi = pr.at_xpath('./Seq-feat_product/Seq-loc/Seq-loc_whole/Seq-id/Seq-id_gi')
-	       next if pr_gi.nil?
-	       if $o[:positive].include? pr_gi.content
-		  pr_loc = pr.at_xpath('./Seq-feat_location/Seq-loc/Seq-loc_int/Seq-interval')
-		  positive_coords[genome_gi] << {
-		     :gi     => pr_gi.content,
-		     :from   => pr_loc.at_xpath('./Seq-interval_from').content.to_i,
-		     :to     => pr_loc.at_xpath('./Seq-interval_to').content.to_i
-		     #, :strand => pr_loc.at_xpath('./Seq-interval_strand/Na-strand/@value').content
-		  }
+	 incomplete = true
+	 doc.xpath('//Bioseq-set/Bioseq-set_seq-set/Seq-entry').each do |genome|
+	    genome_gi = genome.at_xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_seq-set/Seq-entry/Seq-entry_seq/Bioseq/Bioseq_id/Seq-id/Seq-id_gi')
+	    if !genome_gi.nil? and gi==genome_gi.content
+	       incomplete = false
+	       positive_coords[gi] ||= []
+	       genome.xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_annot/Seq-annot/Seq-annot_data/Seq-annot_data_ftable/Seq-feat').each do |pr|
+		  pr_gi = pr.at_xpath('./Seq-feat_product/Seq-loc/Seq-loc_whole/Seq-id/Seq-id_gi')
+		  next if pr_gi.nil?
+		  if $o[:positive].include? pr_gi.content
+		     pr_loc = pr.at_xpath('./Seq-feat_location/Seq-loc/Seq-loc_int/Seq-interval')
+		     positive_coords[gi] << {
+			:gi     => pr_gi.content,
+			:from   => pr_loc.at_xpath('./Seq-interval_from').content.to_i,
+			:to     => pr_loc.at_xpath('./Seq-interval_to').content.to_i
+			#, :strand => pr_loc.at_xpath('./Seq-interval_strand/Na-strand/@value').content
+		     }
+		  end
 	       end
+	       break
 	    end
 	 end
 	 doc = nil
+	 warn "WARNING: Cannot find GI '#{gi}'." if incomplete
       end
       print "\n" unless $o[:q]
       missing = $o[:positive] - positive_coords.values.map{ |a| a.map{ |b| b[:gi] } }.reduce(:+)
