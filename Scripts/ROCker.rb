@@ -4,7 +4,7 @@
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @author Luis (Coto) Orellana
 # @license artistic license 2.0
-# @update Nov-10-2014
+# @update Nov-11-2014
 #
 
 require 'optparse'
@@ -620,7 +620,12 @@ begin
 	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
       else
 	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
-	 efetch({:db=>'nuccore', :id=>all_gis.join(','), :rettype=>'fasta', :retmode=>'text'}, genomes_file)
+	 ids = Array.new(all_gis)
+	 ofh = File.open(genomes_file, 'w')
+	 while ids.size>0
+	    ofh.print efetch({:db=>'nuccore', :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
+	 end
+	 ofh.close
       end
       # Locate genes
       puts "Locating sequences in genomes." unless $o[:q]
@@ -651,12 +656,29 @@ begin
 		  next if pr_gi.nil?
 		  if $o[:positive].include? pr_gi.content
 		     pr_loc = pr.at_xpath('./Seq-feat_location/Seq-loc/Seq-loc_int/Seq-interval')
-		     positive_coords[gi] << {
-			:gi     => pr_gi.content,
-			:from   => pr_loc.at_xpath('./Seq-interval_from').content.to_i,
-			:to     => pr_loc.at_xpath('./Seq-interval_to').content.to_i
-			#, :strand => pr_loc.at_xpath('./Seq-interval_strand/Na-strand/@value').content
-		     }
+		     if pr_loc.nil?
+			pr_loc = pr.xpath('./Seq-feat_location/Seq-loc/Seq-loc_mix//Seq-loc/Seq-loc_int/Seq-interval')
+			if pr_loc.nil?
+			   warn "WARNING: Impossible to find location of '#{pr_gi.content}' in '#{gi}'."
+			   incomplete = true
+			else
+			   pr_loc.each do |loc_int|
+			      positive_coords[gi] << {
+				 :gi     => pr_gi.content,
+				 :from   => loc_int.at_xpath('./Seq-interval_from').content.to_i,
+				 :to     => loc_int.at_xpath('./Seq-interval_to').content.to_i
+				 #, :strand => loc_int.at_xpath('./Seq-interval_strand/Na-strand/@value').content
+			      }
+			   end
+			end
+		     else
+			positive_coords[gi] << {
+			   :gi     => pr_gi.content,
+			   :from   => pr_loc.at_xpath('./Seq-interval_from').content.to_i,
+			   :to     => pr_loc.at_xpath('./Seq-interval_to').content.to_i
+			   #, :strand => pr_loc.at_xpath('./Seq-interval_strand/Na-strand/@value').content
+			}
+		     end
 		  end
 	       end
 	       break
