@@ -22,7 +22,7 @@ WARN
 #================================[ Options parsing ]
 $o = {
    :q=>false, :r=>'R', :nucl=>false,
-   :positive=>[], :negative=>[], :sbj=>[],:color=>false,
+   :positive=>[], :negative=>[], :sbj=>[],:color=>false, :refine=>true,
    :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
@@ -98,6 +98,7 @@ opts = OptionParser.new do |opt|
       opt.on("-t", "--table FILE", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
       opt.on("-k", "--rocker FILE", "ROCker file to be created. Required."){ |v| $o[:rocker]=v }
       opt.on(      "--min-score NUMBER", "Minimum Bit-Score to consider a hit. By default: #{$o[:minscore]}"){ |v| $o[:minscore]=v.to_f }
+      opt.on(      "--norefine", "Do not refine windows."){ $o[:refine]=false }
       opt.on("-w", "--window INT", "Size of alignment windows (in number of AA columns). By default: #{$o[:win]}."){ |v| $o[:win]=v.to_i }
       opt.separator ""
       opt.separator "INPUT/OUTPUT"
@@ -779,8 +780,10 @@ begin
       puts "Analyzing data." unless $o[:q]
       puts "  * computing windows." unless $o[:q]
       data = ROCData.new($o[:table], aln, $o[:win])
-      puts "  * refining windows." unless $o[:q]
-      warn "Insufficient hits to refine results." unless data.refine! $o[:table]
+      if $o[:refine]
+	 puts "  * refining windows." unless $o[:q]
+	 warn "Insufficient hits to refine results." unless data.refine! $o[:table]
+      end
       puts "  * saving ROCker file: #{$o[:rocker]}." unless $o[:q]
       data.save $o[:rocker]
    when 'filter'
