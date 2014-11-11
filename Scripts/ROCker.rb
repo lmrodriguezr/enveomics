@@ -25,7 +25,7 @@ $o = {
    :positive=>[], :negative=>[], :sbj=>[],:color=>false,
    :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
-   :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s"',
+   :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
    :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
    :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -outfmt 6 -max_target_seqs 1',
    :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"'
