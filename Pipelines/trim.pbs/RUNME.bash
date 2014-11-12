@@ -47,12 +47,12 @@ for i in $dir/*.1.fastq ; do
    b=$(basename $i .1.fastq) ;
    mv $b.[12].fastq 01.raw_reads/ ;
    # Predict time (in hours)
-   TIME_H=$(($(ls -pl 01.raw_reads/$b.1.fastq | awk '{print $5}')/1000000)) ;
-   if [[ -e 01.raw_reads/$b.2.fastq ]] ; then
-      let TIME_H=$TIME_H*5/1000 ;
-   else
-      let TIME_H=$TIME_H*5/2000 ;
-   fi ;
+   SIZE_M=$(($(ls -pl 01.raw_reads/$b.1.fastq | awk '{print $5}')/1000000)) ;
+   let TIME_H=$SIZE_M*5/1000 ;
+   [[ -e 01.raw_reads/$b.2.fastq ]] || let TIME_H=$SIZE_M/2 ;
+   let RAM_G=$SIZE_M*6/1000 ;
+   [[ $RAM_G -lt 10 ]] && RAM_G=10 ;
+   
    # Find the right queue
    if [[ $TIME_H -lt 12 ]] ; then
       QUEUE="-q iw-shared-6 -l walltime=12:00:00" ;
@@ -62,7 +62,7 @@ for i in $dir/*.1.fastq ; do
       QUEUE="-q microcluster -l walltime=2000:00:00" ;
    fi ;
    # Launch job
-   jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" $QUEUE $EXTRA $pac/run.pbs | grep .) ;
+   jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" -l "mem=${RAM_G}g" $QUEUE $EXTRA $pac/run.pbs | grep .) ;
    echo "$b: ${jids[$k]}$EXTRA_MSG" ;
    let k=$k+1 ;
 done ;
