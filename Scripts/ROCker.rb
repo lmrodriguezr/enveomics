@@ -4,7 +4,7 @@
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @author Luis (Coto) Orellana
 # @license artistic license 2.0
-# @update Nov-11-2014
+# @update Nov-13-2014
 #
 
 require 'optparse'
@@ -21,19 +21,26 @@ WARN
 
 #================================[ Options parsing ]
 $o = {
+   # General
    :q=>false, :r=>'R', :nucl=>false,
-   :positive=>[], :negative=>[], :sbj=>[],:color=>false, :refine=>true,
-   :win=>20, :gformat=>'pdf', :width=>9, :height=>9, :minscore=>0,
+   # Build
+   :positive=>[], :negative=>[],
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
    :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
    :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -outfmt 6 -max_target_seqs 1',
-   :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"'
+   :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"',
+   # Compile
+   :refine=>true, :win=>20, :minscore=>0,
+   # Filter
+   :sbj=>[],
+   # Plot
+   :color=>false, :gformat=>'pdf', :width=>9, :height=>9
 }
 $t = {
    'build'   => 'Creates in silico metagenomes and training sets from reference genomes.',
    'compile' => 'Identifies the most discriminant bit-score per sequence position in a set of sequence.',
-   'filter'  => 'Uses a pre-compiled set of bit-score thresholds to filter a BLAST result.',
+   'filter'  => 'Uses a pre-compiled set of bit-score thresholds to filter a search result.',
    'plot'    => 'Generates a graphical representation of the alignment, the thresholds, and the hits.',
 }
 task = (ARGV.size > 0 ? ARGV.shift : '').downcase
@@ -58,19 +65,21 @@ opts = OptionParser.new do |opt|
    case task
    when 'build'
       unless has_build_gems
-	 opt.separator "UNSATISFIED REQUIREMENTS"
+	 opt.separator "• UNSATISFIED REQUIREMENTS"
 	 opt.separator "    The building task requires uninstalled gems, please install them executing:"
 	 opt.separator "       gem install rest_client"
 	 opt.separator "       gem install nokogiri"
 	 opt.separator ""
       end
-      opt.separator "BUILDING ARGUMENTS"
+      opt.separator "• BUILDING ARGUMENTS"
       opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required unless -P or -a are used."){ |v| $o[:posori]=v }
-      opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set."){ |v| $o[:negative]=v }
+      opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set. See also -N."){ |v| $o[:negative]=v }
+      opt.on("-o", "--baseout PATH", "Prefix for the output files to be generated. Required."){ |v| $o[:baseout]=v }
+      opt.separator ""
+      opt.separator "• ADVANCED BUILDING ARGUMENTS"
       opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line. If used, -p is not required."){ |v| $o[:posfile]=v }
       opt.on("-N", "--negative-file PATH", "File containing the negative set (see -n), one GI per line."){ |v| $o[:negfile]=v }
-      opt.on("-a", "--alignment FILE", "Protein alignment of the reference sequences. The defline must contain GI numbers. If used, -p is not required."){ |v| $o[:aln]=v }
-      opt.on("-o", "--baseout PATH", "Prefix for the output files to be generated. Required."){ |v| $o[:baseout]=v }
+      opt.on("-a", "--alignment PATH", "Protein alignment of the reference sequences. The defline must contain GI numbers. If used, -p is not required."){ |v| $o[:aln]=v }
       opt.on("-s", "--seqdepth NUMBER", "Sequencing depth to be used in building the in silico metagenome. By default: '#{$o[:seqdepth]}'."){ |v| $o[:seqdepth]=v.to_f }
       opt.on("-v", "--overlap NUMBER", "Minimum overlap with reference gene to tag a read as positive. By default: '#{$o[:minovl]}'."){ |v| $o[:minovl]=v.to_f }
       opt.on("-G", "--grinder PATH", "Path to the grinder executable. By default: '#{$o[:grinder]}' (in the $PATH)."){ |v| $o[:grinder]=v }
@@ -91,17 +100,19 @@ opts = OptionParser.new do |opt|
       opt.on("--makedb-cmd STR", "Command calling BLAST format, where %1$s: blast bins, %2$s: dbtype, %3$s: input, %4$s: database.",
 	 "By default: '#{$o[:makedbcmd]}'."){ |v| $o[:makedbcmd]=v }
    when 'compile'
-      opt.separator "COMPILATION ARGUMENTS"
-      opt.on("-a", "--alignment FILE", "Protein alignment of the reference sequences. Required."){ |v| $o[:aln]=v }
-      opt.on("-b", "--ref-blast FILE",
+      opt.separator "• COMPILATION ARGUMENTS"
+      opt.on("-a", "--alignment PATH", "Protein alignment of the reference sequences. Required."){ |v| $o[:aln]=v }
+      opt.on("-b", "--ref-blast PATH",
       		"Tabular BLAST (blastx) of the test reads vs. the reference dataset. Required unless -t exists."){ |v| $o[:blast]=v }
-      opt.on("-t", "--table FILE", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
-      opt.on("-k", "--rocker FILE", "ROCker file to be created. Required."){ |v| $o[:rocker]=v }
+      opt.on("-k", "--rocker PATH", "ROCker file to be created. Required."){ |v| $o[:rocker]=v }
+      opt.separator ""
+      opt.separator "• ADVANCED COMPILATION ARGUMENTS"
+      opt.on("-t", "--table PATH", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
       opt.on(      "--min-score NUMBER", "Minimum Bit-Score to consider a hit. By default: #{$o[:minscore]}"){ |v| $o[:minscore]=v.to_f }
       opt.on(      "--norefine", "Do not refine windows."){ $o[:refine]=false }
-      opt.on("-w", "--window INT", "Size of alignment windows (in number of AA columns). By default: #{$o[:win]}."){ |v| $o[:win]=v.to_i }
+      opt.on("-w", "--window INT", "Initial size of alignment windows (in number of AA columns). By default: #{$o[:win]}."){ |v| $o[:win]=v.to_i }
       opt.separator ""
-      opt.separator "INPUT/OUTPUT"
+      opt.separator "• INPUT/OUTPUT"
       opt.separator "   o The input alignment (-a) MUST be in FastA format, and the IDs must"
       opt.separator "     coincide with those from the BLAST (-b)."
       opt.separator "   o The input BLAST (-b) MUST be in tabular format. True positives must"
@@ -122,17 +133,19 @@ opts = OptionParser.new do |opt|
       opt.separator "     The file also contains the alignment (commented with #:)."
       opt.separator ""
    when 'filter'
-      opt.separator "FILTERING ARGUMENTS"
-      opt.on("-k", "--rocker FILE", "ROCker file generated by the compile task (-k). Required."){ |v| $o[:rocker]=v }
-      opt.on("-x", "--query-blast FILE", "Tabular BLAST (blastx) of the query reads vs. the reference dataset. Required."){ |v| $o[:qblast]=v }
-      opt.on("-o", "--out-blast FILE", "Filtered tabular BLAST to be created. Required."){ |v| $o[:oblast]=v }
+      opt.separator "• FILTERING ARGUMENTS"
+      opt.on("-k", "--rocker PATH", "ROCker file generated by the compile task (-k). Required."){ |v| $o[:rocker]=v }
+      opt.on("-x", "--query-blast PATH", "Tabular BLAST (blastx) of the query reads vs. the reference dataset. Required."){ |v| $o[:qblast]=v }
+      opt.on("-o", "--out-blast PATH", "Filtered tabular BLAST to be created. Required."){ |v| $o[:oblast]=v }
    when 'plot'
-      opt.separator "PLOTTING ARGUMENTS"
-      opt.on("-k", "--rocker FILE", "ROCker file generated by the compile task (-k). Required."){ |v| $o[:rocker]=v }
-      opt.on("-b", "--ref-blast FILE",
+      opt.separator "• PLOTTING ARGUMENTS"
+      opt.on("-k", "--rocker PATH", "ROCker file generated by the compile task (-k). Required."){ |v| $o[:rocker]=v }
+      opt.on("-b", "--ref-blast PATH",
       		"Tabular BLAST (blastx) of the test reads vs. the reference dataset. Required unless -t exists."){ |v| $o[:blast]=v }
-      opt.on("-t", "--table FILE", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
-      opt.on("-o", "--plot-file FILE", "File to be created with the plot. By default: value of -k + '.' + value of -f."){ |v| $o[:gout]=v }
+      opt.on("-o", "--plot-file PATH", "File to be created with the plot. By default: value of -k + '.' + value of -f."){ |v| $o[:gout]=v }
+      opt.separator ""
+      opt.separator "• ADVANCED PLOTTING ARGUMENTS"
+      opt.on("-t", "--table PATH", "Formated tabular file to be created (or reused). Required unless -b is provided."){ |v| $o[:table]=v }
       opt.on(      "--color", "Color alignment by amino acid."){ $o[:color]=true }
       opt.on(      "--min-score NUMBER", "Minimum Bit-Score to consider a hit. By default: #{$o[:minscore]}"){ |v| $o[:minscore]=v.to_f }
       opt.on("-s", "--subject SBJ1,SBJ2,...", Array,
@@ -148,8 +161,8 @@ opts = OptionParser.new do |opt|
       $t.keys.each{ |t| opt.separator "     #{t}:\t#{$t[t]}" }
    end
    opt.separator ""
-   opt.separator "GENERAL ARGUMENTS"
-   opt.on("-R", "--path-to-r EXE", "Path to the R executable to be used. By default: '#{$o[:r]}'."){ |v| $o[:r]=v }
+   opt.separator "• GENERAL ARGUMENTS"
+   opt.on("-R", "--path-to-r PATH", "Path to the R executable to be used. By default: '#{$o[:r]}'."){ |v| $o[:r]=v }
    opt.on("-q", "--quiet", "Run quietly."){ |v| $o[:q]=true }
    opt.on("-h", "--help","Display this screen") do
       puts opt
@@ -189,18 +202,10 @@ class Sequence
       end
       pos
    end
-   def cols
-      self.aln.length
-   end
-   def length
-      self.seq.length
-   end
-   def to_seq_s
-      ">#{self.id}\n#{self.seq}\n"
-   end
-   def to_s
-      "#:>#{self.id}\n#:#{self.aln}\n"
-   end
+   def cols() self.aln.length end
+   def length() self.seq.length end
+   def to_seq_s() ">#{self.id}\n#{self.seq}\n" end
+   def to_s() "#:>#{self.id}\n#:#{self.aln}\n" end
 end
 
 class Alignment
@@ -208,12 +213,8 @@ class Alignment
    def initialize
       @seqs = {}
    end
-   def read_fasta(file)
-      self.read_file(file, false)
-   end
-   def read_rocker(file)
-      self.read_file(file, true)
-   end
+   def read_fasta(file) self.read_file(file, false) end
+   def read_rocker(file) self.read_file(file, true) end
    def read_file(file, is_rocker)
       f = File.open(file, 'r')
       id = nil
@@ -239,9 +240,6 @@ class Alignment
       @cols = seq.cols if self.cols.nil?
       raise "Aligned sequence #{seq.id} has a different length (#{seq.cols} vs #{self.cols})" unless seq.cols == self.cols
    end
-   def seq(id)
-      @seqs[id]
-   end
    def get_gis
       regexps = [/^gi\|(\d+)\|/, /^(\d+)\|/, /^(\d+)$/, /^gi\|(\d+)$/, /\|gi\|(\d+)\|/, /\|gi\|(\d+)$/]
       gis = []
@@ -257,15 +255,10 @@ class Alignment
       end
       gis
    end
-   def size
-      self.seqs.size
-   end
-   def to_seq_s
-      self.seqs.values.map{|s| s.to_seq_s}.join + "\n"
-   end
-   def to_s
-      self.seqs.values.map{|s| s.to_s}.join + "\n"
-   end
+   def seq(id) @seqs[id] end
+   def size() self.seqs.size end
+   def to_seq_s() self.seqs.values.map{|s| s.to_seq_s}.join + "\n" end
+   def to_s() self.seqs.values.map{|s| s.to_s}.join + "\n" end
 end
 
 class BlastHit
@@ -294,7 +287,9 @@ class BlastHit
       end
    end
    def to_s
-      self.sbj.nil? ? "" : [self.sbj, self.sfrom.to_s, self.sto.to_s, self.bits.to_s, self.istrue ? '1' : '0', self.midpoint].join("\t") + "\n"
+      self.sbj.nil? ? "" :
+	 [self.sbj, self.sfrom.to_s, self.sto.to_s, self.bits.to_s,
+	    self.istrue ? '1' : '0', self.midpoint].join("\t") + "\n"
    end
 end
 
@@ -329,17 +324,6 @@ class ROCWindow
 	 @thr = nil if @thr==0.0 or @thr.infinite?
       end
    end
-   def load_hits
-      self.rrun "y <- x[x$V6>=#{self.from} & x$V6<=#{self.to},];"
-   end
-   def previous
-      return nil if self.from == 1
-      self.data.win_at_col(self.from - 1)
-   end
-   def next
-      return nil if self.to == self.data.aln.cols
-      self.data.win_at_col(self.to + 1)
-   end
    def around_thr
       a = self.previous
       b = self.next
@@ -354,24 +338,15 @@ class ROCWindow
       return b.thr if a.nil?
       return (b.thr*(self.from-a.from) - a.thr*(self.from-b.from))/(b.from-a.from)
    end
-   def thr_notnil
-      (@thr.nil? or @thr.infinite?) ? self.around_thr : @thr
-   end
-   def fps
-      self.hits - self.tps
-   end
-   def almost_empty
-      self.fps < 3 or self.tps < 3
-   end
-   def length
-      self.to - self.from + 1
-   end
-   def rrun(cmd, type=nil)
-      self.data.rrun cmd, type
-   end
-   def to_s
-      [self.from, self.to, self.hits, self.tps, self.thr_notnil].join("\t") + "\n"
-   end
+   def load_hits() self.rrun "y <- x[x$V6>=#{self.from} & x$V6<=#{self.to},];" end
+   def previous() (self.from == 1) ? nil : self.data.win_at_col(self.from - 1) end
+   def next() (self.to == self.data.aln.cols) ? nil : self.data.win_at_col(self.to + 1) end
+   def thr_notnil() (@thr.nil? or @thr.infinite?) ? self.around_thr : @thr end
+   def fps() self.hits - self.tps end
+   def almost_empty() self.fps < 3 or self.tps < 3 end
+   def length() self.to - self.from + 1 end
+   def rrun(cmd, type=nil) self.data.rrun cmd, type end
+   def to_s() [self.from, self.to, self.hits, self.tps, self.thr_notnil].join("\t") + "\n" end
 end
 
 class ROCData
@@ -471,9 +446,7 @@ class ROCData
       @windows = []
       1.step(self.aln.cols,size).each { |a| @windows << ROCWindow.new(self, a, a+size-1) }
    end
-   def rrun(cmd, type=nil)
-      self.r.run cmd, type
-   end
+   def rrun(cmd, type=nil) self.r.run cmd, type end
    def save(file)
       f = File.open(file, "w")
       f.print self.to_s
@@ -549,12 +522,8 @@ def eutils(script, params={}, outfile=nil)
    end
    response.to_s
 end
-def efetch(*etc)
-   eutils 'efetch.fcgi', *etc
-end
-def elink(*etc)
-   eutils 'elink.fcgi', *etc
-end
+def efetch(*etc) eutils 'efetch.fcgi', *etc end
+def elink(*etc) eutils 'elink.fcgi', *etc end
 def bash(cmd, err_msg=nil)
    o = `#{cmd} 2>&1 && echo '{'`
    raise (err_msg.nil? ? "Error executing: #{cmd}\n\n#{o}" : err_msg) unless o[-2]=='{'
@@ -562,8 +531,8 @@ def bash(cmd, err_msg=nil)
 end
 #================================[ Main ]
 begin
-   bash "echo '' | #{$o[:r]} --vanilla", "-r/--path-to-r must be executable. Is R installed?" unless task=='build'
    case task
+#================================[ Build ]
    when 'build'
       # Check requirements
       puts "Testing environment." unless $o[:q]
@@ -754,6 +723,7 @@ begin
 	 sff += %w{.ref.phr .ref.pin .ref.psq} unless $o[:noblast]
 	 sff.each { |sf| File.unlink $o[:baseout] + sf if File.exists? $o[:baseout] + sf }
       end
+#================================[ Compile ]
    when 'compile'
       raise "-a/--alignment is mandatory." if $o[:aln].nil?
       raise "-a/--alignment must exist." unless File.exists? $o[:aln]
@@ -763,6 +733,9 @@ begin
       end
       raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
       raise "-k/--rocker is mandatory." if $o[:rocker].nil?
+
+      puts "Testing environment." unless $o[:q]
+      bash "echo '' | #{$o[:r]} --vanilla", "-r/--path-to-r must be executable. Is R installed?"
       bash "echo \"library('pROC')\" | #{$o[:r]} --vanilla", "Please install the 'pROC' library for R first."
 
       puts "Reading files." unless $o[:q]
@@ -786,6 +759,7 @@ begin
       end
       puts "  * saving ROCker file: #{$o[:rocker]}." unless $o[:q]
       data.save $o[:rocker]
+#================================[ Filter ]
    when 'filter'
       raise "-k/--rocker is mandatory." if $o[:rocker].nil?
       raise "-x/--query-blast is mandatory." if $o[:qblast].nil?
@@ -803,6 +777,7 @@ begin
       end
       ih.close
       oh.close
+#================================[ Plot ]
    when 'plot'
       raise "-k/--rocker is mandatory." if $o[:rocker].nil?
       if $o[:table].nil?
@@ -810,6 +785,9 @@ begin
 	 $o[:table] = "#{$o[:blast]}.table"
       end
       raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
+
+      puts "Testing environment." unless $o[:q]
+      bash "echo '' | #{$o[:r]} --vanilla", "-r/--path-to-r must be executable. Is R installed?"
 
       puts "Reading files." unless $o[:q]
       puts "  * loding ROCker file: #{$o[:rocker]}." unless $o[:q]
@@ -824,12 +802,9 @@ begin
       puts "Plotting hits." unless $o[:q]
       extra = $o[:gformat]=='pdf' ? "" : ", units='in', res=300"
       $o[:gout] ||= "#{$o[:rocker]}.#{$o[:gformat]}"
-      # Open file
       data.rrun "#{$o[:gformat]}('#{$o[:gout]}', #{$o[:width]}, #{$o[:height]}#{extra});"
       data.rrun "layout(c(2,1,3), heights=c(2-1/#{data.aln.size},3,1));"
-      # Read table
       some_thr = data.load_table! $o[:table], $o[:sbj], $o[:minscore]
-      # Plot
       data.rrun "par(mar=c(0,4,0,0.5)+.1);"
       data.rrun "plot(1, t='n', xlim=c(0.5,#{data.aln.cols}+0.5), ylim=range(x$V4)+c(-0.04,0.04)*diff(range(x$V4)), xlab='', ylab='Bit score', xaxs='i', xaxt='n');"
       data.rrun "noise <- runif(ncol(x),-.2,.2)"
