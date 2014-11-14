@@ -24,11 +24,11 @@ $o = {
    # General
    :q=>false, :r=>'R', :nucl=>false,
    # Build
-   :positive=>[], :negative=>[],
+   :positive=>[], :negative=>[], :thr=>2,
    :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
    :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
    :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
-   :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -outfmt 6 -max_target_seqs 1',
+   :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -num_threads %6$d -outfmt 6 -max_target_seqs 1',
    :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"',
    # Compile
    :refine=>true, :win=>20, :minscore=>0,
@@ -75,6 +75,7 @@ opts = OptionParser.new do |opt|
       opt.on("-p", "--positive GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'positive' training set. Required unless -P or -a are used."){ |v| $o[:posori]=v }
       opt.on("-n", "--negative GI1,GI2,GI3", Array, "Comma-separated list of NCBI GIs corresponding to the 'negative' training set. See also -N."){ |v| $o[:negative]=v }
       opt.on("-o", "--baseout PATH", "Prefix for the output files to be generated. Required."){ |v| $o[:baseout]=v }
+      opt.on("-t", "--threads INT", "Number of threads to use. By default: #{$o[:thr]}."){ |v| $o[:thr]=v.to_i }
       opt.separator ""
       opt.separator "• ADVANCED BUILDING ARGUMENTS"
       opt.on("-P", "--positive-file PATH", "File containing the positive set (see -p), one GI per line. If used, -p is not required."){ |v| $o[:posfile]=v }
@@ -95,7 +96,7 @@ opts = OptionParser.new do |opt|
 	 "By default: '#{$o[:grindercmd]}'."){ |v| $o[:grindercmd]=v }
       opt.on("--muscle-cmd STR", "Command calling muscle, where %1$s: muscle bin, %2$s: input, %3$s: output.",
 	 "By default: '#{$o[:musclecmd]}'."){ |v| $o[:musclecmd]=v }
-      opt.on("--blast-cmd STR", "Command calling BLAST search, where %1$s: blast bins, %2$s: program, %3$s: input, %4$s: database, %5$s: output.",
+      opt.on("--blast-cmd STR", "Command calling BLAST search, where %1$s: blast bins, %2$s: program, %3$s: input, %4$s: database, %5$s: output, %6$d: threads.",
 	 "By default: '#{$o[:blastcmd]}'."){ |v| $o[:blastcmd]=v }
       opt.on("--makedb-cmd STR", "Command calling BLAST format, where %1$s: blast bins, %2$s: dbtype, %3$s: input, %4$s: database.",
 	 "By default: '#{$o[:makedbcmd]}'."){ |v| $o[:makedbcmd]=v }
@@ -666,31 +667,66 @@ begin
 	 if $o[:reuse] and File.exists? $o[:baseout] + ".mg.fasta"
 	    puts "  * reusing existing file: #{$o[:baseout]}.mg.fasta." unless $o[:q]
 	 else
-	    puts "  * running grinder." unless $o[:q]
-	    bash sprintf($o[:grindercmd], $o[:grinder], "#{$o[:baseout]}.src.fasta", $o[:seqdepth], "#{$o[:baseout]}.mg.tmp")
-	    # Tag positives
-	    puts "  * tagging positive reads." unless $o[:q]
-	    ifh = File.open($o[:baseout] + ".mg.tmp-reads.fa", 'r')
-	    ofh = File.open($o[:baseout] + ".mg.fasta", 'w')
-	    while ln=ifh.gets
-	       rd = /^>(?<id>\d+) reference=gi\|(?<gi>\d+)\|.* position=(?<comp>complement\()?(?<from>\d+)\.\.(?<to>\d+)\)? /.match(ln)
-	       unless rd.nil?
-		  positive = false
-		  positive_coords[rd[:gi]] ||= []
-		  positive_coords[rd[:gi]].each do |gn|
-		     left  = rd[:to].to_i - gn[:from]
-		     right = gn[:to] - rd[:from].to_i
-		     if (left*right >= 0) and ([left, right].min/(rd[:to].to_i-rd[:from].to_i) >= $o[:minovl])
-			positive = true
-			break
-		     end
+	    all_src = File.readlines("#{$o[:baseout]}.src.fasta").select{ |l| l =~ /^>/ }.size
+	    thrs = [$o[:thr], all_src].min
+	    puts "  * running grinder and tagging positive reads (#{thrs} threads)." unless $o[:q]
+	    thr_obj = []
+	    seqs_per_thr = (all_src/thrs).ceil
+	    (1 .. thrs).each do |thr_i|
+	       thr_obj[thr_i] = Thread.new do
+		  Thread.current[:seqs_a] = thr_i*seqs_per_thr + 1
+		  Thread.current[:seqs_b] = [Thread.current[:seqs_a] + seqs_per_thr, all_src].min
+		  # Create sub-fasta
+		  ofh = File.open("#{$o[:baseout]}.src.fasta.#{thr_i.to_s}", 'w')
+		  ifh = File.open("#{$o[:baseout]}.src.fasta", 'r')
+		  seq_i = 0
+		  while l = ifh.gets
+		     seq_i+=1 if l =~ /^>/
+		     break if seq_i > Thread.current[:seqs_b]
+		     ofh.print l if seq_i >= Thread.current[:seqs_a]
 		  end
-		  ln = ">#{rd[:id]}#{positive ? "@%" : ""} ref=#{rd[:gi]}:#{rd[:from]}..#{rd[:to]}#{(rd[:comp]=='complement(')?'-':'+'}\n"
+		  ifh.close
+		  ofh.close
+		  bash sprintf($o[:grindercmd], $o[:grinder], "#{$o[:baseout]}.src.fasta.#{thr_i.to_s}", $o[:seqdepth], "#{$o[:baseout]}.mg.tmp.#{thr_i.to_s}")
+		  # Tag positives
+		  puts "  * tagging positive reads." unless $o[:q]
+		  ifh = File.open($o[:baseout] + ".mg.tmp.#{thr_i.to_s}-reads.fa", 'r')
+		  ofh = File.open($o[:baseout] + ".mg.fasta.#{thr_i.to_s}", 'w')
+		  while ln=ifh.gets
+		     rd = /^>(?<id>\d+) reference=gi\|(?<gi>\d+)\|.* position=(?<comp>complement\()?(?<from>\d+)\.\.(?<to>\d+)\)? /.match(ln)
+		     unless rd.nil?
+			positive = false
+			positive_coords[rd[:gi]] ||= []
+			positive_coords[rd[:gi]].each do |gn|
+			   left  = rd[:to].to_i - gn[:from]
+			   right = gn[:to] - rd[:from].to_i
+			   if (left*right >= 0) and ([left, right].min/(rd[:to].to_i-rd[:from].to_i) >= $o[:minovl])
+			      positive = true
+			      break
+			   end
+			end
+			ln = ">#{rd[:id]}#{positive ? "@%" : ""} ref=#{rd[:gi]}:#{rd[:from]}..#{rd[:to]}#{(rd[:comp]=='complement(')?'-':'+'}\n"
+		     end
+		     ofh.print ln
+		  end
+		  ofh.close
+		  ifh.close
+		  Thread.current[:output] = $o[:baseout] + ".mg.fasta.#{thr_i.to_s}"
+	       end # Thread.new do
+	    end # (1 .. thrs).each
+	    # Concatenate results
+	    ofh = File.open($o[:baseout] + ".mg.fasta", 'w')
+	    thr_obj.each do |t|
+	       t.join
+	       raise "Thread failed without error trace: #{t}" if t[:output].nil?
+	       ifh = File.open(t[:output], 'r')
+	       while l = ifh.gets
+	          ofh.print l
 	       end
-	       ofh.print ln
+	       ifh.close
+	       File.unlink t[:output]
 	    end
 	    ofh.close
-	    ifh.close
          end
       end # unless $o[:nomg]
       # Align references
@@ -712,7 +748,7 @@ begin
 	    puts "  * preparing database." unless $o[:q]
 	    bash sprintf($o[:makedbcmd], $o[:blastbins], ($o[:nucl]?'nucl':'prot'), "#{$o[:baseout]}.ref.fasta", "#{$o[:baseout]}.ref")
 	    puts "  * running BLAST." unless $o[:q]
-	    bash sprintf($o[:blastcmd], $o[:blastbins], ($o[:nucl]?'blastn':'blastx'), "#{$o[:baseout]}.mg.fasta", "#{$o[:baseout]}.ref", "#{$o[:baseout]}.ref.blast")
+	    bash sprintf($o[:blastcmd], $o[:blastbins], ($o[:nucl]?'blastn':'blastx'), "#{$o[:baseout]}.mg.fasta", "#{$o[:baseout]}.ref", "#{$o[:baseout]}.ref.blast", $o[:thr])
 	 end
       end
       # Clean
