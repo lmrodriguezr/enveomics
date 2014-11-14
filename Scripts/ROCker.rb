@@ -672,7 +672,7 @@ begin
 	    puts "  * running grinder and tagging positive reads (#{thrs} threads)." unless $o[:q]
 	    thr_obj = []
 	    seqs_per_thr = (all_src/thrs).ceil
-	    (1 .. thrs).each do |thr_i|
+	    (0 .. (thrs-1)).each do |thr_i|
 	       thr_obj << Thread.new do
 		  Thread.current[:seqs_a] = thr_i*seqs_per_thr + 1
 		  Thread.current[:seqs_b] = [Thread.current[:seqs_a] + seqs_per_thr, all_src].min
