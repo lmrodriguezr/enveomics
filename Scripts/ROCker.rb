@@ -677,40 +677,40 @@ begin
 		  Thread.current[:seqs_a] = thr_i*seqs_per_thr + 1
 		  Thread.current[:seqs_b] = [Thread.current[:seqs_a] + seqs_per_thr, all_src].min
 		  # Create sub-fasta
-		  ofh = File.open("#{$o[:baseout]}.src.fasta.#{thr_i.to_s}", 'w')
-		  ifh = File.open("#{$o[:baseout]}.src.fasta", 'r')
-		  seq_i = 0
-		  while l = ifh.gets
-		     seq_i+=1 if l =~ /^>/
-		     break if seq_i > Thread.current[:seqs_b]
-		     ofh.print l if seq_i >= Thread.current[:seqs_a]
+		  Thread.current[:ofh] = File.open("#{$o[:baseout]}.src.fasta.#{thr_i.to_s}", 'w')
+		  Thread.current[:ifh] = File.open("#{$o[:baseout]}.src.fasta", 'r')
+		  Thread.current[:seq_i] = 0
+		  while Thread.current[:l] = Thread.current[:ifh].gets
+		     Thread.current[:seq_i]+=1 if Thread.current[:l] =~ /^>/
+		     break if Thread.current[:seq_i] > Thread.current[:seqs_b]
+		     Thread.current[:ofh].print Thread.current[:l] if Thread.current[:seq_i] >= Thread.current[:seqs_a]
 		  end
-		  ifh.close
-		  ofh.close
+		  Thread.current[:ifh].close
+		  Thread.current[:ofh].close
 		  bash sprintf($o[:grindercmd], $o[:grinder], "#{$o[:baseout]}.src.fasta.#{thr_i.to_s}", $o[:seqdepth], "#{$o[:baseout]}.mg.tmp.#{thr_i.to_s}")
 		  # Tag positives
 		  puts "  * tagging positive reads." unless $o[:q]
-		  ifh = File.open($o[:baseout] + ".mg.tmp.#{thr_i.to_s}-reads.fa", 'r')
-		  ofh = File.open($o[:baseout] + ".mg.fasta.#{thr_i.to_s}", 'w')
-		  while ln=ifh.gets
-		     rd = /^>(?<id>\d+) reference=gi\|(?<gi>\d+)\|.* position=(?<comp>complement\()?(?<from>\d+)\.\.(?<to>\d+)\)? /.match(ln)
-		     unless rd.nil?
-			positive = false
-			positive_coords[rd[:gi]] ||= []
-			positive_coords[rd[:gi]].each do |gn|
-			   left  = rd[:to].to_i - gn[:from]
-			   right = gn[:to] - rd[:from].to_i
-			   if (left*right >= 0) and ([left, right].min/(rd[:to].to_i-rd[:from].to_i) >= $o[:minovl])
-			      positive = true
+		  Thread.current[:ifh] = File.open($o[:baseout] + ".mg.tmp.#{thr_i.to_s}-reads.fa", 'r')
+		  Thread.current[:ofh] = File.open($o[:baseout] + ".mg.fasta.#{thr_i.to_s}", 'w')
+		  while Thread.current[:l]=Thread.current[:ifh].gets
+		     Thread.current[:rd] = /^>(?<id>\d+) reference=gi\|(?<gi>\d+)\|.* position=(?<comp>complement\()?(?<from>\d+)\.\.(?<to>\d+)\)? /.match(Thread.current[:l])
+		     unless Thread.current[:rd].nil?
+			Thread.current[:positive] = false
+			positive_coords[Thread.current[:rd][:gi]] ||= []
+			positive_coords[Thread.current[:rd][:gi]].each do |gn|
+			   Thread.current[:left]  = Thread.current[:rd][:to].to_i - gn[:from]
+			   Thread.current[:right] = gn[:to] - Thread.current[:rd][:from].to_i
+			   if (Thread.current[:left]*Thread.current[:right] >= 0) and ([Thread.current[:left], Thread.current[:right]].min/(Thread.current[:rd][:to].to_i-Thread.current[:rd][:from].to_i) >= $o[:minovl])
+			      Thread.current[:positive] = true
 			      break
 			   end
 			end
-			ln = ">#{rd[:id]}#{positive ? "@%" : ""} ref=#{rd[:gi]}:#{rd[:from]}..#{rd[:to]}#{(rd[:comp]=='complement(')?'-':'+'}\n"
+			Thread.current[:l] = ">#{Thread.current[:rd][:id]}#{Thread.current[:positive] ? "@%" : ""} ref=#{Thread.current[:rd][:gi]}:#{Thread.current[:rd][:from]}..#{Thread.current[:rd][:to]}#{(Thread.current[:rd][:comp]=='complement(')?'-':'+'}\n"
 		     end
-		     ofh.print ln
+		     Thread.current[:ofh].print Thread.current[:l]
 		  end
-		  ofh.close
-		  ifh.close
+		  Thread.current[:ofh].close
+		  Thread.current[:ifh].close
 		  Thread.current[:output] = $o[:baseout] + ".mg.fasta.#{thr_i.to_s}"
 	       end # Thread.new do
 	    end # (1 .. thrs).each
