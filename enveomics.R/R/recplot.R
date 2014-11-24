@@ -44,8 +44,12 @@ enve.recplot <- structure(function(
 	### Lightest color in the recruitment plot.
 	rec.col2='black',
 	### Darkest color in the recruitment plot.
+
+	# General
 	main=NULL,
 	### Title of the plot.
+	contig.col=grey(0.85),
+	### Color of the Contig boundaries. Set to NA to ignore Contig boundaries.
 	
 	# Return
 	ret.recplot=FALSE,
@@ -178,7 +182,7 @@ enve.recplot <- structure(function(
    		breaks=seq(0, log10(max(rec.hist)), length.out=1+length(rec.col)), col=rec.col,
 		xlim=pos.lim, ylim=id.lim, xlab='Position in genome (Mbp)',
 		ylab=paste(id.fullname, ' (',id.units,')', sep=''), xaxs='i', yaxs='r');
-   abline(v=c(lim$V2, lim$V3)/1e6, lty=1, col=grey(0.85));
+   if(!is.na(contig.col)) abline(v=c(lim$V2, lim$V3)/1e6, lty=1, col=contig.col);
    abline(h=id.hallmarks, lty=2, col=grey(0.7));
    abline(h=id.marks[id.top[1]], lty=3, col=grey(0.5))
    legend('bottomleft', 'Rec. plot', bg=rgb(1,1,1,2/3));
@@ -223,7 +227,7 @@ enve.recplot <- structure(function(
    if(is.na(ymax) || ymax<=0) ymax <- 1;
    plot(1, t='n', xlab='', xaxt='n', ylab='Sequencing depth (X)', log='y', xlim=pos.lim,
    	ylim=c(ymin, ymax), xaxs='i', main=main, ...);
-   abline(v=c(lim[,2], lim[,3])/1e6, lty=1, col=grey(0.85));
+   if(!is.na(contig.col)) abline(v=c(lim[,2], lim[,3])/1e6, lty=1, col=contig.col);
    abline(h=10^c(0:5), lty=2, col=grey(0.7));
    if(sum(h2)>0){
       h2.x <- rep(pos.marks, each=2)[2:(pos.breaks*2+1)]
