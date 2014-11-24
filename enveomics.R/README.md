@@ -15,5 +15,7 @@ And open help messages using any of the following commands:
     > ?enve.barplot
     > ?enve.recplot
     > ?enve.prune.dist
+    > ?enve.gss
+    > ?enve.gss.test
 
 
