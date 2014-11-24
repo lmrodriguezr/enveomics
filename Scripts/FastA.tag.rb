@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Sep-15-2014
+# @update: Nov-24-2014
 # @license: artistic license 2.0
 #
 
@@ -41,9 +41,9 @@ begin
    i=0
    while ln=ifh.gets
       ln.chomp!
-      if /^>/.match(ln).nil?
+      unless /^>/.match(ln).nil?
 	 i+=1
-	 ofh.puts "@#{o[:p]}#{i}#{o[:s]}#{ o[:d]?" #{ln[1,0]}":"" }"
+	 ofh.puts ">#{o[:p]}#{i}#{o[:s]}#{ o[:d]?" #{ln[1, ln.size-1]}":"" }"
       else
          ofh.puts ln
       end
