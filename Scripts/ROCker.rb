@@ -594,7 +594,7 @@ begin
       abort "No genomes associated with the positive set." if genome_gis[:positive].size==0
       all_gis = genome_gis.values.reduce(:+).uniq
       genomes_file = $o[:baseout] + '.src.fasta'
-      if $o[:reuse] and File.exists? genomes_file
+      if $o[:reuse] and File.exist? genomes_file
 	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
       else
 	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
@@ -613,7 +613,7 @@ begin
       genome_gis[:positive].each do |gi|
 	 print "  * scanning #{(i+=1).ordinalize} genome out of #{genome_gis[:positive].size}. \r" unless $o[:q]
 	 genome_file = $o[:baseout] + '.src.' + i.to_s + '.xml'
-	 if $o[:reuse] and File.exists? genome_file
+	 if $o[:reuse] and File.exist? genome_file
 	    puts "  * reusing existing file: #{genome_file}." unless $o[:q]
 	    ifh = File.open(genome_file, 'r')
 	    doc = Nokogiri::XML( ifh )
@@ -671,7 +671,7 @@ begin
       # Generate metagenome
       unless $o[:nomg]
 	 puts "Generating in silico metagenome" unless $o[:q]
-	 if $o[:reuse] and File.exists? $o[:baseout] + ".mg.fasta"
+	 if $o[:reuse] and File.exist? $o[:baseout] + ".mg.fasta"
 	    puts "  * reusing existing file: #{$o[:baseout]}.mg.fasta." unless $o[:q]
 	 else
 	    all_src = File.readlines("#{$o[:baseout]}.src.fasta").select{ |l| l =~ /^>/ }.size
@@ -739,7 +739,7 @@ begin
       # Align references
       unless $o[:noaln]
 	 puts "Aligning reference set." unless $o[:q]
-	 if $o[:reuse] and File.exists? "#{$o[:baseout]}.ref.aln"
+	 if $o[:reuse] and File.exist? "#{$o[:baseout]}.ref.aln"
 	    puts "  * reusing existing file: #{$o[:baseout]}.ref.aln." unless $o[:q]
 	 else
 	    bash sprintf($o[:musclecmd], $o[:muscle], "#{$o[:baseout]}.ref.fasta", "#{$o[:baseout]}.ref.aln")
@@ -749,7 +749,7 @@ begin
       # Run BLAST 
       unless $o[:noblast]
 	 puts "Running homology search." unless $o[:q]
-	 if $o[:reuse] and File.exists? "#{$o[:baseout]}.ref.blast"
+	 if $o[:reuse] and File.exist? "#{$o[:baseout]}.ref.blast"
 	    puts "  * reusing existing file: #{$o[:baseout]}.ref.blast." unless $o[:q]
 	 else
 	    puts "  * preparing database." unless $o[:q]
@@ -764,17 +764,17 @@ begin
 	 sff  = %w{.src.xml .src.fasta}
 	 sff += %w{.mg.tmp-reads.fa .mg.tmp-ranks.txt} unless $o[:nomg]
 	 sff += %w{.ref.phr .ref.pin .ref.psq} unless $o[:noblast]
-	 sff.each { |sf| File.unlink $o[:baseout] + sf if File.exists? $o[:baseout] + sf }
+	 sff.each { |sf| File.unlink $o[:baseout] + sf if File.exist? $o[:baseout] + sf }
       end
 #================================[ Compile ]
    when 'compile'
       raise "-a/--alignment is mandatory." if $o[:aln].nil?
-      raise "-a/--alignment must exist." unless File.exists? $o[:aln]
+      raise "-a/--alignment must exist." unless File.exist? $o[:aln]
       if $o[:table].nil?
 	 raise "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
 	 $o[:table] = "#{$o[:blast]}.table"
       end
-      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
+      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exist? $o[:table]
       raise "-k/--rocker is mandatory." if $o[:rocker].nil?
 
       puts "Testing environment." unless $o[:q]
@@ -786,7 +786,7 @@ begin
       aln = Alignment.new
       aln.read_fasta $o[:aln]
       
-      if File.exists? $o[:table]
+      if File.exist? $o[:table]
 	 puts "  * reusing existing file: #{$o[:table]}." unless $o[:q]
       else
 	 puts "  * generating table: #{$o[:table]}." unless $o[:q]
@@ -833,7 +833,7 @@ begin
 	 raise "-t/--table is mandatory unless -b is provided." if $o[:blast].nil?
 	 $o[:table] = "#{$o[:blast]}.table"
       end
-      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exists? $o[:table]
+      raise "-b/--blast is mandatory unless -t exists." if $o[:blast].nil? and not File.exist? $o[:table]
 
       puts "Testing environment." unless $o[:q]
       bash "echo '' | #{$o[:r]} --vanilla", "-r/--path-to-r must be executable. Is R installed?"
@@ -841,7 +841,7 @@ begin
       puts "Reading files." unless $o[:q]
       puts "  * loding ROCker file: #{$o[:rocker]}." unless $o[:q]
       data = ROCData.new $o[:rocker]
-      if File.exists? $o[:table]
+      if File.exist? $o[:table]
 	 puts "  * reusing existing file: #{$o[:table]}." unless $o[:q]
       else
 	 puts "  * generating table: #{$o[:table]}." unless $o[:q]
