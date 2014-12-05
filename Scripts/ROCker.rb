@@ -24,7 +24,7 @@ $o = {
    # General
    :q=>false, :r=>'R', :nucl=>false,
    # Build
-   :positive=>[], :negative=>[], :thr=>2,:genomefrx=>1.0,
+   :positive=>[], :negative=>[], :thr=>2,:genomefrx=>1.0, :pergenus=>false, :perspecies=>false,
       # ext. software
       :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
       :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
@@ -86,7 +86,9 @@ opts = OptionParser.new do |opt|
       opt.on("-a", "--alignment PATH", "Protein alignment of the reference sequences. The defline must contain GI numbers. If used, -p is not required."){ |v| $o[:aln]=v }
       opt.on("-s", "--seqdepth NUMBER", "Sequencing depth to be used in building the in silico metagenome. By default: '#{$o[:seqdepth]}'."){ |v| $o[:seqdepth]=v.to_f }
       opt.on("-v", "--overlap NUMBER", "Minimum overlap with reference gene to tag a read as positive. By default: '#{$o[:minovl]}'."){ |v| $o[:minovl]=v.to_f }
-      opt.on(      "--genome-frx NUMBER", "Fraction to subsample the genomes to generate the metagenome.  By default: #{$o[:genomefrx]}"){ |v| $o[:genomefrx]=v.to_f }
+      opt.on(      "--genome-frx NUMBER", "Fraction to subsample the positive set genomes to generate the metagenome. By default: #{$o[:genomefrx]}"){ |v| $o[:genomefrx]=v.to_f }
+      opt.on(      "--per-genus", "If selected, only one genome per genus is used to build the metagenome."){ $o[:pergenus]=true }
+      opt.on(      "--per-species", "If selected, only one genome per species is used to build the metagenome."){ $o[:perspecies]=true }
       opt.on(      "--nometagenome", "Do not create metagenome. Implies --noblast. By default, metagenome is created."){ |v| $o[:nomg]=v }
       opt.on(      "--noblast", "Do not execute BLAST. By default, BLAST is executed."){ |v| $o[:noblast]=v }
       opt.on(      "--noalignment", "Do not align reference set. By default, references are aligned."){ |v| $o[:noaln]=v }
@@ -536,6 +538,15 @@ def eutils(script, params={}, outfile=nil)
 end
 def efetch(*etc) eutils 'efetch.fcgi', *etc end
 def elink(*etc) eutils 'elink.fcgi', *etc end
+def genes2genomes(gis, nucl=false)
+   genomes = []
+   ids = gis
+   while ids.size>0
+      doc = Nokogiri::XML( elink({:dbfrom=>(nucl ? 'nuccore' : 'protein'), :db=>'nuccore', :id=>ids.shift(200).join(',')}) )
+      genomes += doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }
+   end
+   genomes.uniq
+end
 def bash(cmd, err_msg=nil)
    o = `#{cmd} 2>&1 && echo '{'`
    raise (err_msg.nil? ? "Error executing: #{cmd}\n\n#{o}" : err_msg) unless o[-2]=='{'
@@ -567,8 +578,8 @@ begin
       bash "#{$o[:grinder]} --version", "-G/--grinder must be executable. Is Grinder installed?" unless $o[:nomg]
       bash "#{$o[:muscle]} -version", "-M/--muscle must be executable. Is Muscle installed?" unless $o[:noaln]
       bash "#{$o[:blastbins]}makeblastdb -version", "-B/--blastbins must contain executables. Is BLAST+ installed?" unless $o[:noblast]
-      # Download genes and genomes
-      puts "Downloading data." unless $o[:q]
+      # Download genes
+      puts "Downloading gene data." unless $o[:q]
       f = File.open($o[:baseout] + '.ref.fasta', 'w')
       if $o[:posori].nil? and $o[:posfile].nil? and not $o[:aln].nil?
 	 puts "  * re-using aligned sequences as positive set." unless $o[:q]
@@ -586,35 +597,19 @@ begin
       [:positive, :negative].each do |set|
          unless $o[set].size==0
 	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} sequence(s)." unless $o[:q]
-	    genome_gis[set] = []
-	    ids = Array.new($o[set])
-	    while ids.size>0
-	       doc = Nokogiri::XML( elink({:dbfrom=>($o[:nucl]?'nuccore':'protein'), :db=>'nuccore', :id=>ids.shift(200).join(',')}) )
-	       genome_gis[set] += doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }
-	    end
-	    genome_gis[set].uniq!
+	    genome_gis[set] = genes2genomes($o[set], $o[:nucl])
 	 end
       end
-      abort "No genomes associated with the positive set." if genome_gis[:positive].size==0
+      raise "No genomes associated with the positive set." if genome_gis[:positive].size==0
+      genome_gis[:positive] = genome_gis[:positive].sample( (genome_gis[:positive].size*$o[:genomefrx]).round ) if $o[:genomefrx]
+      raise "No positive genomes selected for metagenome construction, is --genome-frx too small?" if genome_gis[:positive].empty?
       all_gis = genome_gis.values.reduce(:+).uniq
-      all_gis = all_gis.sample( (all_gis.size*$o[:genomefrx]).round ) if $o[:genomefrx]
-      abort "No genomes selected for metagenome construction, is --genome-frx too small?" if all_gis.empty?
-      genomes_file = $o[:baseout] + '.src.fasta'
-      if $o[:reuse] and File.exist? genomes_file
-	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
-      else
-	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
-	 ids = Array.new(all_gis)
-	 ofh = File.open(genomes_file, 'w')
-	 while ids.size>0
-	    ofh.print efetch({:db=>'nuccore', :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
-	 end
-	 ofh.close
-      end
+      
       # Locate genes
-      puts "Locating sequences in genomes." unless $o[:q]
+      puts "Analyzing genome data." unless $o[:q]
       puts "  * downloading and parsing #{genome_gis[:positive].size} XML file(s)." unless $o[:q]
       positive_coords = {}
+      genome_org = {}
       i = 0
       genome_gis[:positive].each do |gi|
 	 print "  * scanning #{(i+=1).ordinalize} genome out of #{genome_gis[:positive].size}. \r" unless $o[:q]
@@ -635,6 +630,24 @@ begin
 	    if !genome_gi.nil? and gi==genome_gi.content
 	       incomplete = false
 	       positive_coords[gi] ||= []
+	       if $o[:pergenus] or $o[:perspecies]
+		  name = genome.at_xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_descr/Seq-descr/Seqdesc/Seqdesc_source/BioSource/BioSource_org/Org-ref/Org-ref_orgname/OrgName/OrgName_name/OrgName_name_binomial/BinomialOrgName')
+		  unless name.nil?
+		     name_g = name.at_xpath('./BinomialOrgName_genus')
+		     name_s = name.at_xpath('./BinomialOrgName_species')
+		     if name_g.nil? or (name_s.nil? and $o[:perspecies])
+		        name = nil
+		     else
+		        name = $o[:perspecies] ? name_g.content + " " + name_s.content :  name_g.content
+		     end
+		  end
+		  if name.nil?
+		     warn "WARNING: Cannot find binomial name of #{gi}, using genome regardless of taxonomy."
+		     name = rand(36**100).to_s(36)
+		  end
+		  break unless genome_org[ name ].nil?
+		  genome_org[ name ] = gi
+	       end
 	       genome.xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_annot/Seq-annot/Seq-annot_data/Seq-annot_data_ftable/Seq-feat').each do |pr|
 		  pr_gi = pr.at_xpath('./Seq-feat_product/Seq-loc/Seq-loc_whole/Seq-id/Seq-id_gi')
 		  next if pr_gi.nil?
@@ -671,9 +684,26 @@ begin
 	 doc = nil
 	 warn "WARNING: Cannot find GI '#{gi}'." if incomplete
       end
+      genome_gis[:positive] = genome_org.values if $o[:pergenus] or $o[:perspecies]
+      all_gis = genome_gis.values.reduce(:+).uniq
       print "\n" unless $o[:q]
       missing = $o[:positive] - positive_coords.values.map{ |a| a.map{ |b| b[:gi] } }.reduce(:+)
-      warn "\nWARNING: Cannot find genomic location of sequence(s) #{missing.join(',')}.\n\n" unless missing.size==0 or $o[:genomefrx]<1.0
+      warn "\nWARNING: Cannot find genomic location of sequence(s) #{missing.join(',')}.\n\n" unless missing.size==0 or $o[:genomefrx]<1.0 or $o[:pergenus] or $o[:perspecies]
+      
+      # Download genomes
+      genomes_file = $o[:baseout] + '.src.fasta'
+      if $o[:reuse] and File.exist? genomes_file
+	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
+      else
+	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
+	 ids = Array.new(all_gis)
+	 ofh = File.open(genomes_file, 'w')
+	 while ids.size>0
+	    ofh.print efetch({:db=>'nuccore', :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
+	 end
+	 ofh.close
+      end
+      
       # Generate metagenome
       unless $o[:nomg]
 	 puts "Generating in silico metagenome" unless $o[:q]
