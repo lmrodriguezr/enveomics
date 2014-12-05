@@ -4,7 +4,7 @@
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @author Luis (Coto) Orellana
 # @license artistic license 2.0
-# @update Dec-2-2014
+# @update Dec-5-2014
 #
 
 require 'optparse'
@@ -24,12 +24,13 @@ $o = {
    # General
    :q=>false, :r=>'R', :nucl=>false,
    # Build
-   :positive=>[], :negative=>[], :thr=>2,
-   :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
-   :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
-   :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
-   :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -num_threads %6$d -outfmt 6 -max_target_seqs 1',
-   :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"',
+   :positive=>[], :negative=>[], :thr=>2,:genomefrx=>1.0,
+      # ext. software
+      :grinder=>'grinder', :muscle=>'muscle', :blastbins=>'', :seqdepth=>3, :minovl=>0.75,
+      :grindercmd=>'%1$s -reference_file "%2$s" -cf "%3$f" -base_name "%4$s" -dc \'-~*Nn\' -md "poly4 3e-3 3.3e-8" -mr "95 5" -rd "100 uniform 5"',
+      :musclecmd=>'%1$s -in "%2$s" -out "%3$s" -quiet',
+      :blastcmd=>'%1$s%2$s -query "%3$s" -db "%4$s" -out "%5$s" -num_threads %6$d -outfmt 6 -max_target_seqs 1',
+      :makedbcmd=>'%1$smakeblastdb -dbtype %2$s -in "%3$s" -out "%4$s"',
    # Compile
    :refine=>true, :win=>20, :minscore=>0,
    # Filter
@@ -85,14 +86,17 @@ opts = OptionParser.new do |opt|
       opt.on("-a", "--alignment PATH", "Protein alignment of the reference sequences. The defline must contain GI numbers. If used, -p is not required."){ |v| $o[:aln]=v }
       opt.on("-s", "--seqdepth NUMBER", "Sequencing depth to be used in building the in silico metagenome. By default: '#{$o[:seqdepth]}'."){ |v| $o[:seqdepth]=v.to_f }
       opt.on("-v", "--overlap NUMBER", "Minimum overlap with reference gene to tag a read as positive. By default: '#{$o[:minovl]}'."){ |v| $o[:minovl]=v.to_f }
-      opt.on("-G", "--grinder PATH", "Path to the grinder executable. By default: '#{$o[:grinder]}' (in the $PATH)."){ |v| $o[:grinder]=v }
-      opt.on("-M", "--muscle PATH", "Path to the muscle executable. By default: '#{$o[:muscle]}' (in the $PATH)."){ |v| $o[:muscle]=v }
-      opt.on("-B", "--blastbins PATH", "Path to the Blast+ executables. By default: '#{$o[:blastbins]}' (in the $PATH)."){ |v| $o[:blastbins]=v }
+      opt.on(      "--genome-frx NUMBER", "Fraction to subsample the genomes to generate the metagenome.  By default: #{$o[:genomefrx]}"){ |v| $o[:genomefrx]=v.to_f }
       opt.on(      "--nometagenome", "Do not create metagenome. Implies --noblast. By default, metagenome is created."){ |v| $o[:nomg]=v }
       opt.on(      "--noblast", "Do not execute BLAST. By default, BLAST is executed."){ |v| $o[:noblast]=v }
       opt.on(      "--noalignment", "Do not align reference set. By default, references are aligned."){ |v| $o[:noaln]=v }
       opt.on(      "--nocleanup", "Keep all intermediate files. By default, intermediate files are removed."){ |v| $o[:noclean]=v }
       opt.on(      "--reuse-files", "Re-use existing result files. By default, existing files are ignored."){ |v| $o[:reuse]=true }
+      opt.separator ""
+      opt.separator "+ EXTERNAL SOFTWARE OPTIONS"
+      opt.on("-G", "--grinder PATH", "Path to the grinder executable. By default: '#{$o[:grinder]}' (in the $PATH)."){ |v| $o[:grinder]=v }
+      opt.on("-M", "--muscle PATH", "Path to the muscle executable. By default: '#{$o[:muscle]}' (in the $PATH)."){ |v| $o[:muscle]=v }
+      opt.on("-B", "--blastbins PATH", "Path to the Blast+ executables. By default: '#{$o[:blastbins]}' (in the $PATH)."){ |v| $o[:blastbins]=v }
       opt.on(      "--grinder-cmd STR", "Command calling grinder, where %1$s: grinder bin, %2$s: input, %3$s: seq. depth, %4$s: output.",
 	 "By default: '#{$o[:grindercmd]}'."){ |v| $o[:grindercmd]=v }
       opt.on("--muscle-cmd STR", "Command calling muscle, where %1$s: muscle bin, %2$s: input, %3$s: output.",
@@ -545,7 +549,7 @@ begin
       # Check requirements
       puts "Testing environment." unless $o[:q]
       $o[:noblast]=true if $o[:nomg]
-      raise "Unsatisfied requirements." unless has_build_gems
+      raise "Unsatisfied requirements, please see the help message (-h)." unless has_build_gems
       $o[:positive] += $o[:posori] unless $o[:posori].nil?
       $o[:positive] += File.readlines($o[:posfile]).map{ |l| l.chomp } unless $o[:posfile].nil?
       $o[:negative] += File.readlines($o[:negfile]).map{ |l| l.chomp } unless $o[:negfile].nil?
@@ -593,6 +597,8 @@ begin
       end
       abort "No genomes associated with the positive set." if genome_gis[:positive].size==0
       all_gis = genome_gis.values.reduce(:+).uniq
+      all_gis = all_gis.sample( (all_gis.size*$o[:genomefrx]).round ) if $o[:genomefrx]
+      abort "No genomes selected for metagenome construction, is --genome-frx too small?" if all_gis.empty?
       genomes_file = $o[:baseout] + '.src.fasta'
       if $o[:reuse] and File.exist? genomes_file
 	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
@@ -667,7 +673,7 @@ begin
       end
       print "\n" unless $o[:q]
       missing = $o[:positive] - positive_coords.values.map{ |a| a.map{ |b| b[:gi] } }.reduce(:+)
-      warn "\nWARNING: Cannot find genomic location of sequence(s) #{missing.join(',')}.\n\n" unless missing.size==0
+      warn "\nWARNING: Cannot find genomic location of sequence(s) #{missing.join(',')}.\n\n" unless missing.size==0 or $o[:genomefrx]<1.0
       # Generate metagenome
       unless $o[:nomg]
 	 puts "Generating in silico metagenome" unless $o[:q]
