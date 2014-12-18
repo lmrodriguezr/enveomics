@@ -8,6 +8,13 @@
 
 require 'optparse'
 require 'json'
+has_iconv = TRUE
+begin
+   require 'rubygems'
+   require 'iconv'
+rescue LoadError
+   has_iconv = FALSE
+end
 
 ARGF.argv << "-h" unless ARGF.argv.length > 0
 o = {:q=>FALSE, :regex=>'^(?<dataset>.+?):.*', :area=>FALSE, :norm=>:counts}
@@ -52,7 +59,10 @@ Usage: #{$0} [options]"
    opts.separator "        but it allows you to control the colors and the normalization method (see -m)."
    opts.separator "    3. Execute this script passing the .jplace file created in step 1 (see -i).  If you have a single"
    opts.separator "       dataset, use the option -u to give it a short name.  If you have multiple datasets, use the -s"
-   opts.separator "       or -r options to tell the script how to find the dataset name within the read name."
+   opts.separator "       or -r options to tell the script how to find the dataset name within the read name.  Note that"
+   opts.separator "       some programs (like CheckM) may produce nonstandard characters that won't be correctly parsed."
+   opts.separator "       To avoid this problem,  install iconv support (gem install iconv) before running this script"
+   opts.separator "       (currently "+(has_iconv ? "" : "not ")+"installed)."
    opts.separator "    4. Upload the tree (.nwk file) to iToL  [4].  Make sure you check 'Keep internal node IDs' in the"
    opts.separator "       advanced options.  In that same page, upload the dataset (.itol file), pick a name, and select"
    opts.separator "       the data type 'Multi-value Bar Chart or Pie Chart'. If you used the -c option, upload the list"
@@ -92,6 +102,7 @@ class Node
    end
    def initialize(nwk, parent=nil)
       abort "Empty newick.\n" if nwk.nil? or nwk==''
+      nwk.gsub! /;(.)/, '--\1'
       @nwk = nwk
       @parent = parent
       @placements = []
@@ -107,7 +118,7 @@ class Node
       end
       # Find name, label, and length
       meta_m = /^(\((?<cont>.+)\))?(?<name>[^:\(\);]*)(:(?<length>[0-9\.Ee+-]*)(?<label>\[[^\[\]\(\);]+\])?)?;?$/.match(nwk) or
-	 abort "Cannot parse node metadata:\n#{@nwk}\n"
+	 abort "Cannot parse node metadata (index #{@index}):\n#{@nwk}\n"
       nwk = meta_m[:cont]
       @name = meta_m[:name]
       @length = meta_m[:length]
@@ -115,15 +126,24 @@ class Node
       # Find children
       @children = []
       nwk ||= ''
+      quote = nil
       while nwk != ''
 	 i = 0
 	 j = 0
 	 nwk.each_char do |chr|
-	    i += 1 if chr=='('
-	    i -= 1 if chr==')'
-	    if i==0 and chr==','
-	       i=nil
-	       break
+	    if quote.nil?
+	       if chr=='"' or chr=="'"
+	          quote = chr
+	       else
+		  i += 1 if chr=='('
+		  i -= 1 if chr==')'
+		  if i==0 and chr==','
+		     i=nil
+		     break
+		  end
+	       end
+	    else
+	       quote = nil if chr==quote
 	    end
 	    j += 1
 	 end
@@ -339,6 +359,10 @@ begin
    
 
    $stderr.puts "Parsing tree." unless o[:q]
+   if has_iconv
+      ic = Iconv.new('UTF-8//IGNORE','UTF-8')
+      jplace["tree"] = ic.iconv(jplace["tree"] + ' ')[0..-2]
+   end
    tree = Node.new(jplace["tree"])
    
 
@@ -430,7 +454,7 @@ begin
    end
    f.close
    units = {:none=>'', :counts=>' per million placements', :size=>' per million reads', :norm=>' per normalizing unit'}
-   $stderr.puts " The #{o[:area] ? 'area' : 'radius'} of the pies is proportional to the placements#{units[o[:norm]]}." unless o[:q]
+   $stderr.puts " The pie #{o[:area] ? 'areas' : 'radii'} are proportional to the placements#{units[o[:norm]]}." unless o[:q]
    $stderr.puts " The minimum radius (#{min_norm_n}) represents #{min_norm_sum*(([:none, :norm].include? o[:norm]) ? 1 : 1e6)} placements#{units[o[:norm]]}." unless o[:q]
    $stderr.puts " The maximum radius (#{max_norm_n}) represents #{max_norm_sum*(([:none, :norm].include? o[:norm]) ? 1 : 1e6)} placements#{units[o[:norm]]}." unless o[:q]
    
