@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Oct-10-2013
+# @update: Jan-12-2015
 # @license: artistic license 2.0
 #
 
@@ -16,7 +16,7 @@ rescue LoadError
    has_rest_client = FALSE
 end
 
-o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
+o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>false, :bin=>'', :program=>'blast+', :thr=>1, :correct=>true}
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Nucleotide Identity between two genomes.
@@ -38,6 +38,7 @@ Usage: #{$0} [options]"
    opts.on("-l", "--len INT", "Minimum alignment length (in bp).  By default: #{o[:len].to_s}."){ |v| o[:len] = v.to_i }
    opts.on("-i", "--id NUM", "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."){ |v| o[:id] = v.to_f }
    opts.on("-n", "--hits INT", "Minimum number of hits.  By default: #{o[:hits].to_s}."){ |v| o[:hits] = v.to_i }
+   opts.on("-N", "--nocorrection", "Report values without post-hoc correction. NOT YET IMPLEMENTED."){ |v| o[:correct] = false }
    opts.separator ""
    opts.separator "Software Options"
    opts.on("-b", "--bin DIR", "Path to the directory containing the binaries of the search program."){ |v| o[:bin] = v }
@@ -150,17 +151,18 @@ Dir.mktmpdir do |dir|
 	 ln.chomp!
 	 row = ln.split(/\t/)
 	 if row[3].to_i >= o[:len] and row[2].to_f >= o[:id]
-	    id += row[2].to_f
-	    sq += row[2].to_f ** 2
+	    c_identity = row[2].to_f # / (o[:correct] ? 0.8621 : 1.0)
+	    id += c_identity
+	    sq += c_identity ** 2
 	    n  += 1
 	    if i==1
 	       rbh[ row[0].to_i ] = row[1].to_i
 	    else
 	       if !rbh[ row[1].to_i ].nil? and rbh[ row[1].to_i ]==row[0].to_i
-	          id2 += row[2].to_f
-		  sq2 += row[2].to_f**2
+	          id2 += c_identity
+		  sq2 += c_identity ** 2
 		  n2  += 1
-		  fo.puts [row[2..5],row[10..11]].join("\t") unless o[:out].nil?
+		  fo.puts [c_identity,row[3..5],row[10..11]].join("\t") unless o[:out].nil?
 	       end
 	    end
 	 end
