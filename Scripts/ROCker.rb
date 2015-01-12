@@ -4,7 +4,7 @@
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @author Luis (Coto) Orellana
 # @license artistic license 2.0
-# @update Dec-5-2014
+# @update Jan-12-2015
 #
 
 require 'optparse'
@@ -22,7 +22,7 @@ WARN
 #================================[ Options parsing ]
 $o = {
    # General
-   :q=>false, :r=>'R', :nucl=>false,
+   :q=>false, :r=>'R', :nucl=>false, :debug=>false,
    # Build
    :positive=>[], :negative=>[], :thr=>2,:genomefrx=>1.0, :pergenus=>false, :perspecies=>false,
       # ext. software
@@ -177,6 +177,7 @@ opts = OptionParser.new do |opt|
    opt.separator "+ GENERAL ARGUMENTS"
    opt.on("-R", "--path-to-r PATH", "Path to the R executable to be used. By default: '#{$o[:r]}'."){ |v| $o[:r]=v }
    opt.on("-q", "--quiet", "Run quietly."){ |v| $o[:q]=true }
+   opt.on("-d", "--debug", "Display debugging information."){ |v| $o[:debug]=true }
    opt.on("-h", "--help","Display this screen") do
       puts opt
       exit
@@ -540,7 +541,7 @@ def efetch(*etc) eutils 'efetch.fcgi', *etc end
 def elink(*etc) eutils 'elink.fcgi', *etc end
 def genes2genomes(gis, nucl=false)
    genomes = []
-   ids = gis
+   ids = Array.new(gis)
    while ids.size>0
       doc = Nokogiri::XML( elink({:dbfrom=>(nucl ? 'nuccore' : 'protein'), :db=>'nuccore', :id=>ids.shift(200).join(',')}) )
       genomes += doc.xpath('/eLinkResult/LinkSet/LinkSetDb/Link/Id').map{ |id| id.content }
@@ -587,6 +588,7 @@ begin
 	 $o[:noaln] = true
       else
 	 puts "  * downloading #{$o[:positive].size} sequence(s) in positive set." unless $o[:q]
+	 $stderr.puts "   # #{$o[:positive]}" if $o[:debug]
 	 ids = Array.new($o[:positive])
 	 while ids.size>0
 	    f.print efetch({:db=>($o[:nucl] ? 'nuccore' : 'protein'), :id=>ids.shift(200).join(','), :rettype=>'fasta', :retmode=>'text'})
@@ -597,6 +599,7 @@ begin
       [:positive, :negative].each do |set|
          unless $o[set].size==0
 	    puts "  * gathering genomes from #{$o[set].size} #{set.to_s} sequence(s)." unless $o[:q]
+	    $stderr.puts "   # #{$o[set]}" if $o[:debug]
 	    genome_gis[set] = genes2genomes($o[set], $o[:nucl])
 	 end
       end
@@ -608,11 +611,13 @@ begin
       # Locate genes
       puts "Analyzing genome data." unless $o[:q]
       puts "  * downloading and parsing #{genome_gis[:positive].size} XML file(s)." unless $o[:q]
+      $stderr.puts "   # #{genome_gis[:positive]}" if $o[:debug]
       positive_coords = {}
       genome_org = {}
       i = 0
       genome_gis[:positive].each do |gi|
 	 print "  * scanning #{(i+=1).ordinalize} genome out of #{genome_gis[:positive].size}. \r" unless $o[:q]
+	 $stderr.puts "   # Looking for any of #{$o[:positive]}" if $o[:debug]
 	 genome_file = $o[:baseout] + '.src.' + i.to_s + '.xml'
 	 if $o[:reuse] and File.exist? genome_file
 	    puts "  * reusing existing file: #{genome_file}." unless $o[:q]
@@ -630,6 +635,7 @@ begin
 	    if !genome_gi.nil? and gi==genome_gi.content
 	       incomplete = false
 	       positive_coords[gi] ||= []
+	       $stderr.puts "\n   # got #{gi}, scanning" if $o[:debug]
 	       if $o[:pergenus] or $o[:perspecies]
 		  name = genome.at_xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_descr/Seq-descr/Seqdesc/Seqdesc_source/BioSource/BioSource_org/Org-ref/Org-ref_orgname/OrgName/OrgName_name/OrgName_name_binomial/BinomialOrgName')
 		  unless name.nil?
@@ -648,10 +654,12 @@ begin
 		  break unless genome_org[ name ].nil?
 		  genome_org[ name ] = gi
 	       end
+	       $stderr.puts "   # traversing #{gi}" if $o[:debug]
 	       genome.xpath('./Seq-entry_set/Bioseq-set/Bioseq-set_annot/Seq-annot/Seq-annot_data/Seq-annot_data_ftable/Seq-feat').each do |pr|
 		  pr_gi = pr.at_xpath('./Seq-feat_product/Seq-loc/Seq-loc_whole/Seq-id/Seq-id_gi')
 		  next if pr_gi.nil?
 		  if $o[:positive].include? pr_gi.content
+		     $stderr.puts "   # found #{pr_gi.content}" if $o[:debug]
 		     pr_loc = pr.at_xpath('./Seq-feat_location/Seq-loc/Seq-loc_int/Seq-interval')
 		     if pr_loc.nil?
 			pr_loc = pr.xpath('./Seq-feat_location/Seq-loc/Seq-loc_mix//Seq-loc/Seq-loc_int/Seq-interval')
@@ -696,6 +704,7 @@ begin
 	 puts "  * reusing existing file: #{genomes_file}." unless $o[:q]
       else
 	 puts "  * downloading #{all_gis.size} genome(s) in FastA." unless $o[:q]
+	 $stderr.puts "   # #{all_gis}" if $o[:debug]
 	 ids = Array.new(all_gis)
 	 ofh = File.open(genomes_file, 'w')
 	 while ids.size>0
@@ -713,6 +722,7 @@ begin
 	    all_src = File.readlines("#{$o[:baseout]}.src.fasta").select{ |l| l =~ /^>/ }.size
 	    thrs = [$o[:thr], all_src].min
 	    puts "  * running grinder and tagging positive reads (#{thrs} threads)." unless $o[:q]
+	    $stderr.puts "   # #{positive_coords}" if $o[:debug]
 	    thr_obj = []
 	    seqs_per_thr = (all_src/thrs).ceil
 	    (0 .. (thrs-1)).each do |thr_i|
