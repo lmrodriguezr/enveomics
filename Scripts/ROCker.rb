@@ -528,7 +528,11 @@ def blast2table(blast_f, table_f, aln, minscore)
    ofh.close
 end
 def eutils(script, params={}, outfile=nil)
-   response = RestClient.get "#{$eutils}/#{script}", {:params=>params}
+   response = nil
+   (1 .. 5).each do |i|
+      response = RestClient.get "#{$eutils}/#{script}", {:params=>params}
+      break if response.code == 200
+   end
    raise "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
    unless outfile.nil?
       ohf = File.open(outfile, 'w')
