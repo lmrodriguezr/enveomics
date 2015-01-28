@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jan-27-2015
+# @update: Jan-28-2015
 # @license: artistic license 2.0
 #
 
@@ -174,16 +174,16 @@ Dir.mktmpdir do |dir|
 	 puts "Insuffient hits to estimate one-way ANI: #{n}."
 	 res.puts "Insufficient hits to estimate one-way ANI: #{n}"
       else
-	 printf "! One-way ANI %d: %.2f%% (SD: %.2f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
-	 res.puts sprintf "<b>One-way ANI %d:</b> %.2f%% (SD: %.2f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
+	 printf "! One-way ANI %d: %.10f%% (SD: %.10f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
+	 res.puts sprintf "<b>One-way ANI %d:</b> %.10f%% (SD: %.10f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
    end
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way ANI: #{n2}"
       res.puts "Insufficient hits to estimate two-way ANI: #{n2}"
    else
-      printf "! Two-way ANI  : %.2f%% (SD: %.2f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
-      res.puts sprintf "<b>Two-way ANI:</b> %.2f%% (SD: %.2f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      printf "! Two-way ANI  : %.10f%% (SD: %.10f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
+      res.puts sprintf "<b>Two-way ANI:</b> %.10f%% (SD: %.10f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
    end
    fo.close unless o[:out].nil?
 end
