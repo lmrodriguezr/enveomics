@@ -3,7 +3,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Oct-30-2014
+# @update Jan-15-2015
 #
 
 require 'optparse'
@@ -18,7 +18,7 @@ begin
    require 'restclient'
    require 'nokogiri'
 rescue LoadError
-   abort "Unmet requirements, please install required gems:\n\ngem install rubygems\ngem install rest_client"
+   abort "Unmet requirements, please install required gems:\n\ngem install rubygems\ngem install rest-client\ngem install nokogiri"
 end
 opts = OptionParser.new do |opt|
    opt.banner = "
@@ -44,7 +44,11 @@ opts.parse!
 
 #================================[ Functions ]
 def eutils(script, params={}, outfile=nil)
-   response = RestClient.get "#{$eutils}/#{script}", {:params=>params}
+   response = nil
+   (1 .. 5).each do |i|
+      response = RestClient.get "#{$eutils}/#{script}", {:params=>params}
+      break if response.code == 200
+   end
    abort "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
    unless outfile.nil?
       ohf = File.open(outfile, 'w')
@@ -68,6 +72,10 @@ begin
    $o[:gis].each do |gi|
       doc = Nokogiri::XML( elink({:dbfrom=>$o[:dbfrom], :db=>'taxonomy', :id=>gi}) )
       taxid = doc.at_xpath("/eLinkResult/LinkSet/LinkSetDb/Link/Id")
+      if taxid.nil?
+	 warn "Cannot find link to taxonomy: #{gi}"
+	 next
+      end
       taxonomy = {}
       unless taxid.nil?
 	 doc = Nokogiri::XML( efetch({:db=>'taxonomy', :id=>taxid.content}) )
