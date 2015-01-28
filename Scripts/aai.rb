@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Oct-28-2013
+# @update: Jan-28-2015
 # @license: artistic license 2.0
 #
 
@@ -124,6 +124,7 @@ Dir.mktmpdir do |dir|
    end
    res = File.open(o[:res], "w") unless o[:res].nil?
    [1,2].each do |i|
+      qry_seen = []
       q = "#{dir}/seq#{i}.fa"
       s = "#{dir}/seq#{i==1?2:1}.fa"
       case o[:program].downcase
@@ -146,12 +147,11 @@ Dir.mktmpdir do |dir|
       id = 0
       sq = 0
       n  = 0
-      last_ID = ""
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
-	 next if last_ID == row[0]
-	 if row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:bits]
+	 if qry_seen[ row[0].to_i ].nil? and row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:bits]
+	    qry_seen[ row[0].to_i ] = 1
 	    id += row[2].to_f
 	    sq += row[2].to_f ** 2
 	    n  += 1
