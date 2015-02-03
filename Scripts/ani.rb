@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jan-28-2015
+# @update: Feb-03-2015
 # @license: artistic license 2.0
 #
 
@@ -16,7 +16,7 @@ rescue LoadError
    has_rest_client = FALSE
 end
 
-o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>false, :bin=>'', :program=>'blast+', :thr=>1, :correct=>true}
+o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>false, :bin=>'', :program=>'blast+', :thr=>1, :correct=>true, :dec=>2}
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Nucleotide Identity between two genomes.
@@ -46,6 +46,7 @@ Usage: #{$0} [options]"
    opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
+   opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
@@ -88,9 +89,14 @@ Dir.mktmpdir do |dir|
 	    ln.gsub!(/[^A-Za-z]/, '')
 	    buffer = buffer + ln
 	    while buffer.size > o[:win]
-	       frgs += 1
-	       fo.puts ">#{frgs}"
-	       fo.puts buffer[0, o[:win]]
+	       seq_i = buffer[0, o[:win]]
+	       if seq_i =~ /^N+$/
+	          disc += seq_i.size
+	       else
+		  frgs += 1
+		  fo.puts ">#{frgs}"
+		  fo.puts seq_i
+	       end
 	       buffer = buffer[o[:step] .. -1]
 	    end
 	 else
@@ -153,18 +159,18 @@ Dir.mktmpdir do |dir|
 	 row = ln.split(/\t/)
 	 if qry_seen[ row[0].to_i ].nil? and row[3].to_i >= o[:len] and row[2].to_f >= o[:id]
 	    qry_seen[ row[0].to_i ] = 1
-	    c_identity = row[2].to_f # / (o[:correct] ? 0.8621 : 1.0)
-	    id += c_identity
-	    sq += c_identity ** 2
+	    identity_corr = 100 - (100 - row[2].to_f)/(o[:correct] ? 0.8621: 1.0)
+	    id += identity_corr
+	    sq += identity_corr ** 2
 	    n  += 1
 	    if i==1
 	       rbh[ row[0].to_i ] = row[1].to_i
 	    else
 	       if !rbh[ row[1].to_i ].nil? and rbh[ row[1].to_i ]==row[0].to_i
-	          id2 += c_identity
-		  sq2 += c_identity ** 2
+	          id2 += identity_corr
+		  sq2 += identity_corr ** 2
 		  n2  += 1
-		  fo.puts [c_identity,row[3..5],row[10..11]].join("\t") unless o[:out].nil?
+		  fo.puts [identity_corr,row[3..5],row[10..11]].join("\t") unless o[:out].nil?
 	       end
 	    end
 	 end
@@ -174,16 +180,16 @@ Dir.mktmpdir do |dir|
 	 puts "Insuffient hits to estimate one-way ANI: #{n}."
 	 res.puts "Insufficient hits to estimate one-way ANI: #{n}"
       else
-	 printf "! One-way ANI %d: %.10f%% (SD: %.10f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
-	 res.puts sprintf "<b>One-way ANI %d:</b> %.10f%% (SD: %.10f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
+	 printf "! One-way ANI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
+	 res.puts sprintf "<b>One-way ANI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
    end
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way ANI: #{n2}"
       res.puts "Insufficient hits to estimate two-way ANI: #{n2}"
    else
-      printf "! Two-way ANI  : %.10f%% (SD: %.10f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
-      res.puts sprintf "<b>Two-way ANI:</b> %.10f%% (SD: %.10f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
+      res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
    end
    fo.close unless o[:out].nil?
 end
