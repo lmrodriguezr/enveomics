@@ -2,13 +2,14 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Aug-01-2014
+# @update: Feb-04-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
 o = {:q=>FALSE, :f=>"(\\S+)-(\\S+)\\.rbm", :consolidate=>TRUE, :pre=>[]}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Identifies Orthology Groups (OGs) in Reciprocal Best Matches (RBM)

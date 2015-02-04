@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jan-28-2015
+# @update: Feb-04-2015
 # @license: artistic license 2.0
 #
 
@@ -17,6 +17,7 @@ rescue LoadError
 end
 
 o = {:len=>0, :id=>20, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Amino acid Identity between two genomes.

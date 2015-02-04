@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-03-2015
+# @update: Feb-04-2015
 # @license: artistic license 2.0
 #
 
@@ -17,6 +17,7 @@ rescue LoadError
 end
 
 o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>false, :bin=>'', :program=>'blast+', :thr=>1, :correct=>true, :dec=>2}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Nucleotide Identity between two genomes.
