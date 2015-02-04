@@ -1,23 +1,30 @@
 #!/usr/bin/ruby -w
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Jan 09 2013
+# @update: Feb 04 2015
 # @license: artistic license 2.0
 #
 
-require 'trollop'
+require 'optparse'
 
-opts = Trollop::options do
-   banner "Rounds (or floors) numbers in a table."
-   opt :in, "Input table.", :type=>:string, :short=>'i'
-   opt :out, "Output table.", :type=>:string, :short=>'o'
-   opt :ndigits, "Number of digits.", :type=>:integer, :short=>'n', :default=>0
-   opt :floor, "Floors the values instead of rounding them.", :short=>'f'
-   opt :delimiter, "String delimiting columns.", :short=>'d', :default=>"\t"
-end
-
-Trollop::die :in, "is mandatory" unless opts[:in]
-Trollop::die :out, "is mandatory" unless opts[:out]
+o = {:ndigits=>0, :action=>:round, :delimiter=>"\t"}
+ARGV << '-h' if ARGV.size==0
+OptionParser.new do |opts|
+   opts.banner = "\nRounds numbers in a table."
+   opts.on("-i", "--in FILE", "Input table."){ |v| o[:in] = v}
+   opts.on("-o", "--out FILE", "Output table."){ |v| o[:out] = v }
+   opts.on("-n", "--ndigits INT", "Number of decimal digits. By default: #{o[:ndigits]}"){ |v| o[:ndigits] = v.to_i }
+   opts.on("-f", "--floor", "Floors the values instead of rounding them. Ignores -n."){ o[:action] = :floor }
+   opts.on("-c", "--ceil", "Ceils the values instead of rounding them. Ignores -n."){ o[:action] = :ceil }
+   opts.on("-d", "--delimiter STR", "String delimiting columns. By default, tabulation."){ |v| o[:delimiter] = v }
+   opts.on("-h", "--help", "Display this screen") do
+      puts opts
+      exit
+   end
+   opts.separator ""
+end.parse!
+abort "-i is mandatory" if o[:in].nil?
+abort "-o is mandatory" if o[:out].nil?
 
 class String
    def is_number?
@@ -26,22 +33,28 @@ class String
 end
 
 begin
-   i = File.open(opts[:in], "r")
-   o = File.open(opts[:out], "w")
-   while(ln = i.gets)
+   ifh = File.open(o[:in], "r")
+   ofh = File.open(o[:out], "w")
+   while(ln = ifh.gets)
       ln.chomp!
       row = []
-      ln.split(opts[:delimiter]).each do |value|
-         if opts[:floor]
-	    row.push( value.is_number? ? value.to_f.floor.to_s : value )
-	 else
-	    row.push( value.is_number? ? value.to_f.round(opts[:ndigits]).to_s : value )
-         end
+      ln.split(o[:delimiter]).each do |value|
+	 if value.is_number?
+	    case o[:action]
+	    when :round
+	       value = value.to_f.round(o[:ndigits])
+	    when :floor
+	       value = value.to_f.floor
+	    when :ceil
+	       value = value.to_f.ceil
+	    end
+	 end
+	 row.push value.to_s
       end
-      o.puts(row.join(opts[:delimiter]))
+      ofh.puts(row.join(o[:delimiter]))
    end
-   i.close
-   o.close
+   ifh.close
+   ofh.close
 rescue => err
    $stderr.puts "Exception: #{err}\n\n"
    err.backtrace.each { |l| $stderr.puts " - " + l + "\n" }
