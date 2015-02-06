@@ -1,8 +1,8 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Apr-21-2014
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
@@ -10,6 +10,7 @@ require 'optparse'
 
 $opts = {:n=>5, :sortby=>'bitscore', :q=>FALSE}
 $cols = {'bitscore'=>11, 'evalue'=>10, 'identity'=>2, 'length'=>3}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "Reports the top-N best hits of a BLAST, pre-sorted by query."
    opts.separator ""
@@ -20,6 +21,10 @@ OptionParser.new do |opts|
    opts.on("-n", "--top INTEGER", "Maximum number of hits to report for each query.  By default: #{$opts[:n]}"){ |v| $opts[:n]=v.to_i }
    opts.on("-s", "--sorby STRING", "Parameter used to detect the 'best' hits.  Any of: bitscore (default), evalue, identity, length."){ |v| $opts[:sortby]=v }
    opts.on("-q", "--quiet", "Run quietly."){ $opts[:q]=TRUE; $opts[:w]=FALSE }
+   opts.on("-h", "--help", "Display this screen") do
+      puts opts
+      exit
+   end
    opts.separator ""
 end.parse!
 

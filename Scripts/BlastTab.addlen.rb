@@ -1,14 +1,15 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-11-2013
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
 o = {:subject=>FALSE, :quiet=>FALSE}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Appends an extra column to a BLAST with the length of the query or the subject sequence.

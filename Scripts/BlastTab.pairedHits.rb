@@ -1,14 +1,15 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update: Feb-06-2015
 # @license artistic license 2.0
-# @update mar-17-2014
 #
 
 require 'optparse'
 
 opts = {:minscore=>0, :besthits=>0, :orient=>0, :sisprefix=>"_"}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opt|
    opt.separator "Identifies the best hits of paired-reads."
    opt.separator ""

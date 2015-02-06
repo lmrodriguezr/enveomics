@@ -1,14 +1,15 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Sep-13-2014
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
 o = {:q=>FALSE, :p=>"", :s=>""}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Generates easy-to-parse tagged reads from FastQ files.

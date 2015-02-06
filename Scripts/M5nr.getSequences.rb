@@ -1,8 +1,8 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Aug-21-2013
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
@@ -13,6 +13,7 @@ require 'open-uri'
 require 'JSON'
 
 o = {:q=>FALSE, :url=>'http://api.metagenomics.anl.gov/m5nr', :max=>0, :recover=>FALSE}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Downloads a set of sequences from M5nr with a given functional annotation.

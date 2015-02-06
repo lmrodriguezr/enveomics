@@ -1,8 +1,8 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Dec-18-2014
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
@@ -16,8 +16,8 @@ rescue LoadError
    has_iconv = FALSE
 end
 
-ARGF.argv << "-h" unless ARGF.argv.length > 0
 o = {:q=>FALSE, :regex=>'^(?<dataset>.+?):.*', :area=>FALSE, :norm=>:counts}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Generates iToL-compatible files from a .jplace file (produced by RAxML's EPA

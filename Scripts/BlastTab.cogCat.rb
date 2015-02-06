@@ -1,14 +1,15 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Aug-04-2013
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
 o = {:cog=>FALSE, :desc=>FALSE, :q=>FALSE, :w=>TRUE}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "Replaces the COG gene IDs in a BLAST for the COG category"
    opts.separator ""
@@ -21,6 +22,10 @@ OptionParser.new do |opts|
    opts.on("-d", "--desc", "Includes COG description (requires -g/--cog)."){ o[:desc]=TRUE }
    opts.on("-n", "--noverbose", "Run quietly, but show warnings."){ o[:q]=TRUE }
    opts.on("-q", "--quiet", "Run quietly."){ o[:q]=TRUE; o[:w]=FALSE }
+   opts.on("-h", "--help", "Display this screen") do
+      puts opts
+      exit
+   end
    opts.separator ""
 end.parse!
 

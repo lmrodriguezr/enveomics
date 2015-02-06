@@ -1,15 +1,15 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update  Apr-20-2013
+# @update  Feb-06-2015
 # @license artistic 2.0
 #
 
 require 'optparse'
 
 o = {:quiet=>FALSE, :model=>TRUE}
-
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Extracts the sequence IDs and query model form a (multiple) HMMsearch report (for HMMer 3.0).

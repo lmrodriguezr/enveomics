@@ -1,14 +1,15 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update: Feb-06-2015
 # @license artistic license 2.0
-# @update Jun-11-2014
 #
 
 require 'optparse'
 
 opts = {:rank=>'genus', :quiet=>FALSE}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opt|
    opt.separator "Generates a simple tabular file with the classification of each sequence at a given taxonomic rank from a MyTaxa output."
    opt.separator ""

@@ -1,15 +1,15 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Oct-31-2014
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 
-ARGV << '-h' if ARGV.size==0
 o = {:q=>FALSE, :f=>"(\\S+)\\.txt", :consolidate=>TRUE, :pre=>[]}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Annotates Orthology Groups (OGs) using one or more reference genomes.

@@ -1,9 +1,9 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
-# @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update  Feb-06-2015
 # @license artistic license 2.0
-# @update Jan-15-2015
 #
 
 require 'optparse'

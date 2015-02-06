@@ -1,4 +1,5 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
+
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @update: Feb 04 2015

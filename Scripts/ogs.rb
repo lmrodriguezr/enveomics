@@ -1,8 +1,8 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-04-2015
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 

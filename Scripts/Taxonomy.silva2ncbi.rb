@@ -1,14 +1,15 @@
-#!/usr/bin/ruby -w
+#!/usr/bin/env ruby
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update: Feb-06-2015
 # @license artistic license 2.0
-# @update Mar-18-2014
 #
 
 require 'optparse'
 
 $opts = {:warns=>false}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opt|
    opt.separator "Re-formats Silva taxonomy into NCBI-like taxonomy dump files."
    opt.separator ""
@@ -22,7 +23,7 @@ OptionParser.new do |opt|
    opt.on("-t", "--taxfile FILE", "If passed, it creates a simple TSV taxonomy file."){ |v| $opts[:taxfile]=v }
    opt.on("-n", "--ncbi FILE", "If passed, output folder for the NCBI dump files (e.g., taxdmp)."){ |v| $opts[:ncbi]=v }
    opt.on("-w", "--warns", "Verbously display warnings."){ $opts[:warns]=true }
-   opt.on("-h","--help","Display this screen") do
+   opt.on("-h", "--help","Display this screen") do
       puts opt
       exit
    end

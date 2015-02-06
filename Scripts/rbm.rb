@@ -1,8 +1,8 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jun-28-2015
+# @update: Feb-06-2015
 # @license: artistic license 2.0
 #
 
@@ -10,6 +10,7 @@ require 'optparse'
 require 'tmpdir'
 
 o = {:len=>0, :id=>0, :fract=>0, :score=>0, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :nucl=>FALSE}
+ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Finds the reciprocal best matches between two sets of sequences.
