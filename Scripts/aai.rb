@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-04-2015
+# @update: Feb-05-2015
 # @license: artistic license 2.0
 #
 
@@ -16,7 +16,7 @@ rescue LoadError
    has_rest_client = FALSE
 end
 
-o = {:len=>0, :id=>20, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1}
+o = {:len=>0, :id=>20, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :dec=>2}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -45,6 +45,7 @@ Usage: #{$0} [options]"
    opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
+   opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
@@ -173,16 +174,16 @@ Dir.mktmpdir do |dir|
 	 puts "Insuffient hits to estimate one-way AAI: #{n}."
 	 res.puts "Insufficient hits to estimate one-way AAI: #{n}"
       else
-	 printf "! One-way AAI %d: %.2f%% (SD: %.2f%%), from %i proteins.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
-	 res.puts sprintf "<b>One-way AAI %d:</b> %.2f%% (SD: %.2f%%), from %i proteins.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
+	 printf "! One-way AAI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
+	 res.puts sprintf "<b>One-way AAI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
    end
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way AAI: #{n2}"
       res.puts "Insufficient hits to estimate two-way AAI: #{n2}"
    else
-      printf "! Two-way AAI  : %.2f%% (SD: %.2f%%), from %i proteins.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
-      res.puts sprintf "<b>Two-way AAI:</b> %.2f%% (SD: %.2f%%), from %i proteins.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      printf "! Two-way AAI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
+      res.puts sprintf "<b>Two-way AAI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
    end
    fo.close unless o[:out].nil?
 end
