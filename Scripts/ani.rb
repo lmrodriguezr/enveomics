@@ -39,7 +39,7 @@ Usage: #{$0} [options]"
    opts.on("-l", "--len INT", "Minimum alignment length (in bp).  By default: #{o[:len].to_s}."){ |v| o[:len] = v.to_i }
    opts.on("-i", "--id NUM", "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."){ |v| o[:id] = v.to_f }
    opts.on("-n", "--hits INT", "Minimum number of hits.  By default: #{o[:hits].to_s}."){ |v| o[:hits] = v.to_i }
-   opts.on("-N", "--nocorrection", "Report values without post-hoc correction. NOT YET IMPLEMENTED."){ |v| o[:correct] = false }
+   opts.on("-N", "--nocorrection", "Report values without post-hoc correction."){ |v| o[:correct] = false }
    opts.separator ""
    opts.separator "Software Options"
    opts.on("-b", "--bin DIR", "Path to the directory containing the binaries of the search program."){ |v| o[:bin] = v }
