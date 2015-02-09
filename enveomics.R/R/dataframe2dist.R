@@ -16,6 +16,7 @@ enve.dataframe2dist <- function(
    m <- matrix(NA, nrow=length(ids), ncol=length(ids), dimnames=list(ids, ids));
    diag(m) <- 0
    for(i in 1:nrow(x)){
+      i <- as.character(i);
       m[x[i,obj1.index], x[i,obj2.index]] <- x[i,dist.index];
       m[x[i,obj2.index], x[i,obj1.index]] <- x[i,dist.index];
    }
