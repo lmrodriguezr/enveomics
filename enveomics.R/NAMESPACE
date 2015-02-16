@@ -1,1 +1,1 @@
-export(enve.barplot, enve.recplot, enve.prune.dist, enve.gss, plot.enve.GSS, summary.enve.GSS, enve.gss.test, plot.enve.GSStest, summary.enve.GSStest, enve.df2dist, enve.df2dist.group)
+export(enve.barplot, enve.recplot, enve.prune.dist, enve.gss, plot.enve.GSS, summary.enve.GSS, enve.gss.test, plot.enve.GSStest, summary.enve.GSStest, enve.df2dist, enve.df2dist.group, enve.df2dist.list)
