@@ -17,7 +17,7 @@ if [[ "$1" == "" || "$1" == "-h" || "$2" == "" ]] ; then
    exit 1 ;
 fi ;
 TYPE=$2
-if [[ "$TYPE" != "g" || "$TYPE" != "mg" || "$TYPE" != "scg" || "$TYPE" != "t" ]] ; then
+if [[ "$TYPE" != "g" && "$TYPE" != "mg" && "$TYPE" != "scg" && "$TYPE" != "t" ]] ; then
    echo "Unsupported data type: $TYPE." >&2 ;
    exit 1 ;
 fi ;
