@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-06-2015
+# @update: Feb-26-2015
 # @license: artistic license 2.0
 #
 
@@ -67,7 +67,7 @@ Dir.mktmpdir do |dir|
    n2 = 0
    $stderr.puts " Running comparisons." unless o[:q]
    [2,1].each do |i|
-      qry_seen = []
+      qry_seen = {}
       q = o[:"seq#{i}"]
       s = "#{dir}/seq#{i==1?2:1}"
       $stderr.puts "  Query: #{q}." unless o[:q]
@@ -88,8 +88,8 @@ Dir.mktmpdir do |dir|
 	 ln.chomp!
 	 row = ln.split(/\t/)
 	 row[12] = "1" if o[:program]!='blast+'
-	 if qry_seen[ row[0].to_i ].nil? and row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and row[3].to_f/row[12].to_i >= o[:fract]
-	    qry_seen[ row[0].to_i ] = 1
+	 if qry_seen[ row[0] ].nil? and row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and row[3].to_f/row[12].to_i >= o[:fract]
+	    qry_seen[ row[0] ] = 1
 	    n += 1
 	    if i==2
 	       rbh[ row[0] ] = row[1]

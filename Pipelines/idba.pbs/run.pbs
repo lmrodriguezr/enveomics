@@ -30,7 +30,7 @@ rm $SAMPLE/align-*
 rm $SAMPLE/local-contig-*.fa
 rm $SAMPLE/contig-*.fa
 
-ln -s $enve/scaffold.fa $SAMPLE.AllContigs.fna ;
+ln -s $SAMPLE/scaffold.fa $SAMPLE.AllContigs.fna ;
 time $enve/FastA.length.pl $SAMPLE/scaffold.fa | awk '$2>=500{print $1}' > $SAMPLE.LargeContigs.ids ;
 time $enve/FastA.filter.pl $SAMPLE.LargeContigs.ids $SAMPLE/scaffold.fa > $SAMPLE.LargeContigs.fna ;
 rm $SAMPLE.LargeContigs.ids ;
