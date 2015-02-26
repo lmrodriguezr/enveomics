@@ -54,10 +54,8 @@ for i in $dir/04.trimmed_fasta/*.CoupledReads.fa ; do
    
    # Predict time (in hours)
    SIZE_M=$(($(ls -pl 04.trimmed_fasta/$b.CoupledReads.fa | awk '{print $5}')/1000000)) ;
-   # TODO: This is simply 2X the ammount for trim.pbs, it should be estimated.
-   let TIME_H=$SIZE_M*10/1000 ;
-   let RAM_G=$SIZE_M*16/1000 ;
-   [[ $RAM_G -lt 10 ]] && RAM_G=10 ;
+   let TIME_H=6+$SIZE_M*2/1000 ;
+   let RAM_G=20+$SIZE_M*10/1000 ;
    
    # Find the right queue
    if [[ $TIME_H -lt 12 ]] ; then
