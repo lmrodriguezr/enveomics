@@ -1,9 +1,9 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license: artistic license 2.0
-# @last_update: Apr 08 2013
+# @last_update: Mar-23-2015
 #
 
 use strict;

@@ -1,9 +1,8 @@
-#!/usr/bin/perl
-
+#!/usr/bin/env perl
 # 
 # @author Luis M. Rodriguez-R
 # @version 2.0
-# @update: Oct 19 2012
+# @update: Mar-23-2015
 # @license artistic license 2.0
 # 
 # Usage: FastQ.interpose.pl <output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]

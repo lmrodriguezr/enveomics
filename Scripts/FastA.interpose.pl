@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
 # Interpose sequences in FastA format from two files into one output file.  If more than two files are
 # provided, the script will interpose all the input files.
@@ -10,7 +10,7 @@
 # @author Luis M. Rodriguez-R
 # @version 1.0
 # @created Nov-27-2012
-# @update May-11-2014
+# @update Mar-23-2015
 # @license artistic license 2.0
 # 
 # Usage: FastQ.interpose.pl <output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]

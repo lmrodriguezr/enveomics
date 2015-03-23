@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 
-# @author: Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Oct-02-2014
-# @license: Artistic License 2.0
+# @author Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update Mar-23-2015
+# @license Artistic License 2.0
 
 use warnings;
 use strict;

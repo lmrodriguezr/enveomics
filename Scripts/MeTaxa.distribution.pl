@@ -1,9 +1,8 @@
-#!/usr/bin/perl
-
+#!/usr/bin/env perl
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Apr-01-2014
+# @update Mar-23-2015
 #
 use warnings;
 use strict;
@@ -16,7 +15,7 @@ Usage:
    $0 [args]
 
 Mandatory:
-   -m <str>	MeTaxa output.
+   -m <str>	MyTaxa output.
 
 Optional:
    -g <str>	Genes predicted in the format defined by -f.  If not passed, abundance is assumed to be based
@@ -143,7 +142,7 @@ my $Nno_read_ctg = 0;
 while(not eof(METAXA)){
    my @h=split /\t/, <METAXA>;
    my $t=<METAXA>; chomp $t;
-   exists $h[3] or die "Cannot parse metaxa file, line $.: $_\n";
+   exists $h[3] or die "Cannot parse MyTaxa file, line $.: $_\n";
    my $count_h;
    if($o{c} or $o{g}){
       unless(exists $count{$h[0]}){

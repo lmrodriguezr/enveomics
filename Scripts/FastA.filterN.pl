@@ -1,18 +1,18 @@
-#!/usr/bin/perl
-
-# Filtering sequences by N-content and presence of long homopolymers
-# 
-# Run the script without parameters to get a help message.
+#!/usr/bin/env perl
 # 
 # @author Luis M. Rodriguez-R
 # @version 1.0
+# @update Mar-23-2015
 # @license artistic license 2.0
+# 
 
 use warnings;
 use strict;
 
 my($file, $content, $stretch) = @ARGV;
 $file or die <<HELP
+Description:
+   Filter sequences by N-content and presence of long homopolymers.
 Usage:
    $0 sequences.fa [content [stretch]] > filtered.fa
 Where:

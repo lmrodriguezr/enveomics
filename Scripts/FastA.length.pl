@@ -1,8 +1,7 @@
-#!/usr/bin/perl
-
+#!/usr/bin/env perl
 #
 # @author: Luis M Rodriguez-R
-# @update: Nov 29 2012
+# @update: Mar-23-2015
 # @license: artistic license 2.0
 #
 
