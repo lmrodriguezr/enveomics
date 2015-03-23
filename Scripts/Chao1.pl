@@ -86,7 +86,7 @@ for my $i (0 .. $#values){
       my $uc  = $ob + $c*($ch-$ob);
       print "".join($o{d}, $ob, $ch, $lc, $uc)."\n"
    }else{
-      print "".join($o{d}, $ob, 0, 0, 0)."\n"
+      print "".join($o{d}, $ob, $ob, 0, 0)."\n"
    }
 }
 
