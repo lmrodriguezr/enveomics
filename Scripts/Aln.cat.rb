@@ -70,6 +70,7 @@ begin
    $stderr.puts "Concatenating." unless o[:q]
    a.keys.each do |key|
       (0 .. n).each{|i| a[key][i] = (o[:missing] * lengths[i]) if a[key][i].nil?}
+      abort "Inconsistent lengths in '#{key}'." unless lengths == a[key].map{|i| i.length}
       puts ">#{key}", a[key].join('').gsub(/(.{1,60})/, "\\1\n")
       a.delete(key)
    end
