@@ -7,7 +7,7 @@
 
 require 'optparse'
 
-o = {:q=>FALSE, :missing=>'.', :model=>'DCMUT'}
+o = {:q=>FALSE, :missing=>'-', :model=>'AUTO', :removeinvar=>FALSE, :undefined=>'-.Xx?'}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -18,21 +18,26 @@ Usage: #{$0} [options] aln1.fa aln2.fa ... > aln.fa"
    opts.separator ""
    opts.on("-c", "--coords FILE", "File of coordinates in RAxML-compliant format."){ |v| o[:coords]=v }
    opts.on("-i", "--ignore-after STRING", "Remove everything in the IDs after the specified string."){ |v| o[:ignoreafter]=v }
+   opts.on("-I", "--remove-invariable", "Remove invariable sites.",
+		"Note: Invariable sites are defined as columns with only one state and/or undefined characters.",
+		"Additional ambiguous characters may exist and should be defined using --undefined."){ |v| o[:removeinvar]=v }
    opts.on("-u", "--missing-char CHAR", "Character denoting missing data. By default: '#{o[:missing]}'.") do |v|
       abort "Missing positions can only be denoted by single characters, offending value: '#{v}'" if v.length != 1
       o[:missing]=v
    end
    opts.on("-m", "--model STRING",
-		"Name of the model to use if --coords is used. See RAxML's docs; supported values in v7.0.4 include:",
+		"Name of the model to use if --coords is used. See RAxML's docs; supported values in v8+ include:",
 		"For DNA alignments:",
-		"  'DNA', or 'DNA/3' (to estimate rates per codon position, particular notation for this script).",
+		"  'DNA[F|X]', or 'DNA[F|X]/3' (to estimate rates per codon position, particular notation for this script).",
 		"General protein alignments:",
-		"  'DAYHOFF' (1978), 'DCMUT' (default in this script, MBE 2005), 'JTT' (Nat 1992), 'VT' (JCompBiol",
+		"  'AUTO' (default in this script), 'DAYHOFF' (1978), 'DCMUT' (MBE 2005), 'JTT' (Nat 1992), 'VT' (JCompBiol",
 		"  2000), 'BLOSUM62' (PNAS 1992).",
 		"Specialized protein alignments:",
 		"  'MTREV' (mitochondrial, JME 1996), 'WAG' (globular, MBE 2001), 'RTREV' (retrovirus, JME 2002),",
 		"  'CPREV' (chloroplast, JME 2000), 'MTMAM' (nuclear mammal, JME 1998)."
 		){|v| o[:model]=v}
+   opts.on(      "--undefined STRING", "All characters to be regarded as 'undefined'. It should include all ambiguous and missing data chars.",
+   		"Ignored unless --remove-invariable is used. By default: '#{o[:undefined]}'."){|v| o[:undefined]=v}
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen.") do
       puts opts
@@ -67,10 +72,36 @@ begin
       abort "#{alns[i]}: Empty alignment?" if key.nil?
       lengths[i] = a[key][i].length
    end
+   if o[:removeinvar]
+      $stderr.puts "Removing invariable sites." unless o[:q]
+      invs = 0
+      (0 .. n).each do |i|
+	 olen = lengths[i]
+	 (0 .. (lengths[i]-1)).each do |pos|
+	    chr = nil
+	    inv = true
+	    a.keys.each do |key|
+	       next if a[key][i].nil?
+	       chr = a[key][i][pos] if chr.nil? or o[:undefined].chars.include? chr
+	       if chr != a[key][i][pos] and not o[:undefined].chars.include? a[key][i][pos]
+		  inv = false
+		  break
+	       end
+	    end
+	    if inv
+	       a.keys.each{|key| a[key][i][pos]='!' unless a[key][i].nil?}
+	       lengths[i] -= 1
+	       invs += 1
+	    end
+	 end
+	 a.keys.each{|key| a[key][i].gsub!('!', '') unless a[key][i].nil?}
+      end
+      $stderr.puts "  Removed #{invs} sites." unless o[:q]
+   end
    $stderr.puts "Concatenating." unless o[:q]
    a.keys.each do |key|
       (0 .. n).each{|i| a[key][i] = (o[:missing] * lengths[i]) if a[key][i].nil?}
-      abort "Inconsistent lengths in '#{key}'." unless lengths == a[key].map{|i| i.length}
+      abort "Inconsistent lengths in '#{key}'\nexp:#{lengths.join(' ')}\nobs:#{a[key].map{|i| i.length}.join(' ')}." unless lengths == a[key].map{|i| i.length}
       puts ">#{key}", a[key].join('').gsub(/(.{1,60})/, "\\1\n")
       a.delete(key)
    end
@@ -82,10 +113,10 @@ begin
       (0 .. n).each do |i|
 	 l = lengths[i]
 	 names[i] += "_#{i}" while names.count(names[i])>1
-	 if o[:model]=='DNA/3'
-	    coords.puts "DNA, #{names[i]}codon1 = #{s+1}-#{s+l}\\3"
-	    coords.puts "DNA, #{names[i]}codon2 = #{s+2}-#{s+l}\\3"
-	    coords.puts "DNA, #{names[i]}codon3 = #{s+3}-#{s+l}\\3"
+	 if o[:model] =~ /(DNA.?)\/3/
+	    coords.puts "#{$1}, #{names[i]}codon1 = #{s+1}-#{s+l}\\3"
+	    coords.puts "#{$1}, #{names[i]}codon2 = #{s+2}-#{s+l}\\3"
+	    coords.puts "#{$1}, #{names[i]}codon3 = #{s+3}-#{s+l}\\3"
 	 else
 	    coords.puts "#{o[:model]}, #{names[i]} = #{s+1}-#{s+l}"
 	 end
