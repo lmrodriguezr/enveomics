@@ -111,8 +111,8 @@ begin
       s = 0
       names = alns.map{|a| File.basename(a).gsub(/\..*/,'').gsub(/[^A-Za-z0-9_]/,'_')}
       (0 .. n).each do |i|
-	 next unless l > 0
 	 l = lengths[i]
+	 next unless l > 0
 	 names[i] += "_#{i}" while names.count(names[i])>1
 	 if o[:model] =~ /(DNA.?)\/3/
 	    coords.puts "#{$1}, #{names[i]}codon1 = #{s+1}-#{s+l}\\3"
