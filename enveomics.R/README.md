@@ -13,7 +13,8 @@ And open help messages using any of the following commands:
 
     > ?enveomics.R
     > ?enve.barplot
-    > ?enve.recplot
+    > ?enve.recplot2
+    > ?enve.recplot2.findPeaks
     > ?enve.prune.dist
     > ?enve.gss
     > ?enve.gss.test
