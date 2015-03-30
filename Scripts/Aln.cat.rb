@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 # @author: Luis M. Rodriguez-R
-# @update: Mar-25-2015
+# @update: Mar-30-2015
 # @license: artistic license 2.0
 #
 
@@ -27,12 +27,12 @@ Usage: #{$0} [options] aln1.fa aln2.fa ... > aln.fa"
    end
    opts.on("-m", "--model STRING",
 		"Name of the model to use if --coords is used. See RAxML's docs; supported values in v8+ include:",
-		"For DNA alignments:",
+		"o For DNA alignments:",
 		"  'DNA[F|X]', or 'DNA[F|X]/3' (to estimate rates per codon position, particular notation for this script).",
-		"General protein alignments:",
+		"o General protein alignments:",
 		"  'AUTO' (default in this script), 'DAYHOFF' (1978), 'DCMUT' (MBE 2005), 'JTT' (Nat 1992), 'VT' (JCompBiol",
 		"  2000), 'BLOSUM62' (PNAS 1992).",
-		"Specialized protein alignments:",
+		"o Specialized protein alignments:",
 		"  'MTREV' (mitochondrial, JME 1996), 'WAG' (globular, MBE 2001), 'RTREV' (retrovirus, JME 2002),",
 		"  'CPREV' (chloroplast, JME 2000), 'MTMAM' (nuclear mammal, JME 1998)."
 		){|v| o[:model]=v}
@@ -111,6 +111,7 @@ begin
       s = 0
       names = alns.map{|a| File.basename(a).gsub(/\..*/,'').gsub(/[^A-Za-z0-9_]/,'_')}
       (0 .. n).each do |i|
+	 next unless l > 0
 	 l = lengths[i]
 	 names[i] += "_#{i}" while names.count(names[i])>1
 	 if o[:model] =~ /(DNA.?)\/3/
