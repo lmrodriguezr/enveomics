@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar-23-2015
+# @update: Apr-02-2015
 # @license: artistic license 2.0
 #
 
@@ -10,7 +10,7 @@ use strict;
 use Getopt::Std;
 
 my %o;
-getopts('si:o:ne:h:', \%o);
+getopts('si:o:ne:h:H:', \%o);
 my @files = @ARGV;
 
 $#files>0 or die "
@@ -29,32 +29,35 @@ $#files>0 or die "
       		is 0 if values are numeric (i.e., unless -s is set) or an empty string
 		otherwise.
       -h <str>	Header of the first column, containing the IDs.  By default: \"Tag\".
+      -H <str>	Format of filenames capturing the column header in the first capturing
+		parenthesis.  Non-capturing paretheses can be defined as (?:...).  By
+		default: \"(?:.*/)?([^\\.]+)\", which captures the part of the basename
+		of the file before the first dot (if any).
 
 ";
 $o{i} ||= "\t";
 $o{o} ||= "\t";
 $o{e} ||= ($o{s} ? "" : 0);
 $o{h} ||= "Tag";
+$o{H} ||= "(?:.*/)?([^\\.]+)";
 
 my $notes = {};
-#my $total = [];
 
 print $o{h} unless $o{n};
 my $i = 0;
 for my $file (@files){
-   (my $tag=$file) =~ s{.*/}{};
-   $tag=~s/\..*//;
-   print $o{o}.$tag unless $o{n};
+   unless($o{n}){
+      $file =~ m/$o{H}/ or die "Filename '$file' doesn't match format '$o{H}'.";
+      my $tag=$1;
+      print $o{o}.$tag;
+   }
    open IN, "<", $file or die "Cannot read file: $file: $!\n";
    while(<IN>){
       chomp;
-      #m/^\s*(\d+)\s(.+)/ or die "I can not parse the line $. from the file $file: $_\n";
-      #m/^\s*(.+)\s([\d\.]+)/ or die "I can not parse the line $. from the file $file: $_\n";
       my @l = split $o{i};
       $l[1]+=0 unless $o{s};
       $notes->{$l[0]} ||= [];
       $notes->{$l[0]}->[$i] = $l[1];
-      #($total->[$i] ||= 0) += $l[1];
    }
    close IN;
    $i++;
