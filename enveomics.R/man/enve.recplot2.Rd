@@ -5,7 +5,8 @@
 been previously executed.}
 \usage{enve.recplot2(prefix, plot = TRUE, pos.breaks = 1000, id.breaks = 400, 
     id.metric = c("identity", "corrected identity", "bit score"), 
-    id.summary = sum, id.cutoff = 95, verbose = TRUE, ...)}
+    id.summary = sum, id.cutoff = 95, threads = 2, verbose = TRUE, 
+    ...)}
 \arguments{
   \item{prefix}{Path to the prefix of the BlastTab.catsbj.pl output files. At
 least the files .rec and .lim must exist with this prefix.}
@@ -22,6 +23,7 @@ include: `median` to estimate the median instead of the sum, and
   \item{id.cutoff}{Cutoff of identity metric above which the hits are considered
 'in-group'. The 95\% identity corresponds to the expectation of
 ANI<95\% within species.}
+  \item{threads}{Number of threads to use.}
   \item{verbose}{Indicates if the function should report the advance.}
   \item{\dots}{Any additional parameters supported by `plot.enve.recplot2`.}
 }

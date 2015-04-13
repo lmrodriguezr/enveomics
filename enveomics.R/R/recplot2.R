@@ -227,12 +227,15 @@ enve.recplot2 <- function(
 	### Cutoff of identity metric above which the hits are considered
 	### 'in-group'. The 95% identity corresponds to the expectation of
 	### ANI<95% within species.
+	threads=2,
+	### Number of threads to use.
 	verbose=TRUE,
 	### Indicates if the function should report the advance.
 	...
 	### Any additional parameters supported by `plot.enve.recplot2`.
 	){
    # Settings
+   if(!require(parallel, quietly=TRUE)) stop('Unavailable required package: `parallel`.');
    id.metric <- match.arg(id.metric);
    
    #Read files
@@ -247,15 +250,24 @@ enve.recplot2 <- function(
    if(length(pos.breaks)==1) pos.breaks <- seq(min(lim[,2]),         max(lim[,3]),         length.out=pos.breaks+1);
    if(length(id.breaks)==1)  id.breaks  <- seq(min(rec[,rec.idcol]), max(rec[,rec.idcol]), length.out=id.breaks+1);
    
-   counts <- matrix(0, nrow=length(pos.breaks)-1, ncol=length(id.breaks)-1);
-   for(i in 1:nrow(rec)){
-      if(verbose & i%%100==0) cat("   [",signif(i*100/nrow(rec),3),"% ]   \r");
-      y.bin <- which(rec[i,rec.idcol]>=id.breaks[-length(id.breaks)] & rec[i,rec.idcol]<=id.breaks[-1])[1] ;
-      for(pos in rec[i,1]:rec[i,2]){
-	 x.bin <- which(pos>=pos.breaks[-length(pos.breaks)] & pos<=pos.breaks[-1])[1] ;
-	 counts[x.bin, y.bin] <- counts[x.bin, y.bin]+1 ;
-      }
-   }
+   #counts <- matrix(0, nrow=length(pos.breaks)-1, ncol=length(id.breaks)-1);
+   #for(i in 1:nrow(rec)){
+   #   if(verbose & i%%100==0) cat("   [",signif(i*100/nrow(rec),3),"% ]   \r");
+   #   y.bin <- which(rec[i,rec.idcol]>=id.breaks[-length(id.breaks)] & rec[i,rec.idcol]<=id.breaks[-1])[1] ;
+   #   for(pos in rec[i,1]:rec[i,2]){
+#	 x.bin <- which(pos>=pos.breaks[-length(pos.breaks)] & pos<=pos.breaks[-1])[1] ;
+#	 counts[x.bin, y.bin] <- counts[x.bin, y.bin]+1 ;
+#      }
+#   }
+   ###counts <- enve.recplot2.__counts(rec, pos.breaks, id.breaks, verbose, rec.idcol)
+   cl		<- makeCluster(threads)
+   rec.l	<- list()
+   thl		<- ceiling(nrow(rec)/threads)
+   for(i in 0:(threads-1)) rec.l[[i+1]] <- list(rec=rec[ (i*thl+1):min(((i+1)*thl),nrow(rec)), ], verbose=ifelse(i==0, verbose, FALSE))
+   counts.l	<- clusterApply(cl, rec.l, enve.recplot2.__counts, pos.breaks=pos.breaks, id.breaks=id.breaks, rec.idcol=rec.idcol)
+   counts	<- counts.l[[1]]
+   if(threads>1) for(i in 2:threads) counts <- counts + counts.l[[i]]
+   stopCluster(cl)
    
    # Estimate 1D histograms
    if(verbose) cat("Building histograms.\n")
@@ -266,7 +278,6 @@ enve.recplot2 <- function(
    pos.counts.out  <- apply(counts[,!id.ingroup], 1, sum);
 
    # Plot and return
-   if(verbose) cat("Packing and plotting.\n")
    recplot <- new('enve.recplot2',
       counts=counts, id.counts=id.counts, pos.counts.in=pos.counts.in,
       pos.counts.out=pos.counts.out,
@@ -274,7 +285,10 @@ enve.recplot2 <- function(
       seq.breaks=c(lim[1,2], lim[,3]), seq.names=lim[,1],
       id.ingroup=id.ingroup,id.metric=id.metric,
       call=match.call());
-   if(plot) plot(recplot, ...);
+   if(plot){
+      if(verbose) cat("Plotting.\n")
+      plot(recplot, ...);
+   }
    return(recplot);
 }
 
@@ -333,5 +347,21 @@ enve.recplot2.findPeaks <- function(
       lsd1 <- lsd2;
    }
    return(cbind(M,SD,N));
+}
+
+
+enve.recplot2.__counts <- function(x, pos.breaks, id.breaks, rec.idcol){
+   rec <- x$rec
+   verbose <- x$verbose
+   counts <- matrix(0, nrow=length(pos.breaks)-1, ncol=length(id.breaks)-1);
+   for(i in 1:nrow(rec)){
+      if(verbose & i%%100==0) cat("   [",signif(i*100/nrow(rec),3),"% ]   \r");
+      y.bin <- which(rec[i,rec.idcol]>=id.breaks[-length(id.breaks)] & rec[i,rec.idcol]<=id.breaks[-1])[1] ;
+      for(pos in rec[i,1]:rec[i,2]){
+	 x.bin <- which(pos>=pos.breaks[-length(pos.breaks)] & pos<=pos.breaks[-1])[1] ;
+	 counts[x.bin, y.bin] <- counts[x.bin, y.bin]+1 ;
+      }
+   }
+   return(counts);
 }
 
