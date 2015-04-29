@@ -2,6 +2,7 @@
 \Rdversion{1.1}
 \docType{class}
 \alias{enve.recplot2-class}
+\alias{$,enve.recplot2-method}
 
 \title{Class \code{"enve.recplot2"}}
 \description{
@@ -27,7 +28,9 @@ Objects can be created by calls of the form \code{new("enve.recplot2", ...)}.
   }
 }
 \section{Methods}{
-No methods defined with class "enve.recplot2" in the signature.
+  \describe{
+    \item{$}{\code{signature(x = "enve.recplot2")}: ... }
+	 }
 }
 \references{
 %%  ~~put references to the literature/web site here~~

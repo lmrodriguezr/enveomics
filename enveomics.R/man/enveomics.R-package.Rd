@@ -14,7 +14,7 @@ Authors@R: \tab c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
 email="lmrodriguezr@gmail.com"))\cr
 URL: \tab http://enve-omics.gatech.edu/\cr
 Depends: \tab R (>= 2.9)\cr
-Suggests: \tab stats, gplots, modeest, fitdistrplus\cr
+Suggests: \tab stats, gplots, modeest, fitdistrplus, moments\cr
 License: \tab Artistic-2\cr
 LazyLoad: \tab yes\cr
 Encoding: \tab UTF-8\cr
