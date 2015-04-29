@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Mar-23-2015
+# @update: Apr-29-2015
 # @license: artistic license 2.0
 #
 
@@ -14,6 +14,11 @@ o = {:q=>FALSE, :f=>"(\\S+)-(\\S+)\\.rbm", :consolidate=>TRUE, :pre=>[]}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
+***IMPORTANT NOTE***
+This script suffers from chaining effect and is very sensitive to spurious connections,
+because it applies a greedy clustering algorithm. For most practical purposes, the use
+of this script is discouraged and `ogs.mcl.rb` should be preferred. [ Apr-29-2015 ]
+
 Identifies Orthology Groups (OGs) in Reciprocal Best Matches (RBM)
 between all pairs in a collection of genomes.
 
