@@ -10,7 +10,7 @@ sqa=/nv/pmicro1/shared/bin/SolexaQA++
 scythe=/nv/pmicro1/shared/bin/scythe
 enve=/nv/pmicro1/shared/apps/enveomics/Scripts
 trim=/nv/pmicro1/shared/apps/Trimmomatic-0.32/trimmomatic-0.32.jar
-SEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-SE.fa
+SEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-SE_PE.fa
 PEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-PE.fa
 
 #---------------------------------------------------------
@@ -19,7 +19,7 @@ echo "==[ 02.trimmed_reads: $(date) ]" ;
 cd $FOLDER/02.trimmed_reads ;
 
 time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.1.fastq -p "$b-" -s "/1" -o $b.1.fastq ;
-time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.2.fastq -p "$b-" -s "/2" -o $b.2.fastq ;
+[[ -e ../01.raw_reads/$b.2.fastq ]] && time $enve/FastQ.tag.rb -i ../01.raw_reads/$b.2.fastq -p "$b-" -s "/2" -o $b.2.fastq ;
 
 RAW_READS=$(cat $b.1.fastq | paste - - - - | wc -l | sed -e 's/ *//') ;
 RAW_LENGTH=$(head -n 40000 $b.1.fastq | paste - - - - | awk 'BEGIN{FS="\\t"}{SUM+=length($2)}END{print SUM/NR}') ;
