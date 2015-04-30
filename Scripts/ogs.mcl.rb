@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Apr-29-2015
+# @update: Apr-30-2015
 # @license: artistic license 2.0
 #
 
@@ -17,7 +17,9 @@ OptionParser.new do |opts|
    opts.banner = "
 Identifies Orthology Groups (OGs) in Reciprocal Best Matches (RBM)
 between all pairs in a collection of genomes, using the Markov Cluster
-Algorithm. It requires mcl (see http://www.micans.org/mcl).
+Algorithm.
+
+Requires MCL (see http://www.micans.org/mcl).
 
 Usage: #{$0} [options]"
    opts.separator ""
