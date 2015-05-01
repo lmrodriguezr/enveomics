@@ -49,7 +49,7 @@ for i in $dir/*.1.fastq ; do
    # Predict time (in hours)
    SIZE_M=$(($(ls -pl 01.raw_reads/$b.1.fastq | awk '{print $5}')/1000000)) ;
    let TIME_H=$SIZE_M*5/1000 ;
-   [[ -e 01.raw_reads/$b.2.fastq ]] || let TIME_H=$SIZE_M/2 ;
+   [[ -e 01.raw_reads/$b.2.fastq ]] || let TIME_H=$TIME_H/2 ;
    let RAM_G=$SIZE_M*8/1000 ;
    [[ $RAM_G -lt 10 ]] && RAM_G=10 ;
    
