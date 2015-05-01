@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 #
 # @author: Luis M. Rodriguez-R
-# @update: Mar-30-2015
+# @update: May-01-2015
 # @license: artistic license 2.0
 #
 
@@ -30,11 +30,12 @@ Usage: #{$0} [options] aln1.fa aln2.fa ... > aln.fa"
 		"o For DNA alignments:",
 		"  'DNA[F|X]', or 'DNA[F|X]/3' (to estimate rates per codon position, particular notation for this script).",
 		"o General protein alignments:",
-		"  'AUTO' (default in this script), 'DAYHOFF' (1978), 'DCMUT' (MBE 2005), 'JTT' (Nat 1992), 'VT' (JCompBiol",
-		"  2000), 'BLOSUM62' (PNAS 1992).",
+		"  'AUTO' (default in this script), 'DAYHOFF' (1978), 'DCMUT' (MBE 2005;22(2):193-199), 'JTT' (Nat 1992;358:86-89),",
+		"  'VT' (JCompBiol 2000;7(6):761-776), 'BLOSUM62' (PNAS 1992;89:10915), and 'LG' (MBE 2008;25(7):1307-1320).",
 		"o Specialized protein alignments:",
-		"  'MTREV' (mitochondrial, JME 1996), 'WAG' (globular, MBE 2001), 'RTREV' (retrovirus, JME 2002),",
-		"  'CPREV' (chloroplast, JME 2000), 'MTMAM' (nuclear mammal, JME 1998)."
+		"  'MTREV' (mitochondrial, JME 1996;42(4):459-468), 'WAG' (globular, MBE 2001;18(5):691-699), 'RTREV' (retrovirus,",
+		"  JME 2002;55(1):65-73), 'CPREV' (chloroplast, JME 2000;50(4):348-358), and 'MTMAM' (nuclear mammal proteins, JME",
+		"  1998;46(4):409-418)."
 		){|v| o[:model]=v}
    opts.on(      "--undefined STRING", "All characters to be regarded as 'undefined'. It should include all ambiguous and missing data chars.",
    		"Ignored unless --remove-invariable is used. By default: '#{o[:undefined]}'."){|v| o[:undefined]=v}
