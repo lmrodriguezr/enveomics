@@ -71,7 +71,7 @@ TRIMMED_LENGTH=$(head -n 40000 $b.1.clipped.fastq | paste - - - - | awk 'BEGIN{F
 echo "==[ 03.read_quality: $(date) ]" ;
 cd $FOLDER/03.read_quality ;
 if [ ! -d $b.fastqc ] ; then mkdir $b.fastqc ; fi ;
-fastqc ../02.trimmed_reads/$b.[12].clipped.fastq -o $b.fastqc ;
+perl $(which fastqc) ../02.trimmed_reads/$b.[12].clipped.fastq -o $b.fastqc ;
 
 if [ ! -d $b ] ; then mkdir $b ; fi ;
 time $sqa analysis ../01.raw_reads/$b.[12].fastq -h 20 -d $b -v -m ;
