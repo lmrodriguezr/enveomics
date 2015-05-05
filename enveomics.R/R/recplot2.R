@@ -69,7 +69,7 @@ plot.enve.recplot2 <- function
 	### Relative widths of the columns of `layout`.
 	heights=c(1,2),
 	### Relative heights of the rows of `layout`.
-	palette=grey((0:100)/100),
+	palette=grey((100:0)/100),
 	### Colors to be used to represent the counts matrix, sorted from no hits to the
 	### maximum sequencing depth.
 	underlay.group=FALSE,

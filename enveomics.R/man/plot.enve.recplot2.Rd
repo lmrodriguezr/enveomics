@@ -3,7 +3,7 @@
 \title{plot enve recplot2}
 \description{Plots an `enve.recplot2` object.}
 \usage{\method{plot}{enve.recplot2}(x, layout = matrix(c(5, 5, 2, 1, 4, 3), nrow = 2), 
-    widths = c(1, 7, 2), heights = c(1, 2), palette = grey((0:100)/100), 
+    widths = c(1, 7, 2), heights = c(1, 2), palette = grey((100:0)/100), 
     underlay.group = FALSE, peaks.col = NA, id.lim = range(x$id.breaks), 
     pos.lim = range(x$pos.breaks), pos.units = c("Mbp", "Kbp", 
         "bp"), mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(1, 
