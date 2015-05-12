@@ -34,7 +34,7 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Additional Options"
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = true }
-   opts.on("-e", "--example STRING", "Show an example file based on Van Ert et al 2014 (DOI: 10.1371/journal.pone.0000461) and exit. Supported values",
+   opts.on("-e", "--example STRING", "Show an example file based on Van Ert et al 2007 (DOI: 10.1371/journal.pone.0000461) and exit. Supported values",
       "include: table (input -t), key (input -k), classification (output -c), and newick (output -n).") do |v|
       puts DATA.readlines.grep(/^#{v[0]} /).map{|l| l.sub(/^. /,'')}.join('')
       exit
