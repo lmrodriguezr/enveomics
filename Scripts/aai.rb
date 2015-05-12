@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-06-2015
+# @update: May-10-2015
 # @license: artistic license 2.0
 #
 
@@ -46,8 +46,10 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Other Options"
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
-   opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
+   opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way AAI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
+   opts.on("-T", "--tab FILE", "Saves a file with the final two-way results in a tab-delimited form.",
+      "The columns are (in that order): AAI, standard deviation, proteins used, proteins in the smallest genome."){ |v| o[:tab]=v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
@@ -64,6 +66,7 @@ Dir.mktmpdir do |dir|
 
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
+   minfrg = nil
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
       if not gi.nil?
@@ -102,6 +105,8 @@ Dir.mktmpdir do |dir|
       fi.close
       fo.close
       $stderr.puts "    File contains #{seqs} sequences." unless o[:q]
+      minfrg ||= seqs
+      minfrg = seqs if minfrg > seqs
       case o[:program].downcase
       when "blast"
          `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" -p T`
@@ -184,6 +189,11 @@ Dir.mktmpdir do |dir|
    else
       printf "! Two-way AAI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
       res.puts sprintf "<b>Two-way AAI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      unless o[:tab].nil?
+         tab = File.open(o[:tab], 'w')
+	 tab.printf "%.#{o[:dec]}f\t%.#{o[:dec]}f\t%i\t%i\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg
+	 tab.close
+      end
    end
    fo.close unless o[:out].nil?
 end

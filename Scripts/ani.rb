@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-06-2015
+# @update: May-10-2015
 # @license: artistic license 2.0
 #
 
@@ -50,6 +50,8 @@ Usage: #{$0} [options]"
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
+   opts.on("-T", "--tab FILE", "Saves a file with the final two-way results in a tab-delimited form.",
+      "The columns are (in that order): ANI, standard deviation, fragments used, fragments in the smallest genome."){ |v| o[:tab]=v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
@@ -67,6 +69,7 @@ Dir.mktmpdir do |dir|
 
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
+   minfrg = nil
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
       if not gi.nil?
@@ -109,6 +112,8 @@ Dir.mktmpdir do |dir|
       fi.close
       fo.close
       $stderr.puts "    Created #{frgs} fragments from #{seqs} sequences, discarded #{disc} bp." unless o[:q]
+      minfrg ||= frgs
+      minfrg = frgs if minfrg > frgs
       case o[:program].downcase
       when "blast"
          `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" -p F`
@@ -191,7 +196,13 @@ Dir.mktmpdir do |dir|
    else
       printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
       res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      unless o[:tab].nil?
+         tab = File.open(o[:tab], 'w')
+	 tab.printf "%.#{o[:dec]}f\t%.#{o[:dec]}f\t%i\t%i\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg
+	 tab.close
+      end
    end
+   res.close unless o[:res].nil?
    fo.close unless o[:out].nil?
 end
 
