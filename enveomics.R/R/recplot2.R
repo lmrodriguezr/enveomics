@@ -72,12 +72,12 @@ plot.enve.recplot2 <- function
 	palette=grey((100:0)/100),
 	### Colors to be used to represent the counts matrix, sorted from no hits to the
 	### maximum sequencing depth.
-	underlay.group=FALSE,
+	underlay.group=TRUE,
 	### If TRUE, it indicates the in-group and out-group areas couloured based on
 	### `in.col` and `out.col`. Requires support for semi-transparency.
-	peaks.col=NA,
+	peaks.col='darkred',
 	### If not NA, it attempts to represent peaks in the population histogram in the
-	### specified color.
+	### specified color. Set to NA to avoid peak-finding.
 	id.lim=range(x$id.breaks),
 	### Limits of identities to represent.
 	pos.lim=range(x$pos.breaks),
@@ -91,9 +91,9 @@ plot.enve.recplot2 <- function
 	pos.splines=0,
 	id.splines=0,
 	in.lwd=ifelse(pos.splines>0, 1/2, 2),
-	in.col='black',
+	in.col='darkblue',
 	out.lwd=ifelse(pos.splines>0, 1/2, 2),
-	out.col=grey(2/3),
+	out.col='lightblue',
 	id.lwd=ifelse(id.splines>0, 1/2, 2),
 	id.col='black',
 	peaks.opts=list()
