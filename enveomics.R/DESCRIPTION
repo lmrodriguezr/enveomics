@@ -8,8 +8,7 @@ Description: A collection of R functions of common use in
 Author: Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]
 Maintainer: Luis M. Rodriguez-R <lmrodriguezr@gmail.com>
 URL: http://enve-omics.gatech.edu/
-Depends: R (>= 2.9)
-Suggests: stats, gplots, modeest, fitdistrplus, sn
+Depends: R (>= 2.9), stats, gplots, modeest, fitdistrplus, sn
 License: Artistic (>= 2)
 LazyLoad: yes
 Encoding: UTF-8
