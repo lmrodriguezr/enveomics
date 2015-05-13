@@ -28,7 +28,7 @@ ANI<95\% within species.}
   \item{\dots}{Any additional parameters supported by `plot.enve.recplot2`.}
 }
 
-
+\value{Returns an object of class `enve.recplot2`.}
 
 \author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
 

@@ -53,7 +53,8 @@ specified color. Set to NA to avoid peak-finding.}
   \item{peaks.opts}{Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.}
 }
 
-
+\value{Returns a list of `enve.recplot2.peak` objects (see `enve.recplot2.findPeaks`). If `peaks.col`=NA or
+`layout` doesn't include 4, returns NA.}
 
 \author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
 

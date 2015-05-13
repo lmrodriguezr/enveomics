@@ -35,7 +35,7 @@ those from two rounds earlier (to avoid infinite loops from approximation).}
   \item{verbose}{Display (mostly debugging) information.}
 }
 
-
+\value{Returns a list of `enve.recplot2.peak` objects.}
 
 \author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
 
