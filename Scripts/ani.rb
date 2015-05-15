@@ -192,7 +192,7 @@ Dir.mktmpdir do |dir|
    end
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way ANI: #{n2}"
-      res.puts "Insufficient hits to estimate two-way ANI: #{n2}"
+      res.puts "Insufficient hits to estimate two-way ANI: #{n2}" unless o[:res].nil?
    else
       printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
       res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
