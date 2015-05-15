@@ -184,7 +184,7 @@ Dir.mktmpdir do |dir|
       fh.close
       if n < o[:hits]
 	 puts "Insuffient hits to estimate one-way ANI: #{n}."
-	 res.puts "Insufficient hits to estimate one-way ANI: #{n}"
+	 res.puts "Insufficient hits to estimate one-way ANI: #{n}" unless o[:res].nil?
       else
 	 printf "! One-way ANI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
 	 res.puts sprintf "<b>One-way ANI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?

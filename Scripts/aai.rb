@@ -185,7 +185,7 @@ Dir.mktmpdir do |dir|
    end
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way AAI: #{n2}"
-      res.puts "Insufficient hits to estimate two-way AAI: #{n2}"
+      res.puts "Insufficient hits to estimate two-way AAI: #{n2}" unless o[:res].nil?
    else
       printf "! Two-way AAI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
       res.puts sprintf "<b>Two-way AAI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
@@ -195,6 +195,7 @@ Dir.mktmpdir do |dir|
 	 tab.close
       end
    end
+   res.close unless o[:res].nil?
    fo.close unless o[:out].nil?
 end
 
