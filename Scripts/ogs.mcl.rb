@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Apr-30-2015
+# @update: May-16-2015
 # @license: artistic license 2.0
 #
 
@@ -11,7 +11,7 @@ require 'enveomics_rb/og'
 require 'optparse'
 require 'tmpdir'
 
-o = {:q=>FALSE, :f=>"(\\S+)-(\\S+)\\.rbm", :mcl=>"", :I=>1.5, :blind=>FALSE, :evalue=>FALSE, :thr=>2}
+o = {:q=>false, :f=>"(\\S+)-(\\S+)\\.rbm", :mcl=>"", :I=>1.5, :blind=>false, :evalue=>false, :thr=>2, :identity=>false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -32,9 +32,10 @@ Usage: #{$0} [options]"
    opts.on("-I", "--inflation FLOAT", "Inflation parameter for MCL clustering. By default: #{o[:I]}."){ |v| o[:I]=v.to_f }
    opts.on("-b", "--blind", "If set, computes clusters without taking bitscore into account."){ |v| o[:blind]=v }
    opts.on("-e", "--evalue", "If set, uses the e-value to weight edges, instead of the default Bit-Score."){ |v| o[:evalue]=v }
+   opts.on("-i", "--identity", "If set, uses the identity to weight edges, instead of the default Bit-Score."){ |v| o[:identity]=v }
    opts.on("-m", "--mcl-bin DIR", "Path to the directory containing the mcl binaries. By default, assumed to be in the PATH."){ |v| o[:mcl]=v+"/" }
    opts.on("-t", "--threads INT", "Number of threads to use. By default: #{o[:thr]}."){ |v| o[:thr]=v.to_i }
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = TRUE }
+   opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen.") do
       puts opts
       exit
@@ -43,21 +44,13 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-o is mandatory" if o[:out].nil?
 abort "-d is mandatory" if o[:dir].nil?
+o[:evalue] = false if o[:identity]
+o[:evalue] = false if o[:blind]
+o[:identity] = false if o[:blind]
 
 ##### MAIN:
 begin
    Dir.mktmpdir do |dir|
-      # Read the pre-computed OGs (if -p is passed).`
-      #o[:pre].each do |pre|
-      #   $stderr.puts "Reading pre-computed OGs in '#{pre}'." unless o[:q]
-      #   f = File.open(pre, 'r')
-      #   h = f.gets.chomp.split /\t/
-      #   while ln = f.gets
-   #	 collection << OG.new(h, ln.chomp.split(/\t/))
-   #      end
-   #      f.close
-   #      $stderr.puts " Loaded OGs: #{collection.ogs.length}." unless o[:q]
-      #end
       # Read the RBM files in the directory (if -d is passed)
       abort "-d must exist and be a directory" unless File.exists?(o[:dir]) and File.directory?(o[:dir])
       # Traverse the whole directory
@@ -79,7 +72,7 @@ begin
 	 while ln = f.gets
 	    # Add the RBM to the abc file
 	    row = ln.split(/\t/)
-	    abc.puts [m[1]+">"+row[0], m[2]+">"+row[1], (o[:blind] ? "1" : (o[:evalue] ? row[10] : row[11]))].join("\t")
+	    abc.puts [m[1]+">"+row[0], m[2]+">"+row[1], (o[:blind] ? "1" : (o[:evalue] ? row[10] : (o[:identity] ? row[2] : row[11])))].join("\t")
 	    ln_i += 1
 	 end
 	 f.close
@@ -90,7 +83,7 @@ begin
 
       # Build .mci file (mcxload) and compute .mccl file (mcl)
       $stderr.puts "Markov-Clustering" unless o[:q]
-      `'#{o[:mcl]}mcxload' --stream-mirror -abc '#{dir}/rbms.abc' -o '#{dir}/rbms.mci' --write-binary -write-tab '#{dir}/genes.tab' #{(!o[:blind] and o[:evalue]) ? "--stream-neg-log10" : ""} &>/dev/null`
+      `'#{o[:mcl]}mcxload' --stream-mirror -abc '#{dir}/rbms.abc' -o '#{dir}/rbms.mci' --write-binary -write-tab '#{dir}/genes.tab' #{o[:evalue] ? "--stream-neg-log10" : ""} &>/dev/null`
       `'#{o[:mcl]}mcl' '#{dir}/rbms.mci' -V all -I #{o[:I].to_s} -o '#{dir}/ogs.mcl' -te #{o[:thr].to_s}`
 
       # Load .tab as Gene objects
