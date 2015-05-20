@@ -20,6 +20,7 @@ or three values if dist='sn' (omega=scale, alpha=shape, and xi=location). Note t
     \item{\code{n.hat}:}{(\code{numeric}) Number of bins estimated to be explained by this peak. This should ideally be equal to
 the length of `values`, but it's not and integer.}
     \item{\code{n.total}:}{(\code{numeric}) Total number of bins from which the peak was extracted.}
+    \item{\code{err.res}:}{(\code{numeric}) Error left after adding the peak.}
   }
 }
 \section{Methods}{

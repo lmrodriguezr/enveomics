@@ -43,8 +43,10 @@ setClass("enve.recplot2.peak",
    n.hat='numeric',
    ### Number of bins estimated to be explained by this peak. This should ideally be equal to
    ### the length of `values`, but it's not and integer.
-   n.total='numeric'
+   n.total='numeric',
    ### Total number of bins from which the peak was extracted.
+   err.res='numeric'
+   ### Error left after adding the peak.
    ));
 setMethod("$", "enve.recplot2", function(x, name) attr(x, name))
 setMethod("$", "enve.recplot2.peak", function(x, name) attr(x, name))
@@ -202,8 +204,9 @@ plot.enve.recplot2 <- function
 	    lines(pf, h.mids, col='red',lwd=1.5);
 	    legend('bottomright', legend=paste(
 	       letters[1:length(peaks)],'. ',
-	    signif(as.numeric(lapply(peaks, function(x) tail(as.numeric(x$param.hat),n=1))),3),'X (',
-	       signif(100*as.numeric(lapply(peaks, function(x) (length(x$values)/x$n.total))), 3), '%)',
+	       signif(as.numeric(lapply(peaks, function(x) tail(as.numeric(x$param.hat),n=1))),3),'X (',
+	       signif(100*as.numeric(lapply(peaks, function(x) (length(x$values)/x$n.total))), 3), '%, err: ',
+	       signif(as.numeric(lapply(peaks, function(x) x$err.res)), 3), ')',
 	       sep=''), bty='n');
 	 }
       }
@@ -322,7 +325,7 @@ enve.recplot2.findPeaks <- function(
       ### Range of quantiles to be used in the estimation of a peak's parameters.
       mlv.opts=list(method='parzen'),
       ### Options passed to `mlv` to estimate the mode.
-      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(.3, .5, .7), start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0), upper=c(Inf, 0, Inf)),
+      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(.2, .5, .7), start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0), upper=c(Inf, 0, Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if with.skewness=TRUE. Note that
       ### the `start` parameter will be ammended with xi=estimated mode for each peak.
       fitdist.opts.norm=list(distr='norm', method='qme', probs=c(.4,.6), start=list(sd=1), lower=c(1e-8, 0)),
@@ -352,8 +355,7 @@ enve.recplot2.findPeaks <- function(
    if(with.skewness & !require(sn, quietly=TRUE)) stop('Unavailable required package: `sn`.');
    
    # Essential vars
-   pos.breaks	<- x$pos.breaks;
-   pos.binsize	<- pos.breaks[-1] - pos.breaks[-length(pos.breaks)];
+   pos.binsize	<- x$pos.breaks[-1] - x$pos.breaks[-length(x$pos.breaks)];
    seqdepth.in	<- x$pos.counts.in/pos.binsize;
    dist		<- ifelse(with.skewness, 'sn', 'norm');
    if(with.skewness){ fitdist.opts <- fitdist.opts.sn }else{ fitdist.opts <- fitdist.opts.norm }
@@ -361,6 +363,7 @@ enve.recplot2.findPeaks <- function(
    lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
    if(verbose) cat('Mowing peaks for n =',length(lsd1),'\n')
    peaks <- list();
+   nsum <- c();
 
    # Mow distribution
    while(length(lsd1) > min.points){
@@ -412,6 +415,7 @@ enve.recplot2.findPeaks <- function(
       if(length(lsd.pop) < min.points) break
       if(verbose) cat(' Extracted peak with n =',length(lsd.pop),'with expected n =',n.hat,'\n')
       attr(peak, 'values') <- lsd.pop
+      attr(peak, 'err.res') <- 1-(cor(hist(lsd.pop, breaks=peak.breaks, plot=FALSE)$counts, hist(lsd1, breaks=peak.breaks, plot=FALSE)$counts)+1)/2
       peaks[[length(peaks)+1]] <- peak
       lsd1 <- lsd2
    }
@@ -422,7 +426,7 @@ enve.recplot2.findPeaks <- function(
 
 
 enve.recplot2.__counts <- function
-   ### Internal ancilliary function (see `enve.gss`).
+   ### Internal ancilliary function (see `enve.recplot2.peak`).
       (x, pos.breaks, id.breaks, rec.idcol){
    rec <- x$rec
    verbose <- x$verbose
@@ -439,7 +443,7 @@ enve.recplot2.__counts <- function
 }
 
 enve.recplot2.__peakHist <- function
-   ### Internal ancilliary function (see `enve.gss`).
+   ### Internal ancilliary function (see `enve.recplot2.peak`).
       (x, mids, counts=TRUE){
    d.o <- x$param.hat
    d.o$x <- mids

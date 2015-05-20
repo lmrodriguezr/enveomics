@@ -5,7 +5,7 @@
 sub-population mixtures.}
 \usage{enve.recplot2.findPeaks(x, min.points = 50, quant.est = c(0.01, 
     0.99), mlv.opts = list(method = "parzen"), fitdist.opts.sn = list(distr = "sn", 
-    method = "qme", probs = c(0.3, 0.5, 0.7), start = list(omega = 1, 
+    method = "qme", probs = c(0.2, 0.5, 0.7), start = list(omega = 1, 
         alpha = -1), lower = c(1e-06, -Inf, 0), upper = c(Inf, 
         0, Inf)), fitdist.opts.norm = list(distr = "norm", method = "qme", 
     probs = c(0.4, 0.6), start = list(sd = 1), lower = c(1e-08, 
