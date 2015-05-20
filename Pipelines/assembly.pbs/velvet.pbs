@@ -29,7 +29,7 @@ CWD=$(pwd)
 DIR="$CWD/$LIB.velvet_$KMER"
 
 # Run
-module load velvet/1.2.09
+module load velvet/1.2.10
 echo velveth > $DIR.proc
 CMD="velveth_101_omp $DIR $KMER -$FORMAT"
 if [[ "$USECOUPLED" == "yes" ]]; then

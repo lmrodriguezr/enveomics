@@ -16,7 +16,7 @@ if [[ "$PDIR" == "" ]]; then
 fi
 
 # Run
-module load perl
+module load perl/5.14.4
 echo "K N50 used reads " > $LIB.velvet.n50
 echo "K N50 used reads " > $LIB.soap.n50
 for ID in $(seq 10 31); do
@@ -46,7 +46,7 @@ for ID in $(seq 10 31); do
 done
 
 # Create plot
-module load R 2>/dev/null
+module load R/3.1.2
 echo "
 source('$PDIR/kSelector.R');
 pdf('$LIB.n50.pdf', 13, 7);

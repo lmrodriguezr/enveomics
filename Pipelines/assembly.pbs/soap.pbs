@@ -22,7 +22,7 @@ if [[ "$DATA" == "" ]]; then
 fi
 
 # Prepare input
-module load perl
+module load perl/5.14.4
 KMER=$MOAB_JOBARRAYINDEX
 DIR="$LIB.soap_$KMER"
 if [[ "$USECOUPLED" == "yes" ]]; then
@@ -36,7 +36,7 @@ fi
 NP=$(cat "$PBS_NODEFILE" | wc -l)
 
 # Config
-module load SOAP
+module load SOAP/denovo2/r240
 echo config > $DIR.proc
 echo "max_rd_len=$MAXRDLEN
 [LIB]

@@ -26,7 +26,7 @@ NP=$(cat "$PBS_NODEFILE" | wc -l)
 CWD=$(pwd)
 DIR="$CWD/$LIB.newbler"
 LOG="$DIR.log"
-module load perl
+module load perl/5.14.4
 export PATH=$PATH:$BIN454
 
 # Create project
