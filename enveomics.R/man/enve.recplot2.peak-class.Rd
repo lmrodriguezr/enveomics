@@ -13,6 +13,7 @@ of a Recruitment plot (see `enve.recplot2.findPeaks`).}
   \describe{
     \item{\code{dist}:}{(\code{character}) Distribution of the peak. Currently supported: 'norm' (normal) and 'sn' (skew-normal).}
     \item{\code{values}:}{(\code{numeric}) Sequencing depth values predicted to conform the peak.}
+    \item{\code{values.res}:}{(\code{numeric}) Sequencing depth values not explained by this or previously identified peaks.}
     \item{\code{mode}:}{(\code{numeric}) Seed-value of mode anchoring the peak.}
     \item{\code{param.hat}:}{(\code{list}) Parameters of the distribution. A list of two values if dist='norm' (sd and mean),
 or three values if dist='sn' (omega=scale, alpha=shape, and xi=location). Note that the
@@ -21,6 +22,7 @@ or three values if dist='sn' (omega=scale, alpha=shape, and xi=location). Note t
 the length of `values`, but it's not and integer.}
     \item{\code{n.total}:}{(\code{numeric}) Total number of bins from which the peak was extracted.}
     \item{\code{err.res}:}{(\code{numeric}) Error left after adding the peak.}
+    \item{\code{merge.logdist}:}{(\code{numeric}) Attempted `merge.logdist` parameter.}
   }
 }
 \section{Methods}{

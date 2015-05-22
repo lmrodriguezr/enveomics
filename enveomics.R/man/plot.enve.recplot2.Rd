@@ -9,10 +9,10 @@
         "bp"), mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(1, 
         4, 4, 1) + 0.1, `3` = c(5, 1, 1, 2) + 0.1, `4` = c(1, 
         1, 4, 2) + 0.1, `5` = c(5, 3, 4, 1) + 0.1, `6` = c(5, 
-        4, 4, 2) + 0.1), pos.splines = 0, id.splines = 0, in.lwd = ifelse(pos.splines > 
-        0, 1/2, 2), in.col = "darkblue", out.lwd = ifelse(pos.splines > 
-        0, 1/2, 2), out.col = "lightblue", id.lwd = ifelse(id.splines > 
-        0, 1/2, 2), id.col = "black", peaks.opts = list())}
+        4, 4, 2) + 0.1), pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
+        0, 1/2, 2), out.lwd = ifelse(pos.splines > 0, 1/2, 2), 
+    id.lwd = ifelse(id.splines > 0, 1/2, 2), in.col = "darkblue", 
+    out.col = "lightblue", id.col = "black", peaks.opts = list())}
 \arguments{
   \item{x}{`enve.recplot2` object to plot.}
   \item{layout}{Matrix indicating the position of the different panels in the layout, where:
@@ -34,22 +34,16 @@ specified color. Set to NA to avoid peak-finding.}
   \item{pos.units}{Units in which the positions should be represented (powers of 1,000 base pairs).}
   \item{mar}{
 }
-  \item{pos.splines}{
-}
-  \item{id.splines}{
-}
-  \item{in.lwd}{
-}
-  \item{in.col}{
-}
-  \item{out.lwd}{
-}
-  \item{out.col}{
-}
-  \item{id.lwd}{
-}
-  \item{id.col}{
-}
+  \item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero (0) for no splines.
+If non-zero, requires the stats package.}
+  \item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero (0) for no splines.
+If non-zero, requires the stats package.}
+  \item{in.lwd}{Line width for the sequencing depth of in-group matches.}
+  \item{out.lwd}{Line width for the sequencing depth of out-group matches.}
+  \item{id.lwd}{Line width for the identity histogram.}
+  \item{in.col}{Color associated to in-group matches.}
+  \item{out.col}{Color associated to out-group matches.}
+  \item{id.col}{Color for the identity histogram.}
   \item{peaks.opts}{Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.}
 }
 

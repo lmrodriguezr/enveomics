@@ -34,6 +34,8 @@ setClass("enve.recplot2.peak",
    ### Distribution of the peak. Currently supported: 'norm' (normal) and 'sn' (skew-normal).
    values='numeric',
    ### Sequencing depth values predicted to conform the peak.
+   values.res='numeric',
+   ### Sequencing depth values not explained by this or previously identified peaks.
    mode='numeric',
    ### Seed-value of mode anchoring the peak.
    param.hat='list',
@@ -45,8 +47,10 @@ setClass("enve.recplot2.peak",
    ### the length of `values`, but it's not and integer.
    n.total='numeric',
    ### Total number of bins from which the peak was extracted.
-   err.res='numeric'
+   err.res='numeric',
    ### Error left after adding the peak.
+   merge.logdist='numeric'
+   ### Attempted `merge.logdist` parameter.
    ));
 setMethod("$", "enve.recplot2", function(x, name) attr(x, name))
 setMethod("$", "enve.recplot2.peak", function(x, name) attr(x, name))
@@ -87,16 +91,27 @@ plot.enve.recplot2 <- function
       ### Margins of the panels as a list, with the character representation of the number
       ### of the panel as index (see `layout`).
       pos.splines=0,
-      id.splines=0,
+      ### Smoothing parameter for the splines in the position histogram. Zero (0) for no splines.
+      ### If non-zero, requires the stats package.
+      id.splines=1/2,
+      ### Smoothing parameter for the splines in the identity histogram. Zero (0) for no splines.
+      ### If non-zero, requires the stats package.
       in.lwd=ifelse(pos.splines>0, 1/2, 2),
-      in.col='darkblue',
+      ### Line width for the sequencing depth of in-group matches.
       out.lwd=ifelse(pos.splines>0, 1/2, 2),
-      out.col='lightblue',
+      ### Line width for the sequencing depth of out-group matches.
       id.lwd=ifelse(id.splines>0, 1/2, 2),
+      ### Line width for the identity histogram.
+      in.col='darkblue',
+      ### Color associated to in-group matches.
+      out.col='lightblue',
+      ### Color associated to out-group matches.
       id.col='black',
+      ### Color for the identity histogram.
       peaks.opts=list()
       ### Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.
    ){
+   if(!require(stats, quietly=TRUE)) stop('Unavailable required package: `stats`.');
    pos.units	<- match.arg(pos.units);
    pos.factor	<- ifelse(pos.units=='bp',1,ifelse(pos.units=='Kbp',1e3,1e6));
    pos.lim	<- pos.lim/pos.factor;
@@ -152,10 +167,14 @@ plot.enve.recplot2 <- function
 	 xlim=pos.lim, xlab='', xaxt='n', xaxs='i',
 	 ylim=seqdepth.lim, yaxs='i', ylab='Sequencing depth (X)');
       abline(v=x$seq.breaks/pos.factor, col=grey(2/3, alpha=1/4));
-      lines(rep(pos.breaks,each=2)[-c(1,2*length(pos.breaks))], rep(seqdepth.out,each=2),
-	 lwd=out.lwd, col=out.col);
-      lines(rep(pos.breaks,each=2)[-c(1,2*length(pos.breaks))], rep(seqdepth.in,each=2),
-	 lwd=in.lwd, col=in.col);
+      pos.x <- rep(pos.breaks,each=2)[-c(1,2*length(pos.breaks))]
+      pos.f <- rep(seqdepth.in,each=2)
+      lines(pos.x, rep(seqdepth.out,each=2), lwd=out.lwd, col=out.col);
+      lines(pos.x, pos.f, lwd=in.lwd, col=in.col);
+      if(pos.splines > 0){
+	 pos.spline <- smooth.spline(pos.x[pos.f>0], log(pos.f[pos.f>0]), spar=pos.splines)
+	 lines(pos.spline$x, exp(pos.spline$y), lwd=2, col=in.col)
+      }
       if(any(pos.counts.out==0)) rect(pos.breaks[c(pos.counts.out==0,FALSE)], seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.out==0)], seqdepth.lim[1]*3/2, col=out.col, border=NA);
       if(any(pos.counts.in==0))  rect(pos.breaks[c(pos.counts.in==0,FALSE)],  seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.in==0)],  seqdepth.lim[1]*3/2, col=in.col,  border=NA);
    }
@@ -171,8 +190,13 @@ plot.enve.recplot2 <- function
 	 rect(id.counts.range[1], id.lim[1], id.counts.range[2], min(id.breaks[c(id.ingroup,TRUE)]), col=out.bg, border=NA);
 	 rect(id.counts.range[1], min(id.breaks[c(id.ingroup,TRUE)]), id.counts.range[2], id.lim[2], col=in.bg,  border=NA);
       }
-      lines(rep(id.counts,each=2), rep(id.breaks,each=2)[-c(1,2*length(id.breaks))],
-	    lwd=id.lwd, col=id.col);
+      id.f <- rep(id.counts,each=2)
+      id.x <- rep(id.breaks,each=2)[-c(1,2*length(id.breaks))]
+      lines(id.f, id.x, lwd=id.lwd, col=id.col);
+      if(id.splines > 0){
+	 id.spline <- smooth.spline(id.x[id.f>0], log(id.f[id.f>0]), spar=id.splines)
+	 lines(exp(id.spline$y), id.spline$x, lwd=2, col=id.col)
+      }
    }
 
    # Populations histogram
@@ -243,15 +267,15 @@ enve.recplot2 <- function(
       pos.breaks=1e3,
       ### Breaks in the positions histogram. It can also be a vector of break
       ### points, and values outside the range are ignored.
-      id.breaks=400,
+      id.breaks=300,
       ### Breaks in the identity histogram. It can also be a vector of break
       ### points, and values outside the range are ignored.
       id.metric=c('identity', 'corrected identity', 'bit score'),
       ### Metric of identity to be used (Y-axis). Corrected identity is only
       ### supported if the original BLAST file included sequence lengths.
-      id.summary=sum,
+      id.summary=median,
       ### Function summarizing the identity bins. Other recommended options
-      ### include: `median` to estimate the median instead of the sum, and
+      ### include: `sum` to estimate the total bins instead of the median, and
       ### `function(x) mlv(x,method='parzen')$M` to estimate the mode.
       id.cutoff=95,
       ### Cutoff of identity metric above which the hits are considered
@@ -321,11 +345,11 @@ enve.recplot2.findPeaks <- function(
       ### An `enve.recplot2` object.
       min.points=50,
       ### Minimum number of points in the quantile-estimation-range (`quant.est`) to estimate a peak.
-      quant.est=c(0.01, 0.99),
+      quant.est=c(0.005, 0.995),
       ### Range of quantiles to be used in the estimation of a peak's parameters.
       mlv.opts=list(method='parzen'),
       ### Options passed to `mlv` to estimate the mode.
-      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(.2, .5, .7), start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0), upper=c(Inf, 0, Inf)),
+      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(.1, .5, .8), start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0), upper=c(Inf, 0, Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if with.skewness=TRUE. Note that
       ### the `start` parameter will be ammended with xi=estimated mode for each peak.
       fitdist.opts.norm=list(distr='norm', method='qme', probs=c(.4,.6), start=list(sd=1), lower=c(1e-8, 0)),
@@ -347,6 +371,9 @@ enve.recplot2.findPeaks <- function(
       ### Trace change at which optimization stops (unless `optim.rounds` is reached first). The
       ### trace change is estimated as the sum of square differences between parameters in one round and
       ### those from two rounds earlier (to avoid infinite loops from approximation).
+      merge.logdist=log(1.25),
+      ### Maximum value of |log-ratio| between centrality parameters in peaks to attempt merging. The default
+      ### of ~0.22 corresponds to a maximum difference of 25%.
       verbose=FALSE
       ### Display (mostly debugging) information.
    ){
@@ -357,71 +384,61 @@ enve.recplot2.findPeaks <- function(
    # Essential vars
    pos.binsize	<- x$pos.breaks[-1] - x$pos.breaks[-length(x$pos.breaks)];
    seqdepth.in	<- x$pos.counts.in/pos.binsize;
-   dist		<- ifelse(with.skewness, 'sn', 'norm');
-   if(with.skewness){ fitdist.opts <- fitdist.opts.sn }else{ fitdist.opts <- fitdist.opts.norm }
    lsd1 <- seqdepth.in[seqdepth.in>0];
    lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
+   if(with.skewness){ fitdist.opts <- fitdist.opts.sn }else{ fitdist.opts <- fitdist.opts.norm }
+   peaks.opts <- list(lsd1=lsd1, min.points=min.points, quant.est=quant.est, mlv.opts=mlv.opts,
+      fitdist.opts=fitdist.opts, with.skewness=with.skewness, optim.rounds=optim.rounds,
+      optim.epsilon=optim.epsilon, verbose=verbose, n.total=length(lsd1), merge.logdist=merge.logdist)
+   
+   # Find seed peaks
    if(verbose) cat('Mowing peaks for n =',length(lsd1),'\n')
-   peaks <- list();
-   nsum <- c();
+   peaks <- enve.recplot2.__findPeaks(peaks.opts);
 
-   # Mow distribution
-   while(length(lsd1) > min.points){
-      # Find peak
-      o <- mlv.opts; o$x = lsd1;
-      mode1 <- do.call(mlv, o)$M;
-      if(verbose) cat('Anchoring at mode =',mode1,'\n')
-      param.hat <- fitdist.opts$start; last.hat <- param.hat;
-      lim <- NA;
-      if(with.skewness){ param.hat$xi <- mode1 }else{ param.hat$mean <- mode1 }
-      
-      # Refine peak parameters
-      for(round in 1:optim.rounds){
-	 lim.o <- param.hat
-	 lim.o$p <- quant.est; lim <- do.call(paste('q',dist,sep=''), lim.o)
-	 lsd1.pop <- lsd1[(lsd1>lim[1]) & (lsd1<lim[2])];
-	 if(verbose) cat(' Round', round, 'with n =',length(lsd1.pop),'and params =',as.numeric(param.hat),' \r')
-	 if(length(lsd1.pop) < min.points) break;
-	 o <- fitdist.opts; o$data = lsd1.pop; o$start = param.hat;
-	 last.last.hat <- last.hat
-	 last.hat <- param.hat
-	 param.hat <- as.list(do.call(fitdist, o)$estimate);
-	 if(any(is.na(param.hat))){
-	    if(round>1) param.hat <- last.hat;
-	    break;
+   # Merge overlapping peaks
+   if(verbose) cat('Trying to merge',length(peaks),'peaks\n')
+   merged <- (length(peaks)>1)
+   while(merged){
+      merged <- FALSE
+      ignore <- c()
+      peaks2 <- list();
+      for(i in 1:length(peaks)){
+	 if(i %in% ignore) next
+	 p <- peaks[[ i ]]
+	 j <- enve.recplot2.__whichClosestPeak(p, peaks)
+	 p2 <- peaks[[ j ]]
+	 if( abs(log(p$param.hat[[ length(p$param.hat) ]]/p2$param.hat[[ length(p2$param.hat) ]])) < merge.logdist ){
+	    if(verbose) cat('==> Attempting a merge at',p$param.hat[[ length(p$param.hat) ]],'&',p2$param.hat[[ length(p2$param.hat) ]],'X\n');
+	    peaks.opts$lsd1 <- c(p$values, p2$values)
+	    p.new <- enve.recplot2.__findPeaks(peaks.opts)
+	    if(length(p.new)==1){
+	       peaks2[[ length(peaks2)+1 ]] <- p.new[[ 1 ]]
+	       ignore <- c(ignore, j)
+	       merged <- TRUE
+	    }
 	 }
-	 if(round>2) if(sum((as.numeric(last.last.hat)-as.numeric(param.hat))^2) < optim.epsilon) break;
+	 if(!merged) peaks2[[ length(peaks2)+1 ]] <- p
       }
-      if(verbose) cat('\n')
-      if(is.na(param.hat[1]) | is.na(lim[1])) break;
-      
-      # Extract peak
-      lsd2 <- c();
-      lsd.pop <- c();
-      n.hat <- length(lsd1.pop)/diff(quant.est)
-      peak <- new('enve.recplot2.peak', dist=dist, values=as.numeric(), mode=mode1, param.hat=param.hat, n.hat=n.hat, n.total=length(lsd1))
-      peak.breaks <- seq(min(lsd1), max(lsd1), length=20)
-      peak.cnt <- enve.recplot2.__peakHist(peak, (peak.breaks[-length(peak.breaks)]+peak.breaks[-1])/2)
-      for(i in 2:length(peak.breaks)){
-         values <- lsd1[ (lsd1 >= peak.breaks[i-1]) & (lsd1 < peak.breaks[i]) ]
-	 n.exp <- peak.cnt[i-1]
-	 if(n.exp==0) n.exp=0.1
-	 if(length(values)==0) next
-	 in.peak <- runif(length(values)) <= n.exp/length(values)
-	 lsd2 <- c(lsd2, values[!in.peak])
-	 lsd.pop <- c(lsd.pop, values[in.peak])
-	 if(verbose) cat('   N: obs =',length(values),'| exp =',n.exp,'| extracted =',sum(in.peak),'\n')
-      }
-      if(length(lsd.pop) < min.points) break
-      if(verbose) cat(' Extracted peak with n =',length(lsd.pop),'with expected n =',n.hat,'\n')
-      attr(peak, 'values') <- lsd.pop
-      attr(peak, 'err.res') <- 1-(cor(hist(lsd.pop, breaks=peak.breaks, plot=FALSE)$counts, hist(lsd1, breaks=peak.breaks, plot=FALSE)$counts)+1)/2
-      peaks[[length(peaks)+1]] <- peak
-      lsd1 <- lsd2
+      peaks <- peaks2
+      if(length(peaks)==1) break
    }
+   
    if(verbose) cat('Found',length(peaks),'peak(s)\n')
    return(peaks);
    ### Returns a list of `enve.recplot2.peak` objects.
+}
+
+enve.recplot2.corePeak <- function
+   ### Finds the peak in a list of peaks that is most likely to represent the "core genome" of a population.
+      (x
+      ### `list` of `enve.recplot2.peak` objects.
+   ){
+   maxPeak <- x[[ which.max(as.numeric(lapply(peaks, function(y) y$param.hat[[ length(y$param.hat) ]]))) ]]
+   corePeak <- maxPeak
+   for(p in x)
+      if(abs(log(p$param.hat[[ length(p$param.hat) ]]/maxPeak$param.hat[[ length(maxPeak$param.hat) ]] )) < maxPeak$merge.logdist)
+	 if(length(p$values) > length(corePeak$values)) corePeak <- p
+   return(corePeak)
 }
 
 
@@ -449,6 +466,92 @@ enve.recplot2.__peakHist <- function
    d.o$x <- mids
    prob  <- do.call(paste('d', x$dist, sep=''), d.o)
    if(!counts) return(prob)
+   if(length(x$values)>0) return(prob*length(x$values)/sum(prob))
    return(prob*x$n.hat/sum(prob))
+}
+
+enve.recplot2.__findPeak <- function
+   ### Internall ancilliary function (see `enve.recplot2.findPeaks`).
+      (lsd1, min.points, quant.est, mlv.opts, fitdist.opts, with.skewness,
+      optim.rounds, optim.epsilon, n.total, merge.logdist, verbose
+   ){
+   dist	<- ifelse(with.skewness, 'sn', 'norm');
+   
+   # Find peak
+   o <- mlv.opts; o$x = lsd1;
+   mode1 <- do.call(mlv, o)$M;
+   if(verbose) cat('Anchoring at mode =',mode1,'\n')
+   param.hat <- fitdist.opts$start; last.hat <- param.hat;
+   lim <- NA;
+   if(with.skewness){ param.hat$xi <- mode1 }else{ param.hat$mean <- mode1 }
+   
+   # Refine peak parameters
+   for(round in 1:optim.rounds){
+      param.hat[[ 1 ]] <- param.hat[[ 1 ]]/diff(quant.est) # <- expand dispersion
+      lim.o <- param.hat
+      lim.o$p <- quant.est; lim <- do.call(paste('q',dist,sep=''), lim.o)
+      lsd1.pop <- lsd1[(lsd1>lim[1]) & (lsd1<lim[2])];
+      if(verbose) cat(' Round', round, 'with n =',length(lsd1.pop),'and params =',as.numeric(param.hat),' \r')
+      if(length(lsd1.pop) < min.points) break;
+      o <- fitdist.opts; o$data = lsd1.pop; o$start = param.hat;
+      last.last.hat <- last.hat
+      last.hat <- param.hat
+      param.hat <- as.list(do.call(fitdist, o)$estimate);
+      if(any(is.na(param.hat))){
+	 if(round>1) param.hat <- last.hat;
+	 break;
+      }
+      if(round>2) if(sum((as.numeric(last.last.hat)-as.numeric(param.hat))^2) < optim.epsilon) break;
+   }
+   if(verbose) cat('\n')
+   if(is.na(param.hat[1]) | is.na(lim[1])) return(NULL);
+
+   # Mow distribution
+   lsd2 <- c();
+   lsd.pop <- c();
+   n.hat <- length(lsd1.pop)/diff(quant.est)
+   peak <- new('enve.recplot2.peak', dist=dist, values=as.numeric(), mode=mode1, param.hat=param.hat,
+      n.hat=n.hat, n.total=n.total, merge.logdist=merge.logdist)
+   peak.breaks <- seq(min(lsd1), max(lsd1), length=20)
+   peak.cnt <- enve.recplot2.__peakHist(peak, (peak.breaks[-length(peak.breaks)]+peak.breaks[-1])/2)
+   for(i in 2:length(peak.breaks)){
+      values <- lsd1[ (lsd1 >= peak.breaks[i-1]) & (lsd1 < peak.breaks[i]) ]
+      n.exp <- peak.cnt[i-1]
+      if(n.exp==0) n.exp=0.1
+      if(length(values)==0) next
+      in.peak <- runif(length(values)) <= n.exp/length(values)
+      lsd2 <- c(lsd2, values[!in.peak])
+      lsd.pop <- c(lsd.pop, values[in.peak])
+   }
+   if(length(lsd.pop) < min.points) return(NULL)
+
+   # Return peak
+   attr(peak, 'values') <- lsd.pop
+   attr(peak, 'values.res') <- lsd2
+   attr(peak, 'err.res') <- 1-(cor(hist(lsd.pop, breaks=peak.breaks, plot=FALSE)$counts, hist(lsd1, breaks=peak.breaks, plot=FALSE)$counts)+1)/2
+   if(verbose) cat(' Extracted peak with n =',length(lsd.pop),'with expected n =',n.hat,'\n')
+   return(peak)
+}
+
+enve.recplot2.__findPeaks <- function
+   ### Internal ancilliary function (see `enve.recplot2.findPeaks`).
+      (peaks.opts){
+   peaks <- list()
+   while(length(peaks.opts$lsd1) > peaks.opts$min.points){
+      peak <- do.call(enve.recplot2.__findPeak, peaks.opts)
+      if(is.null(peak)) break
+      peaks[[ length(peaks)+1 ]] <- peak
+      peaks.opts$lsd1 <- peak$values.res
+   }
+   return(peaks)
+}
+
+
+enve.recplot2.__whichClosestPeak <- function
+   ### Internal ancilliary function (see `enve.recplot2.findPeaks`).
+      (peak, peaks){
+   dist <- as.numeric(lapply(peaks, function(x) abs(log(x$param.hat[[ length(x$param.hat) ]]/peak$param.hat[[ length(peak$param.hat) ]] ))))
+   dist[ dist==0 ] <- Inf
+   return(which.min(dist))
 }
 

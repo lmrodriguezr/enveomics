@@ -15,6 +15,7 @@ And open help messages using any of the following commands:
     > ?enve.barplot
     > ?enve.recplot2
     > ?enve.recplot2.findPeaks
+    > ?enve.recplot2.corePeak
     > ?enve.prune.dist
     > ?enve.gss
     > ?enve.gss.test
