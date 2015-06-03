@@ -2,7 +2,7 @@
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Feb-06-2015
+# @update: May-30-2015
 # @license artistic license 2.0
 #
 
@@ -16,12 +16,12 @@ OptionParser.new do |opt|
    opt.on("-i", "--blast FILE", "Input BLAST file."){ |v| opts[:blast]=v }
    opt.on("-s", "--minscore FLOAT", "Minimum (summed) Bit-Score to consider a pair-match."){ |v| opts[:minscore] = v.to_f }
    opt.on("-b", "--besthits INT", "Outputs top best-hits only (use 0 to output all the paired hits)."){ |v| opts[:besthits]=v.to_i }
-   opt.on("-o", "--orient INT", "Checks the orientation of the hit.  Values are: 0, no checking; 1, same direction; 2, \n" +
-   		"\t\t\t\t\tinwards; 3, outwards; 4, different direction (i.e., 2 or 3)."){ |v| opts[:orient]=v.to_i }
-   opt.on("-p", "--sisprefix STR", "Sister read number prefix in the name of the reads.  Escape characters as dots (\\.), \n" +
-   		"\t\t\t\t\tparenthesis (\\(, \\), \\[, \\]), or other characters with special meaning in regular expressions \n" +
-		"\t\t\t\t\t(\\*, \\+, \\^, \\$, \\|).  This prefix allows regular expressions (for example, use ':|\\.' to use any of \n" +
-		"\t\t\t\t\tcolon or dot).  Notice that the prefix will not be included in the base name reported in the output."){ |v| opts[:sisprefix]=v }
+   opt.on("-o", "--orient INT", "Checks the orientation of the hit.  Values are: 0, no checking; 1, same direction; 2,",
+   		"inwards; 3, outwards; 4, different direction (i.e., 2 or 3)."){ |v| opts[:orient]=v.to_i }
+   opt.on("-p", "--sisprefix STR", "Sister read number prefix in the name of the reads.  Escape characters as dots (\\.),",
+   		"parenthesis (\\(, \\), \\[, \\]), or other characters with special meaning in regular expressions",
+		"(\\*, \\+, \\^, \\$, \\|).  This prefix allows regular expressions (for example, use ':|\\.' to use any of",
+		"colon or dot).  Notice that the prefix will not be included in the base name reported in the output."){ |v| opts[:sisprefix]=v }
    opt.on("-h","--help","Display this screen") do
       puts opt
       exit
@@ -35,6 +35,7 @@ OptionParser.new do |opt|
    opt.separator "   4/5. From/To (subject) coordinates for read 1."
    opt.separator "   6/7. From/To (subject) coordinates for read 2."
    opt.separator "   8. Reads orientation (1: same direction, 2: inwards, 3: outwards)."
+   opt.separator "   9. Estimated insert size."
    opt.separator ""
    opt.separator "Important note: This script assumes that paired hits are next to each other."
    opt.separator "   If this is not the case (e.g., because the blast was concatenated),"
@@ -71,10 +72,11 @@ class DoubleHit
       		((hitA.orient>0 and hitB.orient<0) ? 2: 3))
    end
    def to_s
+      coords = [@hitA.sfrom, @hitB.sfrom, @hitA.sto, @hitB.sto]
       @name + "\t" + @sbj + "\t" + @score.to_s + "\t" +
       	@hitA.sfrom.to_s + "\t" + @hitA.sto.to_s + "\t" +
       	@hitB.sfrom.to_s + "\t" + @hitB.sto.to_s + "\t" +
-	@orient.to_s + "\n"
+	@orient.to_s "\t" + (coords.max-coords.min) + "\n"
    end
 end
 class PairedHits
