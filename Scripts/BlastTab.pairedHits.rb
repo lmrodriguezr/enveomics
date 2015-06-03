@@ -76,7 +76,7 @@ class DoubleHit
       @name + "\t" + @sbj + "\t" + @score.to_s + "\t" +
       	@hitA.sfrom.to_s + "\t" + @hitA.sto.to_s + "\t" +
       	@hitB.sfrom.to_s + "\t" + @hitB.sto.to_s + "\t" +
-	@orient.to_s "\t" + (coords.max-coords.min) + "\n"
+	@orient.to_s + "\t" + (coords.max-coords.min) + "\n"
    end
 end
 class PairedHits
