@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: May-16-2015
+# @update: Jun-29-2015
 # @license: artistic license 2.0
 #
 
@@ -11,7 +11,7 @@ require 'enveomics_rb/og'
 require 'optparse'
 require 'tmpdir'
 
-o = {:q=>false, :f=>"(\\S+)-(\\S+)\\.rbm", :mcl=>"", :I=>1.5, :blind=>false, :evalue=>false, :thr=>2, :identity=>false}
+o = {:q=>false, :f=>"(\\S+)-(\\S+)\\.rbm", :mcl=>"", :I=>1.5, :blind=>false, :evalue=>false, :thr=>2, :identity=>false, :bestmatch=>false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -33,6 +33,7 @@ Usage: #{$0} [options]"
    opts.on("-b", "--blind", "If set, computes clusters without taking bitscore into account."){ |v| o[:blind]=v }
    opts.on("-e", "--evalue", "If set, uses the e-value to weight edges, instead of the default Bit-Score."){ |v| o[:evalue]=v }
    opts.on("-i", "--identity", "If set, uses the identity to weight edges, instead of the default Bit-Score."){ |v| o[:identity]=v }
+   opts.on("-B", "--best-match", "If set, it assumes best-matches instead reciprocal best matches."){ |v| o[:bestmatch]=v }
    opts.on("-m", "--mcl-bin DIR", "Path to the directory containing the mcl binaries. By default, assumed to be in the PATH."){ |v| o[:mcl]=v+"/" }
    opts.on("-t", "--threads INT", "Number of threads to use. By default: #{o[:thr]}."){ |v| o[:thr]=v.to_i }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = true }
@@ -83,7 +84,7 @@ begin
 
       # Build .mci file (mcxload) and compute .mccl file (mcl)
       $stderr.puts "Markov-Clustering" unless o[:q]
-      `'#{o[:mcl]}mcxload' --stream-mirror -abc '#{dir}/rbms.abc' -o '#{dir}/rbms.mci' --write-binary -write-tab '#{dir}/genes.tab' #{o[:evalue] ? "--stream-neg-log10" : ""} &>/dev/null`
+      `'#{o[:mcl]}mcxload' #{o[:bestmatch] ? "" : "--stream-mirror"} -abc '#{dir}/rbms.abc' -o '#{dir}/rbms.mci' --write-binary -write-tab '#{dir}/genes.tab' #{o[:evalue] ? "--stream-neg-log10" : ""} &>/dev/null`
       `'#{o[:mcl]}mcl' '#{dir}/rbms.mci' -V all -I #{o[:I].to_s} -o '#{dir}/ogs.mcl' -te #{o[:thr].to_s}`
 
       # Load .tab as Gene objects
