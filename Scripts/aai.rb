@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: May-14-2015
+# @update: Jul-05-2015
 # @license: artistic license 2.0
 #
 
@@ -46,6 +46,7 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Other Options"
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
+   opts.on("-R", "--rbm FILE", "Saves a file with the reciprocal best matches."){ |v| o[:rbm] = v }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way AAI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-T", "--tab FILE", "Saves a file with the final two-way results in a tab-delimited form.",
@@ -67,6 +68,7 @@ Dir.mktmpdir do |dir|
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    minfrg = nil
+   ori_ids = {}
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
       if not gi.nil?
@@ -91,15 +93,17 @@ Dir.mktmpdir do |dir|
 	 fo.close
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
+      ori_ids[seq] = [nil]
       seqs = 0
       fi = File.open(o[seq], "r")
       fo = File.open("#{dir}/#{seq.to_s}.fa", "w")
       fi.each_line do |ln|
-	 if /^>(\S+)/.match(ln).nil?
-	    fo.puts ln
-	 else
+	 if ln =~ /^>(\S+)/
+	    ori_ids[seq] << $1 unless o[:rbm].nil?
 	    seqs += 1
 	    fo.puts ">#{seqs}"
+	 else
+	    fo.puts ln
 	 end
       end
       fi.close
@@ -130,6 +134,7 @@ Dir.mktmpdir do |dir|
       fo.puts %w(identity aln.len mismatch gap.open evalue bitscore).join("\t")
    end
    res = File.open(o[:res], "w") unless o[:res].nil?
+   rbm = File.open(o[:rbm], "w") unless o[:rbm].nil?
    [1,2].each do |i|
       qry_seen = []
       q = "#{dir}/seq#{i}.fa"
@@ -166,10 +171,11 @@ Dir.mktmpdir do |dir|
 	       rbh[ row[0].to_i ] = row[1].to_i
 	    else
 	       if !rbh[ row[1].to_i ].nil? and rbh[ row[1].to_i ]==row[0].to_i
-	          id2 += row[2].to_f
+		  id2 += row[2].to_f
 		  sq2 += row[2].to_f**2
 		  n2  += 1
 		  fo.puts [row[2..5],row[10..11]].join("\t") unless o[:out].nil?
+		  rbm.puts [ori_ids[:seq1][row[1].to_i], ori_ids[:seq2][row[0].to_i], row[2..5], row[8..9], row[6..7], row[10..11]].join("\t") unless o[:rbm].nil?
 	       end
 	    end
 	 end
@@ -183,6 +189,7 @@ Dir.mktmpdir do |dir|
 	 res.puts sprintf "<b>One-way AAI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i proteins.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
    end
+   rbm.close unless o[:rbm].nil?
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way AAI: #{n2}"
       res.puts "Insufficient hits to estimate two-way AAI: #{n2}" unless o[:res].nil?

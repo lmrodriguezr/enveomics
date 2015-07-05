@@ -20,7 +20,7 @@ Description:
    
    Also note that a more elaborated mixture distribution can arise from coverage
    histograms (e.g., see [2] for an additional correction called 'tail distribution'
-   and mixtures involving negative binomial) so use these results cum grano salis.
+   and mixtures involving negative binomial) so take these results cum grano salis.
 
 Usage:
    cat blast1... | $0 genes_or_ctgs.fna > genes_or_ctgs.cov
