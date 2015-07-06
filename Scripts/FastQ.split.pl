@@ -2,7 +2,7 @@
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Mar-23-2015
+# @update Jul-05-2015
 #
 
 use warnings;
@@ -45,9 +45,9 @@ while(my $ln=<FILE>){
 print { $outSym[$i % $outN] } $seq if $seq;
 close FILE;
 
-for(my $i=0; $i<$outN; $i++){
-   close $outSym[$i];
+for(my $j=0; $j<$outN; $j++){
+   close $outSym[$j];
 }
 
-print STDERR "Sequences: $i\nFiles: $outN\n";
+print STDERR "Sequences: ".($i+1)."\nFiles: $outN\n";
 
