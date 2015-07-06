@@ -2,7 +2,7 @@
 enve.df2dist <- function(
 	### Transform a dataframe (or coercible object, like a table) into a `dist` object.
 	x,
-	### A dataframe (or coercible object) with at least three columns: (1) ID of the object 1,
+	### A table (or coercible object) with at least three columns: (1) ID of the object 1,
 	### (2) ID of the object 2, and (3) distance between the two objects.
 	obj1.index=1,
 	### Index of the column containing the ID of the object 1.
@@ -13,7 +13,7 @@ enve.df2dist <- function(
 	default.d=NA
 	### Default value (for missing values)
 	){
-   x <- as.data.frame(x);
+   x <- as.table(x);
    a <- as.character(x[, obj1.index]);
    b <- as.character(x[, obj2.index]);
    d <- as.double(x[, dist.index]);
