@@ -2,21 +2,27 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: May-10-2015
+# @update: Jul-13-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 require 'tmpdir'
-has_rest_client = TRUE
+has_rest_client = true
+has_sqlite3 = true
 begin
    require 'rubygems'
    require 'restclient'
 rescue LoadError
-   has_rest_client = FALSE
+   has_rest_client = false
+end
+begin
+   require 'sqlite3'
+rescue LoadError
+   has_sqlite3 = false
 end
 
-o = {:win=>1000, :step=>200, :len=>700, :id=>70, :hits=>50, :q=>false, :bin=>'', :program=>'blast+', :thr=>1, :correct=>true, :dec=>2}
+o = {win:1000, step:200, id:70, len:700, correct:true, hits:50, q:false, bin:"", program:"blast+", thr:1, dec:2, auto:false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -47,12 +53,15 @@ Usage: #{$0} [options]"
    opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
+   opts.on("-S", "--sqlite3 FILE", "Path to the SQLite3 database to create (or update) with the results."){ |v| o[:sqlite3] = v }
+   opts.separator "    Install sqlite3 gem to enable database support." unless has_sqlite3
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-T", "--tab FILE", "Saves a file with the final two-way results in a tab-delimited form.",
       "The columns are (in that order): ANI, standard deviation, fragments used, fragments in the smallest genome."){ |v| o[:tab]=v }
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
+   opts.on("-a", "--auto", "ONLY outputs the ANI value in STDOUT (or nothing, if calculation fails)."){ o[:auto] = true }
+   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
       exit
@@ -61,6 +70,7 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-1 is mandatory" if o[:seq1].nil?
 abort "-2 is mandatory" if o[:seq2].nil?
+abort "SQLite3 requested (-S) but sqlite3 not supported.  First install gem sqlite3." unless o[:sqlite3].nil? or has_sqlite3
 abort "Step size must be smaller than window size." if o[:step] > o[:win]
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 
@@ -70,6 +80,7 @@ Dir.mktmpdir do |dir|
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    minfrg = nil
+   seq_names = []
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
       if not gi.nil?
@@ -80,6 +91,9 @@ Dir.mktmpdir do |dir|
 	 fo = File.open(o[seq], "w")
 	 fo.puts response.to_str
 	 fo.close
+	 seq_names << "gi:#{gi[1]}"
+      else
+         seq_names << File.basename(o[seq], ".fna")
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
       buffer = ""
@@ -126,6 +140,15 @@ Dir.mktmpdir do |dir|
       end
    end
 
+   # Create SQLite3 file
+   unless o[:sqlite3].nil?
+      sqlite_db = SQLite3::Database.new o[:sqlite3]
+      sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), seq2 varchar(256), id1 varchar(256), id2 varchar(256), id float, evalue float, bitscore float )"
+      sqlite_db.execute "create table if not exists ani( seq1 varchar(256), seq2 varchar(256), ani float, sd float, n int, omega int )"
+      sqlite_db.execute "delete from rbm where seq1=? and seq2=?", seq_names
+      sqlite_db.execute "delete from ani where seq1=? and seq2=?", seq_names
+   end
+   
    # Best-hits.
    $stderr.puts "Running one-way comparisons." unless o[:q]
    rbh = []
@@ -177,30 +200,33 @@ Dir.mktmpdir do |dir|
 		  sq2 += identity_corr ** 2
 		  n2  += 1
 		  fo.puts [identity_corr,row[3..5],row[10..11]].join("\t") unless o[:out].nil?
+		  sqlite_db.execute("insert into rbm values(?,?,?,?,?,?,?)", seq_names + [row[1], row[0], row[2], row[10], row[11]] ) unless o[:sqlite3].nil?
 	       end
 	    end
 	 end
       end
       fh.close
       if n < o[:hits]
-	 puts "Insuffient hits to estimate one-way ANI: #{n}."
+	 puts "Insuffient hits to estimate one-way ANI: #{n}." unless o[:auto]
 	 res.puts "Insufficient hits to estimate one-way ANI: #{n}" unless o[:res].nil?
       else
-	 printf "! One-way ANI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n
+	 printf "! One-way ANI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:auto]
 	 res.puts sprintf "<b>One-way ANI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
    end
    if n2 < o[:hits]
-      puts "Insufficient hits to estimate two-way ANI: #{n2}"
+      puts "Insufficient hits to estimate two-way ANI: #{n2}" unless o[:auto]
       res.puts "Insufficient hits to estimate two-way ANI: #{n2}" unless o[:res].nil?
    else
-      printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2
+      printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:auto]
       res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
       unless o[:tab].nil?
          tab = File.open(o[:tab], 'w')
 	 tab.printf "%.#{o[:dec]}f\t%.#{o[:dec]}f\t%i\t%i\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg
 	 tab.close
       end
+      sqlite_db.execute("insert into ani values(?,?,?,?,?,?)", seq_names + [id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg]) unless o[:sqlite3].nil?
+      puts id2/n2 if o[:auto]
    end
    res.close unless o[:res].nil?
    fo.close unless o[:out].nil?

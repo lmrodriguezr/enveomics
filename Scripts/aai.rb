@@ -22,7 +22,7 @@ rescue LoadError
    has_sqlite3 = false
 end
 
-o = {:len=>0, :id=>20, :bits=>0, :hits=>50, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :dec=>2, :auto=>false}
+o = {bits:0, id:20, len:0, hits:50, q:false, bin:"", program:"blast+", thr:1, dec:2, auto:false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -51,18 +51,16 @@ Usage: #{$0} [options]"
    opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
-   opts.on("-S", "--sqlite3 STR", "Path to the sqlite3 database to create (or update) with the results."){ |v| o[:sqlite3] = v }
-   unless has_sqlite3
-      opts.separator "    Install sqlite3 gem to enable database support."
-   end
+   opts.on("-S", "--sqlite3 FILE", "Path to the SQLite3 database to create (or update) with the results."){ |v| o[:sqlite3] = v }
+   opts.separator "    Install sqlite3 gem to enable database support." unless has_sqlite3
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-R", "--rbm FILE", "Saves a file with the reciprocal best matches."){ |v| o[:rbm] = v }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way AAI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-T", "--tab FILE", "Saves a file with the final two-way results in a tab-delimited form.",
       "The columns are (in that order): AAI, standard deviation, proteins used, proteins in the smallest genome."){ |v| o[:tab]=v }
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
    opts.on("-a", "--auto", "ONLY outputs the AAI value in STDOUT (or nothing, if calculation fails)."){ o[:auto] = true }
+   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
       exit
@@ -80,6 +78,7 @@ Dir.mktmpdir do |dir|
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    minfrg = nil
+   seq_names = []
    ori_ids = {}
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
@@ -88,7 +87,7 @@ Dir.mktmpdir do |dir|
 	 $stderr.puts "  Downloading dataset from GI:#{gi[1]}." unless o[:q]
 	 responseLink = RestClient.get 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi', {:params=>{:db=>'protein',:dbfrom=>'nuccore', :id=>gi[1]}}
 	 abort "Unable to reach NCBI EUtils, error code #{responseLink.code}." unless responseLink.code == 200
-	 fromId = TRUE
+	 fromId = true
 	 protIds = []
 	 o[seq] = "#{dir}/gi-#{seq.to_s}.fa"
 	 fo = File.open(o[seq], "w")
@@ -96,13 +95,16 @@ Dir.mktmpdir do |dir|
 	    idMatch = /<Id>(\d+)<\/Id>/.match(ln);
 	    unless idMatch.nil?
 	       protIds.push(idMatch[1]) unless fromId
-	       fromId = FALSE
+	       fromId = false
 	    end
 	 end
 	 response = RestClient.post 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi', :db=>'nuccore', :rettype=>'fasta', :id=>protIds.join(',')
 	 abort "Unable to reach NCBI EUtils, error code #{response.code}." unless response.code == 200
 	 fo.puts response.to_str
 	 fo.close
+	 seq_names << "gi:#{gi[1]}"
+      else
+         seq_names << File.basename(o[seq], ".faa")
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
       ori_ids[seq] = [nil]
@@ -136,7 +138,6 @@ Dir.mktmpdir do |dir|
    end
 
    # Create SQLite3 file
-   seq_names = [File.basename(o[:seq1], ".faa"), File.basename(o[:seq2], ".faa")]
    unless o[:sqlite3].nil?
       sqlite_db = SQLite3::Database.new o[:sqlite3]
       sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), seq2 varchar(256), id1 varchar(256), id2 varchar(256), id float, evalue float, bitscore float )"
