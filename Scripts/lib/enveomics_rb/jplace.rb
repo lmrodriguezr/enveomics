@@ -1,11 +1,18 @@
 
+#
+# @author: Luis M. Rodriguez-R
+# @update: Jul-14-2015
+# @license: artistic license 2.0
+#
+
 module JPlace
    ##### CLASSES:
    # Placement.new(placement[, fields]): Initializes a new read placement.
    # placement: A hash containing the placement.
    # fields: If passed, sets the field order for all subsequent placements.
    class Placement
-      attr_reader :p, :n, :m
+      attr_writer :flag # This attribute is used by JPlace.distances.rb as a placeholder
+      attr_reader :p, :n, :m, :flag
       @@fields = nil
       def self.fields=(fields)
 	 @@fields=fields
@@ -54,8 +61,11 @@ module JPlace
       def like_weight_ratio
 	 self.get_field_value('like_weight_ratio').to_f
       end
+      def distal_length
+	 (self.get_field_value('distal_length') || 0).to_f
+      end
       def pendant_length
-	 self.get_field_value('pendant_length').to_f
+	 (self.get_field_value('pendant_length') || 0).to_f
       end
       def to_s
 	 "#<Placement of #{self.n}: #{self.p}>"
@@ -181,6 +191,28 @@ module JPlace
 	 blk[self]
 	 self.children.each { |n| n.pre_order &blk }
       end
+      def path_to_root
+	 if @path_to_root.nil?
+	    @path_to_root = [self]
+	    @path_to_root += self.parent.path_to_root unless self.parent.nil?
+	 end
+	 @path_to_root
+      end
+      def distance_to_root
+	 if @distance_to_root.nil?
+	    @distance_to_root = path_to_root.map{ |n| n.length.nil? ? 0.0 : n.length.to_f }.reduce(0.0, :+)
+	 end
+	 @distance_to_root
+      end
+      def lca(node)
+	 p1 = self.path_to_root
+	 p2 = node.path_to_root
+	 p1.find{ |n| p2.include? n }
+      end
+      def distance(node)
+	 self.distance_to_root + node.distance_to_root - (2.0 * self.lca(node).distance_to_root)
+      end
+      def ==(node) self.index == node.index ; end
       # Tree representation
       def cannonical_name
 	 return(self.name) unless self.name.nil? or self.name == ""
