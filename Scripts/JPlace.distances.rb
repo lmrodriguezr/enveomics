@@ -11,7 +11,7 @@ require 'enveomics_rb/jplace'
 require 'optparse'
 require 'json'
 
-o = {:q=>false, :atnode=>false, :innode=>false}
+o = {:q=>false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -25,8 +25,7 @@ Usage: #{$0} [options]"
    opts.on("-o", "--out FILE", "Ouput file."){ |v| o[:out]=v }
    opts.separator ""
    opts.separator "Other Options"
-   opts.on("-a", "--at-node", "Report only reads directly placed at the node of interest."){ |v| o[:atnode]=v }
-   opts.on("-c", "--in-node", "Report only reads placed at the node of interest or it's children."){ |v| o[:innode]=v }
+   opts.on("-N", "--in-node STR","Report only reads placed at this node or it's children."){ |v| o[:onlynode]=v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen.") do
       puts opts
@@ -48,7 +47,9 @@ begin
    $stderr.puts "Parsing tree." unless o[:q]
    tree = JPlace::Tree.from_nwk(jplace["tree"])
    node = JPlace::Node.edges[ o[:node].gsub(/[{}]/,"").to_i ]
+   from_node = o[:onlynode].nil? ? tree : JPlace::Node.edges[ o[:onlynode].gsub(/[{}]/,"").to_i ]
    raise "Cannot find node with index #{o[:node]}." if node.nil?
+   raise "Cannot find node with index #{o[:onlynode]}." if from_node.nil?
 
    $stderr.puts "Parsing placements." unless o[:q]
    JPlace::Placement.fields = jplace["fields"]
@@ -59,30 +60,21 @@ begin
    end
    $stderr.puts " #{placements_n} placements in tree, #{node.placements.length} direct placements to {#{node.index}}." unless o[:q]
    
-   # First, calculate distances in or at node (positive distal_length)
-   if o[:atnode]
-      node.placements.each{ |p| p.flag = p.distal_length + p.pendant_length }
-   else
-      node.pre_order do |n|
-	 d = n.distance(node)
-	 n.placements.each{ |p| p.flag = d + p.distal_length + p.pendant_length }
+   # First, calculate distances
+   from_node.pre_order do |n|
+      d = n.distance(node)
+      if node.path_to_root.include? n
+	 n.placements.each{ |p| p.flag = d + p.pendant_length + p.distal_length }
+      else
+	 n.placements.each{ |p| p.flag = d + p.pendant_length - p.distal_length }
       end
    end
    
-   # Next, calculate the rest of the distances (negative distal_length)
-   unless o[:atnode] or o[:innode]
-      tree.pre_order do |n|
-	 d = n.distance(node)
-	 n.placements.each{ |p| p.flag = d - p.distal_length + p.pendant_length if p.flag.nil? }
-      end
-   end
-
    # Finally, report results
    ofh = File.open(o[:out], "w")
    ofh.puts %w(read distance multiplicity edge_index node_name).join("\t")
-   tree.pre_order do |n|
+   from_node.pre_order do |n|
       n.placements.each do |p|
-	 next if p.flag.nil?
 	 p.nm.each{ |r| ofh.puts [ r[:n], p.flag, r[:m], n.index, n.name ].join("\t") }
       end
    end
