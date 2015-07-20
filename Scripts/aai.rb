@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jul-19-2015
+# @update: Jul-20-2015
 # @license: artistic license 2.0
 #
 
@@ -119,7 +119,7 @@ Dir.mktmpdir do |dir|
       fo = File.open("#{dir}/#{seq.to_s}.fa", "w")
       fi.each_line do |ln|
 	 if ln =~ /^>(\S+)/
-	    ori_ids[seq] << $1 unless o[:rbm].nil?
+	    ori_ids[seq] << $1 unless o[:rbm].nil? and o[:sqlite3].nil?
 	    seqs += 1
 	    fo.puts ">#{seqs}"
 	 else
