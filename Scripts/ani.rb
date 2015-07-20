@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jul-13-2015
+# @update: Jul-19-2015
 # @license: artistic license 2.0
 #
 
@@ -55,6 +55,8 @@ Usage: #{$0} [options]"
    opts.separator "Other Options"
    opts.on("-S", "--sqlite3 FILE", "Path to the SQLite3 database to create (or update) with the results."){ |v| o[:sqlite3] = v }
    opts.separator "    Install sqlite3 gem to enable database support." unless has_sqlite3
+   opts.on(      "--name1 STR", "Name of --seq1 to use in --sqlite3. By default it's determined by the filename."){ |v| o[:seq1name] = v }
+   opts.on(      "--name2 STR", "Name of --seq2 to use in --sqlite3. By default it's determined by the filename."){ |v| o[:seq2name] = v }
    opts.on("-d", "--dec INT", "Decimal positions to report. By default: #{o[:dec]}"){ |v| o[:dec] = v.to_i }
    opts.on("-o", "--out FILE", "Saves a file describing the alignments used for two-way ANI."){ |v| o[:out] = v }
    opts.on("-r", "--res FILE", "Saves a file with the final results."){ |v| o[:res] = v }
@@ -93,7 +95,11 @@ Dir.mktmpdir do |dir|
 	 fo.close
 	 seq_names << "gi:#{gi[1]}"
       else
-         seq_names << File.basename(o[seq], ".fna")
+         if o[ "#{seq}name".to_sym ].nil?
+	    seq_names << File.basename(o[seq], ".fna")
+	 else
+	    seq_names << o[ "#{seq}name".to_sym ]
+	 end
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
       buffer = ""
