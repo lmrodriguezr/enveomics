@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jul-19-2015
+# @update: Jul-20-2015
 # @license: artistic license 2.0
 #
 
@@ -79,6 +79,14 @@ o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 Dir.mktmpdir do |dir|
    $stderr.puts "Temporal directory: #{dir}." unless o[:q]
 
+   # Create SQLite3 file
+   unless o[:sqlite3].nil?
+      sqlite_db = SQLite3::Database.new o[:sqlite3]
+      sqlite_db.execute "create table if not exists regions( seq varchar(256), id int, source varchar(256), from int, to int )"
+      sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), seq2 varchar(256), id1 int, id2 int, id float, evalue float, bitscore float )"
+      sqlite_db.execute "create table if not exists ani( seq1 varchar(256), seq2 varchar(256), ani float, sd float, n int, omega int )"
+   end
+   
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    minfrg = nil
@@ -102,14 +110,23 @@ Dir.mktmpdir do |dir|
 	 end
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
+      sqlite_db.execute("delete from regions where seq=?", [seq_names.last]) unless o[:sqlite3].nil?
       buffer = ""
       frgs = 0
       seqs = 0
       disc = 0
+      seqn = ""
+      from = 1
       fi = File.open(o[seq], "r")
       fo = File.open("#{dir}/#{seq.to_s}.fa", "w")
       fi.each_line do |ln|
-	 if /^>(\S+)/.match(ln).nil?
+	 if ln =~ /^>(\S+)/
+	    seqs += 1
+	    disc += buffer.size
+	    buffer = ""
+	    seqn = $1
+	    from = 1
+	 else
 	    ln.gsub!(/[^A-Za-z]/, '')
 	    buffer = buffer + ln
 	    while buffer.size > o[:win]
@@ -120,13 +137,11 @@ Dir.mktmpdir do |dir|
 		  frgs += 1
 		  fo.puts ">#{frgs}"
 		  fo.puts seq_i
+		  sqlite_db.execute("insert into regions values(?,?,?,?,?)", [seq_names.last, frgs, seqn, from, from+o[:win]]) unless o[:sqlite3].nil?
 	       end
 	       buffer = buffer[o[:step] .. -1]
+	       from += o[:win]
 	    end
-	 else
-	    seqs += 1
-	    disc += buffer.size
-	    buffer = ""
 	 end
       end
       fi.close
@@ -144,23 +159,18 @@ Dir.mktmpdir do |dir|
       else
          abort "Unsupported program: #{o[:program]}."
       end
-   end
+   end # [:seq1, :seq2].each
 
-   # Create SQLite3 file
-   unless o[:sqlite3].nil?
-      sqlite_db = SQLite3::Database.new o[:sqlite3]
-      sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), seq2 varchar(256), id1 varchar(256), id2 varchar(256), id float, evalue float, bitscore float )"
-      sqlite_db.execute "create table if not exists ani( seq1 varchar(256), seq2 varchar(256), ani float, sd float, n int, omega int )"
-      sqlite_db.execute "delete from rbm where seq1=? and seq2=?", seq_names
-      sqlite_db.execute "delete from ani where seq1=? and seq2=?", seq_names
-   end
-   
    # Best-hits.
    $stderr.puts "Running one-way comparisons." unless o[:q]
    rbh = []
    id2 = 0
    sq2 = 0
    n2  = 0
+   unless o[:sqlite3].nil?
+      sqlite_db.execute "delete from rbm where seq1=? and seq2=?", seq_names
+      sqlite_db.execute "delete from ani where seq1=? and seq2=?", seq_names
+   end
    unless o[:out].nil?
       fo = File.open(o[:out], "w")
       fo.puts %w(identity aln.len mismatch gap.open evalue bitscore).join("\t")
@@ -219,20 +229,22 @@ Dir.mktmpdir do |dir|
 	 printf "! One-way ANI %d: %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:auto]
 	 res.puts sprintf "<b>One-way ANI %d:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", i, id/n, (sq/n - (id/n)**2)**0.5, n unless o[:res].nil?
       end
-   end
+   end # [1,2].each
    if n2 < o[:hits]
       puts "Insufficient hits to estimate two-way ANI: #{n2}" unless o[:auto]
       res.puts "Insufficient hits to estimate two-way ANI: #{n2}" unless o[:res].nil?
    else
-      printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:auto]
-      res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2 unless o[:res].nil?
+      ani = id2/n2
+      ani_sd = (sq2/n2 - (id2/n2)**2)**0.5
+      printf "! Two-way ANI  : %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.\n", ani, ani_sd, n2 unless o[:auto]
+      res.puts sprintf "<b>Two-way ANI:</b> %.#{o[:dec]}f%% (SD: %.#{o[:dec]}f%%), from %i fragments.<br/>", ani, ani_sd, n2 unless o[:res].nil?
       unless o[:tab].nil?
-         tab = File.open(o[:tab], 'w')
-	 tab.printf "%.#{o[:dec]}f\t%.#{o[:dec]}f\t%i\t%i\n", id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg
+         tab = File.open(o[:tab], "w")
+	 tab.printf "%.#{o[:dec]}f\t%.#{o[:dec]}f\t%i\t%i\n", ani, ani_sd, n2, minfrg
 	 tab.close
       end
-      sqlite_db.execute("insert into ani values(?,?,?,?,?,?)", seq_names + [id2/n2, (sq2/n2 - (id2/n2)**2)**0.5, n2, minfrg]) unless o[:sqlite3].nil?
-      puts id2/n2 if o[:auto]
+      sqlite_db.execute("insert into ani values(?,?,?,?,?,?)", seq_names + [ani, ani_sd, n2, minfrg]) unless o[:sqlite3].nil?
+      puts ani if o[:auto]
    end
    res.close unless o[:res].nil?
    fo.close unless o[:out].nil?
