@@ -86,8 +86,10 @@ plot.enve.recplot2 <- function
       ### Limits of positions to represent (in bp, regardless of `pos.units`).
       pos.units=c('Mbp','Kbp','bp'),
       ### Units in which the positions should be represented (powers of 1,000 base pairs).
-      mar=list('1'=c(5,4,1,1)+.1, '2'=c(1,4,4,1)+.1, '3'=c(5,1,1,2)+0.1,
-	    '4'=c(1,1,4,2)+0.1, '5'=c(5,3,4,1)+0.1, '6'=c(5,4,4,2)+0.1),
+      mar=list('1'=c(5,4,1,1)+.1, '2'=c(ifelse(any(layout==1),1,5),4,4,1)+.1,
+	    '3'=c(5,ifelse(any(layout==1),1,4),1,2)+0.1,
+	    '4'=c(ifelse(any(layout==1),1,5),ifelse(any(layout==2),1,4),4,2)+0.1,
+	    '5'=c(5,3,4,1)+0.1, '6'=c(5,4,4,2)+0.1),
       ### Margins of the panels as a list, with the character representation of the number
       ### of the panel as index (see `layout`).
       pos.splines=0,
@@ -163,8 +165,15 @@ plot.enve.recplot2 <- function
    # Position histogram
    if(any(layout==2)){
       par(mar=mar[['2']]);
+      if(any(layout==1)){
+	 xlab=''
+	 xaxt='n'
+      }else{
+	 xlab=paste('Position in genome (',pos.units,')',sep='')
+	 xaxt='s'
+      }
       plot(1,t='n', bty='l', log='y',
-	 xlim=pos.lim, xlab='', xaxt='n', xaxs='i',
+	 xlim=pos.lim, xlab=xlab, xaxt=xaxt, xaxs='i',
 	 ylim=seqdepth.lim, yaxs='i', ylab='Sequencing depth (X)');
       abline(v=x$seq.breaks/pos.factor, col=grey(2/3, alpha=1/4));
       pos.x <- rep(pos.breaks,each=2)[-c(1,2*length(pos.breaks))]
@@ -182,11 +191,18 @@ plot.enve.recplot2 <- function
    # Identity histogram
    if(any(layout==3)){
       par(mar=mar[['3']]);
+      if(any(layout==1)){
+	 ylab=''
+	 yaxt='n'
+      }else{
+	 ylab=x$id.metric
+	 yaxt='s'
+      }
       if(sum(id.counts>0)>0){
 	 id.counts.range <- range(id.counts[id.counts>0])*c(1/2,2);
 	 plot(1,t='n', bty='l', log='x',
 	       xlim=id.counts.range, xlab='bps per bin', xaxs='i',
-	       ylim=id.lim, yaxs='i', ylab='', yaxt='n');
+	       ylim=id.lim, yaxs='i', ylab=ylab, yaxt=yaxt);
 	 if(underlay.group){
 	    rect(id.counts.range[1], id.lim[1], id.counts.range[2], min(id.breaks[c(id.ingroup,TRUE)]), col=out.bg, border=NA);
 	    rect(id.counts.range[1], min(id.breaks[c(id.ingroup,TRUE)]), id.counts.range[2], id.lim[2], col=in.bg,  border=NA);
@@ -208,12 +224,19 @@ plot.enve.recplot2 <- function
    peaks <- NA;
    if(any(layout==4)){
       par(mar=mar[['4']]);
+      if(any(layout==2)){
+	 ylab=''
+	 yaxt='n'
+      }else{
+	 ylab='Sequencing depth (X)'
+	 yaxt='s'
+      }
       h.breaks <- seq(log10(seqdepth.lim[1]*2), log10(seqdepth.lim[2]/2), length.out=200);
       h.in <- hist(log10(seqdepth.in), breaks=h.breaks, plot=FALSE);
       h.out <- hist(log10(seqdepth.out), breaks=h.breaks, plot=FALSE);
       plot(1, t='n', log='y',
 	 xlim=range(c(h.in$counts,h.out$counts,sum(pos.counts.in==0))), xaxs='r', xlab='', xaxt='n',
-	 ylim=seqdepth.lim, yaxs='i', ylab='', yaxt='n');
+	 ylim=seqdepth.lim, yaxs='i', ylab=ylab, yaxt=yaxt);
       y.tmp.in <- c(rep(10^h.in$breaks,each=2),seqdepth.lim[1]*c(1,1,3/2,3/2));
       y.tmp.out <- c(rep(10^h.out$breaks,each=2),seqdepth.lim[1]*c(1,1,3/2,3/2));
       lines(c(0,rep(h.out$counts,each=2),0,0,rep(sum(pos.counts.out==0),2),0), y.tmp.out, col=out.col);

@@ -6,10 +6,12 @@
     widths = c(1, 7, 2), heights = c(1, 2), palette = grey((100:0)/100), 
     underlay.group = TRUE, peaks.col = "darkred", id.lim = range(x$id.breaks), 
     pos.lim = range(x$pos.breaks), pos.units = c("Mbp", "Kbp", 
-        "bp"), mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(1, 
-        4, 4, 1) + 0.1, `3` = c(5, 1, 1, 2) + 0.1, `4` = c(1, 
-        1, 4, 2) + 0.1, `5` = c(5, 3, 4, 1) + 0.1, `6` = c(5, 
-        4, 4, 2) + 0.1), pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
+        "bp"), mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(ifelse(any(layout == 
+        1), 1, 5), 4, 4, 1) + 0.1, `3` = c(5, ifelse(any(layout == 
+        1), 1, 4), 1, 2) + 0.1, `4` = c(ifelse(any(layout == 
+        1), 1, 5), ifelse(any(layout == 2), 1, 4), 4, 2) + 0.1, 
+        `5` = c(5, 3, 4, 1) + 0.1, `6` = c(5, 4, 4, 2) + 0.1), 
+    pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
         0, 1/2, 2), out.lwd = ifelse(pos.splines > 0, 1/2, 2), 
     id.lwd = ifelse(id.splines > 0, 1/2, 2), in.col = "darkblue", 
     out.col = "lightblue", id.col = "black", peaks.opts = list())}
