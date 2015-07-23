@@ -2,7 +2,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jul-20-2015
+# @update: Jul-23-2015
 # @license: artistic license 2.0
 #
 
@@ -82,7 +82,7 @@ Dir.mktmpdir do |dir|
    # Create SQLite3 file
    unless o[:sqlite3].nil?
       sqlite_db = SQLite3::Database.new o[:sqlite3]
-      sqlite_db.execute "create table if not exists regions( seq varchar(256), id int, source varchar(256), from int, to int )"
+      sqlite_db.execute "create table if not exists regions( seq varchar(256), id int, source varchar(256), `start` int, `end` int )"
       sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), seq2 varchar(256), id1 int, id2 int, id float, evalue float, bitscore float )"
       sqlite_db.execute "create table if not exists ani( seq1 varchar(256), seq2 varchar(256), ani float, sd float, n int, omega int )"
    end
