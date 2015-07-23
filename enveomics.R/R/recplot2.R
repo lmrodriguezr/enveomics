@@ -182,20 +182,25 @@ plot.enve.recplot2 <- function
    # Identity histogram
    if(any(layout==3)){
       par(mar=mar[['3']]);
-      id.counts.range <- range(id.counts[id.counts>0])*c(1/2,2);
-      plot(1,t='n', bty='l', log='x',
-	    xlim=id.counts.range, xlab='bps per bin', xaxs='i',
-	    ylim=id.lim, yaxs='i', ylab='', yaxt='n');
-      if(underlay.group){
-	 rect(id.counts.range[1], id.lim[1], id.counts.range[2], min(id.breaks[c(id.ingroup,TRUE)]), col=out.bg, border=NA);
-	 rect(id.counts.range[1], min(id.breaks[c(id.ingroup,TRUE)]), id.counts.range[2], id.lim[2], col=in.bg,  border=NA);
-      }
-      id.f <- rep(id.counts,each=2)
-      id.x <- rep(id.breaks,each=2)[-c(1,2*length(id.breaks))]
-      lines(id.f, id.x, lwd=id.lwd, col=id.col);
-      if(id.splines > 0){
-	 id.spline <- smooth.spline(id.x[id.f>0], log(id.f[id.f>0]), spar=id.splines)
-	 lines(exp(id.spline$y), id.spline$x, lwd=2, col=id.col)
+      if(sum(id.counts>0)>0){
+	 id.counts.range <- range(id.counts[id.counts>0])*c(1/2,2);
+	 plot(1,t='n', bty='l', log='x',
+	       xlim=id.counts.range, xlab='bps per bin', xaxs='i',
+	       ylim=id.lim, yaxs='i', ylab='', yaxt='n');
+	 if(underlay.group){
+	    rect(id.counts.range[1], id.lim[1], id.counts.range[2], min(id.breaks[c(id.ingroup,TRUE)]), col=out.bg, border=NA);
+	    rect(id.counts.range[1], min(id.breaks[c(id.ingroup,TRUE)]), id.counts.range[2], id.lim[2], col=in.bg,  border=NA);
+	 }
+	 id.f <- rep(id.counts,each=2)
+	 id.x <- rep(id.breaks,each=2)[-c(1,2*length(id.breaks))]
+	 lines(id.f, id.x, lwd=id.lwd, col=id.col);
+	 if(id.splines > 0){
+	    id.spline <- smooth.spline(id.x[id.f>0], log(id.f[id.f>0]), spar=id.splines)
+	    lines(exp(id.spline$y), id.spline$x, lwd=2, col=id.col)
+	 }
+      }else{
+	 plot(1,t='n',bty='l',xlab='', xaxt='n', ylab='', yaxt='n')
+	 text(1,1,labels='Insufficient data', srt=90)
       }
    }
 
