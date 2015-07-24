@@ -23,6 +23,6 @@ while( my $seq1 = $seq_in->next_seq() ) {
 	chomp $seq;
 	my $lseq = length($seq);
 	if($lseq>=$min){
-		print $id,"\n",$seq,"\n";	
+		print ">$id","\n",$seq,"\n";	
 	}
 }
