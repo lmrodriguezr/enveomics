@@ -2,7 +2,7 @@
 
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: May-30-2015
+# @update: Jul-29-2015
 # @license artistic license 2.0
 #
 
@@ -76,7 +76,7 @@ class DoubleHit
       @name + "\t" + @sbj + "\t" + @score.to_s + "\t" +
       	@hitA.sfrom.to_s + "\t" + @hitA.sto.to_s + "\t" +
       	@hitB.sfrom.to_s + "\t" + @hitB.sto.to_s + "\t" +
-	@orient.to_s + "\t" + (coords.max-coords.min) + "\n"
+	@orient.to_s + "\t" + (coords.max-coords.min).to_s + "\n"
    end
 end
 class PairedHits
