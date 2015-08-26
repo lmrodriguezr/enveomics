@@ -2,15 +2,16 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Feb-26-2015
+# @update: Aug-25-2015
 # @license: artistic license 2.0
 #
 
 require 'optparse'
 require 'tmpdir'
 
-o = {:len=>0, :id=>0, :fract=>0, :score=>0, :q=>FALSE, :bin=>'', :program=>'blast+', :thr=>1, :nucl=>FALSE}
-ARGV << '-h' if ARGV.size==0
+o = {len:0, id:0, fract:0, score:0, q:false, bin:"", program:"blast+", thr:1,
+   nucl:false}
+ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Finds the reciprocal best matches between two sets of sequences.
@@ -18,23 +19,42 @@ Finds the reciprocal best matches between two sets of sequences.
 Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Mandatory"
-   opts.on("-1", "--seq1 FILE", "Path to the FastA file containing the set 1."){ |v| o[:seq1] = v }
-   opts.on("-2", "--seq2 FILE", "Path to the FastA file containing the set 2."){ |v| o[:seq2] = v }
+   opts.on("-1", "--seq1 FILE",
+      "Path to the FastA file containing the set 1."){ |v| o[:seq1] = v }
+   opts.on("-2", "--seq2 FILE",
+      "Path to the FastA file containing the set 2."){ |v| o[:seq2] = v }
    opts.separator ""
    opts.separator "Search Options"
-   opts.on("-n", "--nucl", "Sequences are assumed to be nucleotides (proteins by default)."){ |v| o[:nucl] = TRUE }
-   opts.on("-l", "--len INT", "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."){ |v| o[:len] = v.to_i }
-   opts.on("-f", "--fract FLOAT", "Minimum alignment length (as a fraction of the query). If set, requires BLAST+ (see -p).  By default: #{o[:fract].to_s}."){ |v| o[:fract] = v.to_i }
-   opts.on("-i", "--id NUM", "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."){ |v| o[:id] = v.to_f }
-   opts.on("-s", "--score NUM", "Minimum alignment score (in bits).  By default: #{o[:score].to_s}."){ |v| o[:score] = v.to_f }
+   opts.on("-n", "--nucl",
+      "Sequences are assumed to be nucleotides (proteins by default)."
+      ){ |v| o[:nucl] = true }
+   opts.on("-l", "--len INT",
+      "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."
+      ){ |v| o[:len] = v.to_i }
+   opts.on("-f", "--fract FLOAT",
+      "Minimum alignment length (as a fraction of the query). If set, " +
+      "requires BLAST+ (see -p).  By default: #{o[:fract].to_s}."
+      ){ |v| o[:fract] = v.to_i }
+   opts.on("-i", "--id NUM",
+      "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
+      ){ |v| o[:id] = v.to_f }
+   opts.on("-s", "--score NUM",
+      "Minimum alignment score (in bits).  By default: #{o[:score].to_s}."
+      ){ |v| o[:score] = v.to_f }
    opts.separator ""
    opts.separator "Software Options"
-   opts.on("-b", "--bin DIR", "Path to the directory containing the binaries of the search program."){ |v| o[:bin] = v }
-   opts.on("-p", "--program STR", "Search program to be used.  One of: blast+ (default), blast."){ |v| o[:program] = v }
-   opts.on("-t", "--threads INT", "Number of parallel threads to be used.  By default: #{o[:thr]}."){ |v| o[:thr] = v.to_i }
+   opts.on("-b", "--bin DIR",
+      "Path to the directory containing the binaries of the search program."
+      ){ |v| o[:bin] = v }
+   opts.on("-p", "--program STR",
+      "Search program to be used.  One of: blast+ (default), blast."
+      ){ |v| o[:program] = v }
+   opts.on("-t", "--threads INT",
+      "Number of parallel threads to be used.  By default: #{o[:thr]}."
+      ){ |v| o[:thr] = v.to_i }
    opts.separator ""
    opts.separator "Other Options"
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
+   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
       exit
@@ -43,7 +63,8 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-1 is mandatory" if o[:seq1].nil?
 abort "-2 is mandatory" if o[:seq2].nil?
-abort "Argument -f/--fract requires -p blast+" if o[:fract]>0 and o[:program]!='blast+'
+abort "Argument -f/--fract requires -p blast+" if
+   o[:fract]>0 and o[:program]!="blast+"
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 
 Dir.mktmpdir do |dir|
@@ -54,9 +75,11 @@ Dir.mktmpdir do |dir|
    [:seq1, :seq2].each do |seq|
       case o[:program].downcase
       when "blast"
-         `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq.to_s}" -p #{(o[:nucl]?'F':'T')}`
+         `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq.to_s}" \
+	 -p #{(o[:nucl]?"F":"T")}`
       when "blast+"
-         `"#{o[:bin]}makeblastdb" -in "#{o[seq]}" -out "#{dir}/#{seq.to_s}" -dbtype #{(o[:nucl]?'nucl':'prot')}`
+         `"#{o[:bin]}makeblastdb" -in "#{o[seq]}" -out "#{dir}/#{seq.to_s}" \
+	 -dbtype #{(o[:nucl]?"nucl":"prot")}`
       else
          abort "Unsupported program: #{o[:program]}."
       end
@@ -73,12 +96,13 @@ Dir.mktmpdir do |dir|
       $stderr.puts "  Query: #{q}." unless o[:q]
       case o[:program].downcase
       when "blast"
-	 `"#{o[:bin]}blastall" -p #{o[:nucl]?'blastn':'blastp'} -d "#{s}" -i "#{q}" \
-	 -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
+	 `"#{o[:bin]}blastall" -p #{o[:nucl]?"blastn":"blastp"} -d "#{s}" \
+	 -i "#{q}" -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
       when "blast+"
-	 `"#{o[:bin]}#{o[:nucl]?'blastn':'blastp'}" -db "#{s}" -query "#{q}" \
+	 `"#{o[:bin]}#{o[:nucl]?"blastn":"blastp"}" -db "#{s}" -query "#{q}" \
 	 -max_target_seqs 1 -num_threads #{o[:thr]} -out "#{dir}/#{i}.tab" \
-	 -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend sstart send evalue bitscore qlen slen"`
+	 -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend \
+	 sstart send evalue bitscore qlen slen"`
       else
 	 abort "Unsupported program: #{o[:program]}."
       end
@@ -87,8 +111,10 @@ Dir.mktmpdir do |dir|
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
-	 row[12] = "1" if o[:program]!='blast+'
-	 if qry_seen[ row[0] ].nil? and row[3].to_i >= o[:len] and row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and row[3].to_f/row[12].to_i >= o[:fract]
+	 row[12] = "1" if o[:program]!="blast+"
+	 if qry_seen[ row[0] ].nil? and row[3].to_i >= o[:len] and
+	       row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and
+	       row[3].to_f/row[12].to_i >= o[:fract]
 	    qry_seen[ row[0] ] = 1
 	    n += 1
 	    if i==2
