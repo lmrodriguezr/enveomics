@@ -25,7 +25,9 @@ Options:
    -step <int>	Step size.  By default: 1.
    -lerr <int>	Expected error in chunks length.  By default: 2.
    -comm <1|0>	Generate FastA comments (leaded by semi-colon) to separate
-   		input sequences.  By default: 0.
+		input sequences.  By default: 0.
+   -short <1|0>	Use chunks shorter than the window size 'as is'. By
+		default: 0 (discard those chunks).
    -h		Displays this help message and exits.
 
 " if exists $params{'--help'} or exists $params{'-h'} or exists $params{'-help'};
@@ -41,6 +43,7 @@ $params{'-step'} ||= 1;
 #$params{'-red'} ||= $params{'-step'}/2;
 $params{'-lerr'} ||= 2;
 $params{'-comm'} ||= 0;
+$params{'-short'} ||= 0;
 
 my $win = $params{'-win'}+0;
 my $stp = $params{'-step'}+0;
@@ -51,6 +54,8 @@ my $i = 0;
 while(<SEQ>){
 	chomp;
 	if(m/^>/){
+		print OUT ">", ++$i, "\n", $buffer, "\n" if $params{'-short'}==1 and $buffer;
+		$buffer = "";
 		print OUT ";--- INPUT: $_ ---\n" unless $params{'-comm'}==0;
 		next;
 	}
