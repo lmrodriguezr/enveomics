@@ -74,6 +74,12 @@ class OG
       return false if self.genes[gene.genome_id].nil?
       self.genes[gene.genome_id].include? gene.id
    end
+   # Get the list of genomes containing genes in this OG.
+   def genomes
+      (0 .. Gene.genomes.length-1).select do |gno|
+         not(self.genes[gno].nil? or self.genes[gno].empty?)
+      end
+   end
    # Adds a note that will be printed after the last column
    def add_note note, note_idx=nil
       if note_idx.nil?
