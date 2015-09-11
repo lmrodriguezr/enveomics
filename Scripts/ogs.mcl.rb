@@ -83,7 +83,7 @@ begin
 	 file_i = 0
 	 ln_i = 0
 	 $stderr.puts "Reading RBM files within '#{o[:dir]}'." unless o[:q]
-	 abc = File.open("#{dir}/rbms.abc", "w")
+	 abc = File.open(o[:abc] + ".tmp", "w")
 	 Dir.entries(o[:dir]).each do |rbm_file|
 	    next unless File.file?(o[:dir]+"/"+rbm_file)
 	    # Parse the filename to identify the genomes
@@ -109,6 +109,7 @@ begin
 	       "Found RBMs: #{ln_i}.   \r" unless o[:q]
 	 end
 	 abc.close
+	 File.rename(o[:abc] + ".tmp", o[:abc])
 	 $stderr.print "\n" unless o[:q]
       end # if File.size? o[:abc] ... else
 
