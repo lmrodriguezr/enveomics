@@ -2,8 +2,8 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Sep-01-2015
 # @license: artistic license 2.0
+# @update: Sep-11-2015
 #
 
 $:.push File.expand_path(File.dirname(__FILE__) + '/lib')
@@ -134,7 +134,8 @@ begin
 	 [:core, :pan].each do |met|
 	    a = size[met].map{ |r| r[i] }.sort
 	    avg = a.inject(0,:+).to_f / a.size
-	    sd = Math.sqrt(a.map{ |v| v**2 }.inject(0,:+)/a.size - avg**2)
+	    var = a.map{ |v| v**2 }.inject(0,:+).to_f/a.size - avg**2
+	    sd = Math.sqrt(var)
 	    q1 = a[ a.size*1/4 ]
 	    q2 = a[ a.size*2/4 ]
 	    q3 = a[ a.size*3/4 ]
