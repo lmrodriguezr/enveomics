@@ -2,8 +2,8 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Aug-30-2015
 # @license: artistic license 2.0
+# @update: Sep-15-2015
 #
 
 $:.push File.expand_path(File.dirname(__FILE__) + '/lib')
@@ -59,30 +59,37 @@ begin
    # Estimate descriptive stats
    stat_name = {
       genomes: "Number of genomes",
-      pangenome: "Pangenome (OGs)",
-      core_genome: "Core genome (OGs)",
-      core90pc_genome: "OGs in 90% of the genomes",
-      core80pc_genome: "OGs in 80% of the genomes",
-      avg_genome: "Average number of OGs in a genome",
-      avg_shared: "Average fraction of genomes per OG",
-      core_avg: "Core genome (OGs) / Average genome (OGs)"
+      pan: "Pangenome (OGs)",
+      core: "Core genome (OGs)",
+      core90pc: "OGs in 90% of the genomes",
+      core80pc: "OGs in 80% of the genomes",
+      avg: "Average number of OGs in a genome",
+      avg_pan: "Average genome (OGs) / Pangenome (OGs)",
+      core_avg: "Core genome (OGs) / Average genome (OGs)",
+      core_pan: "Core genome (OGs) / Pangenome (OGs)",
+      ogs_shannon: "Entropy of the OG frequencies (bits)"
    }
    stats = {}
    stats[:genomes] = Gene.genomes.length
-   stats[:pangenome] = collection.ogs.length
-   stats[:core_genome] = collection.ogs.map do |og|
+   stats[:pan] = collection.ogs.length
+   stats[:core] = collection.ogs.map do |og|
       (og.genomes.length == Gene.genomes.length) ? 1 : 0
    end.inject(0,:+)
-   stats[:core90pc_genome] = collection.ogs.map do |og|
+   stats[:core90pc] = collection.ogs.map do |og|
       (og.genomes.length >= 0.9*Gene.genomes.length) ? 1 : 0
    end.inject(0,:+)
-   stats[:core80pc_genome] = collection.ogs.map do |og|
+   stats[:core80pc] = collection.ogs.map do |og|
       (og.genomes.length >= 0.8*Gene.genomes.length) ? 1 : 0
    end.inject(0,:+)
    og_genomes = collection.ogs.map{ |og| og.genomes.length }.inject(0,:+)
-   stats[:avg_genome] = og_genomes.to_f/Gene.genomes.length
-   stats[:avg_shared] = stats[:avg_genome]/stats[:pangenome]
-   stats[:core_avg] = stats[:core_genome].to_f/stats[:avg_genome]
+   stats[:avg] = og_genomes.to_f/Gene.genomes.length
+   stats[:avg_pan] = stats[:avg]/stats[:pan]
+   stats[:core_avg] = stats[:core].to_f/stats[:avg]
+   stats[:core_pan] = stats[:core].to_f/stats[:pan]
+   stats[:ogs_shannon] = -1 * collection.ogs.map do |og|
+      pi = og.genomes.length.to_f/Gene.genomes.length
+      pi * Math.log(pi, 2)
+   end.inject(0.0,:+)
 
    # Show result
    $stderr.puts "Generating reports." unless o[:q]

@@ -21,6 +21,7 @@
 #       "123..3"
 #    Is interpreted as:
 #       "complement(3..123)"
+# See also http://www.insdc.org/files/feature_table.html
 # 
 # SeqRange.new(c): Initializes a new SeqRange from an object.
 # c: Any object supported by the `<<` operator, or `nil` to create an empty
