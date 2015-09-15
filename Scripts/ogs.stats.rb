@@ -88,7 +88,7 @@ begin
    stats[:core_pan] = stats[:core].to_f/stats[:pan]
    stats[:ogs_shannon] = -1 * collection.ogs.map do |og|
       pi = og.genomes.length.to_f/Gene.genomes.length
-      pi * Math.log(pi, 2)
+      pi * Math.log(pi)
    end.inject(0.0,:+)
 
    # Show result
