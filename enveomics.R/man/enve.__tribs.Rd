@@ -1,8 +1,8 @@
-\name{enve.__gss}
-\alias{enve.__gss}
-\title{enve   gss}
-\description{Internal ancilliary function (see `enve.gss`).}
-\usage{enve.__gss(rep, frx, selection, dimensions, dots, dist.method, 
+\name{enve.__tribs}
+\alias{enve.__tribs}
+\title{enve   tribs}
+\description{Internal ancilliary function (see `enve.tribs`).}
+\usage{enve.__tribs(rep, frx, selection, dimensions, dots, dist.method, 
     summary.fx, dist)}
 \arguments{
   \item{rep}{
