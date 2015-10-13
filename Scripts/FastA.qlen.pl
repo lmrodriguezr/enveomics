@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar-23-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update  Oct-07-2015
+# @license artistic license 2.0
 #
 use strict;
 use warnings;
@@ -29,7 +29,9 @@ $minlen ||= 0;
 
 my @len = ();
 my $seqI = Bio::SeqIO->new(-file=>$seqs, -format=>"FastA");
-while(my $seq = $seqI->next_seq){ push(@len, int($seq->length)) unless $seq->length<$minlen }
+while(my $seq = $seqI->next_seq){
+   push(@len, int($seq->length)) unless $seq->length<$minlen
+}
 @len = sort { $a <=> $b } @len;
 for my $q (0 .. 4){
    my $ii = int(my $i = $#len*$q/4);
