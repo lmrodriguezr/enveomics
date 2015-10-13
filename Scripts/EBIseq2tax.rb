@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update  Sep-29-2015
+# @update  Oct-13-2015
 # @license Artistic License 2.0
 #
 
@@ -35,7 +35,7 @@ OptionParser.new do |opt|
       ){ |v| $o[:dbfrom]=v }
    opt.on("-r", "--ranks RANK1,RANK2,...", Array,
       "Taxonomic ranks to report. By default:",
-      $o[:ranks].join(", ") + "."){ |v| $o[:ranks]=v }
+      $o[:ranks].join(",") + "."){ |v| $o[:ranks]=v }
    opt.on("-n", "--noheader",
       "Do not includ a header in the output."){ $o[:header]=false }
    opt.on("-t", "--taxids",
@@ -48,18 +48,6 @@ OptionParser.new do |opt|
    opt.separator ""
 end.parse!
 
-#================================[ Functions ]
-def seq2taxid(id, db)
-   doc = RemoteData.ebiFetch(db, id, "annot").split(/[\n\r]/)
-   ln = doc.grep(/^FT\s+\/db_xref="taxon:/).first
-   ln = doc.grep(/^OX\s+NCBI_TaxID=/).first if ln.nil?
-   return nil if ln.nil?
-   ln.sub!(/.*(?:"taxon:|NCBI_TaxID=)(\d+)["; ].*/, "\\1")
-   return nil unless ln =~ /^\d+$/
-   ln
-end
-
-
 #================================[ Main ]
 begin
    $o[:ids] += File.readlines($o[:infile]).map{ |l| l.chomp } unless
@@ -68,7 +56,8 @@ begin
    puts (["ID", "TaxId"] + $o[:ranks].map{ |r| r.capitalize }).join("\t") if
       $o[:header]
    $o[:ids].each do |id|
-      taxid = seq2taxid(id, $o[:dbfrom])
+      id = $1 if id =~ /^[a-z]+\|\S+\|(\S+)/
+      taxid = RemoteData.ebiseq2taxid(id, $o[:dbfrom])
       if taxid.nil?
 	 warn "Cannot find link to taxonomy: #{id}"
 	 next

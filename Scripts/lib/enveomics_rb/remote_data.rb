@@ -1,7 +1,7 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Sep-29-2015
+# @update: Oct-13-2015
 # @license: artistic license 2.0
 #
 
@@ -42,6 +42,15 @@ class RemoteData
       raise "Unable to reach EBI REST client, error code " +
 	 response.code.to_s + "." unless response.code == 200
       response.to_s
+   end
+   def self.ebiseq2taxid(id,db)
+      doc = RemoteData.ebiFetch(db, id, "annot").split(/[\n\r]/)
+      ln = doc.grep(/^FT\s+\/db_xref="taxon:/).first
+      ln = doc.grep(/^OX\s+NCBI_TaxID=/).first if ln.nil?
+      return nil if ln.nil?
+      ln.sub!(/.*(?:"taxon:|NCBI_TaxID=)(\d+)["; ].*/, "\\1")
+      return nil unless ln =~ /^\d+$/
+      ln
    end
 end
 
