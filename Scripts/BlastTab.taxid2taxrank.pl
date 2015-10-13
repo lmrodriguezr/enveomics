@@ -11,6 +11,9 @@ use strict;
 my($blast, $nodes, $names, $rank, $bh) = @ARGV;
 ($blast and $nodes and $names) or die <<HELP
 
+Takes a BLAST with NCBI Taxonomy IDs as subjects and replaces them by names at a
+given taxonomic rank.
+
 Usage:
    $0 tax_blast.txt nodes.dmp names.dmp[ rank[ best-hit]] > taxrank_blast.txt
 
