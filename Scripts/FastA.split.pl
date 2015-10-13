@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update Jul-05-2015
+# @update Oct-13-2015
 # @license artistic license 2.0
 #
 
@@ -36,7 +36,7 @@ for my $i (1 .. $outN){
 my($i, $seq) = (-1, '');
 open FILE, "<", $file or die "I can not read the file: $file: $!\n";
 while(my $ln=<FILE>){
-   next if /^;/;
+   next if $ln=~/^;/;
    if($ln =~ m/^>/){
       print { $outSym[$i % $outN] } $seq if $seq;
       $i++;
