@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar-23-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update  Oct-07-2015
+# @license artistic license 2.0
 #
 
 use warnings;
@@ -42,6 +42,7 @@ print STDERR "Filtering FastA.\n" unless $o{q};
 open FA, "<", $fa or die "Cannot read file: $fa: $!\n";
 my $good = 0;
 while(my $ln = <FA>){
+   next if $ln =~ /^;/;
    chomp $ln;
    if($ln =~ m/^>((\S+).*)/){ $good = (exists $li{$1} or exists $li{">$1"} or exists $li{$2} or exists $li{$ln}) }
    elsif($ln =~ m/^>/){ $good=$o{r}; print STDERR "Warning: Non-cannonical defline, line $.: $ln\n" }

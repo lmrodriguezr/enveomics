@@ -28,13 +28,15 @@ Usage
 my @outSym = ();
 for my $i (1 .. $outN){
    $outSym[$i-1] = gensym;
-   open $outSym[$i-1], ">", "$base.$i.fa" or die "I can not create the file: $base.$i.fa: $!\n";
+   open $outSym[$i-1], ">", "$base.$i.fa" or
+      die "I can not create the file: $base.$i.fa: $!\n";
 }
 
 
 my($i, $seq) = (-1, '');
 open FILE, "<", $file or die "I can not read the file: $file: $!\n";
 while(my $ln=<FILE>){
+   next if /^;/;
    if($ln =~ m/^>/){
       print { $outSym[$i % $outN] } $seq if $seq;
       $i++;

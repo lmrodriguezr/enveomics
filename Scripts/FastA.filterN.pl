@@ -1,8 +1,7 @@
 #!/usr/bin/env perl
 # 
-# @author Luis M. Rodriguez-R
-# @version 1.0
-# @update Mar-23-2015
+# @author  Luis M. Rodriguez-R
+# @update  Oct-07-2015
 # @license artistic license 2.0
 # 
 
@@ -11,6 +10,7 @@ use strict;
 
 my($file, $content, $stretch) = @ARGV;
 $file or die <<HELP
+
 Description:
    Filter sequences by N-content and presence of long homopolymers.
 Usage:
@@ -22,6 +22,7 @@ Where:
    stretch	A number indicating the maximum number of consecutive identical
    		nucleotides allowed (0 to turn off, 100 by default)
    filtered.fa	Filtered set of sequences.
+
 HELP
 ;
 ($content ||= 0.5)+=0;
@@ -35,6 +36,7 @@ FASTA: {
    open FILE, "<", $file or die "I can not open the file: $file: $!\n";
    SEQ: while(<FILE>){
       $N++;
+      s/^;.*//gm;
       s/>//g;
       my($n,$s) = split /\n/, $_, 2;
       (my $clean = $s) =~ s/[^ACTGN]//g;

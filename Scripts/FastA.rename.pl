@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar-23-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update  Oct-07-2015
+# @license artistic license 2.0
 #
 
 use warnings;
@@ -21,8 +21,8 @@ sub HELP_MESSAGE { die "
    -h		Prints this message and exits.
 
    [mandatory]
-   list.txt	Tab-delimited list of sequences, with the original ID in the first
-   		column and the ID to use in the second.
+   list.txt	Tab-delimited list of sequences, with the original ID in the
+   		first column and the ID to use in the second.
    seqs.fa	FastA file containing the superset of sequences.
    renamed.fa	FastA file to be created.
 
@@ -43,6 +43,7 @@ print STDERR "Renaming FastA.\n" unless $o{q};
 open FA, "<", $fa or die "Cannot read file: $fa: $!\n";
 my $good = 0;
 while(my $ln = <FA>){
+   next if $ln =~ /^;/;
    chomp $ln;
    if($ln =~ m/^>((\S+).*)/){
       my $rep=0;
@@ -54,7 +55,10 @@ while(my $ln = <FA>){
 	 $ln = $rep;
 	 $good = 1;
       }
-   }elsif($ln =~ m/^>/){ $good=0; print STDERR "Warning: Non-cannonical defline, line $.: $ln\n" }
+   }elsif($ln =~ m/^>/){
+      $good=0;
+      print STDERR "Warning: Non-cannonical defline, line $.: $ln\n";
+   }
    print "$ln\n" if $good or not $o{f};
 }
 close FA;

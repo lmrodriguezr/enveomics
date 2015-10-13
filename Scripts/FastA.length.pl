@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author: Luis M Rodriguez-R
-# @update: Mar-23-2015
-# @license: artistic license 2.0
+# @author  Luis M Rodriguez-R
+# @update  Oct-07-2015
+# @license artistic license 2.0
 #
 
 use warnings;
@@ -22,6 +22,7 @@ for my $fa (@ARGV){
    my $def = '';
    my $len = 0;
    while(<FA>){
+      next if /^;/;
       if(m/^>(\S+)\s?/){
          print "$def\t$len\n" if $def;
 	 $def = $1;

@@ -61,6 +61,7 @@ LINE: while(1){
       defined $ln or die "Impossible to read next entry ($.) from $in[$k]: $!\n";
       $ln =~ s/^\>?/>/;
       $ln =~ s/\>$//;
+      $ln =~ s/^;.*//gm;
       if($eval_T and not $i % $eval_T){
 	 unless($name){
 	    $ln =~ m/^>(.*?)[\/ \\_]\d+/ or die "Impossible to evaluate names!\n offending entry:\n$ln\n";

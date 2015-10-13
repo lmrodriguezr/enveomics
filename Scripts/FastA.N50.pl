@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar 23 2015
+# @update: Oct 07 2015
 # @license: artistic license 2.0
 #
 use strict;
@@ -32,6 +32,7 @@ while(<SEQ>){
    if(/^>/){
       push @len, 0;
    }else{
+      next if /^;/;
       chomp;
       s/\W//g;
       $len[-1]+=length $_;

@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 # 
-# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Mar-23-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update  Oct-07-2015
+# @license artistic license 2.0
 # 
 
 use strict;
@@ -29,20 +29,21 @@ my $HELP = <<HELP
   Options:
     -f <float>	: Fraction of the library to be sampled (as percentage).  It can
     		  include several values (separated by comma), as well as ranges
-		  of values in the form 'from-to/by'.  For example, the -f value:
-		  '1-5/1,10-50/10,75,99' will produce 12 subsamples with expected
-		  fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%, 30%, 40%, 50%, 75%, and
-		  99%.  By default: 10.
+		  of values in the form 'from-to/by'.  For example, the -f value
+		  1-5/1,10-50/10,75,99 will produce 12 subsamples with expected
+		  fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%, 30%, 40%, 50%, 75%,
+		  and 99%.  By default: 10.
     -r <int>	: Number of replicates per fraction.  By default: 1.
-    -o <str>	: Prefix of the output files to be created.  The output files will
-    		  have a suffix of the form '.fraction-replicate.fa', where
+    -o <str>	: Prefix of the output files to be created.  The output files
+		  will have a suffix of the form '.fraction-replicate.fa', where
 		  'fraction' is the percentage sampled and 'replicate' is an
 		  increasing integer for replicates of the same fraction.  By
 		  default: Path to the input file.
     -F		: Force overwriting output file(s).
-    -z		: Include leading zeroes in the numeric parts of the output files
-    		  (e.g., file.002.50-01.fa instead of file.2.50-1.fa), so that
-		  alphabetic sorting of files reflects the sampled fraction.
+    -z		: Include leading zeroes in the numeric parts of the output
+    		  files (e.g., file.002.50-01.fa instead of file.2.50-1.fa), so
+		  that alphabetic sorting of files reflects the sampled
+		  fraction.
     -q		: Run quietly.
     -h		: Displays this message and exits.
 
@@ -91,7 +92,6 @@ $o{'h'} and die $HELP;
 
 my $N  = 0;
 my @ck = qw(*... **.. ***. .*** ..** ...*);
-#my @ck = qw(\\ | / -);
 SAMPLING: {
    local $/ = "\n>";
    print STDERR "Sampling sequences.\n" unless $o{q};
@@ -101,6 +101,7 @@ SAMPLING: {
 	 $N++;
 	 $seq =~ s/^>?/>/;
 	 $seq =~ s/>$//;
+	 $seq =~ s/^;.*//gm;
 	 PERC: for my $sperc (values %$samples){
 	    SAMPLE: for my $sample (@$sperc){
 	       if($sample->[0] > rand 100){
@@ -109,7 +110,8 @@ SAMPLING: {
 	       }
 	    }
 	 }
-	 print STDERR " [".$ck[($N/5000)%@ck]."] ".&thousands($N)." seqs.    \r" unless $o{q} or $N%5000;
+	 print STDERR " [".$ck[($N/5000)%@ck]."] ".&thousands($N).
+	    " seqs.    \r" unless $o{q} or $N%5000;
       }
       close IN;
    }
