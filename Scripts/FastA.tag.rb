@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 #
-# @author: Luis M. Rodriguez-R
-# @update: Feb-06-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R
+# @update  Oct-07-2015
+# @license artistic license 2.0
 #
 
 require 'optparse'
@@ -17,13 +17,16 @@ Generates easy-to-parse tagged reads from FastA files.
 Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Mandatory"
-   opts.on("-i", "--in FILE", "Path to the FastA file containing the sequences."){ |v| o[:in] = v }
-   opts.on("-o", "--out FILE", "Path to the FastA to create."){ |v| o[:out] = v }
+   opts.on("-i", "--in FILE",
+      "Path to the FastA file containing the sequences."){ |v| o[:in] = v }
+   opts.on("-o", "--out FILE",
+      "Path to the FastA to create."){ |v| o[:out] = v }
    opts.separator ""
    opts.separator "ID options"
    opts.on("-p", "--prefix STR", "Prefix to use in all IDs."){ |v| o[:p] = v }
    opts.on("-s", "--suffix STR", "Suffix to use in all IDs."){ |v| o[:s] = v }
-   opts.on("-d", "--defline", "Keep the original defline after a space."){ o[:d]=TRUE }
+   opts.on("-d", "--defline",
+      "Keep the original defline after a space."){ o[:d]=TRUE }
    opts.separator ""
    opts.separator "Other Options"
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = TRUE }
@@ -42,6 +45,7 @@ begin
    i=0
    while ln=ifh.gets
       ln.chomp!
+      next if ln =~ /^;/
       unless /^>/.match(ln).nil?
 	 i+=1
 	 ofh.puts ">#{o[:p]}#{i}#{o[:s]}#{ o[:d]?" #{ln[1, ln.size-1]}":"" }"
