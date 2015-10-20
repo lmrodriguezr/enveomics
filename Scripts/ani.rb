@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
 #
-# @author: Luis M. Rodriguez-R
-# @update: Aug-25-2015
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R
+# @update  Oct-20-2015
+# @license artistic license 2.0
 #
 
 require 'optparse'
@@ -23,7 +23,7 @@ rescue LoadError
 end
 
 o = {win:1000, step:200, id:70, len:700, correct:true, hits:50, q:false, bin:"",
-   program:"blast+", thr:1, dec:2, auto:false}
+   program:"blast+", thr:1, dec:2, auto:false, lookupfirst:false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -85,6 +85,10 @@ Usage: #{$0} [options]"
    opts.on("--name2 STR",
       "Name of --seq2 to use in --sqlite3. By default it's determined by the " +
       "filename."){ |v| o[:seq2name] = v }
+   opts.on("--lookup-first",
+      "Indicates if the ANI should be looked up first in the database.",
+      "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with --res and --tab."
+      ){ |v| o[:lookupfirst] = v }
    opts.on("-d", "--dec INT",
       "Decimal positions to report. By default: #{o[:dec]}"
       ){ |v| o[:dec] = v.to_i }
@@ -113,23 +117,44 @@ abort "SQLite3 requested (-S) but sqlite3 not supported.  First install gem " +
    "sqlite3." unless o[:sqlite3].nil? or has_sqlite3
 abort "Step size must be smaller than window size." if o[:step] > o[:win]
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
+if o[:lookupfirst]
+   abort "--lookup-first needs --sqlite3" if o[:sqlite3].nil?
+   abort "--lookup-first requires --auto" unless o[:auto]
+   abort "--lookup-first requires --name1" if o[:seq1name].nil?
+   abort "--lookup-first requires --name2" if o[:seq2name].nil?
+   abort "--lookup-first conflicts with --res" unless o[:res].nil?
+   abort "--lookup-first conflicts with --tab" unless o[:tab].nil?
+end
+
+# Create SQLite3 file
+unless o[:sqlite3].nil?
+   $stderr.puts "Accessing SQLite3 file: #{o[:sqlite3]}." unless o[:q]
+   sqlite_db = SQLite3::Database.new o[:sqlite3]
+   sqlite_db.execute "create table if not exists regions( " +
+      "seq varchar(256), id int, source varchar(256), `start` int," +
+      " `end` int )"
+   sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), " +
+      "seq2 varchar(256), id1 int, id2 int, id float, evalue float, " +
+      "bitscore float )"
+   sqlite_db.execute "create table if not exists ani( seq1 varchar(256), " +
+      "seq2 varchar(256), ani float, sd float, n int, omega int )"
+end
+
+# Look-up first
+if o[:lookupfirst]
+   val = sqlite_db.execute "select ani from ani where seq1=? and seq2=?",
+      [o[:seq1name], o[:seq2name]]
+   val = sqlite_db.execute "select ani from ani where seq1=? and seq2=?",
+      [o[:seq2name], o[:seq1name]] if val.empty?
+   unless val.empty?
+      puts val.first.first
+      exit
+   end
+end
 
 Dir.mktmpdir do |dir|
    $stderr.puts "Temporal directory: #{dir}." unless o[:q]
 
-   # Create SQLite3 file
-   unless o[:sqlite3].nil?
-      sqlite_db = SQLite3::Database.new o[:sqlite3]
-      sqlite_db.execute "create table if not exists regions( " +
-	 "seq varchar(256), id int, source varchar(256), `start` int," +
-	 " `end` int )"
-      sqlite_db.execute "create table if not exists rbm( seq1 varchar(256), " +
-	 "seq2 varchar(256), id1 int, id2 int, id float, evalue float, " +
-	 "bitscore float )"
-      sqlite_db.execute "create table if not exists ani( seq1 varchar(256), " +
-	 "seq2 varchar(256), ani float, sd float, n int, omega int )"
-   end
-   
    # Create databases.
    $stderr.puts "Creating databases." unless o[:q]
    minfrg = nil
@@ -148,13 +173,13 @@ Dir.mktmpdir do |dir|
 	 fo = File.open(o[seq], "w")
 	 fo.puts response.to_str
 	 fo.close
-	 seq_names << "gi:#{gi[1]}"
+	 seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
+	    "gi:#{gi[1]}" :
+	    o[ "#{seq}name".to_sym ])
       else
-         if o[ "#{seq}name".to_sym ].nil?
-	    seq_names << File.basename(o[seq], ".fna")
-	 else
-	    seq_names << o[ "#{seq}name".to_sym ]
-	 end
+	 seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
+	    File.basename(o[seq], ".fna") :
+	    o[ "#{seq}name".to_sym ])
       end
       $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
       sqlite_db.execute("delete from regions where seq=?",
