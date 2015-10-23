@@ -123,6 +123,17 @@ class OGCollection
 	 self << og if is_new
       end
    end
+   # Removes OGs present in less than 'fraction' of the genomes
+   def filter_core!(fraction=1.0)
+      min_genomes = (fraction * Gene.genomes.size).ceil
+      @ogs.select! { |og| og.genomes.size >= min_genomes }
+   end
+   # Removes OGs present more than 'dups' number of times in any genome
+   def remove_inparalogs!(dups=1)
+      @ogs.select! do |og|
+	 og.genes.map{ |pergenome| pergenome.size }.max <= dups
+      end
+   end
    # Add a pair of RBM genes into the corresponding OG, or create a new OG.
    def add_rbm(a, b)
       og = self.get_og(a)
