@@ -83,7 +83,7 @@ Usage: #{$0} [options]"
       "Name of --seq2 to use in --sqlite3. By default it's determined by the " +
       "filename."){ |v| o[:seq2name] = v }
    opts.on("--lookup-first",
-      "Indicates if the ANI should be looked up first in the database.",
+      "Indicates if the AAI should be looked up first in the database.",
       "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with --res and --tab."
       ){ |v| o[:lookupfirst] = v }
    opts.on("-d", "--dec INT",
