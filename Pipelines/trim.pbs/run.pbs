@@ -3,15 +3,17 @@
 #PBS -l nodes=1:ppn=1
 #PBS -k eo
 
-module load fastqc/0.11.2 ;
+module load fastqc/0.11.2
+module load scythe/0.993
 
+shared=/gpfs/pace1/project/bio-konstantinidis/shared3
 b=$SAMPLE ;
-sqa=/nv/pmicro1/shared/bin/SolexaQA++
-scythe=/nv/pmicro1/shared/bin/scythe
-enve=/nv/pmicro1/shared/apps/enveomics/Scripts
-trim=/nv/pmicro1/shared/apps/Trimmomatic-0.32/trimmomatic-0.32.jar
-SEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-SE_PE.fa
-PEadapters=/nv/pmicro1/shared/apps/Trimmomatic-0.32/adapters/ALL-PE.fa
+sqa=$shared/bin/SolexaQA++
+scythe=scythe
+enve=$shared/apps/enveomics/Scripts
+trim=$shared/apps/Trimmomatic-0.32/trimmomatic-0.32.jar
+SEadapters=$shared/apps/Trimmomatic-0.32/adapters/ALL-SE_PE.fa
+PEadapters=$shared/apps/Trimmomatic-0.32/adapters/ALL-PE.fa
 
 #---------------------------------------------------------
 
