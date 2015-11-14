@@ -198,7 +198,7 @@ plot.enve.recplot2 <- function
 	 ylab=x$id.metric
 	 yaxt='s'
       }
-      if(sum(id.counts>0)>0){
+      if(sum(id.counts>0) >= 4){
 	 id.counts.range <- range(id.counts[id.counts>0])*c(1/2,2);
 	 plot(1,t='n', bty='l', log='x',
 	       xlim=id.counts.range, xlab='bps per bin', xaxs='i',
@@ -457,15 +457,27 @@ enve.recplot2.findPeaks <- function(
 }
 
 enve.recplot2.corePeak <- function
-   ### Finds the peak in a list of peaks that is most likely to represent the "core genome" of a population.
+   ### Finds the peak in a list of peaks that is most likely to represent the
+   ### "core genome" of a population.
       (x
       ### `list` of `enve.recplot2.peak` objects.
    ){
-   maxPeak <- x[[ which.max(as.numeric(lapply(peaks, function(y) y$param.hat[[ length(y$param.hat) ]]))) ]]
+   # Find the peak with maximum depth (centrality)
+   maxPeak <- x[[
+	 which.max(as.numeric(lapply(peaks,
+	    function(y) y$param.hat[[ length(y$param.hat) ]])))
+      ]]
+   # If a "larger" peak (a peak explaining more bins of the genome) is within
+   # the "merge.logdist" distance, take that one instead.
    corePeak <- maxPeak
-   for(p in x)
-      if(abs(log(p$param.hat[[ length(p$param.hat) ]]/maxPeak$param.hat[[ length(maxPeak$param.hat) ]] )) < maxPeak$merge.logdist)
-	 if(length(p$values) > length(corePeak$values)) corePeak <- p
+   for(p in x){
+      sz.d = log(length(p$values)/length(corePeak$values))
+      if(sz.d < 0)
+	 next;
+      sq.d = log(p$param.hat[[ length(p$param.hat) ]]/maxPeak$param.hat[[ length(maxPeak$param.hat) ]] )
+      if(abs(sq.d) < maxPeak$merge.logdist+sz.d/5)
+         corePeak <- p
+   }
    return(corePeak)
 }
 
