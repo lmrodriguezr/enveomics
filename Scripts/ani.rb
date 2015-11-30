@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Nov-29-2015
+# @update  Nov-30-2015
 # @license artistic license 2.0
 #
 
@@ -24,7 +24,7 @@ end
 
 o = {win:1000, step:200, id:70, len:700, correct:true, hits:50, q:false, bin:"",
    program:"blast+", thr:1, dec:2, auto:false, lookupfirst:false,
-   dbregions:true}
+   dbregions:true, dbrbm: true}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -89,6 +89,9 @@ Usage: #{$0} [options]"
    opts.on("--[no-]save-regions",
       "Save (or don't save) the fragments in the --sqlite3 database.",
       "By default: #{o[:dbregions]}."){ |v| o[:dbregions] = !!v }
+   opts.on("--[no-]save-rbm",
+      "Save (or don't save) the reciprocal best matches in the --sqlite3 db.",
+      "By default: #{o[:dbrbm]}."){ |v| o[:dbrbm] = !!v }
    opts.on("--lookup-first",
       "Indicates if the ANI should be looked up first in the database.",
       "Requires --sqlite3, --auto, --name1, and --name2.",
@@ -299,7 +302,7 @@ Dir.mktmpdir do |dir|
 		     row[10..11]].join("\t") unless o[:out].nil?
 		  sqlite_db.execute("insert into rbm values(?,?,?,?,?,?,?)",
 		     seq_names + [row[1], row[0], row[2], row[10], row[11]]
-		     ) unless o[:sqlite3].nil?
+		     ) if not o[:sqlite3].nil? and o[:dbrbm]
 	       end
 	    end
 	 end
