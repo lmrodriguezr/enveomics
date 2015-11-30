@@ -9,7 +9,7 @@
       "options": [
         {
 	  "opt": "--coords",
-	  "arg": "out-file",
+	  "arg": "out_file",
 	  "description": "Output file of coordinates in RAxML-compliant format."
 	},
 	{
@@ -48,7 +48,7 @@
 	},
 	{
 	  "name": "Input alignments",
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "multiple_sep": " ",
 	  "required": true,
 	  "description": "Input alignments in FastA format."
@@ -56,7 +56,7 @@
 	">",
 	{
 	  "name": "Output alignment",
-	  "arg": "out-file",
+	  "arg": "out_file",
 	  "required": true,
 	  "description": "Output concatenated alignment."
 	},
@@ -94,12 +94,12 @@
 	},
 	"<",
 	{
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "required": true
 	},
 	">",
 	{
-	  "arg": "out-file",
+	  "arg": "out_file",
 	  "required": true
 	}
       ]
@@ -114,7 +114,7 @@
         {
           "name": "Input table",
 	  "opt": "-i",
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "description": ["Columns: samples, rows: OTUs, first column: OTU",
 	    "names)."],
 	  "required": true
@@ -160,7 +160,7 @@
 	{
 	  "name": "Distances file",
 	  "opt": "-D",
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "description": ["A squared matrix (or bottom-left half matrix) with",
 	    "the distances between categories (OTUs or functions). The first",
 	    "column must contain the names of the categories, and it shouldn't",
@@ -184,7 +184,7 @@
 	},
 	">",
 	{
-	  "arg": "out-file",
+	  "arg": "out_file",
 	  "required": true
 	}
       ]
@@ -196,7 +196,7 @@
       "options": [
         {
 	  "opt": "--fasta",
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "description": "FastA file of the query or the subject.",
 	  "required": true
 	},
@@ -208,13 +208,13 @@
 	},
 	"<",
 	{
-	  "arg": "in-file",
+	  "arg": "in_file",
 	  "description": "Input tabular BLAST file.",
 	  "required": true
 	},
 	">",
 	{
-	  "arg": "out-file",
+	  "arg": "out_file",
 	  "description": "Output tabular BLAST file with additional column.",
 	  "required": true
 	}
