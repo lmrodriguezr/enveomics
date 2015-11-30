@@ -492,5 +492,65 @@
       "task": "rbm.rb",
       "description": ""
     }
-  ]
+  ],
+  "categories": {
+    "Sequence similarity search": {
+      "Statistics": [
+        "BlastTab.seqdepth_ZIP.pl",
+	"BlastTab.advance.bash",
+	"BlastTab.sumPerHit.pl",
+	"BlastTab.seqdepth.pl",
+	"BlastTab.seqdepth_nomedian.pl"
+      ],
+      "Manipulation": [
+        "BlastTab.topHits_sorted.rb",
+	"BlastTab.cogCat.rb",
+	"BlastTab.filter.pl",
+	"BlastTab.addlen.rb",
+	"BlastTab.catsbj.pl",
+	"BlastTab.pairedHits.rb",
+	"BlastTab.subsample.pl",
+	"BlastTab.best_hit_sorted.pl",
+	"BlastTab.taxid2taxrank.pl",
+	"BlastTab.kegg_pep2path_rest.pl",
+	"BlastTab.kegg_pep2ko_rest.pl"
+      ],
+      "Execution": [
+        "aai.rb",
+	"ani.rb",
+	"rbm.rb"
+      ]
+    },
+    "Sequence analyses": {
+      "Statistics": [
+        "FastA.gc.pl",
+	"FastA.length.pl",
+	"FastA.qlen.pl",
+	"FastA.N50.pl"
+      ],
+      "Manipulation": [
+        "FastQ.toFastA.awk",
+	"FastA.tag.rb",
+	"FastQ.tag.rb",
+	"FastA.rename.pl",
+	"FastQ.split.pl",
+	"FastA.revcom.pl",
+	"FastQ.filter.pl",
+	"FastA.subsample.pl",
+	"FastQ.offset.pl",
+	"FastA.filter.pl",
+	"FastA.split.pl",
+	"FastA.slider.pl",
+	"FastA.filterN.pl",
+	"FastQ.interpose.pl",
+	"FastA.interpose.pl"
+      ]
+    },
+    "Diversity": {
+      "OTUs": [
+        "AlphaDiversity.pl",
+        "Chao1.pl"
+      ]
+    }
+  }
 }

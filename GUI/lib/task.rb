@@ -3,12 +3,13 @@ class Task
    def initialize(o)
       @hash = o
       raise "task field required to set Task." if @hash[:task].nil?
-      raise "options field required to set Task." if @hash[:options].nil?
+      @hash[:options] ||= []
    end
    def task
       hash[:task]
    end
    def description
+      hash[:description] = hash[:description].join(" ") if hash[:description].is_a? Array
       hash[:description]
    end
    def options
