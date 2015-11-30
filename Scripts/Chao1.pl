@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Mar-23-2015
+# @update  Nov-29-2015
 #
 
 use warnings;
@@ -24,9 +24,11 @@ Usage:
    -i <str>	* Input table (columns:samples, rows:OTUs).
    -r <int>	Number of rows to ignore.  By default: 0.
    -c <int>	Number of columns to ignore.  By default: 0.
-   -d <str>	Delimiter.  Supported escaped characters are: \"\\t\" (tabulation),
-   		and \"\\0\" (null bit).  By default: \"\\t\".
-   -h		If set, the first row is assumed to have the names of the samples.
+   -C <int>	Number of columns to ignore at the end. By default: 0.
+   -d <str>	Delimiter.  Supported escaped characters are: \"\\t\"
+		(tabulation), and \"\\0\" (null bit).  By default: \"\\t\".
+   -h		If set, the first row is assumed to have the names of the
+		samples.
    --help	This help message.
 
    * Mandatory.
@@ -41,6 +43,7 @@ getopts('i:c:r:h', \%o);
 
 &HELP_MESSAGE() unless $o{i};
 $o{c} ||= 0;
+$o{C} ||= 0;
 $o{r} ||= 0;
 $o{d} ||= "\\t";
 
@@ -57,11 +60,13 @@ if($o{h}){
    chomp $h;
    @names = split $o{d}, $h;
    shift @names for (1 .. $o{c});
+   pop @names for (1 .. $o{C});
 }
 while(<TABLE>){
    chomp;
    my @ln = split $o{d};
    shift @ln for (1 .. $o{c});
+   pop @ln for (1 .. $o{C});
    push @{$values[$_] ||= []}, $ln[$_] for (0 .. $#ln);
 }
 close TABLE;
