@@ -39,7 +39,7 @@ To improve:
 "}
 
 my %o;
-getopts('i:c:r:h', \%o);
+getopts('i:c:C:r:h', \%o);
 
 &HELP_MESSAGE() unless $o{i};
 $o{c} ||= 0;
