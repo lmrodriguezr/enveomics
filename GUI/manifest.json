@@ -551,6 +551,17 @@
         "AlphaDiversity.pl",
         "Chao1.pl"
       ]
+    },
+    "Annotation": {
+      "Database mapping": [
+        "BlastTab.taxid2taxrank.pl",
+	"EBIseq2tax.rb",
+	"RefSeq.download.bash",
+	"gi2tax.rb",
+	"M5nr.getSequences.rb",
+	"BlastTab.kegg_pep2path_rest.pl",
+	"BlastTab.kegg_pep2ko_rest.pl"
+      ]
     }
   }
 }
