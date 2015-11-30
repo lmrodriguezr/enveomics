@@ -1,0 +1,496 @@
+{
+  "tasks": [
+    {
+      "task": "Aln.cat.rb",
+      "description": ["Concatenates several multiple alignments in FastA",
+        "format into a single multiple alignment. The IDs of the sequences",
+	"(or the ID prefixes, if using --ignore-after) must coincide across",
+	"files."],
+      "options": [
+        {
+	  "opt": "--coords",
+	  "arg": "out-file",
+	  "description": "Output file of coordinates in RAxML-compliant format."
+	},
+	{
+	  "opt": "--ignore-after",
+	  "arg": "string",
+	  "description": ["Remove everything in the IDs after the specified",
+	    "string."]
+	},
+	{
+	  "opt": "--remove-invariable",
+	  "description": "Remove invariable sites.",
+	  "note": ["Invariable sites are defined as columns with only one",
+	    "state and undefined characters. Additional ambiguous characters",
+	    "may exist and should be declared using --undefined."]
+	},
+	{
+	  "opt": "--missing-char",
+	  "description": "Character denoting missing data",
+	  "arg": "character",
+	  "default": "-"
+	},
+	{
+	  "opt": "--model",
+	  "description": "Name of the model to use if --coords is used.",
+	  "note": "See RAxML's documentation for additional information.",
+	  "arg": "string",
+	  "default": "AUTO"
+	},
+	{
+	  "opt": "--undefined",
+	  "arg": "string",
+	  "description": ["All characters to be regarded as 'undefined'. It",
+	    "should include all ambiguous and missing data chars. Ignored",
+	    "unless --remove-invariable."],
+	  "default": "-.Xx?"
+	},
+	{
+	  "name": "Input alignments",
+	  "arg": "in-file",
+	  "multiple_sep": " ",
+	  "required": true,
+	  "description": "Input alignments in FastA format."
+	},
+	">",
+	{
+	  "name": "Output alignment",
+	  "arg": "out-file",
+	  "required": true,
+	  "description": "Output concatenated alignment."
+	},
+	"2>",
+	{
+	  "arg": "log"
+	}
+      ]
+    },
+    {
+      "task": "Aln.convert.pl",
+      "description": "Translates between different alignment formats.",
+      "requires": [
+        {
+	  "description": "Perl library Bio::Perl",
+          "test": "perl -MBio::AlignIO -e '' && echo 1"
+	}
+      ],
+      "options": [
+        {
+	  "name": "In-format",
+	  "description": "Input file's format.",
+	  "required": true,
+	  "arg": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
+	    "mega", "meme", "metafasta", "msf", "nexus", "pfam", "phylip", "po",
+	    "prodom", "psi", "selex", "stockholm", "XMFA", "arp"]
+	},
+        {
+	  "name": "Out-format",
+	  "description": "Output file's format.",
+	  "required": true,
+	  "arg": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
+	    "mega", "meme", "metafasta", "msf", "nexus", "pfam", "phylip", "po",
+	    "prodom", "psi", "selex", "stockholm", "XMFA", "arp"]
+	},
+	"<",
+	{
+	  "arg": "in-file",
+	  "required": true
+	},
+	">",
+	{
+	  "arg": "out-file",
+	  "required": true
+	}
+      ]
+    },
+    {
+      "task": "AlphaDiversity.pl",
+      "description": ["Takes a table of OTU abundance in one or more samples",
+        "and calculates the Rao (Q_alpha), Rao-Jost (Q_alpha_eqv), Shannon",
+	"(Hprime), and inverse Simpson (1_lambda) indices of alpha diversity",
+	"for each sample."],
+      "options": [
+        {
+          "name": "Input table",
+	  "opt": "-i",
+	  "arg": "in-file",
+	  "description": ["Columns: samples, rows: OTUs, first column: OTU",
+	    "names)."],
+	  "required": true
+	},
+	{
+	  "name": "Discard rows",
+	  "opt": "-r",
+	  "arg": "integer",
+	  "description": "Number of rows to ignore",
+	  "default": 0
+	},
+	{
+	  "name": "Discard left columns",
+	  "opt": "-c",
+	  "arg": "integer",
+	  "description": ["Number of columns to ignore after the first column",
+	    "(i.e., between the first column, containing the name of the",
+	    "categories, and the first column of abundance values)."],
+	  "default": 0
+	},
+	{
+	  "name": "Discard right columns",
+	  "opt": "-C",
+	  "arg": "integer",
+	  "description": "Number of columns to ignore at the end of each line.",
+	  "default": 0
+	},
+	{
+	  "name": "Delimiter",
+	  "opt": "-d",
+	  "arg": "string",
+	  "description": "Character (or string) separating columns.",
+	  "note": ["Supported escaped characters are: '\\t' (tabulation), and",
+	    "'\\0' (null bit)."],
+	  "default": "\\t"
+	},
+	{
+	  "name": "Headers",
+	  "opt": "-h",
+	  "description": ["The first row is assumed to have the names of the",
+	    "samples."]
+	},
+	{
+	  "name": "Distances file",
+	  "opt": "-D",
+	  "arg": "in-file",
+	  "description": ["A squared matrix (or bottom-left half matrix) with",
+	    "the distances between categories (OTUs or functions). The first",
+	    "column must contain the names of the categories, and it shouldn't",
+	    "have headers.  If not set, all distances are assumed to be one."],
+	  "note": "Only used for Rao."
+	},
+	{
+	  "name": "Skip Rao",
+	  "opt": "-R",
+	  "description": "Do not calculate Rao indices.",
+	  "note": ["This significantly decreases the total running time. Note",
+	    "that Rao indices are highly susceptible to precision errors, and",
+	    "shouldn't be trusted for very big numbers."]
+	},
+	{
+	  "name": "q for qD",
+	  "opt": "-q",
+	  "arg": "integer",
+	  "description": "Estimate the qD index (true diversity order q).",
+	  "default": 0
+	},
+	">",
+	{
+	  "arg": "out-file",
+	  "required": true
+	}
+      ]
+    },
+    {
+      "task": "BlastTab.addlen.rb",
+      "description": ["Appends an extra column to a BLAST with the length of",
+        "the query or the subject sequence."],
+      "options": [
+        {
+	  "opt": "--fasta",
+	  "arg": "in-file",
+	  "description": "FastA file of the query or the subject.",
+	  "required": true
+	},
+	{
+	  "opt": "--subject",
+	  "description": ["Use the subject column of the BLAST, by default the",
+	    "query column is used"],
+	  "note": "If used, the input FastA must contain subject sequences."
+	},
+	"<",
+	{
+	  "arg": "in-file",
+	  "description": "Input tabular BLAST file.",
+	  "required": true
+	},
+	">",
+	{
+	  "arg": "out-file",
+	  "description": "Output tabular BLAST file with additional column.",
+	  "required": true
+	}
+      ]
+    },
+    {
+      "task": "BlastTab.advance.bash",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.best_hit_sorted.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.catsbj.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.cogCat.rb",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.filter.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.kegg_pep2path_rest.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.metaxaPrep.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.pairedHits.rb",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.recplot.R",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.seqdepth.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.seqdepth_ZIP.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.seqdepth_nomedian.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.subsample.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.sumPerHit.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.taxid2taxrank.pl",
+      "description": ""
+    },
+    {
+      "task": "BlastTab.topHits_sorted.rb",
+      "description": ""
+    },
+    {
+      "task": "Chao1.pl",
+      "description": ""
+    },
+    {
+      "task": "CharTable.classify.rb",
+      "description": ""
+    },
+    {
+      "task": "EBIseq2tax.rb",
+      "description": ""
+    },
+    {
+      "task": "FastA.N50.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.filter.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.filterLen.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.filterN.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.gc.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.interpose.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.length.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.qlen.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.rename.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.revcom.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.slider.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.split.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.subsample.pl",
+      "description": ""
+    },
+    {
+      "task": "FastA.tag.rb",
+      "description": ""
+    },
+    {
+      "task": "FastQ.filter.pl",
+      "description": ""
+    },
+    {
+      "task": "FastQ.interpose.pl",
+      "description": ""
+    },
+    {
+      "task": "FastQ.offset.pl",
+      "description": ""
+    },
+    {
+      "task": "FastQ.split.pl",
+      "description": ""
+    },
+    {
+      "task": "FastQ.tag.rb",
+      "description": ""
+    },
+    {
+      "task": "FastQ.toFastA.awk",
+      "description": ""
+    },
+    {
+      "task": "GenBank.add_fields.rb",
+      "description": ""
+    },
+    {
+      "task": "HMM.essential.rb",
+      "description": ""
+    },
+    {
+      "task": "HMMsearch.extractIds.rb",
+      "description": ""
+    },
+    {
+      "task": "JPlace.distances.rb",
+      "description": ""
+    },
+    {
+      "task": "JPlace.to_iToL.rb",
+      "description": ""
+    },
+    {
+      "task": "M5nr.getSequences.rb",
+      "description": ""
+    },
+    {
+      "task": "MeTaxa.distribution.pl",
+      "description": ""
+    },
+    {
+      "task": "MyTaxa.fragsByTax.pl",
+      "description": ""
+    },
+    {
+      "task": "MyTaxa.seq-taxrank.rb",
+      "description": ""
+    },
+    {
+      "task": "RAxML-EPA.to_iToL.pl",
+      "description": ""
+    },
+    {
+      "task": "RefSeq.download.bash",
+      "description": ""
+    },
+    {
+      "task": "SRA.download.bash",
+      "description": ""
+    },
+    {
+      "task": "Table.filter.pl",
+      "description": ""
+    },
+    {
+      "task": "Table.merge.pl",
+      "description": ""
+    },
+    {
+      "task": "Table.round.rb",
+      "description": ""
+    },
+    {
+      "task": "Table.split.pl",
+      "description": ""
+    },
+    {
+      "task": "Taxonomy.silva2ncbi.rb",
+      "description": ""
+    },
+    {
+      "task": "aai.rb",
+      "description": ""
+    },
+    {
+      "task": "ani.rb",
+      "description": ""
+    },
+    {
+      "task": "gi2tax.rb",
+      "description": ""
+    },
+    {
+      "task": "in_silico_GA_GI.pl",
+      "description": ""
+    },
+    {
+      "task": "lib",
+      "description": ""
+    },
+    {
+      "task": "ogs.annotate.rb",
+      "description": ""
+    },
+    {
+      "task": "ogs.core-pan.rb",
+      "description": ""
+    },
+    {
+      "task": "ogs.extract.rb",
+      "description": ""
+    },
+    {
+      "task": "ogs.mcl.rb",
+      "description": ""
+    },
+    {
+      "task": "ogs.rb",
+      "description": ""
+    },
+    {
+      "task": "ogs.stats.rb",
+      "description": ""
+    },
+    {
+      "task": "rbm.rb",
+      "description": ""
+    }
+  ]
+}
