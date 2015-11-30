@@ -2,29 +2,30 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Oct-20-2015
+# @update  Nov-29-2015
 # @license artistic license 2.0
 #
 
-require 'optparse'
-require 'tmpdir'
+require "optparse"
+require "tmpdir"
 has_rest_client = true
 has_sqlite3 = true
 begin
-   require 'rubygems'
-   require 'restclient'
+   require "rubygems"
+   require "restclient"
 rescue LoadError
    has_rest_client = false
 end
 begin
-   require 'sqlite3'
+   require "sqlite3"
 rescue LoadError
    has_sqlite3 = false
 end
 
 o = {win:1000, step:200, id:70, len:700, correct:true, hits:50, q:false, bin:"",
-   program:"blast+", thr:1, dec:2, auto:false, lookupfirst:false}
-ARGV << '-h' if ARGV.size==0
+   program:"blast+", thr:1, dec:2, auto:false, lookupfirst:false,
+   dbregions:true}
+ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
 Calculates the Average Nucleotide Identity between two genomes.
@@ -85,10 +86,13 @@ Usage: #{$0} [options]"
    opts.on("--name2 STR",
       "Name of --seq2 to use in --sqlite3. By default it's determined by the " +
       "filename."){ |v| o[:seq2name] = v }
+   opts.on("--[no-]save-regions",
+      "Save (or don't save) the fragments in the --sqlite3 database.",
+      "By default: #{o[:dbregions]}."){ |v| o[:dbregions] = !!v }
    opts.on("--lookup-first",
       "Indicates if the ANI should be looked up first in the database.",
-      "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with --res and --tab."
-      ){ |v| o[:lookupfirst] = v }
+      "Requires --sqlite3, --auto, --name1, and --name2.",
+      "Incompatible with --res and --tab."){ |v| o[:lookupfirst] = v }
    opts.on("-d", "--dec INT",
       "Decimal positions to report. By default: #{o[:dec]}"
       ){ |v| o[:dec] = v.to_i }
@@ -99,8 +103,9 @@ Usage: #{$0} [options]"
       "Saves a file with the final results."){ |v| o[:res] = v }
    opts.on("-T", "--tab FILE",
       "Saves a file with the final two-way results in a tab-delimited form.",
-      "The columns are (in that order): ANI, standard deviation, fragments " +
-      "used, fragments in the smallest genome."){ |v| o[:tab]=v }
+      "The columns are (in that order):",
+      "ANI, standard deviation, fragments used, " +
+      "fragments in the smallest genome."){ |v| o[:tab]=v }
    opts.on("-a", "--auto",
       "ONLY outputs the ANI value in STDOUT (or nothing, if calculation " +
       "fails)."){ o[:auto] = true }
@@ -211,8 +216,8 @@ Dir.mktmpdir do |dir|
 		  fo.puts ">#{frgs}"
 		  fo.puts seq_i
 		  sqlite_db.execute("insert into regions values(?,?,?,?,?)",
-		     [seq_names.last, frgs, seqn, from, from+o[:win]]) unless
-		     o[:sqlite3].nil?
+		     [seq_names.last, frgs, seqn, from, from+o[:win]]) if
+		     not o[:sqlite3].nil? and o[:dbregions]
 	       end
 	       buffer = buffer[o[:step] .. -1]
 	       from += o[:win]
