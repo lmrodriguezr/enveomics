@@ -1,12 +1,12 @@
 #!/usr/bin/env ruby
 #
 # @author  Luis M. Rodriguez-R
-# @update  Sep-29-2015
+# @update  Nov-30-2015
 # @license artistic license 2.0
 #
 
 $:.push File.expand_path(File.dirname(__FILE__) + "/lib")
-require "enveomics_rb/remote_data"
+require "enveomics_rb/enveomics"
 
 o = {:q=>false, :missing=>"-", :model=>"AUTO", :removeinvar=>false,
    :undefined=>"-.Xx?"}
