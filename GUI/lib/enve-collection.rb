@@ -2,8 +2,26 @@ require "json"
 require "enve-task"
 
 class EnveCollection
+   @@HOME = nil
+   def self.home
+      if @@HOME.nil?
+	 @@HOME = File.expand_path(".enveomics", ENV["HOME"])
+	 Dir.mkdir(@@HOME) unless Dir.exist? @@HOME
+      end
+      @@HOME
+   end
+   def self.manif
+      manif = File.expand_path("enveomics-master/manifest.json", home)
+      return manif if File.exist? manif
+      nil
+   end
+   def self.master_url
+      "https://github.com/lmrodriguezr/enveomics/archive/master.zip"
+   end
+   
    attr_accessor :hash
-   def initialize(manif)
+   def initialize(manif=nil)
+      manif ||= EnveCollection.manif
       @hash = JSON.parse(File.read(manif), {symbolize_names: true})
       @hash[:categories] ||= {}
       unless @hash[:tasks].nil?

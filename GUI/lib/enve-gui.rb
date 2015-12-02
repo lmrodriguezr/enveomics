@@ -15,13 +15,12 @@ if $IS_CLI
 end
 
 class EnveGUI < Shoes
-   url "/", :index
+   url "/", :home
+   url "/index", :index
    url "/about", :about
    url "/script-(.*)", :script
-   $manif_path = File.expand_path("../manifest.json", File.dirname(__FILE__))
    $enve_path  = File.expand_path("../../Scripts", File.dirname(__FILE__))
    $img_path   = File.expand_path("../img", File.dirname(__FILE__))
-   $collection = EnveCollection.new($manif_path)
    $enve_jobs  = {}
    $citation   = [
       "Rodriguez-R and Konstantinidis. In preparation. The enveomics ",
@@ -35,12 +34,33 @@ class EnveGUI < Shoes
    
    # =====================[ View : Windows ]
    # Main window
+   def home
+      header
+      stack(margin:40) do
+	 title "Welcome to the Enveomics collection!", align:"center"
+	 $home_info = para "Retrieving enveomics..."
+	 $manif_path = EnveCollection.manif
+	 if $manif_path.nil?
+	    download EnveCollection.master_url,
+	       save: File.expand_path("master.zip", EnveCollection.home),
+	       finish: proc { |d|
+		  $home_info.text = "Unzipping..."
+		  `cd #{EnveCollection.home.shellescape} && unzip master.zip`
+		  $manif_path = EnveCollection.manif
+		  show_home
+	       }
+	 else
+	    show_home
+	 end
+      end
+      footer
+   end
+   # Index of tasks
    def index
       header
       stack(margin:40) do
 	 title "Welcome to the Enveomics collection!", align:"center"
 	 para ""
-	 para "To begin, please select one of the following tasks:"
 	 stack do
 	    $collection.each_category do |cat_name, cat_set|
 	       stack(margin: 20) do
@@ -168,25 +188,24 @@ class EnveGUI < Shoes
       stack(margin:[40,0,40,5]) do
 	 flow(width:1.0, height:60) do
 	    stack(width:64, margin:5) do
-	       image File.expand_path("noun_208357_cc.png",$img_path),
-		  width: 50, height: 50, margin: 2
+	       image img_path("noun_208357_cc.png"),
+		  width:50, height:50, margin:2
 	       inscription "Home", align:"center"
 	    end.click{ visit "/" }
 	    stack(width:64, margin:5) do
-	       image(File.expand_path("noun_229118_cc.png",$img_path),
-		  width: 50, height: 50, margin: 2)
+	       image img_path("noun_229118_cc.png"),
+		  width:50, height:50, margin:2
 	       inscription "About", align:"center"
 	    end.click{ visit "/about" }
 	 end
 	 inscription ""
-	 stack(margin:1){ background black }
+	 stack(height:2, width:1.0) { background black }
       end
    end
 
    def footer
       para "", margin:50
    end
-   
    
    # =====================[ Controller : Tasks ]
    def launch_analysis(t, values)
@@ -231,5 +250,26 @@ class EnveGUI < Shoes
       rescue => e
 	 Shoes.alert e
       end
+   end
+
+   def img_path(img)
+      # Easy peasy for normal files
+      o = File.expand_path(img,$img_path)
+      return o if __FILE__ !~ /\.jar!\//
+      # Juggling around packages:
+      $img_cache ||= {}
+      if $img_cache[img].nil?
+	 f = Tempfile.new("enveomics")
+	 f.close
+	 FileUtils.copy o, f.path
+	 $img_cache[img] = f.path
+      end
+      $img_cache[img]
+   end
+   
+   def show_home
+      $home_info.text = "Loading collection..."
+      $collection ||= EnveCollection.new($manif_path)
+      $home_info.text = ""
    end
 end

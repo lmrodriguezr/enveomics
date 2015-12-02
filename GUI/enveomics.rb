@@ -7,7 +7,7 @@
 #
 
 $:.push File.expand_path("lib", File.dirname(__FILE__))
-$IS_CLI = !!(ARGV[0] == "-cli")
+$IS_CLI = !(ARGV[0] == "-cli")
 require "enve-gui"
 
 ### MAIN
