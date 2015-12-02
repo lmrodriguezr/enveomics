@@ -6,9 +6,12 @@ To Do
 * Generate :script form.
 * Launch :task using new (detached) window and a unique job identifier.
 * Support R functions
+* Support :multiple_sep for multi-files
+* Package it
 
 Done
 ====
 Nov-2015
 -----------
 * Create GUI scaffold.
+* About.

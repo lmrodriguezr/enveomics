@@ -2,6 +2,18 @@
 
 Scripts and reference libraries at [Kostas lab](http://enve-omics.gatech.edu).
 
+# PREREQUISITES
+
+The enveomics collection as a whole has very modest requirements, essentially a
+*nix system with `bash`, `perl`, `ruby`, and `R`. Some scripts may require
+additional libraries, or even external Software, but you'll be forewarned about
+these requirements in the documentation accompanying each script. If you prefer,
+you can also use the Graphical User Interface (GUI), that comes with additional
+tests to let you know if your system is ready to use any given script.
+
+# Graphical User Interface (GUI)
+
+
 
 # LICENSE
 

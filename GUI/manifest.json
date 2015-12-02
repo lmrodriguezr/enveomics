@@ -50,19 +50,22 @@
 	  "name": "Input alignments",
 	  "arg": "in_file",
 	  "multiple_sep": " ",
-	  "required": true,
+	  "mandatory": true,
 	  "description": "Input alignments in FastA format."
 	},
 	">",
 	{
 	  "name": "Output alignment",
 	  "arg": "out_file",
-	  "required": true,
+	  "mandatory": true,
 	  "description": "Output concatenated alignment."
 	},
 	"2>",
 	{
-	  "arg": "log"
+	  "name": "Output log",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output raw-text log."
 	}
       ]
     },
@@ -79,28 +82,30 @@
         {
 	  "name": "In-format",
 	  "description": "Input file's format.",
-	  "required": true,
-	  "arg": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
+	  "mandatory": true,
+	  "arg": "select",
+	  "values": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
 	    "mega", "meme", "metafasta", "msf", "nexus", "pfam", "phylip", "po",
 	    "prodom", "psi", "selex", "stockholm", "XMFA", "arp"]
 	},
         {
 	  "name": "Out-format",
 	  "description": "Output file's format.",
-	  "required": true,
-	  "arg": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
+	  "mandatory": true,
+	  "arg": "select",
+	  "values": ["bl2seq", "clustalw", "emboss", "fasta", "maf", "mase",
 	    "mega", "meme", "metafasta", "msf", "nexus", "pfam", "phylip", "po",
 	    "prodom", "psi", "selex", "stockholm", "XMFA", "arp"]
 	},
 	"<",
 	{
 	  "arg": "in_file",
-	  "required": true
+	  "mandatory": true
 	},
 	">",
 	{
 	  "arg": "out_file",
-	  "required": true
+	  "mandatory": true
 	}
       ]
     },
@@ -117,7 +122,7 @@
 	  "arg": "in_file",
 	  "description": ["Columns: samples, rows: OTUs, first column: OTU",
 	    "names)."],
-	  "required": true
+	  "mandatory": true
 	},
 	{
 	  "name": "Discard rows",
@@ -185,38 +190,38 @@
 	">",
 	{
 	  "arg": "out_file",
-	  "required": true
+	  "mandatory": true
 	}
       ]
     },
     {
       "task": "BlastTab.addlen.rb",
-      "description": ["Appends an extra column to a BLAST with the length of",
-        "the query or the subject sequence."],
+      "description": ["Appends an extra column to a tabular BLAST with the",
+        "length of the query or the subject sequence."],
       "options": [
         {
 	  "opt": "--fasta",
 	  "arg": "in_file",
 	  "description": "FastA file of the query or the subject.",
-	  "required": true
+	  "mandatory": true
 	},
 	{
 	  "opt": "--subject",
 	  "description": ["Use the subject column of the BLAST, by default the",
-	    "query column is used"],
+	    "query column is used."],
 	  "note": "If used, the input FastA must contain subject sequences."
 	},
 	"<",
 	{
 	  "arg": "in_file",
 	  "description": "Input tabular BLAST file.",
-	  "required": true
+	  "mandatory": true
 	},
 	">",
 	{
 	  "arg": "out_file",
 	  "description": "Output tabular BLAST file with additional column.",
-	  "required": true
+	  "mandatory": true
 	}
       ]
     },
@@ -298,7 +303,29 @@
     },
     {
       "task": "FastA.N50.pl",
-      "description": ""
+      "description": ["Calculates the N50 value of a set of sequences.",
+        "Alternatively, it can calculate other N** values.  It also calculates",
+	"the total number of sequences and the total added length."],
+      "options": [
+        {
+	  "name": "Sequences",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "A FastA file containing the sequences."
+	},
+	{
+	  "name": "Minimum length",
+	  "arg": "integer",
+	  "description": "Minimum length to take into consideration.",
+	  "default": 0
+	},
+	{
+	  "name": "NXX",
+	  "arg": "integer",
+	  "description": "Value NXX to calculate.",
+	  "default": 50
+	}
+      ]
     },
     {
       "task": "FastA.filter.pl",
@@ -561,6 +588,41 @@
 	"M5nr.getSequences.rb",
 	"BlastTab.kegg_pep2path_rest.pl",
 	"BlastTab.kegg_pep2ko_rest.pl"
+      ],
+      "Tables": [
+        "GenBank.add_fields.rb",
+	"MyTaxa.fragsByTax.pl",
+	"Table.split.pl",
+	"Table.filter.pl",
+	"Table.round.rb",
+	"Table.merge.pl"
+      ],
+      "Search": [
+        "ogs.core-pan.rb",
+	"ogs.stats.rb",
+	"HMM.essential.rb",
+	"ogs.mcl.rb",
+	"ogs.extract.rb",
+	"ogs.annotate.rb",
+	"HMMsearch.extractIds.rb"
+      ]
+    },
+    "Other data": {
+      "Phylogenetic and other distances": [
+        "CharTable.classify.rb",
+	"JPlace.to_iToL.rb"
+      ],
+      "Taxonomic": [
+        "EBIseq2tax.rb",
+	"CharTable.classify.rb",
+	"gi2tax.rb",
+	"MyTaxa.fragsByTax.pl",
+	"MyTaxa.seq-taxrank.rb",
+	"Taxonomy.silva2ncbi.rb"
+      ],
+      "Alignments": [
+        "Aln.cat.rb",
+	"Aln.convert.pl"
       ]
     }
   }
