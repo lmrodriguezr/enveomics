@@ -13,7 +13,8 @@ tests to let you know if your system is ready to use any given script.
 
 # Graphical User Interface (GUI)
 
-
+The enveomics collection now has a graphical user interface! To learn more,
+please visit [enveomics-gui](https://github.com/lmrodriguezr/enveomics-gui).
 
 # LICENSE
 
@@ -25,7 +26,7 @@ http://www.perlfoundation.org/artistic_license_2_0.
 
 # DOCUMENTATION
 
-Most scripts in this repository are auto-documented.  However,
+Most scripts in this repository are self-documented.  However,
 more extensive documentation (and some discussion) can be found
 at the [Kostas lab blog](http://enveomics.blogspot.com/).
 

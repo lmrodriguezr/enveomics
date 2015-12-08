@@ -6,6 +6,7 @@
         "format into a single multiple alignment. The IDs of the sequences",
 	"(or the ID prefixes, if using --ignore-after) must coincide across",
 	"files."],
+      "help_arg": "--help",
       "options": [
         {
 	  "opt": "--coords",
@@ -47,6 +48,10 @@
 	  "default": "-.Xx?"
 	},
 	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	},
+	{
 	  "name": "Input alignments",
 	  "arg": "in_file",
 	  "multiple_sep": " ",
@@ -59,19 +64,13 @@
 	  "arg": "out_file",
 	  "mandatory": true,
 	  "description": "Output concatenated alignment."
-	},
-	"2>",
-	{
-	  "name": "Output log",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output raw-text log."
 	}
       ]
     },
     {
       "task": "Aln.convert.pl",
       "description": "Translates between different alignment formats.",
+      "help_arg": "",
       "requires": [
         {
 	  "description": "Perl library Bio::Perl",
@@ -115,6 +114,7 @@
         "and calculates the Rao (Q_alpha), Rao-Jost (Q_alpha_eqv), Shannon",
 	"(Hprime), and inverse Simpson (1_lambda) indices of alpha diversity",
 	"for each sample."],
+      "help_arg": "--help",
       "options": [
         {
           "name": "Input table",
@@ -198,6 +198,7 @@
       "task": "BlastTab.addlen.rb",
       "description": ["Appends an extra column to a tabular BLAST with the",
         "length of the query or the subject sequence."],
+      "help_arg": "--help",
       "options": [
         {
 	  "opt": "--fasta",
@@ -210,6 +211,10 @@
 	  "description": ["Use the subject column of the BLAST, by default the",
 	    "query column is used."],
 	  "note": "If used, the input FastA must contain subject sequences."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
 	},
 	"<",
 	{
@@ -227,47 +232,346 @@
     },
     {
       "task": "BlastTab.advance.bash",
-      "description": ""
+      "description": ["Calculates the percentage of a partial BLAST result.",
+        "The value produced slightly subestimates the actual advance, due to",
+	"un-flushed output and trailing queries that could be processed but",
+	"generate no results."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Blast",
+	  "arg": "in_file",
+	  "description": "Incomplete BLAST output",
+	  "mandatory": true
+	},
+        {
+	  "name": "Query FastA",
+	  "arg": "in_file",
+	  "description": "FastA file with query sequences",
+	  "mandatory": true
+	}
+      ]
     },
     {
       "task": "BlastTab.best_hit_sorted.pl",
-      "description": ""
+      "description": "Filters a tabular BLAST to retain only the best matches.",
+      "help_arg": "--help",
+      "options": [
+	{
+	  "name": "Sort",
+	  "arg": "select",
+	  "values": ["sort","cat"],
+	  "mandatory": true,
+	  "description": ["Use 'sort' if your BLAST is not pre-sorted by the",
+	    "first column (or if you're not sure). Use 'cat' otherwise."]
+	},
+	{
+	  "name": "Input BLAST",
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "mandatory": true,
+	  "description": "Tabular BLAST file to filter."
+	},
+	"|",
+	{ "arg": "task" },
+	">",
+	{
+	  "name": "Output BLAST",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Filetered tabular BLAST output."
+	}
+      ]
     },
     {
       "task": "BlastTab.catsbj.pl",
-      "description": ""
+      "description": ["Generates a list of hits from a BLAST result",
+        "concatenating the subject sequences. This can be used, e.g., to",
+	"analyze BLAST results against draft genomes. This script creates two ",
+	"files using <map.bls> as prefix with extensions .rec (for the",
+	"recruitment plot) and .lim (for the limits of the different sequences",
+	"in <seq.fa>)."],
+      "help_arg": "-h",
+      "options": [
+         {
+	   "opt": "-i",
+	   "name": "Identity",
+	   "description": "Minimum identity (in %) to report a result.",
+	   "arg": "float",
+	   "default": 70.0
+	 },
+	 {
+	   "opt": "-l",
+	   "name": "Length",
+	   "description": "Minimum alignment length to report a result.",
+	   "default": 60.0,
+	   "arg": "float"
+	 },
+	 {
+	   "opt": "-s",
+	   "name": "Subset",
+	   "description": ["The FastA provided is to be treated as a subset of",
+	     "the subject. By default, it expects all the subjects to be",
+	     "present in the BLAST."]
+	 },
+	 {
+	   "opt": "-q",
+	   "name": "Quiet",
+	   "description": "Run quietly."
+	 },
+	 {
+	   "name": "seq.fa",
+	   "description": "Subject sequences (ref) in FastA format.",
+	   "mandatory": true,
+	   "arg": "in_file"
+	 },
+	 {
+	   "name": "map.bls",
+	   "description": ["Mapping of the reads to the reference in Tabular",
+	     "BLAST format."],
+	   "mandatory": true,
+	   "arg": "in_file"
+	 }
+      ]
     },
     {
       "task": "BlastTab.cogCat.rb",
-      "description": ""
+      "description": ["Replaces the COG gene IDs in a BLAST for the COG",
+        "category."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--whog",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "COG's 'whog' file."
+	},
+	{
+	  "opt": "--blast",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Tabular BLAST file."
+	},
+	{
+	  "opt": "--cog",
+	  "description": "If set, returns the COG ID, not the COG category."
+	},
+	{
+	  "opt": "--desc",
+	  "description": "Includes COG description (requires --cog)."
+	},
+	{
+	  "opt": "--noverbose",
+	  "description": "Run quietly, but show warnings."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "name": "COG Blast",
+	  "mandatory": true,
+	  "description": "Tabular BLAST with COG ID's or categories as subject."
+	}
+      ]
     },
     {
       "task": "BlastTab.filter.pl",
-      "description": ""
+      "description": ["Extracts a subset of hits (queries or subjects) from a",
+        "tabular BLAST."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Subject",
+	  "opt": "-s",
+	  "description": ["If set, assumes that list.txt contains subject IDs.",
+	    "By default: assumes query IDs."]
+	},
+	{
+	  "name": "Inverse",
+	  "opt": "-i",
+	  "description": ["If set, reports the inverse of the list (i.e.,",
+	    "reports only hits absent in the list)."]
+	},
+	{
+	  "name": "list.txt",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "List of IDs to extract"
+	},
+	{
+	  "name": "blast.txt",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Tabular BLAST file containing the superset of hits."
+	},
+	">",
+	{
+	  "name": "subset.txt",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Tabulat BLAST file to be created."
+	}
+      ]
     },
     {
       "task": "BlastTab.kegg_pep2path_rest.pl",
-      "description": ""
-    },
-    {
-      "task": "BlastTab.metaxaPrep.pl",
-      "description": ""
+      "description": ["Takes a BLAST against KEGG_PEP (or KO) and retrieves",
+        "the pathways in which the subject peptides are involved."],
+      "requires": [
+        {
+	  "description": "Perl library JSON",
+	  "test": "perl -MJSON -e '' && echo 1"
+	},
+	{
+	  "description": "Perl library LWP::Simple",
+	  "test": "perl -MLWP::Simple -e '' && echo 1"
+	}
+      ],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "blast.txt",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input tabular BLAST file."
+	},
+	{
+	  "name": "Cache file",
+	  "arg": "out_file",
+	  "description": ["(optional) File containing the saved cache. If",
+	    "unset, the cache won't be recoverable across instances of this",
+	    "script. It is strongly recommended to set a file.  Multiple",
+	    "parallel instances of this script may use the same cache file."]
+	},
+	">",
+	{
+	  "name": "output.txt",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Tab-delimited output file, with the columns: (1)",
+	    "Query ID, (2) Subject ID, (3) Pathway ID, (4) Pathway (reference)",
+	    "description, (5) Organism"]
+	}
+      ]
     },
     {
       "task": "BlastTab.pairedHits.rb",
-      "description": ""
-    },
-    {
-      "task": "BlastTab.recplot.R",
-      "description": ""
+      "description": "Identifies the best hits of paired-reads.",
+      "help_arg": "--help",
+      "options": [
+	{
+	  "opt": "--blast",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input Tabular BLAST file.",
+	  "note": ["This script assumes that paired hits are next to each",
+	    "other. If this is not the case (e.g., because the blast was",
+	    "concatenated), you must sort the input before running this",
+	    "script."]
+	},
+	{
+	  "name": "Min score",
+	  "opt": "--minscore",
+	  "arg": "float",
+	  "default": 0.0,
+	  "description": "Minimum (summed) Bit-Score to consider a pair-match."
+	},
+	{
+	  "name": "Best hits",
+	  "opt": "--besthits",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": ["Outputs top best-hits only (use 0 to output all the",
+	    "paired hits)."]
+	},
+	{
+	  "name": "Orientation",
+	  "opt": "--orient",
+	  "arg": "select",
+	  "values": [0,1,2,3,4],
+	  "default": 0,
+	  "description": ["Checks the orientation of the hit.  Values are: 0,",
+	    "no checking; 1, same direction; 2, inwards; 3, outwards; 4,",
+	    "different direction (i.e., 2 or 3)."]
+	},
+	{
+	  "name": "Sister prefix",
+	  "opt": "--sisprefix",
+	  "arg": "string",
+	  "default": "_",
+	  "description": ["Sister read number prefix in the name of the reads.",
+	    "Escape characters as dots (\.), parenthesis (\(, \), \[, \]), or",
+	    "other characters with special meaning in regular expressions (\*,",
+	    "\+, \^, \$, \|). This prefix allows regular expressions (for",
+	    "example, use ':|\.' to use any of colon or dot). Notice that the",
+	    "prefix will not be included in the base name reported in the",
+	    "output."]
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Tab-delimited flat file, with the following",
+	    "columns: (1) Query ID (without the \"sister\" identifier). (2)",
+	    "Subject ID. (3) Bit score (summed from both sister reads). (4/5)",
+	    "From/To (subject) coordinates for read 1. (6/7) From/To (subject)",
+	    "coordinates for read 2. (8) Reads orientation (1: same direction,",
+	    "2: inwards, 3: outwards). (9) Estimated insert size."]
+	}
+      ]
     },
     {
       "task": "BlastTab.seqdepth.pl",
-      "description": ""
+      "description": "Estimates the sequencing depth of subject sequences.",
+      "help_arg": "",
+      "options": [
+        "cat",
+	{
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "mandatory": true,
+	  "description": ["One or more Tabular BLAST files of reads vs genes",
+	    "(or contigs)."]
+	},
+	"|",
+	{
+	  "name": "genes_or_ctgs.fna",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["A FastA file containing the genes or the contigs",
+	    "(db)."]
+	},
+	">",
+	{
+	  "name": "genes_or_ctgs.cov",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["A tab-delimited file with the following columns:",
+	    "(1) Subject ID. (2) Average sequencing depth. (3) Median",
+	    "sequencing depth. (4) Number of mapped reads. (5) Length of the",
+	    "subject sequence."]
+	}
+      ]
     },
     {
       "task": "BlastTab.seqdepth_ZIP.pl",
-      "description": ""
+      "description": ["Estimates the average sequencing depth of subject",
+        "sequences (genes or contigs) assuming a Zero-Inflated Poisson",
+	"distribution (ZIP) to correct for non-covered positions. It uses the",
+	"corrected method of moments estimators (CMMEs) as described by",
+	"Beckett et al [1]. Note that [1] has a mistake in eq. (2.4), that",
+	"should be: pi-hat-MM = 1 - (X-bar / lambda-hat-MM). Also note that a",
+	"more elaborated mixture distribution can arise from coverage",
+	"histograms (e.g., see [2] for an additional correction called 'tail",
+	"distribution' and mixtures involving negative binomial) so take these",
+	"results cum grano salis.\n [1]",
+	"http://anisette.ucs.louisiana.edu/Academic/Sciences/MATH/stage/stat2012.pdf\n",
+	"[2] Lindner et al, Bioinformatics, 2013."],
+      "help_arg": "",
+      "options": []
     },
     {
       "task": "BlastTab.seqdepth_nomedian.pl",
@@ -477,7 +781,148 @@
     },
     {
       "task": "ani.rb",
-      "description": ""
+      "description": ["Calculates the Average Nucleotide Identity between two",
+        "genomes."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--seq1",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the genome 1.",
+	  "note": ["Alternatively, you can supply a GI with the format ",
+	     "gi:12345 instead of files."]
+	},
+        {
+	  "opt": "--seq2",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the genome 2.",
+	  "note": ["Alternatively, you can supply a GI with the format ",
+	     "gi:12345 instead of files."]
+	},
+	{
+	  "opt": "--win",
+	  "arg": "integer",
+	  "description": "Window size in the ANI calculation (in bp).",
+	  "default": 1000
+	},
+	{
+	  "opt": "--step",
+	  "arg": "integer",
+	  "description": "Step size in the ANI calculation (in bp).",
+	  "default": 200
+	},
+	{
+	  "opt": "--len",
+	  "arg": "integer",
+	  "description": "Minimum alignment length (in bp).",
+	  "default": 700
+	},
+	{
+	  "opt": "--id",
+	  "arg": "float",
+	  "description": "Minimum alignment identity (in %).",
+	  "default": 70.0
+	},
+	{
+	  "opt": "--hits",
+	  "arg": "integer",
+	  "description": "Minimum number of hits",
+	  "default": 50
+	},
+	{
+	  "opt": "--nocorrection",
+	  "description": "Report values without post-hoc correction"
+	},
+	{
+	  "opt": "--bin",
+	  "arg": "in_dir",
+	  "description": ["Directory containing the binaries of the search",
+	    "program."]
+	},
+	{
+	  "opt": "--program",
+	  "arg": "select",
+	  "values": ["blast+", "blast", "blat"],
+	  "description": "Search program to be used. Default: blast+.",
+	  "note": ["Make sure that you have installed the search program you",
+	    "want to use. If you have downloaded the program, but it's not",
+	    "installed, please use the --bin option above."]
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "description": "Number of parallel threads to be used",
+	  "default": 1
+	},
+	{
+	  "opt": "--sqlite3",
+	  "arg": "out_file",
+	  "description": ["Path to the SQLite3 database to create (or update)",
+	    "with the results."]
+	},
+	{
+	  "opt": "--name1",
+	  "arg": "string",
+	  "description": ["Name of --seq1 to use in --sqlite3. By default",
+	    "it's determined by the filename."]
+	},
+	{
+	  "opt": "--name2",
+	  "arg": "string",
+	  "description": ["Name of --seq2 to use in --sqlite3. By default",
+	    "it's determined by the filename."]
+	},
+	{
+	  "opt": "--no-save-regions",
+	  "description": "Don't save the fragments in the --sqlite3 database."
+	},
+	{
+	  "opt": "--no-save-rbm",
+	  "description": ["Don't save the reciprocal best matches in the",
+	    "--sqlite3 database"]
+	},
+	{
+	  "opt": "--lookup-first",
+	  "description": ["Indicates if the ANI should be looked up first in",
+	    "the database. Requires --sqlite3, --auto, --name1, and --name2.",
+	    "Incompatible with --res and --tab."]
+	},
+	{
+	  "opt": "--dec",
+	  "description": "Decimal positions to report.",
+	  "default": 2
+	},
+	{
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "description": ["Saves a file describing the alignments used for",
+	    "two-way ANI."]
+	},
+	{
+	  "opt": "--res",
+	  "arg": "out_file",
+	  "description": "Saves a file with the final results."
+	},
+	{
+	  "opt": "--tab",
+	  "arg": "out_file",
+	  "description": ["Saves a file with the final two-way results in a",
+	    "tab-delimited form. The columns are (in that order): ANI,",
+	    "standard deviation, fragments used, fragments in the smallest",
+	    "genome."]
+	},
+	{
+	  "opt": "--auto",
+	  "description": ["ONLY outputs the ANI value in STDOUT (or nothing,",
+	    "if calculation fails)."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "gi2tax.rb",
@@ -523,24 +968,24 @@
   "categories": {
     "Sequence similarity search": {
       "Statistics": [
-        "BlastTab.seqdepth_ZIP.pl",
 	"BlastTab.advance.bash",
-	"BlastTab.sumPerHit.pl",
 	"BlastTab.seqdepth.pl",
-	"BlastTab.seqdepth_nomedian.pl"
+	"BlastTab.seqdepth_nomedian.pl",
+        "BlastTab.seqdepth_ZIP.pl",
+	"BlastTab.sumPerHit.pl"
       ],
       "Manipulation": [
-        "BlastTab.topHits_sorted.rb",
+	"BlastTab.addlen.rb",
+	"BlastTab.best_hit_sorted.pl",
+	"BlastTab.catsbj.pl",
 	"BlastTab.cogCat.rb",
 	"BlastTab.filter.pl",
-	"BlastTab.addlen.rb",
-	"BlastTab.catsbj.pl",
+	"BlastTab.kegg_pep2ko_rest.pl",
+	"BlastTab.kegg_pep2path_rest.pl",
 	"BlastTab.pairedHits.rb",
 	"BlastTab.subsample.pl",
-	"BlastTab.best_hit_sorted.pl",
 	"BlastTab.taxid2taxrank.pl",
-	"BlastTab.kegg_pep2path_rest.pl",
-	"BlastTab.kegg_pep2ko_rest.pl"
+        "BlastTab.topHits_sorted.rb"
       ],
       "Execution": [
         "aai.rb",
@@ -552,25 +997,25 @@
       "Statistics": [
         "FastA.gc.pl",
 	"FastA.length.pl",
-	"FastA.qlen.pl",
-	"FastA.N50.pl"
+	"FastA.N50.pl",
+	"FastA.qlen.pl"
       ],
       "Manipulation": [
-        "FastQ.toFastA.awk",
-	"FastA.tag.rb",
-	"FastQ.tag.rb",
-	"FastA.rename.pl",
-	"FastQ.split.pl",
-	"FastA.revcom.pl",
-	"FastQ.filter.pl",
-	"FastA.subsample.pl",
-	"FastQ.offset.pl",
 	"FastA.filter.pl",
-	"FastA.split.pl",
-	"FastA.slider.pl",
 	"FastA.filterN.pl",
+	"FastA.interpose.pl",
+	"FastA.rename.pl",
+	"FastA.revcom.pl",
+	"FastA.slider.pl",
+	"FastA.split.pl",
+	"FastA.subsample.pl",
+	"FastA.tag.rb",
+	"FastQ.filter.pl",
 	"FastQ.interpose.pl",
-	"FastA.interpose.pl"
+	"FastQ.offset.pl",
+	"FastQ.split.pl",
+	"FastQ.tag.rb",
+	"FastQ.toFastA.awk"
       ]
     },
     "Diversity": {
@@ -581,30 +1026,30 @@
     },
     "Annotation": {
       "Database mapping": [
+	"BlastTab.kegg_pep2ko_rest.pl",
+	"BlastTab.kegg_pep2path_rest.pl",
         "BlastTab.taxid2taxrank.pl",
 	"EBIseq2tax.rb",
-	"RefSeq.download.bash",
 	"gi2tax.rb",
 	"M5nr.getSequences.rb",
-	"BlastTab.kegg_pep2path_rest.pl",
-	"BlastTab.kegg_pep2ko_rest.pl"
+	"RefSeq.download.bash"
       ],
       "Tables": [
         "GenBank.add_fields.rb",
 	"MyTaxa.fragsByTax.pl",
-	"Table.split.pl",
 	"Table.filter.pl",
+	"Table.merge.pl",
 	"Table.round.rb",
-	"Table.merge.pl"
+	"Table.split.pl"
       ],
       "Search": [
-        "ogs.core-pan.rb",
-	"ogs.stats.rb",
 	"HMM.essential.rb",
-	"ogs.mcl.rb",
-	"ogs.extract.rb",
+	"HMMsearch.extractIds.rb",
 	"ogs.annotate.rb",
-	"HMMsearch.extractIds.rb"
+        "ogs.core-pan.rb",
+	"ogs.extract.rb",
+	"ogs.mcl.rb",
+	"ogs.stats.rb"
       ]
     },
     "Other data": {
@@ -613,8 +1058,8 @@
 	"JPlace.to_iToL.rb"
       ],
       "Taxonomic": [
-        "EBIseq2tax.rb",
 	"CharTable.classify.rb",
+        "EBIseq2tax.rb",
 	"gi2tax.rb",
 	"MyTaxa.fragsByTax.pl",
 	"MyTaxa.seq-taxrank.rb",
