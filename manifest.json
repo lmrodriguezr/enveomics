@@ -287,7 +287,7 @@
       "task": "BlastTab.catsbj.pl",
       "description": ["Generates a list of hits from a BLAST result",
         "concatenating the subject sequences. This can be used, e.g., to",
-	"analyze BLAST results against draft genomes. This script creates two ",
+	"analyze BLAST results against draft genomes. This script creates two",
 	"files using <map.bls> as prefix with extensions .rec (for the",
 	"recruitment plot) and .lim (for the limits of the different sequences",
 	"in <seq.fa>)."],
@@ -583,7 +583,70 @@
     },
     {
       "task": "BlastTab.sumPerHit.pl",
-      "description": ""
+      "description": ["Sums the weights of all the queries hitting each",
+        "subject. Often (but not necessarily) the BLAST files contain only",
+	"best matches. The weights can be any number, but a common use of this",
+	"Script is to add up counts (weights are integers).  For example, in a",
+	"BLAST of predicted genes vs some annotation source, the weights could",
+	"be the number of reads recruited by each gene."],
+      "help_arg": "-h",
+      "options": [
+        {
+	  "name": "Weights file",
+	  "opt": "-w",
+	  "arg": "in_file",
+	  "description": ["A two-columns tab-delimited file containing the",
+	    "weight of each query."]
+	},
+	{
+	  "name": "Minimum score",
+	  "opt": "-s",
+	  "arg": "float",
+	  "default": 0.0
+	},
+	{
+	  "name": "Minimum identity (%)",
+	  "opt": "-i",
+	  "arg": "float",
+	  "default": 0.0
+	},
+	{
+	  "name": "Queries",
+	  "opt": "-m",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Maximum number of queries. Set to 0 for all."
+	},
+	{
+	  "name": "Normalize",
+	  "opt": "-n",
+	  "description": "Normalize weights by the number of hits per query."
+	},
+	{
+	  "name": "Include zeroes",
+	  "opt": "-z",
+	  "description": ["Add zero when weight is not found (by default:",
+	    "doesn't list them)."]
+	},
+	{
+	  "name": "Run quietly",
+	  "opt": "-q"
+	},
+	{
+	  "name": "blast",
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "mandatory": true,
+	  "description": "One or more BLAST files."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["A two-columns tab-delimited file containing the",
+	    "summed weights per hit."]
+	}
+      ]
     },
     {
       "task": "BlastTab.taxid2taxrank.pl",
@@ -697,7 +760,32 @@
     },
     {
       "task": "FastQ.split.pl",
-      "description": ""
+      "description": ["Splits a FastQ file into several FastQ files. This",
+        "script can be used to separate interposed sister reads using any even",
+	"number of output files."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "in_file.fq",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file in FastA format."
+	},
+	{
+	  "name": "out_base",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Prefix for the name of the output files. It will be",
+	    "appended with .<i>.fastq, where <i> is a consecutive number",
+	    "starting in 1."]
+	},
+	{
+	  "name": "no_files",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Number of files to generate."
+	}
+      ]
     },
     {
       "task": "FastQ.tag.rb",
@@ -777,7 +865,140 @@
     },
     {
       "task": "aai.rb",
-      "description": ""
+      "description": ["Calculates the Average Amino acid Identity between two",
+        "genomes."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--seq1",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the genome 1 (proteins).",
+	  "note": ["Alternatively, you can supply the GI of a genome",
+	    " (nucleotides) with the format gi:12345 instead of files."]
+	},
+        {
+	  "opt": "--seq2",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the genome 2.",
+	  "note": ["Alternatively, you can supply the GI of a genome",
+	    " (nucleotides) with the format gi:12345 instead of files."]
+	},
+	{
+	  "name": "Length",
+	  "opt": "--len",
+	  "arg": "integer",
+	  "description": "Minimum alignment length (in aa).",
+	  "default": 0
+	},
+	{
+	  "name": "Identity",
+	  "opt": "--id",
+	  "arg": "float",
+	  "description": "Minimum alignment identity (in %).",
+	  "default": 20.0
+	},
+	{
+	  "name": "Bit-score",
+	  "opt": "--bitscore",
+	  "arg": "float",
+	  "description": "Minimum bit score (in bits).",
+	  "default": 0.0
+	},
+	{
+	  "opt": "--hits",
+	  "arg": "float",
+	  "description": "Minimum number of hits.",
+	  "default": 50.0
+	},
+	{
+	  "name": "Executables",
+	  "opt": "--bin",
+	  "arg": "in_dir",
+	  "description": ["Path to the directory containing the binaries of",
+	    "the search program."]
+	},
+	{
+	  "opt": "--program",
+	  "arg": "select",
+	  "values": ["blast+","blast","blat"],
+	  "default": "blast+",
+	  "description": "Search program to be used."
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "description": "Number of parallel threads to be used.",
+	  "default": 1
+	},
+	{
+	  "opt": "--sqlite3",
+	  "arg": "out_file",
+	  "description": ["Path to the SQLite3 database to create (or update)",
+	    "with the results."]
+	},
+	{
+	  "opt": "--name1",
+	  "arg": "string",
+	  "description": ["Name of --seq1 to use in --sqlite3. By default it's",
+	    "determined by the filename."]
+	},
+	{
+	  "opt": "--name2",
+	  "arg": "string",
+	  "description": ["Name of --seq2 to use in --sqlite3. By default it's",
+	    "determined by the filename."]
+	},
+	{
+	  "opt": "--lookup-first",
+	  "description": ["Indicates if the AAI should be looked up first in",
+	    "the database. Requires --sqlite3, --auto, --name1, and --name2.",
+	    "Incompatible with --res and --tab."]
+	},
+	{
+	  "name": "Precision",
+	  "opt": "--dec",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Decimal positions to report."
+	},
+	{
+	  "name": "RBM",
+	  "opt": "--rbm",
+	  "arg": "out_file",
+	  "description": "Saves a file with the reciprocal best matches."
+	},
+	{
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "description": ["Saves a file describing the alignments used for",
+	    "two-way AAI."]
+	},
+	{
+	  "name": "Result",
+	  "opt": "--res",
+	  "arg": "out_file",
+	  "description": "Saves a file with the final results."
+	},
+	{
+	  "opt": "--tab",
+	  "arg": "out_file",
+	  "description": ["Saves a file with the final two-way results in a",
+	    "tab-delimited form. The columns are (in that order): AAI,",
+	    "standard deviation, proteins used, proteins in the smallest",
+	    "genome."]
+	},
+	{
+	  "opt": "--auto",
+	  "description": ["ONLY outputs the AAI value in STDOUT (or nothing,",
+	    "if calculation fails)."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ani.rb",
@@ -790,18 +1011,19 @@
 	  "arg": "in_file",
 	  "mandatory": true,
 	  "description": "FastA file containing the genome 1.",
-	  "note": ["Alternatively, you can supply a GI with the format ",
-	     "gi:12345 instead of files."]
+	  "note": ["Alternatively, you can supply a GI with the format",
+	    "gi:12345 instead of files."]
 	},
         {
 	  "opt": "--seq2",
 	  "arg": "in_file",
 	  "mandatory": true,
 	  "description": "FastA file containing the genome 2.",
-	  "note": ["Alternatively, you can supply a GI with the format ",
-	     "gi:12345 instead of files."]
+	  "note": ["Alternatively, you can supply a GI with the format",
+	    "gi:12345 instead of files."]
 	},
 	{
+	  "name": "Window",
 	  "opt": "--win",
 	  "arg": "integer",
 	  "description": "Window size in the ANI calculation (in bp).",
@@ -814,12 +1036,14 @@
 	  "default": 200
 	},
 	{
+	  "name": "Length",
 	  "opt": "--len",
 	  "arg": "integer",
 	  "description": "Minimum alignment length (in bp).",
 	  "default": 700
 	},
 	{
+	  "name": "Identity",
 	  "opt": "--id",
 	  "arg": "float",
 	  "description": "Minimum alignment identity (in %).",
@@ -836,6 +1060,7 @@
 	  "description": "Report values without post-hoc correction"
 	},
 	{
+	  "name": "Executables",
 	  "opt": "--bin",
 	  "arg": "in_dir",
 	  "description": ["Directory containing the binaries of the search",
@@ -890,6 +1115,7 @@
 	    "Incompatible with --res and --tab."]
 	},
 	{
+	  "name": "Precision",
 	  "opt": "--dec",
 	  "description": "Decimal positions to report.",
 	  "default": 2
@@ -901,6 +1127,7 @@
 	    "two-way ANI."]
 	},
 	{
+	  "name": "Result",
 	  "opt": "--res",
 	  "arg": "out_file",
 	  "description": "Saves a file with the final results."
