@@ -609,11 +609,65 @@
     },
     {
       "task": "BlastTab.seqdepth_nomedian.pl",
-      "description": ""
+      "description": ["Estimates the sequencing depth of subject",
+        "sequences. The values reported by this script may differ from those",
+	"of BlastTab.seqdepth.pl, because this script uses the aligned length",
+	"of the read while BlastTab.seqdepth.pl uses the aligned length of the",
+	"subject sequence."],
+      "help_arg": "",
+      "options": [
+        "cat",
+	{
+	  "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": ["One or more Tabular BLAST files of reads vs genes",
+            "(or contigs)."]
+	},
+	"|",
+        {
+          "name": "genes_or_ctgs.fna",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["A FastA file containing the genes or the contigs",
+            "(db)."]
+        },
+        ">",
+        {
+          "name": "genes_or_ctgs.cov",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["A tab-delimited file with the following columns:",
+            "(1) Subject ID. (2) Average sequencing depth. (3) Number of",
+	    "mapped reads. (4) Length of the subject sequence."]
+        }
+      ]
     },
     {
       "task": "BlastTab.subsample.pl",
-      "description": ""
+      "description": ["Filters a BLAST output including only the hits produced",
+        "by any of the given sequences as query."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "blast.tab",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "BLAST output to be filtered (tabular format)."
+	},
+	{
+	  "name": "sample.fa",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Sequences to use as query (FastA format)."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "The filtered BLAST output (tabular format)."
+	}
+      ]
     },
     {
       "task": "BlastTab.sumPerHit.pl",
@@ -684,7 +738,57 @@
     },
     {
       "task": "BlastTab.taxid2taxrank.pl",
-      "description": ""
+      "description": ["Takes a BLAST with NCBI Taxonomy IDs as subjects and",
+        "replaces them by names at a given taxonomic rank."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "tax_blast.txt",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": ["BLAST output, where subject IDs are NCBI Taxonomy",
+	    "IDs."]
+	},
+	{
+	  "name": "nodes.dmp",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Nodes file from NCBI Taxonomy.",
+	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+	},
+	{
+	  "name": "names.dmp",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Names file from NCBI Taxonomy.",
+	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+	},
+	{
+	  "name": "rank",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": "genus",
+	  "description": ["The rank to be reported. All the reported nodes",
+	    "will have the same rank. To see supported values, run:\n",
+	    "`cut -f 5 nodes.dmp | sort -u`."]
+	},
+	{
+	  "name": "Best-hit",
+	  "arg": "select",
+	  "values": ["yes", "no"],
+	  "default": "yes",
+	  "description": ["Should it take into account the best hit per query",
+	    "only? This is: should it filter by best-hit?"]
+	},
+	">",
+	{
+	  "name": "taxrank_list.txt",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["BLAST-like output, where subject IDs are Taxonomy",
+	    "names."]
+	}
+      ]
     },
     {
       "task": "BlastTab.topHits_sorted.rb",
