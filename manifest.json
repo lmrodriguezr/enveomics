@@ -804,7 +804,7 @@
           "name": "in_file.fq",
           "arg": "in_file",
           "mandatory": true,
-          "description": "Input file in FastA format."
+          "description": "Input file in FastQ format."
         },
         {
           "name": "out_base",
@@ -1189,10 +1189,6 @@
     },
     {
       "task": "gi2tax.rb",
-      "description": ""
-    },
-    {
-      "task": "in_silico_GA_GI.pl",
       "description": ""
     },
     {
