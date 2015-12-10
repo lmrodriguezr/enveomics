@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Oct-20-2015
+# @update  Dec-09-2015
 # @license artistic license 2.0
 #
 
@@ -23,7 +23,7 @@ rescue LoadError
 end
 
 o = {bits:0, id:20, len:0, hits:50, q:false, bin:"", program:"blast+", thr:1,
-   dec:2, auto:false, lookupfirst:false}
+   dec:2, auto:false, lookupfirst:false, dbrbm: true}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -86,6 +86,9 @@ Usage: #{$0} [options]"
       "Indicates if the AAI should be looked up first in the database.",
       "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with --res and --tab."
       ){ |v| o[:lookupfirst] = v }
+   opts.on("--[no-]save-rbm",
+      "Save (or don't save) the reciprocal best matches in the --sqlite3 db.",
+      "By default: #{o[:dbrbm]}."){ |v| o[:dbrbm] = !!v }
    opts.on("-d", "--dec INT",
       "Decimal positions to report. By default: #{o[:dec]}"
       ){ |v| o[:dec] = v.to_i }
@@ -284,7 +287,7 @@ Dir.mktmpdir do |dir|
 		  sqlite_db.execute("insert into rbm values(?,?,?,?,?,?,?)",
 		     seq_names + [ori_ids[:seq1][row[1].to_i],
 		     ori_ids[:seq2][row[0].to_i], row[2], row[10], row[11]]
-		     ) unless o[:sqlite3].nil?
+		     ) if not o[:sqlite3].nil? and o[:dbrbm]
 	       end
 	    end
 	 end

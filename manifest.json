@@ -992,6 +992,11 @@
             "Incompatible with --res and --tab."]
         },
         {
+          "opt": "--no-save-rbm",
+          "description": ["Don't save the reciprocal best matches in the",
+            "--sqlite3 database."]
+        },
+        {
           "name": "Precision",
           "opt": "--dec",
           "arg": "integer",
