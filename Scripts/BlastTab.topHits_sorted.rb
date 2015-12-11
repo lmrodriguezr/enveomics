@@ -1,26 +1,32 @@
 #!/usr/bin/env ruby
 
 #
-# @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Feb-06-2015
+# @author:  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
+# @update:  Dec-11-2015
 # @license: artistic license 2.0
 #
 
-require 'optparse'
+require "optparse"
 
-$opts = {:n=>5, :sortby=>'bitscore', :q=>FALSE}
-$cols = {'bitscore'=>11, 'evalue'=>10, 'identity'=>2, 'length'=>3}
-ARGV << '-h' if ARGV.size==0
+$opts = {n:5, sortby:"bitscore", q:false}
+$cols = {"bitscore"=>11, "evalue"=>10, "identity"=>2, "length"=>3}
+ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "Reports the top-N best hits of a BLAST, pre-sorted by query."
    opts.separator ""
    opts.separator "Mandatory"
-   opts.on("-i", "--blast FILE", "Path to the BLAST file."){ |v| $opts[:blast]=v }
+   opts.on("-i", "--blast FILE",
+      "Path to the BLAST file."){ |v| $opts[:blast]=v }
    opts.separator ""
    opts.separator "Optional"
-   opts.on("-n", "--top INTEGER", "Maximum number of hits to report for each query.  By default: #{$opts[:n]}"){ |v| $opts[:n]=v.to_i }
-   opts.on("-s", "--sorby STRING", "Parameter used to detect the 'best' hits.  Any of: bitscore (default), evalue, identity, length."){ |v| $opts[:sortby]=v }
-   opts.on("-q", "--quiet", "Run quietly."){ $opts[:q]=TRUE; $opts[:w]=FALSE }
+   opts.on("-n", "--top INTEGER",
+      "Maximum number of hits to report for each query.",
+      "By default: #{$opts[:n]}"){ |v| $opts[:n]=v.to_i }
+   opts.on("-s", "--sort-by STRING",
+      "Parameter used to detect the 'best' hits.",
+      "Any of: bitscore (default), evalue, identity, length."
+      ){ |v| $opts[:sortby]=v }
+   opts.on("-q", "--quiet", "Run quietly."){ $opts[:q]=true }
    opts.on("-h", "--help", "Display this screen") do
       puts opts
       exit
@@ -29,7 +35,8 @@ OptionParser.new do |opts|
 end.parse!
 
 abort "-i/--blast is mandatory." if $opts[:blast].nil?
-abort "Unrecognized value for -s/--sortby: #{$opts[:sortby]}." if $cols[ $opts[:sortby] ].nil?
+abort "Unrecognized value for -s/--sortby: #{$opts[:sortby]}." if
+   $cols[ $opts[:sortby] ].nil?
 
 class Hit
    attr_reader :blast_line
@@ -41,7 +48,7 @@ class Hit
    end
    def <=>(other)
       ans = self.col( $cols[ $opts[:sortby] ] ).to_f <=> other.col( $cols[ $opts[:sortby] ] ).to_f
-      ans = ans * -1 unless $opts[:sortby] == 'evalue'
+      ans = ans * -1 unless $opts[:sortby] == "evalue"
       return ans
    end
    def to_s
@@ -57,7 +64,8 @@ class HitSet
    end
    def <<(hit)
       @query = hit.col(0) if @query.nil?
-      raise "Inconsistent query, expecting #{self.query}" unless self.query == hit.col(0)
+      raise "Inconsistent query, expecting #{self.query}" unless
+	 self.query == hit.col(0)
       @hits << hit
    end
    def empty?

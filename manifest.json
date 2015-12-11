@@ -792,7 +792,45 @@
     },
     {
       "task": "BlastTab.topHits_sorted.rb",
-      "description": ""
+      "description": ["Reports the top-N best hits of a BLAST, pre-sorted by",
+        "query."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "name": "Sort",
+          "arg": "select",
+          "values": ["sort","cat"],
+          "mandatory": true,
+          "description": ["Use 'sort' if your BLAST is not pre-sorted by the",
+            "first column (or if you're not sure). Use 'cat' otherwise."]
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Tabular BLAST file."
+	},
+	"|",
+	{ "arg": "task" },
+	"--blast",
+	"/dev/stdin",
+	{
+	  "opt": "--top",
+	  "arg": "integer",
+	  "default": 5,
+	  "description": "Maximum number of hits to report for each query."
+	},
+	{
+	  "opt": "--sort-by",
+	  "arg": "select",
+	  "values": ["bitscore", "evalue", "identity", "length"],
+	  "default": "bitscore",
+	  "description": "Parameter used to detect the 'best' hits."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	}
+      ]
     },
     {
       "task": "Chao1.pl",
