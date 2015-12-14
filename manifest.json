@@ -1101,7 +1101,10 @@
           "arg": "select",
           "values": ["blast+","blast","blat"],
           "default": "blast+",
-          "description": "Search program to be used."
+          "description": "Search program to be used.",
+          "note": ["Make sure that you have installed the search program you",
+            "want to use. If you have downloaded the program, but it's not",
+            "installed, please use the --bin option above."]
         },
         {
           "opt": "--threads",
@@ -1252,7 +1255,8 @@
           "opt": "--program",
           "arg": "select",
           "values": ["blast+", "blast", "blat"],
-          "description": "Search program to be used. Default: blast+.",
+	  "default": "blast+",
+          "description": "Search program to be used.",
           "note": ["Make sure that you have installed the search program you",
             "want to use. If you have downloaded the program, but it's not",
             "installed, please use the --bin option above."]
@@ -1364,7 +1368,84 @@
     },
     {
       "task": "rbm.rb",
-      "description": ""
+      "description": ["Finds the reciprocal best matches between two sets of",
+        "sequences."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--seq1",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the genome 1."
+	},
+        {
+	  "opt": "--seq2",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the genome 2."
+	},
+	{
+	  "opt": "--nucl",
+	  "description": ["Sequences are assumed to be nucleotides (proteins",
+	    "by default)."]
+	},
+        {
+          "name": "Length",
+          "opt": "--len",
+          "arg": "integer",
+          "description": "Minimum alignment length (in residues).",
+          "default": 0
+        },
+	{
+	  "name": "Fraction",
+	  "opt": "--fract",
+	  "arg": "float",
+	  "default": 0.0,
+	  "description": ["Minimum alignment length (as a fraction of the",
+	    "query). If set, requires BLAST+ (see --program)."]
+	},
+        {
+          "name": "Identity",
+          "opt": "--id",
+          "arg": "float",
+          "description": "Minimum alignment identity (in %).",
+          "default": 0.0
+        },
+	{
+	  "name": "Bit score",
+	  "opt": "--score",
+	  "arg": "float",
+	  "default": 0.0,
+	  "description": "Minimum alignment score (in bits)."
+	},
+        {
+          "name": "Executables",
+          "opt": "--bin",
+          "arg": "in_dir",
+          "description": ["Directory containing the binaries of the search",
+            "program."]
+        },
+        {
+          "opt": "--program",
+          "arg": "select",
+          "values": ["blast+", "blast", "blat"],
+	  "default": "blast+",
+          "description": "Search program to be used. Default: blast+.",
+          "note": ["Make sure that you have installed the search program you",
+            "want to use. If you have downloaded the program, but it's not",
+            "installed, please use the --bin option above."]
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "description": "Number of parallel threads to be used.",
+          "default": 1
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
     }
   ],
   "categories": {
