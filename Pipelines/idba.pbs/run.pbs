@@ -41,7 +41,7 @@ rm $SAMPLE/contig-*.fa
 if [[ -s $SAMPLE/scaffold.fa ]] ; then
    ln -s $SAMPLE/scaffold.fa $SAMPLE.AllContigs.fna
 else
-   ln -s $SAMPLE/contigs.fa $SAMPLE.AllContigs.fna
+   ln -s $SAMPLE/contig.fa $SAMPLE.AllContigs.fna
 fi
 time $enve/FastA.length.pl $SAMPLE/scaffold.fa | awk '$2>=500{print $1}' \
    > $SAMPLE.LargeContigs.ids
