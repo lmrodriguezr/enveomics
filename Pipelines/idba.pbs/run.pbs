@@ -2,27 +2,35 @@
 #PBS -l nodes=1:ppn=10
 #PBS -k eo
 
-module load idba/1.1.1 ;
+module load idba/1.1.1
 
-b=$SAMPLE ;
+b=$SAMPLE
 enve=/nv/pmicro1/shared/apps/enveomics/Scripts
-THR=10 ;
+THR=10
 
 #---------------------------------------------------------
 
-echo "==[ 05.assembly: $(date) ]" ;
-cd $FOLDER/05.assembly ;
+echo "==[ 05.assembly: $(date) ]"
+cd $FOLDER/05.assembly
 
+CMD=""
 case "$TYPE" in
 *g)
-   time idba_ud --pre_correction -r $FA -o $SAMPLE --num_threads $THR ;;
+   CMD="idba_ud" ;;
 t)
-   time idba_tran --pre_correction -r $FA -o $SAMPLE --num_threads $THR ;;
+   CMD="idba_tran" ;;
 *)
-   echo "Unsupported data type: $TYPE" >&2 ;
-   exit 1 ;
+   echo "Unsupported data type: $TYPE" >&2
+   exit 1
    ;;
-esac ;
+esac
+CMD="$CMD --pre_correction -r $FA -o $SAMPLE --num_threads $THR"
+[[ -n "$FA_RL2" ]] && CMD="$CMD --read_level_2 $FA_RL2"
+[[ -n "$FA_RL3" ]] && CMD="$CMD --read_level_3 $FA_RL3"
+[[ -n "$FA_RL4" ]] && CMD="$CMD --read_level_4 $FA_RL4"
+[[ -n "$FA_RL5" ]] && CMD="$CMD --read_level_5 $FA_RL5"
+
+time $CMD
 
 rm $SAMPLE/kmer
 rm $SAMPLE/graph-*.fa
@@ -30,12 +38,18 @@ rm $SAMPLE/align-*
 rm $SAMPLE/local-contig-*.fa
 rm $SAMPLE/contig-*.fa
 
-ln -s $SAMPLE/scaffold.fa $SAMPLE.AllContigs.fna ;
-time $enve/FastA.length.pl $SAMPLE/scaffold.fa | awk '$2>=500{print $1}' > $SAMPLE.LargeContigs.ids ;
-time $enve/FastA.filter.pl $SAMPLE.LargeContigs.ids $SAMPLE/scaffold.fa > $SAMPLE.LargeContigs.fna ;
-rm $SAMPLE.LargeContigs.ids ;
+if [[ -s $SAMPLE/scaffold.fa ]] ; then
+   ln -s $SAMPLE/scaffold.fa $SAMPLE.AllContigs.fna
+else
+   ln -s $SAMPLE/contigs.fa $SAMPLE.AllContigs.fna
+fi
+time $enve/FastA.length.pl $SAMPLE/scaffold.fa | awk '$2>=500{print $1}' \
+   > $SAMPLE.LargeContigs.ids
+time $enve/FastA.filter.pl $SAMPLE.LargeContigs.ids $SAMPLE/scaffold.fa \
+   > $SAMPLE.LargeContigs.fna
+rm $SAMPLE.LargeContigs.ids
 
 #---------------------------------------------------------
 
-echo "Done: $(date)." ;
+echo "Done: $(date)."
 
