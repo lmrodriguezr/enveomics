@@ -1,0 +1,7 @@
+languages:
+   Ruby: true
+exclude_paths:
+   - "Tests/*"
+   - "Pipelines/*"
+   - "Examples/*"
+   - "enveomics.R/*"
