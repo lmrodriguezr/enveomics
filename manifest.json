@@ -115,6 +115,7 @@
         "(Hprime), and inverse Simpson (1_lambda) indices of alpha diversity",
         "for each sample."],
       "help_arg": "--help",
+      "see_also": ["Chao1.pl"],
       "options": [
         {
           "name": "Input table",
@@ -256,6 +257,7 @@
       "task": "BlastTab.best_hit_sorted.pl",
       "description": "Filters a tabular BLAST to retain only the best matches.",
       "help_arg": "--help",
+      "see_also": ["BlastTab.topHits_sorted.rb"],
       "options": [
         {
           "name": "Sort",
@@ -527,6 +529,7 @@
       "task": "BlastTab.seqdepth.pl",
       "description": "Estimates the sequencing depth of subject sequences.",
       "help_arg": "",
+      "see_also": ["BlastTab.seqdepth_ZIP.pl", "BlastTab.seqdepth_nomedian.pl"],
       "options": [
         "cat",
         {
@@ -571,6 +574,7 @@
         "http://anisette.ucs.louisiana.edu/Academic/Sciences/MATH/stage/stat2012.pdf\n",
         "[2] Lindner et al, Bioinformatics, 2013."],
       "help_arg": "",
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_nomedian.pl"],
       "options": [
         "cat",
         {
@@ -615,6 +619,7 @@
 	"of the read while BlastTab.seqdepth.pl uses the aligned length of the",
 	"subject sequence."],
       "help_arg": "",
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_ZIP.pl"],
       "options": [
         "cat",
 	{
@@ -795,6 +800,7 @@
       "description": ["Reports the top-N best hits of a BLAST, pre-sorted by",
         "query."],
       "help_arg": "--help",
+      "see_also": "BlastTab.best_hit_sorted.pl",
       "options": [
         {
           "name": "Sort",
@@ -834,7 +840,8 @@
     },
     {
       "task": "Chao1.pl",
-      "description": ""
+      "description": "",
+      "see_also": ["AlphaDiversity.pl"]
     },
     {
       "task": "CharTable.classify.rb",
@@ -850,6 +857,7 @@
         "Alternatively, it can calculate other N** values.  It also calculates",
         "the total number of sequences and the total added length."],
       "help_arg": "",
+      "see_also": ["FastA.length.pl"],
       "options": [
         {
           "name": "Sequences",
@@ -893,7 +901,8 @@
     },
     {
       "task": "FastA.length.pl",
-      "description": ""
+      "description": "",
+      "see_also": ["FastA.N50.pl"]
     },
     {
       "task": "FastA.qlen.pl",
@@ -913,7 +922,8 @@
     },
     {
       "task": "FastA.split.pl",
-      "description": ""
+      "description": "",
+      "see_also": ["FastQ.split.pl"]
     },
     {
       "task": "FastA.subsample.pl",
@@ -941,6 +951,7 @@
         "script can be used to separate interposed sister reads using any even",
         "number of output files."],
       "help_arg": "",
+      "see_also": ["FastA.split.pl"],
       "options": [
         {
           "name": "in_file.fq",
@@ -1045,6 +1056,7 @@
       "description": ["Calculates the Average Amino acid Identity between two",
         "genomes."],
       "help_arg": "--help",
+      "see_also": ["ani.rb", "rbm.rb"],
       "options": [
         {
           "opt": "--seq1",
@@ -1190,6 +1202,7 @@
       "description": ["Calculates the Average Nucleotide Identity between two",
         "genomes."],
       "help_arg": "--help",
+      "see_also": ["aai.rb","rbm.rb"],
       "options": [
         {
           "opt": "--seq1",
@@ -1344,27 +1357,75 @@
     },
     {
       "task": "ogs.annotate.rb",
-      "description": ""
+      "description": "",
+      "see_also": ["ogs.mcl.rb"]
     },
     {
       "task": "ogs.core-pan.rb",
-      "description": ""
+      "description": "",
+      "see_also": ["ogs.mcl.rb"]
     },
     {
       "task": "ogs.extract.rb",
-      "description": ""
+      "description": "",
+      "see_also": ["ogs.mcl.rb"]
     },
     {
       "task": "ogs.mcl.rb",
-      "description": ""
+      "description": "",
+      "see_also": ["ogs.annotate.rb", "ogs.core-pan.rb", "ogs.extract.rb",
+        "ogs.stats.rb"]
     },
     {
       "task": "ogs.rb",
-      "description": ""
+      "description": ["Identifies Orthology Groups (OGs) in Reciprocal Best",
+        "Matches (RBM) between all pairs in a collection of genomes."],
+      "warn": ["This script suffers from chaining effect and is very",
+        "sensitive to spurious connections, because it applies a greedy",
+	"clustering algorithm. For most practical purposes, the use of this",
+	"script is discouraged and `ogs.mcl.rb` should be preferred."],
+      "help_arg": "--help",
+      "see_also": ["ogs.mcl.rb"],
+      "options": [
+        {
+	  "opt": "--out",
+	  "mandatory": true,
+	  "arg": "out_file",
+	  "description": "Output file containing the detected OGs."
+	},
+	{
+	  "opt": "--dir",
+	  "arg": "in_dir",
+	  "description": "Directory containing the RBM files.",
+	  "note": "Required unless --pre-ogs is passed."
+	},
+	{
+	  "opt": "--pre-ogs",
+	  "arg": "in_file",
+	  "multiple_sep": ",",
+	  "description": "Pre-computed OGs file(s), separated by commas."
+	},
+	{
+	  "opt": "--unchecked",
+	  "description": "Do not check internal redundancy in OGs."
+	},
+	{
+	  "opt": "--format",
+	  "arg": "string",
+	  "default": "(\\S+)-(\\S+)\\.rbm",
+	  "description": ["Format of the filenames for the RBM files (within",
+	    "-d), using regex syntax."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ogs.stats.rb",
-      "description": ""
+      "description": "",
+      "see_also": ["ogs.mcl.rb"]
     },
     {
       "task": "rbm.rb",
@@ -1532,7 +1593,8 @@
         "ogs.core-pan.rb",
         "ogs.extract.rb",
         "ogs.mcl.rb",
-        "ogs.stats.rb"
+        "ogs.stats.rb",
+	"ogs.rb"
       ]
     },
     "Other data": {
