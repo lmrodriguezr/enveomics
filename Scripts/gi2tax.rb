@@ -35,7 +35,7 @@ OptionParser.new do |opt|
       "Taxonomic ranks to report. By default: #{$o[:ranks].join(",")}."
       ){ |v| $o[:ranks]=v }
    opt.on("-n", "--noheader",
-      "Do not includ a header in the output."){ $o[:header]=false }
+      "Do not include a header in the output."){ $o[:header]=false }
    opt.on("-t", "--taxids",
       "Return Taxonomy IDs instead of scientific names."){ $o[:ret]="TaxId" }
    opt.on("-q", "--quiet", "Run quietly."){ |v| $o[:q]=true }

@@ -74,7 +74,7 @@
       "requires": [
         {
           "description": "Perl library Bio::Perl",
-          "test": "perl -MBio::AlignIO -e '' && echo 1"
+          "test": "perl -MBio::AlignIO -e ''"
         }
       ],
       "options": [
@@ -238,6 +238,12 @@
         "un-flushed output and trailing queries that could be processed but",
         "generate no results."],
       "help_arg": "",
+      "requires": [
+        {
+	  "description": "GNU AWK",
+	  "test": "awk --version"
+	}
+      ],
       "options": [
         {
           "name": "Blast",
@@ -425,11 +431,11 @@
       "requires": [
         {
           "description": "Perl library JSON",
-          "test": "perl -MJSON -e '' && echo 1"
+          "test": "perl -MJSON -e ''"
         },
         {
           "description": "Perl library LWP::Simple",
-          "test": "perl -MLWP::Simple -e '' && echo 1"
+          "test": "perl -MLWP::Simple -e ''"
         }
       ],
       "help_arg": "",
@@ -505,12 +511,12 @@
           "arg": "string",
           "default": "_",
           "description": ["Sister read number prefix in the name of the reads.",
-            "Escape characters as dots (\.), parenthesis (\(, \), \[, \]), or",
-            "other characters with special meaning in regular expressions (\*,",
-            "\+, \^, \$, \|). This prefix allows regular expressions (for",
-            "example, use ':|\.' to use any of colon or dot). Notice that the",
-            "prefix will not be included in the base name reported in the",
-            "output."]
+            "Escape characters as dots (\\.), parenthesis (\\(, \\), \\[,",
+            "\\]), other characters with special meaning in regular",
+	    "expressions (\\*, \\+, \\^, \\$, \\|). This prefix allows regular",
+	    "expressions (for example, use ':|\\.' to use any of colon or",
+	    "dot). Note that the prefix will not be included in the base name",
+	    "reported in the output."]
         },
         ">",
         {
@@ -840,16 +846,175 @@
     },
     {
       "task": "Chao1.pl",
-      "description": "",
-      "see_also": ["AlphaDiversity.pl"]
+      "description": ["Takes a table of OTU abundance in one or more samples",
+        "and calculates the chao1 index (with 95% Confidence Interval) for",
+	"each sample. To use it with Qiime OTU Tables, run it ignoring 1",
+	"left column and with header."],
+      "see_also": ["AlphaDiversity.pl"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "-i",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input table (columns:samples, rows:OTUs)."
+	},
+	{
+	  "name": "Rows",
+	  "opt": "-r",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Number of rows to ignore."
+	},
+	{
+	  "name": "Left columns to ignore",
+	  "opt": "-c",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Number of columns to ignore."
+	},
+	{
+	  "name": "Right columns to ignore",
+	  "opt": "-C",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Number of columns to ignore at the end."
+	},
+	{
+	  "name": "Delimiter",
+	  "opt": "-d",
+	  "arg": "string",
+	  "default": "\\t",
+	  "description": "Delimiter between columns.",
+	  "note": ["Supported escaped characters are: \\t (tabulation),",
+	    "and \\0 (null bit)."]
+	},
+	{
+	  "name": "Header",
+	  "opt": "-h",
+	  "description": ["If set, the first row is assumed to have the names",
+	    "of the samples."]
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Chao1 index and 95% CI bounds for each sample, in",
+	    "tab-delimited format."]
+	}
+      ]
     },
     {
       "task": "CharTable.classify.rb",
-      "description": ""
+      "description": ["Uses a dichotomous key to classify objects parsing a",
+        "character table."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--table",
+	  "arg": "in_file",
+	  "note": "Mandatory unless 'Example' is used.",
+	  "description": ["Input table containing the states (columns) per",
+	    "object (row). It must be tab-delimited and with row and column",
+	    "names. Use 'Example' table to see an example."]
+	},
+	{
+	  "opt": "--key",
+	  "arg": "in_file",
+	  "note": "Mandatory unless 'Example' is used.",
+	  "description": ["Input table containing the dychotomous key in",
+	    "linked style, defined in four columns (can contain #-lead comment",
+	    "lines): (1) ID of the step, typically a sequential integer. (2)",
+	    "Name of the character to evaluate. It must coincide with the",
+	    "headers of -t. (3) First character decision (see below). (4)",
+	    "Second character decision (see below).\nA character decision must",
+	    "be formated as: state (must coincide with the values in -t),",
+	    "colon (:), step to follow. If the state is * (star) any state",
+	    "triggers the decision (this should be the norm in column 4). The",
+	    "step to follow should be a step ID in square brackets, or the",
+	    "name of the classification. Use 'Example' key to see an example."]
+	},
+	{
+	  "opt": "--classification",
+	  "arg": "out_file",
+	  "description": ["Two-column table with the classification of the",
+	    "input objects."]
+	},
+	{
+	  "opt": "--newick",
+	  "arg": "out_file",
+	  "description": ["Tree containing all the classified objects. This",
+	    "only makes sense for synoptic keys."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	},
+	{
+	  "opt": "--example",
+	  "arg": "select",
+	  "values": ["table", "key", "classification", "output"],
+	  "description": ["Show an example file based on Van Ert et al 2007",
+	    "(PLoS ONE 2(5):e461) and exit."],
+	  "source_url": "http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000461"
+	}
+      ]
     },
     {
       "task": "EBIseq2tax.rb",
-      "description": ""
+      "description": ["Maps a list of EBI-supported IDs to their corresponding",
+        "NCBI taxonomy using EBI RESTful API."],
+      "warn": ["Avoid using this script on millions of entries at a time,",
+        "since each entry elicits requests to EBI and NCBI servers."],
+      "requires": [
+        {
+	  "description": "Ruby gem nokogiri",
+	  "test": "ruby -r nokogiri -e ''"
+	}
+      ],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "IDs",
+	  "opt": "--ids",
+	  "arg": "string",
+	  "description": "Comma-separated list of EBI IDs.",
+	  "note": "Required unless 'Input file' is passed."
+	},
+	{
+	  "name": "Input file",
+	  "opt": "--infile",
+	  "arg": "in_file",
+	  "description": ["Raw text file containing the list of EBI IDs,",
+	    "one per line."],
+	  "note": "Required unless 'IDs' is passed."
+	},
+	{
+	  "opt": "--database",
+	  "arg": "string",
+	  "default": "uniprotkb",
+	  "description": "EBI database defining the EBI IDs."
+	},
+	{
+	  "opt": "--ranks",
+	  "arg": "string",
+	  "description": "Comma-delimited list of taxonomic ranks to report.",
+	  "default": "superkingdom,phylum,class,order,family,genus,species."
+	},
+	{
+	  "opt": "--noheader",
+	  "description": "Do not includ a header in the output."
+	},
+	{
+	  "opt": "--taxids",
+	  "description": "Return Taxonomy IDs instead of scientific names."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	}
+      ]
     },
     {
       "task": "FastA.N50.pl",
@@ -893,7 +1058,24 @@
     },
     {
       "task": "FastA.gc.pl",
-      "description": ""
+      "description": "Estimates the G+C content of sequences.",
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "seqs.fa",
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "mandatory": true,
+	  "description": "One or more FastA files."
+	},
+	">",
+	{
+	  "name": "gc.txt",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "A table with the G+C content of the sequences."
+	}
+      ]
     },
     {
       "task": "FastA.interpose.pl",
@@ -989,7 +1171,104 @@
     },
     {
       "task": "HMM.essential.rb",
-      "description": ""
+      "description": ["Finds and extracts a collection of essential proteins",
+        "suitable for genome completeness evaluation and phylogenetic",
+	"analyses in Archaea and Bacteria."],
+      "warn": ["Most complete bacterial genomes contain only 106/111 genes in",
+        "this collection, therefore producing a completeness of 95.5%, and",
+	"most archaeal genomes only contain 26/111 genes, producing a",
+	"completeness of 23.4%. Use the options --bacteria and/or --archaea to",
+	"ignore models often missing in one or both domains. Note that even",
+	"with these options, some complete archaeal genomes result in very low",
+	"values of completeness (e.g., Nanoarchaeum equitans returns 76.9%)."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing all the proteins in the genome."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "description": ["FastA file with the translated essential genes. By",
+	    "default the file is not produced."]
+	},
+	{
+	  "opt": "--per-model",
+	  "arg": "out_file",
+	  "description": ["Prefix of translated genes in independent files",
+	    "with the name of the model appended. By default files are not",
+	    "produced."]
+	},
+	{
+	  "opt": "--report",
+	  "arg": "out_file",
+	  "description": ["Path to the report file. By default, the report is",
+	    "sent to the STDOUT."]
+	},
+	{
+	  "opt": "--bacteria",
+	  "description": "If set, ignores models typically missing in Bacteria."
+	},
+	{
+	  "opt": "--archaea",
+	  "description": "If set, ignores models typically missing in Archaea."
+	},
+	{
+	  "opt": "--genome-eq",
+	  "description": ["If set, ignores models not suitable for",
+	    "genome-equivalents estimations. See Rodriguez-R et al, 2015, ISME",
+	    "J 9(9):1928-1940."],
+	  "source_url": "http://www.nature.com/ismej/journal/vaop/ncurrent/full/ismej20155a.html"
+	},
+	{
+	  "opt": "--rename",
+	  "arg": "string",
+	  "description": ["If set, renames the sequences with the string",
+	    "provided and appends it with pipe (|) and the gene name (except",
+	    "in --per-model files)."]
+	},
+	{
+	  "opt": "--no-stats",
+	  "description": ["If set, no statistics are reported on genome",
+	    "evaluation."]
+	},
+	{
+	  "opt": "--no-genes",
+	  "description": ["If set, statistics won't include the lists of",
+	    "missing/multi-copy genes."]
+	},
+	{
+	  "opt": "--metagenome",
+	  "description": ["If set, it allows for multiple copies of each gene",
+	    "and turns on metagenomic report mode."]
+	},
+	{
+	  "opt": "--list-models",
+	  "description": ["If set, it only lists the models and exits.",
+	    "Compatible with 'Archaea', 'Bacteria', 'Genome eq', and 'Quiet';",
+	    "ignores all other parameters."]
+	},
+	{
+	  "opt": "--bin",
+	  "arg": "in_dir",
+	  "description": "Directory containing the binaries of HMMer 3.0+."
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Number of parallel threads to be used."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "HMMsearch.extractIds.rb",
@@ -1025,11 +1304,74 @@
     },
     {
       "task": "RefSeq.download.bash",
-      "description": ""
+      "description": ["Downloads a collection of sequences and/or annotations",
+        "from NCBI's RefSeq."],
+      "help_arg": "",
+      "requires": [
+        {
+	  "description": "curl",
+	  "test": "curl --version"
+	}
+      ],
+      "options": [
+        {
+	  "name": "Organism",
+	  "arg": "string",
+	  "mandatory": true,
+	  "description": ["The organism to download (e.g.,",
+	    "Streptococcus_pneumoniae)."]
+	},
+	{
+	  "name": "Extension",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": ".*.gz",
+	  "description": ["Extension to download. Common extensions include",
+	    ".fna.gz (genomic sequences), .faa.gz (protein sequences),",
+	    ".gff.gz (annotations), and .*.gz (all data)."]
+	},
+	{
+	  "name": "Level",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": "Any",
+	  "description": ["Use only genomes with this assembly level. Common",
+	    "levels are 'Complete Genome' and 'Contig'. By default, any",
+	    "assembly level is allowed ('Any')."]
+	},
+	{
+	  "name": "Directory",
+	  "arg": "out_dir",
+	  "description": ["Directory where the files are to be downladed.",
+	    "By default, same as 'Organism'."]
+	}
+      ]
     },
     {
       "task": "SRA.download.bash",
-      "description": ""
+      "description": ["Downloads the set of runs from a project, sample, or",
+        "experiment in SRA."],
+      "help_arg": "",
+      "requires": [
+        {
+	  "description": "curl",
+	  "test": "curl --version"
+	}
+      ],
+      "options": [
+        {
+	  "name": "SRA ID",
+	  "arg": "string",
+	  "mandatory": true,
+	  "description": "ID of the SRA Project, Sample, or Experiment."
+	},
+	{
+	  "name": "dir",
+	  "arg": "out_dir",
+	  "description": ["Directory where the files are to be downladed. By",
+	    "default, same as 'SRA ID'."]
+	}
+      ]
     },
     {
       "task": "Table.filter.pl",
@@ -1049,7 +1391,55 @@
     },
     {
       "task": "Taxonomy.silva2ncbi.rb",
-      "description": ""
+      "description": ["Re-formats Silva taxonomy into NCBI-like taxonomy dump",
+        "files."],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--silvaranks",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input Silva ranks file (e.g.,",
+	    "tax_ranks_ssu_115.txt)."],
+	  "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
+	},
+	{
+	  "opt": "--silvaref",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input Silva ref alignment file (e.g.,",
+	    "SSURef_NR99_115_tax_silva_full_align_trunc.fasta)."],
+	  "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
+	},
+	{
+	  "opt": "--patch",
+	  "arg": "in_file",
+	  "description": ["If passed, it replaces the paths specified in the",
+	    "patch."],
+	  "source_url": "http://enve-omics.ce.gatech.edu/data/public_misc/patch_Silva_SSU_r115.txt"
+	},
+	{
+	  "opt": "--seqinfo",
+	  "arg": "out_file",
+	  "description": ["If passed, it creates a CSV seq-info file",
+	    "compatible with taxtastic."]
+	},
+	{
+	  "opt": "--taxfile",
+	  "arg": "out_file",
+	  "description": "If passed, it creates a simple TSV taxonomy file."
+	},
+	{
+	  "opt": "--ncbi",
+	  "arg": "out_dir",
+	  "description": ["If passed, output folder for the NCBI dump files",
+	    "(e.g., taxdmp)."]
+	},
+	{
+	  "opt": "--warns",
+	  "description": "Verbously display warnings."
+	}
+      ]
     },
     {
       "task": "aai.rb",
@@ -1353,28 +1743,313 @@
     },
     {
       "task": "gi2tax.rb",
-      "description": ""
+      "description": ["Maps a list of NCBI GIs to their corresponding taxonomy",
+        "using the NCBI EUtilities."],
+      "warn": ["Avoid using this script on millions of entries at a time,",
+        "since each entry elicits two requests to NCBI's servers."],
+      "requires": [
+        {
+	  "description": "Ruby gem nokogiri",
+	  "test": "ruby -r nokogiri -e ''"
+	}
+      ],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "GIs",
+	  "opt": "--gis",
+	  "arg": "string",
+	  "description": "Comma-separated list of GIs.",
+	  "note": "Required unless 'Input file' is passed."
+	},
+	{
+	  "name": "Input file",
+	  "opt": "--infile",
+	  "arg": "in_file",
+	  "description": ["Raw text file containing the list of GIs, one per",
+	    "line."],
+	  "note": "Required unless 'GIs' is passed."
+	},
+	{
+	  "opt": "--protein",
+	  "description": ["Use if the GIs are proteins. Otherwise, GIs are",
+	    "assumed to be from the Nuccore Database."]
+	},
+	{
+	  "opt": "--ranks",
+	  "arg": "string",
+	  "description": "Taxonomic ranks to report, separated by commas.",
+	  "default": "superkingdom,phylum,class,order,family,genus,species"
+	},
+	{
+	  "name": "No header",
+	  "opt": "--noheader",
+	  "description": "Do not include a header in the output."
+	},
+	{
+	  "name": "Tax IDs",
+	  "opt": "--taxids",
+	  "description": "Return Taxonomy IDs instead of scientific names."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Tab-delimited table with GIs and taxonomic",
+	    "classification."]
+	}
+      ]
     },
     {
       "task": "ogs.annotate.rb",
-      "description": "",
-      "see_also": ["ogs.mcl.rb"]
+      "description": ["Annotates Orthology Groups (OGs) using one or more",
+        "reference genomes."],
+      "see_also": ["ogs.mcl.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input file containing the OGs (as generated by",
+	    "ogs.rb)."]
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output file containing the annotated OGs."
+	},
+	{
+	  "name": "Annotations",
+	  "opt": "-a",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "multiple_sep": ",",
+	  "description": ["Input file(s) containing the annotations. One or",
+	    "more tab-delimited files with the gene names in the first column",
+	    "and the annotation in the second."]
+	},
+	{
+	  "opt": "--format",
+	  "arg": "string",
+	  "default": "(\\S+)\\.txt",
+	  "description": ["Format of the filenames for the annotation files,",
+	    "using regex syntax."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ogs.core-pan.rb",
-      "description": "",
-      "see_also": ["ogs.mcl.rb"]
+      "description": ["Subsamples the genomes in a set of Orthology Groups",
+        "(OGs) and estimates the trend of core genome and pangenome sizes."],
+      "help_arg": "--help",
+      "requires": [
+        {
+	  "description": "Ruby gem json",
+	  "test": "ruby -r json -e ''"
+	}
+      ],
+      "see_also": ["ogs.mcl.rb"],
+      "options": [
+        {
+	  "opt": "--ogs",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file containing the precomputed OGs."
+	},
+	{
+	  "opt": "--replicates",
+	  "arg": "integer",
+	  "description": "Number of replicates to estimate.",
+	  "default": 10
+	},
+	{
+	  "opt": "--json",
+	  "arg": "out_file",
+	  "description": "Output file in JSON format."
+	},
+	{
+	  "opt": "--tab",
+	  "arg": "out_file",
+	  "description": "Output file in tabular format."
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "description": "Children threads to spawn."
+	},
+	{
+	  "opt": "--summary",
+	  "arg": "out_file",
+	  "description": ["Output file in tabular format with summary",
+	    "statistics."]
+	},
+	{
+	  "opt": "--auto",
+	  "description": "Run completely quiertly (no STDERR or STDOUT)."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ogs.extract.rb",
-      "description": "",
-      "see_also": ["ogs.mcl.rb"]
+      "description": ["Extracts sequences of Orthology Groups (OGs) from",
+        "genomes (proteomes)."],
+      "help_arg": "--help",
+      "see_also": ["ogs.mcl.rb"],
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input file containing the OGs (as generated by",
+	    "ogs.rb)."]
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output directory where to place extracted sequences."
+	},
+	{
+	  "name": "Sequences",
+	  "opt": "--seqs",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Path to the proteomes in FastA format, using '%s'",
+	    "to denote the genome. For example: /path/to/seqs/%s.faa."]
+	},
+	{
+	  "opt": "--core",
+	  "arg": "float",
+	  "description": ["Use only OGs present in at least this fraction of",
+	    "the genomes. To use only the strict core genome*, use --core 1."],
+	  "note": ["* To use only the unus genome (OGs with exactly one gene",
+	    "per genome), use: --core 1 --duplicates 1."]
+	},
+	{
+	  "opt": "--duplicates",
+	  "arg": "integer",
+	  "description": ["Use only OGs with less than this number of",
+	    "in-paralogs in a genome. To use only genes without in-paralogs*,",
+	    "use --duplicates 1."],
+	  "note": ["* To use only the unus genome (OGs with exactly one gene",
+	    "per genome), use: --core 1 --duplicates 1."]
+	},
+	{
+	  "opt": "--per-genome",
+	  "description": ["If set, the output is generated per genome. By",
+	    "default, the output is per OG."]
+	},
+	{
+	  "opt": "--prefix",
+	  "description": ["If set, each sequence is prefixed with the genome",
+	    "name (or OG number, if --per-genome) and a dash."]
+	},
+	{
+	  "opt": "--first",
+	  "description": ["Get only one gene per genome per OG (first)",
+	    "regardless of in-paralogs. By default all genes are extracted."]
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ogs.mcl.rb",
-      "description": "",
+      "description": ["Identifies Orthology Groups (OGs) in Reciprocal Best",
+        "Matches (RBM) between all pairs in a collection of genomes, using the",
+	"Markov Cluster Algorithm."],
       "see_also": ["ogs.annotate.rb", "ogs.core-pan.rb", "ogs.extract.rb",
-        "ogs.stats.rb"]
+        "ogs.stats.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output file containing the detected OGs."
+	},
+	{
+	  "opt": "--dir",
+	  "arg": "in_dir",
+	  "description": "Directory containing the RBM files.",
+	  "note": "Mandatory, unless --abc is set to a non-empty file."
+	},
+	{
+	  "opt": "--format",
+	  "arg": "string",
+	  "description": ["Format of the filenames for the RBM files (within",
+	    "--dir), using regex syntax."],
+	  "default": "(\\S+)-(\\S+)\\.rbm"
+	},
+	{
+	  "opt": "--inflation",
+	  "arg": "float",
+	  "description": "Inflation parameter for MCL clustering.",
+	  "default": 1.5
+	},
+	{
+	  "opt": "--blind",
+	  "description": ["If set, computes clusters without taking bitscore",
+	    "into account."]
+	},
+	{
+	  "opt": "--evalue",
+	  "description": ["If set, uses the e-value to weight edges, instead",
+	    "of the default Bit-Score."]
+	},
+	{
+	  "opt": "--identity",
+	  "description": ["If set, uses the identity to weight edges, instead",
+	    "of the default Bit-Score."]
+	},
+	{
+	  "opt": "--best-match",
+	  "description": ["If set, it assumes best-matches instead reciprocal",
+	    "best matches."]
+	},
+	{
+	  "opt": "--mcl-bin",
+	  "arg": "in_dir",
+	  "description": ["Path to the directory containing the mcl binaries.",
+	    "By default, assumed to be in the PATH."]
+	},
+	{
+	  "name": "abc",
+	  "arg": "out_file",
+	  "opt": "--abc",
+	  "description": "Use this abc file instead of a temporal file."
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Number of threads to use."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "ogs.rb",
@@ -1424,8 +2099,47 @@
     },
     {
       "task": "ogs.stats.rb",
-      "description": "",
-      "see_also": ["ogs.mcl.rb"]
+      "description": ["Estimates some descriptive statistics on a set of",
+        "Orthology Groups (OGs)."],
+      "see_also": ["ogs.mcl.rb"],
+      "help_arg": "--help",
+      "requires": [
+        {
+	  "description": "Ruby gem json",
+	  "test": "ruby -r json -e ''"
+	}
+      ],
+      "options": [
+        {
+	  "opt": "--ogs",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file containing the precomputed OGs."
+	},
+	{
+	  "opt": "--json",
+	  "arg": "out_file",
+	  "description": "Output file in JSON format."
+	},
+	{
+	  "opt": "--tab",
+	  "arg": "out_file",
+	  "description": "Output file in tabular format."
+	},
+	{
+	  "opt": "--transposed-tab",
+	  "arg": "out_file",
+	  "description": "Output file in transposed tabular format."
+	},
+	{
+	  "opt": "--auto",
+	  "description": "Run completely quiertly (no STDERR or STDOUT)."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "rbm.rb",
