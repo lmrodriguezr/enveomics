@@ -1,6 +1,11 @@
 {
   "tasks": [
     {
+      "task": "AAsubs.log2ratio.rb",
+      "description": "",
+      "$see_also": ["BlastPairwise.AAsubs.pl"]
+    },
+    {
       "task": "Aln.cat.rb",
       "description": ["Concatenates several multiple alignments in FastA",
         "format into a single multiple alignment. The IDs of the sequences",
@@ -194,6 +199,11 @@
           "mandatory": true
         }
       ]
+    },
+    {
+      "task": "BlastPairwise.AAsubs.pl",
+      "description": "",
+      "see_also": ["AAsubs.log2ratio.rb"]
     },
     {
       "task": "BlastTab.addlen.rb",
