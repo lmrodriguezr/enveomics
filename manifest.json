@@ -1141,7 +1141,38 @@
     },
     {
       "task": "FastA.filter.pl",
-      "description": ""
+      "description": "Extracts a subset of sequences from a FastA file.",
+      "help_arg": "-h",
+      "options": [
+        {
+	  "opt": "-r",
+	  "description": ["Reverse list. Extracts sequences NOT present in the",
+	    "list."]
+	},
+	{
+	  "opt": "-q",
+	  "description": "Runs quietly."
+	},
+	{
+	  "name": "List",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "List of sequences to extract."
+	},
+	{
+	  "name": "Sequences",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the superset of sequences."
+	},
+	">",
+	{
+	  "name": "Subset",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastA file to be created."
+	}
+      ]
     },
     {
       "task": "FastA.filterLen.pl",
@@ -1149,7 +1180,40 @@
     },
     {
       "task": "FastA.filterN.pl",
-      "description": ""
+      "description": ["Filter sequences by N-content and presence of long",
+        "homopolymers."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Sequences",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file in FastA format."
+	},
+	{
+	  "name": "Content",
+	  "arg": "float",
+	  "default": 0.5,
+	  "mandatory": true,
+	  "description": ["A number between 0 and 1 indicating the maximum",
+	    "proportion of Ns (1 to turn off, 0.5 by default)."]
+	},
+	{
+	  "name": "Stretch",
+	  "arg": "integer",
+	  "default": 100,
+	  "description": ["A number indicating the maximum number of",
+	    "consecutive identical nucleotides allowed (0 to turn off, 100 by",
+	    "default)."]
+	},
+	">",
+	{
+	  "name": "Filtered",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Filtered set of sequences."
+	}
+      ]
     },
     {
       "task": "FastA.gc.pl",
@@ -1174,16 +1238,85 @@
     },
     {
       "task": "FastA.interpose.pl",
-      "description": ""
+      "description": ["Interpose sequences in FastA format from two files into",
+        "one output file. If more than two files are provided, the script will",
+	"interpose all the input files."],
+      "warn": ["Please note that this script will check for the consistency of",
+        "the names (assuming a pair of related reads contains the same name",
+	"varying only in a trailing slash (/) followed by a digit. If you want",
+	"to turn this feature off just set the $eval_T variable to zero. If",
+	"you want to decrease the sampling period (to speed the script up) or",
+	"increase it (to make it more sensitive to errors) just change $eval_T",
+	"accordingly."],
+      "help_arg": "",
+      "options": [
+        {
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output FastA file."
+	},
+	{
+	  "name": "Input FastA 1",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "First FastA file."
+	},
+	{
+	  "name": "Input FastA 2",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Second FastA file."
+	},
+	{
+	  "name": "Additional FastA",
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "description": "Any additional FastA files (or none)."
+	}
+      ]
     },
     {
       "task": "FastA.length.pl",
-      "description": "",
-      "see_also": ["FastA.N50.pl"]
+      "description": "Returns the length of sequences in (multi-)FastA.",
+      "see_also": ["FastA.N50.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "mandatory": true,
+	  "description": "One or more FastA files."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "A table with the lengths of the sequences."
+	}
+      ]
     },
     {
       "task": "FastA.qlen.pl",
-      "description": ""
+      "description": ["Calculates the quartiles of the length in a set of",
+        "sequences. The Q2 is also known as the median.  Q0 is the minimum",
+	"length, and Q4 is the maximum length. It also calculates TOTAL, the",
+	"added length of the sequences in the file, and AVG, the average",
+	"length."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Sequences",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "A FastA file containing the sequences."
+	},
+	{
+	  "name": "Minimum Length",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "The minimum length to take into consideration."
+	}
+      ]
     },
     {
       "task": "FastA.rename.pl",
