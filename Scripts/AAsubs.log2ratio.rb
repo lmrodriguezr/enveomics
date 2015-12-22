@@ -58,6 +58,9 @@ end.parse!
 # Initialize
 abort "--input is mandatory" if o[:file].nil?
 ALPHABET = %w(A C D E F G H I K L M N P Q R S T V W Y X)
+o[:obs] ||= "#{o[:file]}.obs"
+o[:boot] ||= "#{o[:file]}.boot"
+o[:null] ||= "#{o[:file]}.null"
 
 # Functions
 def dist_summary(a,b)
@@ -89,8 +92,14 @@ ifh.each do |l|
          sample_B[a][prot_index] = 0
       end
    end
-   sample_A[ r[1] ][ prot_index ] += 1 if r[1]!="-"
-   sample_B[ r[2] ][ prot_index ] += 1 if r[2]!="-"
+   [1,2].each do |ds|
+      unless %w(- *).include? r[ds]
+	 abort "Unknown amino acid in line #{$.}: '#{r[ds]}'." unless
+	    ALPHABET.include? r[ds]
+	 sample_A[ r[ds] ][ prot_index ] += 1 if ds==1
+	 sample_B[ r[ds] ][ prot_index ] += 1 if ds==2
+      end
+   end
 end
 ifh.close
 $stderr.puts "  > Found #{prot_index+1} proteins." unless o[:q]
