@@ -11,6 +11,11 @@ require "enveomics_rb/enveomics"
 o = {permutations: 1000, bootstraps: 1000, overwrite: false}
 OptionParser.new do |opt|
    opt.banner = "
+   Estimates the log2-ratio of different amino acids in homologous sites using
+   an AAsubs file (see BlastPairwise.AAsubs.pl). It provides the point
+   estimation (.obs file), the bootstrap of the estimation (.boot file) and the
+   null model based on label-permutation (.null file).
+
    Usage: #{$0} [options]".gsub(/^ +/,"")
    opt.separator ""
    opt.separator "Mandatory"
