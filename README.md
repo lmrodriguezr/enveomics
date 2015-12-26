@@ -19,9 +19,9 @@ please visit [enveomics-gui](https://github.com/lmrodriguezr/enveomics-gui).
 # LICENSE
 
 The files in this repository are licensed under the terms of the
-Artistic License 2.0, except if otherwise noted.
+Artistic License 2.0, except when otherwise noted.
 
-You can find a copy of the license in LICENSE.txt or at
+You can find a copy of the license in [LICENSE.txt]() or at
 http://www.perlfoundation.org/artistic_license_2_0.
 
 # DOCUMENTATION
