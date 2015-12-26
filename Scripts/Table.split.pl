@@ -11,7 +11,7 @@ use Getopt::Std;
 use Symbol;
 
 my %o;
-getopts('i:o:e:h', \%o);
+getopts('i:o:d:e:h', \%o);
 my $file = shift @ARGV;
 
 ($file and not $o{h}) or die "
@@ -24,10 +24,12 @@ my $file = shift @ARGV;
    Options:
       -i <str>	Input field-delimiter.  By default: tabulation (\"\\t\").
       -o <str>	Prefix of the output files.  By default: no prefix (\"\").
+      -d <str>	Output directory. By default: current directory (\"\").
 
 ";
 $o{i} ||= "\t";
 $o{o} ||= "";
+$o{o} = $o{d}."/".$o{o} unless $o{d};
 
 my $open=0;
 my @fhs=();
