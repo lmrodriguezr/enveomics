@@ -231,7 +231,7 @@
           "description": ["A squared matrix (or bottom-left half matrix) with",
             "the distances between categories (OTUs or functions). The first",
             "column must contain the names of the categories, and it shouldn't",
-            "have headers.  If not set, all distances are assumed to be one."],
+            "have headers. If not set, all distances are assumed to be one."],
           "note": "Only used for Rao."
         },
         {
@@ -539,7 +539,7 @@
           "arg": "out_file",
           "description": ["(optional) File containing the saved cache. If",
             "unset, the cache won't be recoverable across instances of this",
-            "script. It is strongly recommended to set a file.  Multiple",
+            "script. It is strongly recommended to set a file. Multiple",
             "parallel instances of this script may use the same cache file."]
         },
         ">",
@@ -589,7 +589,7 @@
           "arg": "select",
           "values": [0,1,2,3,4],
           "default": 0,
-          "description": ["Checks the orientation of the hit.  Values are: 0,",
+          "description": ["Checks the orientation of the hit. Values are: 0,",
             "no checking; 1, same direction; 2, inwards; 3, outwards; 4,",
             "different direction (i.e., 2 or 3)."]
         },
@@ -775,7 +775,7 @@
       "description": ["Sums the weights of all the queries hitting each",
         "subject. Often (but not necessarily) the BLAST files contain only",
         "best matches. The weights can be any number, but a common use of this",
-        "Script is to add up counts (weights are integers).  For example, in a",
+        "Script is to add up counts (weights are integers). For example, in a",
         "BLAST of predicted genes vs some annotation source, the weights could",
         "be the number of reads recruited by each gene."],
       "help_arg": "-h",
@@ -1108,7 +1108,7 @@
     {
       "task": "FastA.N50.pl",
       "description": ["Calculates the N50 value of a set of sequences.",
-        "Alternatively, it can calculate other N** values.  It also calculates",
+        "Alternatively, it can calculate other N** values. It also calculates",
         "the total number of sequences and the total added length."],
       "help_arg": "",
       "see_also": ["FastA.length.pl"],
@@ -1137,6 +1137,7 @@
       "task": "FastA.filter.pl",
       "description": "Extracts a subset of sequences from a FastA file.",
       "help_arg": "-h",
+      "see_also": ["FastQ.filter.pl"],
       "options": [
         {
 	  "opt": "-r",
@@ -1235,6 +1236,7 @@
       "description": ["Interpose sequences in FastA format from two files into",
         "one output file. If more than two files are provided, the script will",
 	"interpose all the input files."],
+      "see_also": ["FastA.split.pl","FastQ.interpose.pl"],
       "warn": ["Please note that this script will check for the consistency of",
         "the names (assuming a pair of related reads contains the same name",
 	"varying only in a trailing slash (/) followed by a digit. If you want",
@@ -1292,7 +1294,7 @@
     {
       "task": "FastA.qlen.pl",
       "description": ["Calculates the quartiles of the length in a set of",
-        "sequences. The Q2 is also known as the median.  Q0 is the minimum",
+        "sequences. The Q2 is also known as the median. Q0 is the minimum",
 	"length, and Q4 is the maximum length. It also calculates TOTAL, the",
 	"added length of the sequences in the file, and AVG, the average",
 	"length."],
@@ -1314,40 +1316,355 @@
     },
     {
       "task": "FastA.rename.pl",
-      "description": ""
+      "description": "Renames a set of sequences in FastA format.",
+      "help_arg": "-h",
+      "options": [
+        {
+	  "name": "Filter list",
+	  "opt": "-f",
+	  "description": "Ignore sequences NOT present in the list."
+	},
+	{
+	  "name": "Quiet",
+	  "opt": "-q",
+	  "description": "Runs quietly."
+	},
+	{
+	  "name": "List.txt",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Tab-delimited list of sequences, with the original",
+	    "ID in the first column and the ID to use in the second."]
+	},
+	{
+	  "name": "Seqs.fa",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the superset of sequences."
+	},
+	">",
+	{
+	  "name": "Renamed.fa",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastA file to be created."
+	}
+      ]
     },
     {
       "task": "FastA.revcom.pl",
-      "description": ""
+      "description": "Reverse-complement sequences in FastA format.",
+      "requires": [ { "perl_lib": "Bio::SeqIO" } ],
+      "help_arg": "--help",
+      "options": [
+        "<",
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file in FastA format."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output file in FastA format."
+	}
+      ]
     },
     {
       "task": "FastA.slider.pl",
-      "description": ""
+      "description": "Slices sequences in fixed- or variable-length windows.",
+      "help_arg": "-help",
+      "options": [
+        {
+	  "opt": "-seq",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file in FastA format."
+	},
+	{
+	  "opt": "-out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output file in FastA format."
+	},
+	{
+	  "opt": "-win",
+	  "arg": "integer",
+	  "default": 18,
+	  "description": "Window size."
+	},
+	{
+	  "opt": "-step",
+	  "arg": "integer",
+	  "default": 1,
+	  "description": "Step size."
+	},
+	{
+	  "name": "Length error",
+	  "opt": "-lerr",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Expected error in chunks length."
+	},
+	{
+	  "opt": "-comm",
+	  "arg": "select",
+	  "values": [0,1],
+	  "default": 0,
+	  "description": ["Generate FastA comments (leaded by semi-colon) to",
+	    "separate input sequences. Set to 0 for no-comments, to 1 for",
+	    "comments."]
+	},
+	{
+	  "opt": "-short",
+	  "arg": "select",
+	  "values": [0,1],
+	  "default": 0,
+	  "description": ["Use chunks shorter than the window size 'as is'.",
+	    "Set to 0 to discard those chunks, to 1 to use them."]
+	}
+      ]
     },
     {
       "task": "FastA.split.pl",
-      "description": "",
-      "see_also": ["FastQ.split.pl"]
+      "description": "Splits a FastA file into two or more files.",
+      "see_also": ["FastA.interpose.pl","FastQ.split.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input file in FastA format."
+	},
+	{
+	  "name": "Out base",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Prefix for the name of the output files. It will be",
+	    "appended with .<i>.fa, where <i> is a consecutive number starting",
+	    "in 1."]
+	},
+	{
+	  "name": "Number of files",
+	  "arg": "integer",
+	  "default": 12,
+	  "description": "Number of files to generate."
+	}
+      ]
     },
     {
       "task": "FastA.subsample.pl",
-      "description": ""
+      "description": "Subsamples a set of sequences.",
+      "help_arg": "-h",
+      "options": [
+        {
+	  "name": "Fraction",
+	  "opt": "-f",
+	  "arg": "string",
+	  "default": "10",
+	  "description": ["Fraction of the library to be sampled (as",
+	    "percentage). It can include several values (separated by comma),",
+	    "as well as ranges of values in the form 'from-to/by'. For",
+	    "example, the -f value 1-5/1,10-50/10,75,99 will produce 12",
+	    "subsamples with expected fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%,",
+	    "30%, 40%, 50%, 75%, and 99%."]
+	},
+	{
+	  "name": "Replicates",
+	  "opt": "-r",
+	  "arg": "integer",
+	  "default": 1,
+	  "description": "Number of replicates per fraction."
+	},
+	{
+	  "name": "Out base",
+	  "opt": "-o",
+	  "arg": "out_file",
+	  "description": ["Prefix of the output files to be created. The",
+	    "output files will have a suffix of the form",
+	    "'.fraction-replicate.fa', where 'fraction' is the percentage",
+	    "sampled and 'replicate' is an increasing integer for replicates",
+	    "of the same fraction. By default: Path to the input file."]
+	},
+	{
+	  "name": "Force",
+	  "opt": "-F",
+	  "description": "Force overwriting output file(s)."
+	},
+	{
+	  "name": "Zeroes",
+	  "opt": "-z",
+	  "description": ["Include leading zeroes in the numeric parts of the",
+	    "output files (e.g., file.002.50-01.fa instead of file.2.50-1.fa),",
+	    "so that alphabetic sorting of files reflects the sampled",
+	    "fraction."]
+	},
+	{
+	  "name": "Quiet",
+	  "opt": "-q",
+	  "description": "Run quietly."
+	}
+      ]
     },
     {
       "task": "FastA.tag.rb",
-      "description": ""
+      "description": "Generates easy-to-parse tagged reads from FastA files.",
+      "see_also": ["FastQ.tag.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastA file containing the sequences."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastA file to create."
+	},
+	{
+	  "opt": "--prefix",
+	  "arg": "string",
+	  "description": "Prefix to use in all IDs."
+	},
+	{
+	  "opt": "--suffix",
+	  "arg": "string",
+	  "description": "Suffix to use in all IDs."
+	},
+	{
+	  "opt": "--defline",
+	  "description": "Keep the original defline after a space."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "FastQ.filter.pl",
-      "description": ""
+      "description": "Extracts a subset of sequences from a FastQ file.",
+      "see_also": ["FastA.filter.pl"],
+      "help_arg": "-h",
+      "options": [
+        {
+	  "name": "Reverse list",
+	  "opt": "-r",
+	  "description": "Extracts sequences NOT present in the list."
+	},
+	{
+	  "name": "Quiet",
+	  "opt": "-q",
+	  "description": "Runs quietly."
+	},
+	{
+	  "name": "List",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "List of sequences to extract."
+	},
+	{
+	  "name": "Seqs.fq",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastQ file containing the superset of sequences."
+	},
+	">",
+	{
+	  "name": "Subset.fq",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastQ file to be created."
+	}
+      ]
     },
     {
       "task": "FastQ.interpose.pl",
-      "description": ""
+      "description": ["Interposes sequences in FastQ format from two files",
+        "into one output file. If more than two files are provided, the script",
+	"will interpose all the input files."],
+      "warn": ["Note that this script will check for the consistency of the",
+        "names (assuming a pair of related reads contains the same name",
+	"varying only in a trailing slash (/) followed by a digit. If you want",
+	"to turn this feature off just set the -T option to zero. If you want",
+	"to decrease the sampling period (to speed the script up) or increase",
+	"it (to make it more sensitive to errors) just change -T option",
+	"accordingly."],
+      "see_also": ["FastQ.split.pl","FastA.interpose.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Checking period",
+	  "opt": "-T",
+	  "arg": "integer",
+	  "default": 1000,
+	  "description": "Sampling period for names evaluation."
+	},
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "First input FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Second input FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "description": "Any additional input FastQ files."
+	}
+      ]
     },
     {
       "task": "FastQ.offset.pl",
-      "description": ""
+      "description": ["There are several FastQ formats. This script takes a",
+        "FastQ in any of them, identifies the type of FastQ (this is, the",
+	"offset), and generates a FastQ with the given offset."],
+      "warn": ["Note that Solexa+64 FastQ can cause problematic values when",
+        "using the offset 33, since there is no equivalent in Phred+33 for",
+	"negative values (the range of Solexa+64 is -5 to 40)."],
+      "help_arg": "",
+      "options": [
+        {
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input file in FastQ format (range is automatically",
+	    "detected)."]
+	},
+	{
+	  "name": "Offset",
+	  "arg": "integer",
+	  "default": 33,
+	  "mandatory": true,
+	  "description": ["Offset to use for the output. Use 0 (zero) to",
+	    "detect the input format and exit."]
+	},
+	{
+	  "opt": "force",
+	  "description": ["If set, turns errors into warnings and continues.",
+	    "Out-of-range values are set to the closest range limit."]
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Output file in FastQ format with the specified",
+	    "offset."]
+	}
+      ]
     },
     {
       "task": "FastQ.split.pl",
@@ -1355,7 +1672,7 @@
         "script can be used to separate interposed sister reads using any even",
         "number of output files."],
       "help_arg": "",
-      "see_also": ["FastA.split.pl"],
+      "see_also": ["FastQ.interpose.pl","FastA.split.pl"],
       "options": [
         {
           "name": "in_file.fq",
@@ -1381,11 +1698,58 @@
     },
     {
       "task": "FastQ.tag.rb",
-      "description": ""
+      "description": "Generates easy-to-parse tagged reads from FastQ files.",
+      "see_also": ["FastA.tag.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastQ file containing the sequences."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastQ to create."
+	},
+	{
+	  "opt": "--prefix",
+	  "arg": "string",
+	  "description": "Prefix to use in all IDs."
+	},
+	{
+	  "opt": "--suffix",
+	  "arg": "string",
+	  "description": "Suffix to use in all IDs."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
     },
     {
       "task": "FastQ.toFastA.awk",
-      "description": ""
+      "description": "Translates FastQ files into FastA.",
+      "help_arg": "'' --help",
+      "options": [
+	"<",
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input FastQ file."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output FastA file."
+	}
+      ]
     },
     {
       "task": "GenBank.add_fields.rb",
