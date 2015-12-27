@@ -1,0 +1,206 @@
+{
+  "tasks": [
+    {
+      "task": "Table.filter.pl",
+      "description": ["Extracts (and re-orders) a subset of rows from a raw",
+        "table."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Key",
+	  "opt": "-k",
+	  "arg": "integer",
+	  "default": 1,
+	  "description": "Column of the table to use as key to filter."
+	},
+	{
+	  "name": "Sep",
+	  "opt": "-s",
+	  "arg": "string",
+	  "description": ["String to use as separation between rows. By",
+	    "default, tabulation."]
+	},
+	{
+	  "name": "Inverse",
+	  "opt": "-i",
+	  "description": ["If set, reports the inverse of the list (i.e.,",
+	    "reports only rows absent in the list). Implies 'No re-order'."]
+	},
+	{
+	  "name": "Header",
+	  "opt": "-h",
+	  "description": "Keep first row of the table (header) untouched."
+	},
+	{
+	  "name": "No re-order",
+	  "opt": "-n",
+	  "description": ["The output has the same order of the table. By",
+	    "default, it prints in the order of the list."]
+	},
+	{
+	  "name": "List",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "List of IDs to extract."
+	},
+	{
+	  "name": "Table",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Table file containing the superset."
+	},
+	">",
+	{
+	  "name": "Subset",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Table file to be created."
+	}
+      ]
+    },
+    {
+      "task": "Table.merge.pl",
+      "description": "Merges multiple (two-column) lists into one table.",
+      "see_also": ["Table.split.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Strings",
+	  "opt": "-s",
+	  "description": ["Values are read as Strings. By default, values are",
+	    "read as numbers."]
+	},
+	{
+	  "name": "Input delimiter",
+	  "opt": "-i",
+	  "arg": "string",
+	  "description": "Input field-delimiter. By default, tabulation."
+	},
+	{
+	  "name": "Output delimiter",
+	  "opt": "-o",
+	  "arg": "string",
+	  "description": "Output field-delimiter. By default: tabulation."
+	},
+	{
+	  "name": "No header",
+	  "opt": "-n",
+	  "description": ["By default, the header is determined by the file",
+	    "names."]
+	},
+	{
+	  "name": "Empty",
+	  "opt": "-e",
+	  "description": ["Default string when no value is found. By default,",
+	    "the 'empty' value is 0 if values are numeric (i.e., unless -s is",
+	    "set) or an empty string otherwise."]
+	},
+	{
+	  "name": "Header",
+	  "opt": "-h",
+	  "arg": "string",
+	  "default": "Tag",
+	  "description": "Header of the first column, containing the IDs."
+	},
+	{
+	  "name": "Header format",
+	  "opt": "-H",
+	  "arg": "string",
+	  "default": "(?:.*/)?([^\\.]+)",
+	  "description": ["Format of filenames capturing the column header in",
+	    "the first capturing parenthesis. Non-capturing paretheses can be",
+	    "defined as (?:...). By default: '(?:.*/)?([^\\.]+)', which",
+	    "captures the part of the basename of the file before the first",
+	    "dot (if any)."]
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "multiple_sep": " ",
+	  "description": "Input two-column lists."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Merged table."
+	}
+      ]
+    },
+    {
+      "task": "Table.round.rb",
+      "description": "Rounds numbers in a table.",
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input table."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output table."
+	},
+	{
+	  "name": "Decimals",
+	  "opt": "--ndigits",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Number of decimal digits."
+	},
+	{
+	  "opt": "--floor",
+	  "description": ["Floors the values instead of rounding them. Ignores",
+	    "'Decimals'."]
+	},
+	{
+	  "opt": "--ceil",
+	  "description": ["Ceils the values instead of rounding them. Ignores",
+	    "'Decimals'."]
+	},
+	{
+	  "opt": "--delimiter",
+	  "arg": "string",
+	  "description": "String delimiting columns. By default, tabulation."
+	}
+      ]
+    },
+    {
+      "task": "Table.split.pl",
+      "description": ["Split a file with multiple columns into multiple",
+        "two-columns lists."],
+      "see_also": ["Table.merge.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Input delimiter",
+	  "opt": "-i",
+	  "arg": "string",
+	  "description": "Input field-delimiter. By default, tabulation."
+	},
+	{
+	  "name": "Out prefix",
+	  "opt": "-o",
+	  "arg": "string",
+	  "description": "Prefix of the output files."
+	},
+	{
+	  "name": "Output directory",
+	  "opt": "-d",
+	  "arg": "out_dir",
+	  "description": "Output directory."
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input table."
+	}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+{
+  "_": "This file loads all the .json files inside 'Manifest/Tasks'.",
+  "_include": "Tasks/*.json"
+}

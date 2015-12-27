@@ -1,0 +1,208 @@
+{
+  "tasks": [
+    {
+      "task": "FastQ.filter.pl",
+      "description": "Extracts a subset of sequences from a FastQ file.",
+      "see_also": ["FastA.filter.pl"],
+      "help_arg": "-h",
+      "options": [
+        {
+	  "name": "Reverse list",
+	  "opt": "-r",
+	  "description": "Extracts sequences NOT present in the list."
+	},
+	{
+	  "name": "Quiet",
+	  "opt": "-q",
+	  "description": "Runs quietly."
+	},
+	{
+	  "name": "List",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "List of sequences to extract."
+	},
+	{
+	  "name": "Seqs.fq",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastQ file containing the superset of sequences."
+	},
+	">",
+	{
+	  "name": "Subset.fq",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastQ file to be created."
+	}
+      ]
+    },
+    {
+      "task": "FastQ.interpose.pl",
+      "description": ["Interposes sequences in FastQ format from two files",
+        "into one output file. If more than two files are provided, the script",
+	"will interpose all the input files."],
+      "warn": ["Note that this script will check for the consistency of the",
+        "names (assuming a pair of related reads contains the same name",
+	"varying only in a trailing slash (/) followed by a digit. If you want",
+	"to turn this feature off just set the -T option to zero. If you want",
+	"to decrease the sampling period (to speed the script up) or increase",
+	"it (to make it more sensitive to errors) just change -T option",
+	"accordingly."],
+      "see_also": ["FastQ.split.pl","FastA.interpose.pl"],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Checking period",
+	  "opt": "-T",
+	  "arg": "integer",
+	  "default": 1000,
+	  "description": "Sampling period for names evaluation."
+	},
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "First input FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Second input FastQ file."
+	},
+	{
+	  "arg": "in_file",
+	  "multiple_sep": " ",
+	  "description": "Any additional input FastQ files."
+	}
+      ]
+    },
+    {
+      "task": "FastQ.offset.pl",
+      "description": ["There are several FastQ formats. This script takes a",
+        "FastQ in any of them, identifies the type of FastQ (this is, the",
+	"offset), and generates a FastQ with the given offset."],
+      "warn": ["Note that Solexa+64 FastQ can cause problematic values when",
+        "using the offset 33, since there is no equivalent in Phred+33 for",
+	"negative values (the range of Solexa+64 is -5 to 40)."],
+      "help_arg": "",
+      "options": [
+        {
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input file in FastQ format (range is automatically",
+	    "detected)."]
+	},
+	{
+	  "name": "Offset",
+	  "arg": "integer",
+	  "default": 33,
+	  "mandatory": true,
+	  "description": ["Offset to use for the output. Use 0 (zero) to",
+	    "detect the input format and exit."]
+	},
+	{
+	  "opt": "force",
+	  "description": ["If set, turns errors into warnings and continues.",
+	    "Out-of-range values are set to the closest range limit."]
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Output file in FastQ format with the specified",
+	    "offset."]
+	}
+      ]
+    },
+    {
+      "task": "FastQ.split.pl",
+      "description": ["Splits a FastQ file into several FastQ files. This",
+        "script can be used to separate interposed sister reads using any even",
+        "number of output files."],
+      "help_arg": "",
+      "see_also": ["FastQ.interpose.pl","FastA.split.pl"],
+      "options": [
+        {
+          "name": "in_file.fq",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in FastQ format."
+        },
+        {
+          "name": "out_base",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Prefix for the name of the output files. It will be",
+            "appended with .<i>.fastq, where <i> is a consecutive number",
+            "starting in 1."]
+        },
+        {
+          "name": "no_files",
+          "arg": "integer",
+          "default": 2,
+          "description": "Number of files to generate."
+        }
+      ]
+    },
+    {
+      "task": "FastQ.tag.rb",
+      "description": "Generates easy-to-parse tagged reads from FastQ files.",
+      "see_also": ["FastA.tag.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input file",
+	  "opt": "--in",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "FastQ file containing the sequences."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "FastQ to create."
+	},
+	{
+	  "opt": "--prefix",
+	  "arg": "string",
+	  "description": "Prefix to use in all IDs."
+	},
+	{
+	  "opt": "--suffix",
+	  "arg": "string",
+	  "description": "Suffix to use in all IDs."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
+    },
+    {
+      "task": "FastQ.toFastA.awk",
+      "description": "Translates FastQ files into FastA.",
+      "help_arg": "'' --help",
+      "options": [
+	"<",
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Input FastQ file."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output FastA file."
+	}
+      ]
+    }
+  ]
+}

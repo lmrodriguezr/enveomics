@@ -1,0 +1,99 @@
+{
+  "tasks": [
+    {
+      "task": "AAsubs.log2ratio.rb",
+      "description": ["Estimates the log2-ratio of different amino acids in",
+        "homologous sites using an AAsubs file (see BlastPairwise.AAsubs.pl).",
+	"It provides the point estimation (.obs file), the bootstrap of the",
+	"estimation (.boot file) and the null model based on label-permutation",
+	"(.null file)."],
+      "see_also": ["BlastPairwise.AAsubs.pl"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "opt": "--input",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Input file in AAsubs format. It's a tab-delimited",
+	    "table where each line corresponds to a substitution, the first",
+	    "column corresponds to the compared protein IDs, the second",
+	    "and third columns correspond to the AA on each protein, and the",
+	    "fourth column indicates the length of the protein (not used by",
+	    "this script."]
+	},
+	{
+	  "opt": "--obs-file",
+	  "arg": "out_file",
+	  "description": ["Output file with the log2-ratios per amino acid.",
+	    "By default, 'Input value'.obs."]
+	},
+	{
+	  "opt": "--bootstrap-file",
+	  "arg": "out_file",
+	  "description": ["Output file with the bootstrap results of",
+	    "log2-ratios per amino acid. By default, 'Input value'.boot."]
+	},
+	{
+	  "opt": "--null-file",
+	  "arg": "out_file",
+	  "description": ["Output file with the permutation results of",
+	    "log2-ratios per amino acid. By default, 'Input value'.null."]
+	},
+	{
+	  "opt": "--overwrite",
+	  "description": ["Overwrite existing files. By default, skip steps if",
+	    "the files already exist."]
+	},
+	{
+	  "opt": "--bootstraps",
+	  "arg": "integer",
+	  "default": 1000,
+	  "description": "Number of bootstraps to run."
+	},
+	{
+	  "opt": "--permutations",
+	  "arg": "integer",
+	  "default": 1000,
+	  "description": "Number of permutations to run."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
+    },
+    {
+      "task": "BlastPairwise.AAsubs.pl",
+      "description": ["Counts the different AA substitutions in the best hit",
+        "blast alignments, from a BLASTP pairwise format output (-outfmt 0 in",
+	"BLAST+, -m 0 in legacy BLAST)."],
+      "see_also": ["AAsubs.log2ratio.rb"],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "Cigar char",
+	  "arg": "select",
+	  "values": ["+","_"],
+	  "mandatory": true,
+	  "description": ["Use '+' for similar substitutions, use '_' for non",
+	    "similar substitutions."]
+	},
+	{
+	  "name": "Blast M0",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Blast in 'pairwise text' format (-outfmt/-m 0)."
+	},
+	">",
+	{
+	  "name": "AA subs",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["A tab-delimited raw file with one substitution per",
+	    "row and columns: (1) Name-of-query_Name-of-subject, (2)",
+	    "AA-in-subject, (3) AA-in-query, (4) Total-Align-Length."]
+	}
+      ]
+    }
+  ]
+}

@@ -1,0 +1,609 @@
+{
+  "tasks": [
+    {
+      "task": "BlastTab.addlen.rb",
+      "description": ["Appends an extra column to a tabular BLAST with the",
+        "length of the query or the subject sequence."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--fasta",
+          "arg": "in_file",
+          "description": "FastA file of the query or the subject.",
+          "mandatory": true
+        },
+        {
+          "opt": "--subject",
+          "description": ["Use the subject column of the BLAST, by default the",
+            "query column is used."],
+          "note": "If used, the input FastA must contain subject sequences."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        },
+        "<",
+        {
+          "arg": "in_file",
+          "description": "Input tabular BLAST file.",
+          "mandatory": true
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "description": "Output tabular BLAST file with additional column.",
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.advance.bash",
+      "description": ["Calculates the percentage of a partial BLAST result.",
+        "The value produced slightly subestimates the actual advance, due to",
+        "un-flushed output and trailing queries that could be processed but",
+        "generate no results."],
+      "help_arg": "",
+      "requires": [ { "interpreter": "awk" } ],
+      "options": [
+        {
+          "name": "Blast",
+          "arg": "in_file",
+          "description": "Incomplete BLAST output.",
+          "mandatory": true
+        },
+        {
+          "name": "Query FastA",
+          "arg": "in_file",
+          "description": "FastA file with query sequences.",
+          "mandatory": true
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.best_hit_sorted.pl",
+      "description": "Filters a tabular BLAST to retain only the best matches.",
+      "help_arg": "--help",
+      "see_also": ["BlastTab.topHits_sorted.rb"],
+      "options": [
+        {
+          "name": "Sort",
+          "arg": "select",
+          "values": ["sort","cat"],
+          "mandatory": true,
+          "description": ["Use 'sort' if your BLAST is not pre-sorted by the",
+            "first column (or if you're not sure). Use 'cat' otherwise."]
+        },
+        {
+          "name": "Input BLAST",
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": "Tabular BLAST file to filter."
+        },
+        "|",
+        { "arg": "task" },
+        ">",
+        {
+          "name": "Output BLAST",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Filetered tabular BLAST output."
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.catsbj.pl",
+      "description": ["Generates a list of hits from a BLAST result",
+        "concatenating the subject sequences. This can be used, e.g., to",
+        "analyze BLAST results against draft genomes. This script creates two",
+        "files using <map.bls> as prefix with extensions .rec (for the",
+        "recruitment plot) and .lim (for the limits of the different sequences",
+        "in <seq.fa>)."],
+      "help_arg": "-h",
+      "options": [
+         {
+           "opt": "-i",
+           "name": "Identity",
+           "description": "Minimum identity (in %) to report a result.",
+           "arg": "float",
+           "default": 70.0
+         },
+         {
+           "opt": "-l",
+           "name": "Length",
+           "description": "Minimum alignment length to report a result.",
+           "default": 60.0,
+           "arg": "float"
+         },
+         {
+           "opt": "-s",
+           "name": "Subset",
+           "description": ["The FastA provided is to be treated as a subset of",
+             "the subject. By default, it expects all the subjects to be",
+             "present in the BLAST."]
+         },
+         {
+           "opt": "-q",
+           "name": "Quiet",
+           "description": "Run quietly."
+         },
+         {
+           "name": "seq.fa",
+           "description": "Subject sequences (ref) in FastA format.",
+           "mandatory": true,
+           "arg": "in_file"
+         },
+         {
+           "name": "map.bls",
+           "description": ["Mapping of the reads to the reference in Tabular",
+             "BLAST format."],
+           "mandatory": true,
+           "arg": "in_file"
+         }
+      ]
+    },
+    {
+      "task": "BlastTab.cogCat.rb",
+      "description": ["Replaces the COG gene IDs in a BLAST for the COG",
+        "category."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--whog",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "COG's 'whog' file."
+        },
+        {
+          "opt": "--blast",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Tabular BLAST file."
+        },
+        {
+          "opt": "--cog",
+          "description": "If set, returns the COG ID, not the COG category."
+        },
+        {
+          "opt": "--desc",
+          "description": "Includes COG description (requires --cog)."
+        },
+        {
+          "opt": "--noverbose",
+          "description": "Run quietly, but show warnings."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "name": "COG Blast",
+          "mandatory": true,
+          "description": "Tabular BLAST with COG ID's or categories as subject."
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.filter.pl",
+      "description": ["Extracts a subset of hits (queries or subjects) from a",
+        "tabular BLAST."],
+      "help_arg": "",
+      "options": [
+        {
+          "name": "Subject",
+          "opt": "-s",
+          "description": ["If set, assumes that list.txt contains subject IDs.",
+            "By default: assumes query IDs."]
+        },
+        {
+          "name": "Inverse",
+          "opt": "-i",
+          "description": ["If set, reports the inverse of the list (i.e.,",
+            "reports only hits absent in the list)."]
+        },
+        {
+          "name": "list.txt",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "List of IDs to extract."
+        },
+        {
+          "name": "blast.txt",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Tabular BLAST file containing the superset of hits."
+        },
+        ">",
+        {
+          "name": "subset.txt",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Tabulat BLAST file to be created."
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.pairedHits.rb",
+      "description": "Identifies the best hits of paired-reads.",
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--blast",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input Tabular BLAST file.",
+          "note": ["This script assumes that paired hits are next to each",
+            "other. If this is not the case (e.g., because the blast was",
+            "concatenated), you must sort the input before running this",
+            "script."]
+        },
+        {
+          "name": "Min score",
+          "opt": "--minscore",
+          "arg": "float",
+          "default": 0.0,
+          "description": "Minimum (summed) Bit-Score to consider a pair-match."
+        },
+        {
+          "name": "Best hits",
+          "opt": "--besthits",
+          "arg": "integer",
+          "default": 0,
+          "description": ["Outputs top best-hits only (use 0 to output all the",
+            "paired hits)."]
+        },
+        {
+          "name": "Orientation",
+          "opt": "--orient",
+          "arg": "select",
+          "values": [0,1,2,3,4],
+          "default": 0,
+          "description": ["Checks the orientation of the hit. Values are: 0,",
+            "no checking; 1, same direction; 2, inwards; 3, outwards; 4,",
+            "different direction (i.e., 2 or 3)."]
+        },
+        {
+          "name": "Sister prefix",
+          "opt": "--sisprefix",
+          "arg": "string",
+          "default": "_",
+          "description": ["Sister read number prefix in the name of the reads.",
+            "Escape characters as dots (\\.), parenthesis (\\(, \\), \\[,",
+            "\\]), other characters with special meaning in regular",
+	    "expressions (\\*, \\+, \\^, \\$, \\|). This prefix allows regular",
+	    "expressions (for example, use ':|\\.' to use any of colon or",
+	    "dot). Note that the prefix will not be included in the base name",
+	    "reported in the output."]
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Tab-delimited flat file, with the following",
+            "columns: (1) Query ID (without the \"sister\" identifier). (2)",
+            "Subject ID. (3) Bit score (summed from both sister reads). (4/5)",
+            "From/To (subject) coordinates for read 1. (6/7) From/To (subject)",
+            "coordinates for read 2. (8) Reads orientation (1: same direction,",
+            "2: inwards, 3: outwards). (9) Estimated insert size."]
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.seqdepth.pl",
+      "description": "Estimates the sequencing depth of subject sequences.",
+      "help_arg": "",
+      "see_also": ["BlastTab.seqdepth_ZIP.pl", "BlastTab.seqdepth_nomedian.pl"],
+      "options": [
+        "cat",
+        {
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": ["One or more Tabular BLAST files of reads vs genes",
+            "(or contigs)."]
+        },
+        "|",
+	{ "arg": "task" },
+        {
+          "name": "genes_or_ctgs.fna",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["A FastA file containing the genes or the contigs",
+            "(db)."]
+        },
+        ">",
+        {
+          "name": "genes_or_ctgs.cov",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["A tab-delimited file with the following columns:",
+            "(1) Subject ID. (2) Average sequencing depth. (3) Median",
+            "sequencing depth. (4) Number of mapped reads. (5) Length of the",
+            "subject sequence."]
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.seqdepth_ZIP.pl",
+      "description": ["Estimates the average sequencing depth of subject",
+        "sequences (genes or contigs) assuming a Zero-Inflated Poisson",
+        "distribution (ZIP) to correct for non-covered positions. It uses the",
+        "corrected method of moments estimators (CMMEs) as described by",
+        "Beckett et al [1]. Note that [1] has a mistake in eq. (2.4), that",
+        "should be: pi-hat-MM = 1 - (X-bar / lambda-hat-MM). Also note that a",
+        "more elaborated mixture distribution can arise from coverage",
+        "histograms (e.g., see [2] for an additional correction called 'tail",
+        "distribution' and mixtures involving negative binomial) so take these",
+        "results cum grano salis.\n [1]",
+        "http://anisette.ucs.louisiana.edu/Academic/Sciences/MATH/stage/stat2012.pdf\n",
+        "[2] Lindner et al, Bioinformatics, 2013."],
+      "help_arg": "",
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_nomedian.pl"],
+      "options": [
+        "cat",
+        {
+          "name": "blast",
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": ["One or more Tabular BLAST files of reads vs genes",
+            "(or contigs)."]
+        },
+        "|",
+        { "arg": "task" },
+        {
+          "name": "genes_or_ctgs.fna",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["A FastA file containing the genes or the contigs",
+            "(db)."]
+        },
+        ">",
+        {
+          "name": "genes_or_ctgs.cov",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Output file with the following columns:",
+            "(1) Subject ID.",
+            "(2) Estimated average sequencing depth (CMME lambda).",
+            "(3) Zero-inflation (CMME pi).",
+            "(4) Observed average sequencing depth.",
+            "(5) Observed median sequencing depth.",
+            "(6) Observed median sequencing depth excluding zeroes.",
+            "(7) Number of mapped reads.",
+            "(8) Length of the subject sequence."]
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.seqdepth_nomedian.pl",
+      "description": ["Estimates the sequencing depth of subject",
+        "sequences. The values reported by this script may differ from those",
+	"of BlastTab.seqdepth.pl, because this script uses the aligned length",
+	"of the read while BlastTab.seqdepth.pl uses the aligned length of the",
+	"subject sequence."],
+      "help_arg": "",
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_ZIP.pl"],
+      "options": [
+        "cat",
+	{
+	  "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": ["One or more Tabular BLAST files of reads vs genes",
+            "(or contigs)."]
+	},
+	"|",
+	{ "arg": "task" },
+        {
+          "name": "genes_or_ctgs.fna",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["A FastA file containing the genes or the contigs",
+            "(db)."]
+        },
+        ">",
+        {
+          "name": "genes_or_ctgs.cov",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["A tab-delimited file with the following columns:",
+            "(1) Subject ID. (2) Average sequencing depth. (3) Number of",
+	    "mapped reads. (4) Length of the subject sequence."]
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.subsample.pl",
+      "description": ["Filters a BLAST output including only the hits produced",
+        "by any of the given sequences as query."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "blast.tab",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "BLAST output to be filtered (tabular format)."
+	},
+	{
+	  "name": "sample.fa",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Sequences to use as query (FastA format)."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "The filtered BLAST output (tabular format)."
+	}
+      ]
+    },
+    {
+      "task": "BlastTab.sumPerHit.pl",
+      "description": ["Sums the weights of all the queries hitting each",
+        "subject. Often (but not necessarily) the BLAST files contain only",
+        "best matches. The weights can be any number, but a common use of this",
+        "Script is to add up counts (weights are integers). For example, in a",
+        "BLAST of predicted genes vs some annotation source, the weights could",
+        "be the number of reads recruited by each gene."],
+      "help_arg": "-h",
+      "options": [
+        {
+          "name": "Weights file",
+          "opt": "-w",
+          "arg": "in_file",
+          "description": ["A two-columns tab-delimited file containing the",
+            "weight of each query."]
+        },
+        {
+          "name": "Minimum score",
+          "opt": "-s",
+          "arg": "float",
+          "default": 0.0
+        },
+        {
+          "name": "Minimum identity (%)",
+          "opt": "-i",
+          "arg": "float",
+          "default": 0.0
+        },
+        {
+          "name": "Queries",
+          "opt": "-m",
+          "arg": "integer",
+          "default": 0,
+          "description": "Maximum number of queries. Set to 0 for all."
+        },
+        {
+          "name": "Normalize",
+          "opt": "-n",
+          "description": "Normalize weights by the number of hits per query."
+        },
+        {
+          "name": "Include zeroes",
+          "opt": "-z",
+          "description": ["Add zero when weight is not found (by default:",
+            "doesn't list them)."]
+        },
+        {
+          "name": "Run quietly",
+          "opt": "-q"
+        },
+        {
+          "name": "blast",
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": "One or more BLAST files."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["A two-columns tab-delimited file containing the",
+            "summed weights per hit."]
+        }
+      ]
+    },
+    {
+      "task": "BlastTab.taxid2taxrank.pl",
+      "description": ["Takes a BLAST with NCBI Taxonomy IDs as subjects and",
+        "replaces them by names at a given taxonomic rank."],
+      "help_arg": "",
+      "options": [
+        {
+	  "name": "tax_blast.txt",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": ["BLAST output, where subject IDs are NCBI Taxonomy",
+	    "IDs."]
+	},
+	{
+	  "name": "nodes.dmp",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Nodes file from NCBI Taxonomy.",
+	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+	},
+	{
+	  "name": "names.dmp",
+	  "mandatory": true,
+	  "arg": "in_file",
+	  "description": "Names file from NCBI Taxonomy.",
+	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+	},
+	{
+	  "name": "rank",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": "genus",
+	  "description": ["The rank to be reported. All the reported nodes",
+	    "will have the same rank. To see supported values, run:\n",
+	    "`cut -f 5 nodes.dmp | sort -u`."]
+	},
+	{
+	  "name": "Best-hit",
+	  "arg": "select",
+	  "values": ["yes", "no"],
+	  "default": "yes",
+	  "description": ["Should it take into account the best hit per query",
+	    "only? This is: should it filter by best-hit?"]
+	},
+	">",
+	{
+	  "name": "taxrank_list.txt",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["BLAST-like output, where subject IDs are Taxonomy",
+	    "names."]
+	}
+      ]
+    },
+    {
+      "task": "BlastTab.topHits_sorted.rb",
+      "description": ["Reports the top-N best hits of a BLAST, pre-sorted by",
+        "query."],
+      "help_arg": "--help",
+      "see_also": "BlastTab.best_hit_sorted.pl",
+      "options": [
+        {
+          "name": "Sort",
+          "arg": "select",
+          "values": ["sort","cat"],
+          "mandatory": true,
+          "description": ["Use 'sort' if your BLAST is not pre-sorted by the",
+            "first column (or if you're not sure). Use 'cat' otherwise."]
+	},
+	{
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "Tabular BLAST file."
+	},
+	"|",
+	{ "arg": "task" },
+	"--blast",
+	"/dev/stdin",
+	{
+	  "opt": "--top",
+	  "arg": "integer",
+	  "default": 5,
+	  "description": "Maximum number of hits to report for each query."
+	},
+	{
+	  "opt": "--sort-by",
+	  "arg": "select",
+	  "values": ["bitscore", "evalue", "identity", "length"],
+	  "default": "bitscore",
+	  "description": "Parameter used to detect the 'best' hits."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	}
+      ]
+    }
+  ]
+}

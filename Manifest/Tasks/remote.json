@@ -1,0 +1,279 @@
+{
+  "tasks": [
+    {
+      "task": "BlastTab.kegg_pep2path_rest.pl",
+      "description": ["Takes a BLAST against KEGG_PEP (or KO) and retrieves",
+        "the pathways in which the subject peptides are involved."],
+      "requires": [
+        {
+	  "perl_lib": "JSON"
+        },
+        {
+          "description": "Perl library LWP::Simple",
+          "test": "perl -MLWP::Simple -e ''"
+        }
+      ],
+      "help_arg": "",
+      "options": [
+        {
+          "name": "blast.txt",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input tabular BLAST file."
+        },
+        {
+          "name": "Cache file",
+          "arg": "out_file",
+          "description": ["(optional) File containing the saved cache. If",
+            "unset, the cache won't be recoverable across instances of this",
+            "script. It is strongly recommended to set a file. Multiple",
+            "parallel instances of this script may use the same cache file."]
+        },
+        ">",
+        {
+          "name": "output.txt",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Tab-delimited output file, with the columns: (1)",
+            "Query ID, (2) Subject ID, (3) Pathway ID, (4) Pathway (reference)",
+            "description, (5) Organism."]
+        }
+      ]
+    },
+    {
+      "task": "M5nr.getSequences.rb",
+      "description": ["Downloads a set of sequences from M5nr with a given",
+        "functional annotation."],
+      "help_arg": "--help",
+      "requires": [
+        { "ruby_gem": "restclient" },
+        { "ruby_gem": "open-uri" },
+        { "ruby_gem": "JSON" }
+      ],
+      "options": [
+        {
+	  "opt": "--function",
+	  "arg": "string",
+	  "mandatory": true,
+	  "description": "Functional annotation."
+	},
+	{
+	  "name": "Output file",
+	  "opt": "--out",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "File containing the sequences."
+	},
+	{
+	  "opt": "--max",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": ["Maximum number of sequences to download. Set to",
+	    "0 to download all."]
+	},
+	{
+	  "opt": "--recover",
+	  "description": "If set, tries to recover a previous FastA."
+	},
+	{
+	  "name": "URL",
+	  "opt": "--url",
+	  "arg": "string",
+	  "default": "http://api.metagenomics.anl.gov/m5nr",
+	  "description": "URL for M5nr API."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly (no STDERR output)."
+	}
+      ]
+    },
+    {
+      "task": "EBIseq2tax.rb",
+      "description": ["Maps a list of EBI-supported IDs to their corresponding",
+        "NCBI taxonomy using EBI RESTful API."],
+      "warn": ["Avoid using this script on millions of entries at a time,",
+        "since each entry elicits requests to EBI and NCBI servers."],
+      "requires": [
+        {
+	  "ruby_gem": "nokogiri"
+	}
+      ],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "IDs",
+	  "opt": "--ids",
+	  "arg": "string",
+	  "description": "Comma-separated list of EBI IDs.",
+	  "note": "Required unless 'Input file' is passed."
+	},
+	{
+	  "name": "Input file",
+	  "opt": "--infile",
+	  "arg": "in_file",
+	  "description": ["Raw text file containing the list of EBI IDs,",
+	    "one per line."],
+	  "note": "Required unless 'IDs' is passed."
+	},
+	{
+	  "opt": "--database",
+	  "arg": "string",
+	  "default": "uniprotkb",
+	  "description": "EBI database defining the EBI IDs."
+	},
+	{
+	  "opt": "--ranks",
+	  "arg": "string",
+	  "description": "Comma-delimited list of taxonomic ranks to report.",
+	  "default": "superkingdom,phylum,class,order,family,genus,species"
+	},
+	{
+	  "opt": "--noheader",
+	  "description": "Do not includ a header in the output."
+	},
+	{
+	  "opt": "--taxids",
+	  "description": "Return Taxonomy IDs instead of scientific names."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	}
+      ]
+    },
+    {
+      "task": "RefSeq.download.bash",
+      "description": ["Downloads a collection of sequences and/or annotations",
+        "from NCBI's RefSeq."],
+      "help_arg": "",
+      "requires": [
+        {
+	  "description": "curl",
+	  "test": "curl --version"
+	}
+      ],
+      "options": [
+        {
+	  "name": "Organism",
+	  "arg": "string",
+	  "mandatory": true,
+	  "description": ["The organism to download (e.g.,",
+	    "Streptococcus_pneumoniae)."]
+	},
+	{
+	  "name": "Extension",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": ".*.gz",
+	  "description": ["Extension to download. Common extensions include",
+	    ".fna.gz (genomic sequences), .faa.gz (protein sequences),",
+	    ".gff.gz (annotations), and .*.gz (all data)."]
+	},
+	{
+	  "name": "Level",
+	  "arg": "string",
+	  "mandatory": true,
+	  "default": "Any",
+	  "description": ["Use only genomes with this assembly level. Common",
+	    "levels are 'Complete Genome' and 'Contig'. By default, any",
+	    "assembly level is allowed ('Any')."]
+	},
+	{
+	  "name": "Directory",
+	  "arg": "out_dir",
+	  "description": ["Directory where the files are to be downladed.",
+	    "By default, same as 'Organism'."]
+	}
+      ]
+    },
+    {
+      "task": "SRA.download.bash",
+      "description": ["Downloads the set of runs from a project, sample, or",
+        "experiment in SRA."],
+      "help_arg": "",
+      "requires": [
+        {
+	  "description": "curl",
+	  "test": "curl --version"
+	}
+      ],
+      "options": [
+        {
+	  "name": "SRA ID",
+	  "arg": "string",
+	  "mandatory": true,
+	  "description": "ID of the SRA Project, Sample, or Experiment."
+	},
+	{
+	  "name": "dir",
+	  "arg": "out_dir",
+	  "description": ["Directory where the files are to be downladed. By",
+	    "default, same as 'SRA ID'."]
+	}
+      ]
+    },
+    {
+      "task": "gi2tax.rb",
+      "description": ["Maps a list of NCBI GIs to their corresponding taxonomy",
+        "using the NCBI EUtilities."],
+      "warn": ["Avoid using this script on millions of entries at a time,",
+        "since each entry elicits two requests to NCBI's servers."],
+      "requires": [
+        {
+	  "ruby_gem": "nokogiri"
+	}
+      ],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "GIs",
+	  "opt": "--gis",
+	  "arg": "string",
+	  "description": "Comma-separated list of GIs.",
+	  "note": "Required unless 'Input file' is passed."
+	},
+	{
+	  "name": "Input file",
+	  "opt": "--infile",
+	  "arg": "in_file",
+	  "description": ["Raw text file containing the list of GIs, one per",
+	    "line."],
+	  "note": "Required unless 'GIs' is passed."
+	},
+	{
+	  "opt": "--protein",
+	  "description": ["Use if the GIs are proteins. Otherwise, GIs are",
+	    "assumed to be from the Nuccore Database."]
+	},
+	{
+	  "opt": "--ranks",
+	  "arg": "string",
+	  "description": "Taxonomic ranks to report, separated by commas.",
+	  "default": "superkingdom,phylum,class,order,family,genus,species"
+	},
+	{
+	  "name": "No header",
+	  "opt": "--noheader",
+	  "description": "Do not include a header in the output."
+	},
+	{
+	  "name": "Tax IDs",
+	  "opt": "--taxids",
+	  "description": "Return Taxonomy IDs instead of scientific names."
+	},
+	{
+	  "opt": "--quiet",
+	  "description": "Run quietly."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Tab-delimited table with GIs and taxonomic",
+	    "classification."]
+	}
+      ]
+    }
+  ]
+}
