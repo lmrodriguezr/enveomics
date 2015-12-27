@@ -3,6 +3,7 @@
     "https://github.com/lmrodriguezr/enveomics-gui/."],
   "_include": [
     "Manifest/categories.json",
+    "Manifest/examples.json",
     "Manifest/tasks.json"
   ]
 }
