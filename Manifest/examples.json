@@ -5,9 +5,8 @@
       "task": "rbm.rb",
       "description": ["Reciprocal Best Matches between the proteomes of the",
         "two major HIV types (HIV-1 and HIV-2)."],
-      "values": ["hiv1.faa","hiv2.faa",null,null,null,null,null,null,null,
-        null,null,null,null,null,null,null,null,null,null,null,null,null,
-        "hiv1-hiv2.rbm"]
+      "values": ["hiv1.faa","hiv2.faa",null,null,null,null,null,null,null,null,
+        null,null,"hiv1-hiv2.rbm"]
     },
     {
       "task": "ogs.mcl.rb",
@@ -35,8 +34,7 @@
       "description": ["Average Amino acid Identity (AAI) between Mycoplasma",
         "genitalium (Bacteria) and Nanoarchaeum equitans (Archaea)."],
      "values": ["Mgen_M2288.faa", "Nequ_Kin4M.faa",null,null,null,null,null,
-       null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-       null,null]
+       null,null,null,null,null,null,null,null,null,null,null,null,null,null]
     }
   ]
 }
