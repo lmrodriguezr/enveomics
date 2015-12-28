@@ -57,7 +57,8 @@ ARGF.each_line do |ln|
       end
    when :list
       if /^\s*$/.match(ln).nil?
-         ln.gsub!(/#.*/,"")
+         next if ln =~ /^\s*-+ inclusion threshold -+$/
+	 ln.gsub!(/#.*/,"")
 	 row = ln.split(/\s+/)
 	 row << nil if row.count==10
 	 raise "Unable to parse seemingly malformed list of hits in line " +
