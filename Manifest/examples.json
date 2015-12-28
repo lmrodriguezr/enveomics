@@ -1,6 +1,27 @@
 {
-  "_": "Input files and directories are included in the 'Examples' folder.",
+  "_": "Input files and directories are included in the 'Tests' folder.",
   "examples": [
+    {
+      "task": "ogs.stats.rb",
+      "description": ["Statistics on the groups of orthology in the Primate",
+        "Lentivirus Group, including HIV-1, HIV-2, and SIV."],
+      "values": ["primate_lentivirus.ogs",null,null,null,null,null]
+    },
+    {
+      "task": "ani.rb",
+      "description": ["Average Nucleotide Identity (ANI) between two strains",
+        "of Mycoplasma genitalium (M2288 and M2321)."],
+      "values": ["Mgen_M2288.fna","Mgen_M2321.fna",null,null,null,null,null,
+        null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+	null,null]
+    },
+    {
+      "task": "aai.rb",
+      "description": ["Average Amino acid Identity (AAI) between Mycoplasma",
+        "genitalium (Bacteria) and Nanoarchaeum equitans (Archaea)."],
+      "values": ["Mgen_M2288.faa","Nequ_Kin4M.faa",null,null,null,null,null,
+        null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+    },
     {
       "task": "rbm.rb",
       "description": ["Reciprocal Best Matches between the proteomes of the",
@@ -12,29 +33,22 @@
       "task": "ogs.mcl.rb",
       "description": ["Groups of orthology in the Primate Letivirus Group,",
 	 "including HIV-1, HIV-2, and SIV."],
-      "values": ["primate_lentivirus.ogs", "primate_lentivirus.rbm",null,null,
+      "values": ["primate_lentivirus.ogs","primate_lentivirus.rbm",null,null,
         null,null,null,null,null,null,null,null]
     },
     {
-      "task": "ogs.stats.rb",
-      "description": ["Statistics on the groups of orthology in the Primate",
-        "Lentivirus Group, including HIV-1, HIV-2, and SIV."],
-      "values": ["primate_lentivirus.ogs",null,null,null,null,null]
+      "task": "HMM.essential.rb",
+      "description": ["Typical single-copy bacterial genes present in",
+        "Mycoplasma genitalium."],
+      "values": ["Mgen_M2288.faa",null,null,null,true,null,null,null,null,null,
+	null,null,null,null,null]
     },
     {
-      "task": "ani.rb",
-      "description": ["Average Nucleotide Identity (ANI) between two strains",
-        "of Mycoplasma genitalium (M2288 and M2321)."],
-      "values": ["Mgen_M2288.fna", "Mgen_M2321.fna",null,null,null,null,null,
-        null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-	null,null]
-    },
-    {
-      "task": "aai.rb",
-      "description": ["Average Amino acid Identity (AAI) between Mycoplasma",
-        "genitalium (Bacteria) and Nanoarchaeum equitans (Archaea)."],
-     "values": ["Mgen_M2288.faa", "Nequ_Kin4M.faa",null,null,null,null,null,
-       null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+      "task": "HMM.essential.rb",
+      "description": ["Typical single-copy archaeal genes present in",
+        "Nanoarchaeum equitans."],
+      "values": ["Mgen_M2288.faa",null,null,null,null,true,null,null,null,null,
+	null,null,null,null,null]
     }
   ]
 }

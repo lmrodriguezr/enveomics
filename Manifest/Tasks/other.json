@@ -366,7 +366,7 @@
 	"completeness of 23.4%. Use the options --bacteria and/or --archaea to",
 	"ignore models often missing in one or both domains. Note that even",
 	"with these options, some complete archaeal genomes result in very low",
-	"values of completeness (e.g., Nanoarchaeum equitans returns 76.9%)."],
+	"values of completeness (e.g., Nanoarchaeum equitans returns 88.5%)."],
       "help_arg": "--help",
       "requires": [
         {
