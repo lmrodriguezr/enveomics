@@ -452,6 +452,11 @@
 	  "description": "Directory containing the binaries of HMMer 3.0+."
 	},
 	{
+	  "opt": "--model-file",
+	  "arg": "in_file",
+	  "description": "External file containing models to search."
+	},
+	{
 	  "opt": "--threads",
 	  "arg": "integer",
 	  "default": 2,
