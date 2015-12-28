@@ -9,7 +9,7 @@
 require "optparse"
 
 o = {quiet:false, model:true}
-ARGV << "-h" if ARGV.size==0
+
 OptionParser.new do |opts|
    opts.banner = "
 Extracts the sequence IDs and query model form a (multiple) HMMsearch report
@@ -59,9 +59,10 @@ ARGF.each_line do |ln|
       if /^\s*$/.match(ln).nil?
          ln.gsub!(/#.*/,"")
 	 row = ln.split(/\s+/)
+	 row << nil if row.count==10
 	 raise "Unable to parse seemingly malformed list of hits in line " +
-	    "#{$.}:\n#{ln}" unless row.length==11
-	 good = TRUE
+	    "#{$.}:\n#{ln}" unless row.count==11
+	 good   = true
 	 good &&= ( o[:all_evalue].nil? || row[1].to_f <= o[:all_evalue] )
 	 good &&= ( o[:all_score].nil? || row[2].to_f >= o[:all_score] )
 	 good &&= ( o[:best_evalue].nil? || row[4].to_f <= o[:best_evalue] )
