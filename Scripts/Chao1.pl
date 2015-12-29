@@ -2,7 +2,7 @@
 #
 # @author  Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update  Nov-29-2015
+# @update  Dec-29-2015
 #
 
 use warnings;
@@ -39,7 +39,7 @@ To improve:
 "}
 
 my %o;
-getopts('i:c:C:r:h', \%o);
+getopts('i:c:C:r:d:h', \%o);
 
 &HELP_MESSAGE() unless $o{i};
 $o{c} ||= 0;
