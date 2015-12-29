@@ -1,4 +1,4 @@
-export(enve.barplot, enve.recplot, enve.prune.dist,
+export(enve.cliopts, enve.barplot, enve.recplot, enve.prune.dist,
    enve.tribs, plot.enve.TRIBS, summary.enve.TRIBS, enve.tribs.test,
    plot.enve.TRIBStest, summary.enve.TRIBStest,
    enve.df2dist, enve.df2dist.group, enve.df2dist.list,
