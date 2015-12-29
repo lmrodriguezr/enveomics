@@ -2,6 +2,7 @@
   "_": "Input files and directories are included in the 'Tests' folder.",
   "examples": [
     {
+      "_": "== Examples of sequence comparisons ==",
       "task": "ogs.stats.rb",
       "description": ["Statistics on the groups of orthology in the Primate",
         "Lentivirus Group, including HIV-1, HIV-2, and SIV."],
@@ -37,6 +38,7 @@
         null,null,null,null,null,null,null,null]
     },
     {
+      "_": "== Examples of functional annotations ==",
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy bacterial genes present in",
         "Mycoplasma genitalium."],
@@ -49,6 +51,30 @@
         "Nanoarchaeum equitans."],
       "values": ["Mgen_M2288.faa",null,null,null,null,true,null,null,null,null,
 	null,null,null,null,null,null]
+    },
+    {
+      "_": "== Examples of diversity ==",
+      "task": "Enve.barplot.R",
+      "description": ["Barplot with the distribution of bacterial phyla in",
+        "four different sites, with taxa sorted by variance."],
+      "values": ["phyla_counts.tsv","250,100,75,200",null,null,null,null,null,
+        null,true,"var",2,null,null,"phyla_counts.pdf",10,null]
+    },
+    {
+      "task": "Chao1.pl",
+      "description": ["Phylum-richness estimated by the Chao1 index with 95%",
+        "confidence, using the distributions of bacterial phyla in four",
+	"different sites."],
+      "values": ["phyla_counts.tsv",null,1,null,null,true,null,
+	 "phyla_chao1.tsv"]
+    },
+    {
+      "task": "AlphaDiversity.pl",
+      "description": ["Phylum-diversity estimated by the indices of Shannon",
+        "(H'), Inverse Simpson (1/Lambda), and true diversity of order 1 (1D),",
+	"using the distributions of bacterial phyla in four different sites."],
+      "values": ["phyla_counts.tsv",null,1,null,null,true,null,true,1,null,
+	 "phyla_diversity.tsv"]
     }
   ]
 }
