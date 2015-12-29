@@ -54,7 +54,7 @@ Usage:
 
 # Input arguments
 my %o;
-getopts('i:c:C:r:hD:Rq:', \%o);
+getopts('i:c:C:d:r:hD:Rq:', \%o);
 
 #$o{B} and (eval("use bignum; 1") or die "Cannot use bignum.\n");
 &HELP_MESSAGE() unless $o{i};
