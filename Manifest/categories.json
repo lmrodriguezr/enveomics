@@ -55,7 +55,8 @@
     "Diversity": {
       "OTUs": [
         "AlphaDiversity.pl",
-        "Chao1.pl"
+        "Chao1.pl",
+        "Enve.barplot.R"
       ]
     },
     "Annotation": {
@@ -69,6 +70,7 @@
         "RefSeq.download.bash"
       ],
       "Tables": [
+        "Enve.barplot.R",
         "GenBank.add_fields.rb",
         "MyTaxa.fragsByTax.pl",
         "Table.filter.pl",
@@ -95,6 +97,7 @@
       "Taxonomic": [
         "CharTable.classify.rb",
         "EBIseq2tax.rb",
+        "Enve.barplot.R",
         "gi2tax.rb",
         "MyTaxa.fragsByTax.pl",
         "MyTaxa.seq-taxrank.rb",
