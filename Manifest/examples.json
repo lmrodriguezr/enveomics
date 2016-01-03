@@ -81,6 +81,14 @@
 	"using the distributions of bacterial phyla in four different sites."],
       "values": ["phyla_counts.tsv",null,1,null,null,true,null,true,1,null,
 	 "phyla_diversity.tsv"]
+    },
+    {
+      "_": "== Other miscelaneous examples ==",
+      "task": "CharTable.classify.rb",
+      "description": ["Classification of anthrax genomes based on can-SNPs, as",
+        "described in Van Ert 2007 (PLoS ONE 2(5):e461)."],
+      "values": ["anthrax-cansnp-data.tsv","anthrax-cansnp-key.tsv",
+        "anthrax-cansnp-classif.tsv","anthrax-cansnp-classif.nwk",null,null]
     }
   ]
 }

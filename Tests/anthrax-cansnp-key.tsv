@@ -1,0 +1,17 @@
+# C group
+1	A/B.Br.001	G:C.Br.A1055	A:[2]
+# A/B groups
+2	B.Br.003	A:[3]	G:[6]
+# B group
+3	B.Br.004	C:B.Br.CNEVA	T:[4]
+4	B.Br.002	G:B.Br.002/003	T:[5]
+5	B.Br.001	C:B.Br.KrugerB	T:B.Br.001/002
+# A group
+6	A.Br.006	C:A.Br.006/root	A:[7]
+7	A.Br.007	C:A.Br.Vollum	T:[8]
+8	A.Br.004	T:[12]	C:[9]
+9	A.Br.003	A:A.Br.003/004	G:[10]
+10	A.Br.002	G:A.Br.Aust94	A:[11]
+11	A.Br.001	C:A.Br.Ames	T:A.Br.001/002
+12	A.Br.008	T:A.Br.008/005	G:[13]
+13	A.Br.009	G:A.Br.WNA	A:A.Br.008/009
