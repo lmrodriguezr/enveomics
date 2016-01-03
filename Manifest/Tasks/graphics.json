@@ -1,7 +1,7 @@
 {
   "tasks": [
     {
-      "task": "Enve.barplot.R",
+      "task": "Table.barplot.R",
       "description": "Creates nice barplots from tab-delimited tables.",
       "requires": [ { "r_package": "optparse" } ],
       "help_arg": "--help",

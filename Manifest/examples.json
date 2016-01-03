@@ -53,8 +53,14 @@
 	null,null,null,null,null,null]
     },
     {
+      "task": "Newick.autoprune.R",
+      "description": ["Prune an AlkB tree with 110 tips to get only distant",
+        "representatives (41)."],
+      "values": ["alkB.nwk",0.9,null,null,null,null,null,"alkB-pruned.nwk"]
+    },
+    {
       "_": "== Examples of diversity ==",
-      "task": "Enve.barplot.R",
+      "task": "Table.barplot.R",
       "description": ["Barplot with the distribution of bacterial phyla in",
         "four different sites, with taxa sorted by variance."],
       "values": ["phyla_counts.tsv","250,100,75,200",null,null,null,null,null,

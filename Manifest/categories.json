@@ -56,7 +56,7 @@
       "OTUs": [
         "AlphaDiversity.pl",
         "Chao1.pl",
-        "Enve.barplot.R"
+        "Table.barplot.R"
       ]
     },
     "Annotation": {
@@ -70,7 +70,7 @@
         "RefSeq.download.bash"
       ],
       "Tables": [
-        "Enve.barplot.R",
+        "Table.barplot.R",
         "GenBank.add_fields.rb",
         "MyTaxa.fragsByTax.pl",
         "Table.filter.pl",
@@ -86,18 +86,19 @@
         "ogs.extract.rb",
         "ogs.mcl.rb",
         "ogs.stats.rb",
-	"ogs.rb"
+        "ogs.rb"
       ]
     },
     "Other data": {
       "Phylogenetic and other distances": [
         "CharTable.classify.rb",
-        "JPlace.to_iToL.rb"
+        "JPlace.to_iToL.rb",
+        "Newick.autoprune.R"
       ],
       "Taxonomic": [
         "CharTable.classify.rb",
         "EBIseq2tax.rb",
-        "Enve.barplot.R",
+        "Table.barplot.R",
         "gi2tax.rb",
         "MyTaxa.fragsByTax.pl",
         "MyTaxa.seq-taxrank.rb",
