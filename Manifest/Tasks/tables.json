@@ -1,6 +1,60 @@
 {
   "tasks": [
     {
+      "task": "Table.df2dist.R",
+      "description": ["Transform a tab-delimited list of distances into a",
+        "squared matrix."],
+      "help_arg": "--help",
+      "requires": [ { "r_package": "optparse" } ],
+      "options": [
+        {
+	  "name": "Input list",
+	  "opt": "--x",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "A tab-delimited table with the distances."
+	},
+	{
+	  "opt": "--obj1-index",
+	  "arg": "integer",
+	  "default": 1,
+	  "description": ["Index of the column containing the ID of the object",
+	    "1."]
+	},
+	{
+	  "opt": "--obj2-index",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": ["Index of the column containing the ID of the object",
+	    "2."]
+	},
+	{
+	  "opt": "--dist-index",
+	  "arg": "integer",
+	  "default": 3,
+	  "description": "Index of the column containing the distance."
+	},
+	{
+	  "opt": "--default-d",
+	  "arg": "integer",
+	  "description": "Default value for missing values. NA if empty."
+	},
+	{
+	  "opt": "--max-sim",
+	  "arg": "float",
+	  "description": ["If not-empty, assumes that the values are",
+	    "similarity (not distance) and this is the maximum similarity",
+	    "(corresponding to distance 0). Applies transformation:",
+	    "distance = (max.sim - values)/max.sim."]
+	},
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output squared matrix in tab-separated values format."
+	}
+      ]
+    },
+    {
       "task": "Table.filter.pl",
       "description": ["Extracts (and re-orders) a subset of rows from a raw",
         "table."],

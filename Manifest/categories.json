@@ -76,6 +76,7 @@
         "Table.barplot.R",
         "GenBank.add_fields.rb",
         "MyTaxa.fragsByTax.pl",
+        "Table.df2dist.R",
         "Table.filter.pl",
         "Table.merge.pl",
         "Table.round.rb",
@@ -97,7 +98,8 @@
         "CharTable.classify.rb",
         "JPlace.distances.rb",
         "JPlace.to_iToL.rb",
-        "Newick.autoprune.R"
+        "Newick.autoprune.R",
+        "Table.df2dist.R"
       ],
       "Taxonomic": [
         "CharTable.classify.rb",
