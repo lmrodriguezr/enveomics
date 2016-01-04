@@ -12,16 +12,16 @@ enve.df2dist <- function(
 	### Index of the column containing the distance.
 	default.d=NA,
 	### Default value (for missing values)
-	max.sim=NA
-	### If not-NA, assumes that the values are similarity (not distance) and
-	### this is the maximum similarity (corresponding to distance 0).
+	max.sim=0
+	### If not-zero, assumes that the values are similarity (not distance)
+	### and this is the maximum similarity (corresponding to distance 0).
 	### Applies transformation: distance = (max.sim - values)/max.sim.
 	){
    x <- as.data.frame(x);
    a <- as.character(x[, obj1.index]);
    b <- as.character(x[, obj2.index]);
    d <- as.double(x[, dist.index]);
-   if(!is.na(max.sim)) d <- (max.sim - d)/max.sim
+   if(max.sim!=0) d <- (max.sim - d)/max.sim
    ids <- unique(c(a,b));
    m <- matrix(default.d, nrow=length(ids), ncol=length(ids), dimnames=list(ids, ids));
    diag(m) <- 0.0
