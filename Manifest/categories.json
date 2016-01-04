@@ -2,6 +2,7 @@
   "categories": {
     "Sequence similarity search": {
       "Statistics": [
+        "BlastPairwise.AAsubs.pl",
         "BlastTab.advance.bash",
         "BlastTab.seqdepth.pl",
         "BlastTab.seqdepth_nomedian.pl",
@@ -36,6 +37,7 @@
       ],
       "Manipulation": [
         "FastA.filter.pl",
+        "FastA.filterLen.pl",
         "FastA.filterN.pl",
         "FastA.interpose.pl",
         "FastA.rename.pl",
@@ -67,7 +69,8 @@
         "EBIseq2tax.rb",
         "gi2tax.rb",
         "M5nr.getSequences.rb",
-        "RefSeq.download.bash"
+        "RefSeq.download.bash",
+        "SRA.download.bash"
       ],
       "Tables": [
         "Table.barplot.R",
@@ -92,6 +95,7 @@
     "Other data": {
       "Phylogenetic and other distances": [
         "CharTable.classify.rb",
+        "JPlace.distances.rb",
         "JPlace.to_iToL.rb",
         "Newick.autoprune.R"
       ],
@@ -105,8 +109,10 @@
         "Taxonomy.silva2ncbi.rb"
       ],
       "Alignments": [
+        "AAsubs.log2ratio.rb",
         "Aln.cat.rb",
-        "Aln.convert.pl"
+        "Aln.convert.pl",
+        "BlastPairwise.AAsubs.pl"
       ]
     }
   }
