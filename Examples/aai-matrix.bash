@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Dec-14-2015
+# @update  Jan-04-2016
 # @license artistic license 2.0
 #
 
@@ -46,7 +46,7 @@ for i in $SEQS ; do
    for j in $SEQS ; do
       echo -n " o $i vs $j: "
       aai.rb -1 $i -2 $j -S $OUT.db \
-	 --no-save-rbm --no-save-regions --auto --quiet
+	 --no-save-rbm --auto --quiet
       [[ "$i" == "$j" ]] && break
    done
 done

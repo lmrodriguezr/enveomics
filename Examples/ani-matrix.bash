@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Dec-11-2015
+# @update  Jan-04-2016
 # @license artistic license 2.0
 #
 
