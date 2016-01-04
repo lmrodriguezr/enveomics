@@ -65,7 +65,7 @@ enve.cliopts <- function(
 
       optopt <- list(help="")
       if(length(o_desc[[i]])==1) optopt$help <- o_desc[[i]]
-      if(is.logical(f[[i]])){
+      if(!suppressWarnings(is.na(f[[i]])) & is.logical(f[[i]])){
 	 optopt$opt_str <- paste(ifelse(f[[i]], "--no-", "--"), flag, sep='')
 	 optopt$action  <- ifelse(f[[i]], "store_false", "store_true")
       }else{
@@ -80,6 +80,7 @@ enve.cliopts <- function(
 	 optopt$default <- f[[i]]
 	 optopt$metavar <- class(f[[i]])
       }
+      if(i %in% number) optopt$metavar <- "NUMERIC"
       optopt$dest <- i
       opts[[o_i]] <- do.call("make_option", optopt)
    }
