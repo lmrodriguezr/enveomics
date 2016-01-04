@@ -17,7 +17,7 @@ enve.df2dist <- function(
 	### this is the maximum similarity (corresponding to distance 0).
 	### Applies transformation: distance = (max.sim - values)/max.sim.
 	){
-   x <- as.table(x);
+   x <- as.data.frame(x);
    a <- as.character(x[, obj1.index]);
    b <- as.character(x[, obj2.index]);
    d <- as.double(x[, dist.index]);
