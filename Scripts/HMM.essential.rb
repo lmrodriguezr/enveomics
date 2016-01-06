@@ -9,6 +9,7 @@
 $:.push File.expand_path("../lib", __FILE__)
 require "enveomics_rb/enveomics"
 use "tmpdir"
+use "zlib"
 
 o = {bin:"", thr:2, q:false, stats:true, genes:true, bacteria:false,
    archaea:false, genomeeq:false, metagenome:false, list:false}
@@ -114,8 +115,10 @@ begin
       models = {}
       model_id = nil
       dbh = File.open("#{dir}/essential.hmm", "w")
-      mfh = o[:model_file].nil? ?
-	 File.open(File.expand_path("../lib/data/essential.hmm",__FILE__),"r") :
+      o[:model_file] ||= File.expand_path("../lib/data/essential.hmm.gz",
+					     __FILE__)
+      mfh = (File.extname(o[:model_file])==".gz") ?
+	 Zlib::GzipReader.open(o[:model_file]) :
 	 File.open(o[:model_file],"r")
       while ln = mfh.gets
 	 dbh.print ln
