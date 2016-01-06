@@ -15,7 +15,7 @@ differences between the empirical PDFs (to compare against zero).}
   \item{col1}{First color of the plot if type='overlap'.}
   \item{col2}{Second color of the plot if type='overlap'.}
   \item{ylab}{Y-axis label.}
-  \item{xlim}{X-axis label.}
+  \item{xlim}{X-axis limits.}
   \item{ylim}{Y-axis limits.}
   \item{\dots}{Any other graphical arguments.}
 }
