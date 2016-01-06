@@ -301,9 +301,9 @@ enve.recplot2 <- function(
       id.metric=c('identity', 'corrected identity', 'bit score'),
       ### Metric of identity to be used (Y-axis). Corrected identity is only
       ### supported if the original BLAST file included sequence lengths.
-      id.summary=median,
+      id.summary=sum,
       ### Function summarizing the identity bins. Other recommended options
-      ### include: `sum` to estimate the total bins instead of the median, and
+      ### include: `median` to estimate the median instead of total bins, and
       ### `function(x) mlv(x,method='parzen')$M` to estimate the mode.
       id.cutoff=95,
       ### Cutoff of identity metric above which the hits are considered
