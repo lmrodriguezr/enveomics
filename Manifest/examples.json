@@ -45,6 +45,13 @@
         "Xanthomonas_oryzae.aai-mat.tsv"]
     },
     {
+      "_": "== Recruitment plots",
+      "task": "BlastTab.catsbj.pl",
+      "description": ["Prepares recruitment plot files for a comparison",
+        "between a virome containing HIV and the HIV-1 genome."],
+      "values": [null,null,null,null,"hiv1.fna","hiv_mix-hiv1.blast"]
+    },
+    {
       "_": "== Examples of functional annotations ==",
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy bacterial genes present in",
