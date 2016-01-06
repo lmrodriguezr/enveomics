@@ -202,7 +202,7 @@ plot.enve.TRIBStest <- function
    ylab='Probability',
    ### Y-axis label.
    xlim=range(attr(x, 'dist.mids')),
-   ### X-axis label.
+   ### X-axis limits.
    ylim=c(0,max(c(attr(x, 'all.dist'), attr(x, 'sel.dist')))),
    ### Y-axis limits.
    ...
