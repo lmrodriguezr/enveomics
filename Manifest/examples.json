@@ -96,6 +96,14 @@
         "described in Van Ert 2007 (PLoS ONE 2(5):e461)."],
       "values": ["anthrax-cansnp-data.tsv","anthrax-cansnp-key.tsv",
         "anthrax-cansnp-classif.tsv","anthrax-cansnp-classif.nwk",null,null]
+    },
+    {
+      "task": "TRIBS.test.R",
+      "description": ["Test overclustering of Xanthomonas oryzae genomes",
+        "encoding for PilA using Transformed-space Resampling In Biased Sets",
+	"(TRIBS)."],
+      "values": ["Xanthomonas_oryzae.aai-mat.tsv","Xanthomonas_oryzae-PilA.txt",
+        5000,null,null,null,null,0,"Xanthomonas_oryzae-PilA.tribs.Rdata",100]
     }
   ]
 }
