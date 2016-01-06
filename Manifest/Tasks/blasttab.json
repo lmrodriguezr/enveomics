@@ -604,6 +604,90 @@
 	  "description": "Run quietly."
 	}
       ]
+    },
+    {
+      "task": "BlastTab.recplot2.R",
+      "description": ["Produce recruitment plot objects provided that",
+        "BlastTab.catsbj.pl has been previously executed."],
+      "help_arg": "--help",
+      "requires": [ { "r_package": "enveomics.R" } ],
+      "options": [
+        {
+	  "opt": "--prefix",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": ["Path to the prefix of the BlastTab.catsbj.pl output",
+	    "files. At least the files .rec and .lim must exist with this",
+	    "prefix."]
+	},
+	{
+	  "opt": "--pos-breaks",
+	  "arg": "integer",
+	  "default": 1000,
+	  "description": ["Breaks in the positions histogram."]
+	},
+	{
+	  "opt": "--id-breaks",
+	  "arg": "integer",
+	  "default": 300,
+	  "description": ["Breaks in the identity histogram."]
+	},
+	{
+	  "opt": "--id-metric",
+	  "arg": "select",
+	  "values": ["identity", "corrected identity", "bit score"],
+	  "default": "identity",
+	  "description": ["Metric of identity to be used (Y-axis). Corrected",
+	    "identity is only supported if the original BLAST file included",
+	    "sequence lengths."]
+	},
+	{
+	  "opt": "--id-summary",
+	  "arg": "string",
+	  "default": "sum",
+	  "description": "Function summarizing the identity bins."
+	},
+	{
+	  "opt": "--id-cutoff",
+	  "arg": "float",
+	  "default": 95.0,
+	  "description": ["Cutoff of identity metric above which the hits are",
+	    "considered 'in-group'. The 95% identity corresponds to the",
+	    "expectation of ANI<95% within species."]
+	},
+	{
+	  "opt": "--threads",
+	  "arg": "integer",
+	  "default": 2,
+	  "description": "Number of threads to use."
+	},
+	{
+	  "opt": "--no-verbose",
+	  "description": "Indicates if the function should report the advance."
+	},
+	{
+	  "name": "R Object Output",
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": ["Recplo2 object that can be re-plotted using",
+	    "R function plot."]
+	},
+	{
+	  "name": "Graphical Output",
+	  "arg": "out_file",
+	  "description": "Recruitment plot in PDF."
+	},
+	{
+	  "name": "Width",
+	  "arg": "float",
+	  "description": "Width of the plot in inches (7 by default)."
+	},
+	{
+	  "name": "Height",
+	  "arg": "float",
+	  "description": "Height of the plot in inches (7 by default)."
+	}
+      ]
     }
   ]
 }
