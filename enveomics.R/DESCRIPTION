@@ -1,5 +1,5 @@
 Package: enveomics.R
-Version: 2015.12.29
+Version: 2016.01.05
 Authors@R: c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
 	   email="lmrodriguezr@gmail.com"))
 Title: Various R functions from the Kostas lab

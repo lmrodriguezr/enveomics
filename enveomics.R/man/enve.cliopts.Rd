@@ -4,8 +4,8 @@
 \description{Generates nicely formatted command-line interfaces for
 functions (_closures_ only).}
 \usage{enve.cliopts(fx, rd_file, positional_arguments, usage, mandatory = c(), 
-    vectorize = c(), ignore = c(), number = c(), o_desc = list(), 
-    p_desc = "")}
+    vectorize = c(), ignore = c(), number = c(), defaults = list(), 
+    o_desc = list(), p_desc = "")}
 \arguments{
   \item{fx}{Function for which the interface should be generated.}
   \item{rd_file}{(Optional) .Rd file with the standard documentation of the function.}
@@ -18,6 +18,7 @@ use also `number`.}
   \item{ignore}{Arguments of the function to ignore.}
   \item{number}{Force these arguments as numerics. Useful for numeric
 vectors (see `vectorize`) or arguments with no defaults.}
+  \item{defaults}{Defaults to use instead of the ones provided by the formals.}
   \item{o_desc}{Descriptions of the options. Help from `rd` is ignored for arguments
 present in this list.}
   \item{p_desc}{Description of the function. Help from `rd` is ignored for the

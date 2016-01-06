@@ -1,0 +1,14 @@
+{
+  "tasks": [
+    {
+      "task": "TRIBS.test.R",
+      "description": ["Estimates the empirical difference between all the",
+        "distances in a set of objects and a subset, together with its",
+	"statistical significance."],
+      "help_arg": "--help",
+      "requires": [
+        { "r_package": "enveomics.R" }
+      ]
+    }
+  ]
+}

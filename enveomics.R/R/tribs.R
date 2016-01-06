@@ -362,7 +362,7 @@ enve.tribs <- function
       if(missing(pre.tribs)){
 	 if(verbosity > 0)
 	    cat('===[ Estimating NMDS ]\n');
-	 if(!require(vegan, quietly=TRUE))
+	 if(!suppressPackageStartupMessages(require(vegan, quietly=TRUE)))
 	    stop('Unavailable required package: `vegan`.');
 	 mds.args <- c(metaMDS.opts, list(comm=dist, k=dimensions,
 	    trace=verbosity));

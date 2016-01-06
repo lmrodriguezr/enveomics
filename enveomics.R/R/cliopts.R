@@ -20,6 +20,8 @@ enve.cliopts <- function(
       number=c(),
       ### Force these arguments as numerics. Useful for numeric
       ### vectors (see `vectorize`) or arguments with no defaults.
+      defaults=list(),
+      ### Defaults to use instead of the ones provided by the formals.
       o_desc=list(),
       ### Descriptions of the options. Help from `rd` is ignored for arguments
       ### present in this list.
@@ -58,6 +60,7 @@ enve.cliopts <- function(
    o_i <- 0
    opts <- list()
    f <- formals(fx)
+   for(i in 1:length(defaults)) f[[names(defaults)[i]]] <- defaults[[i]]
    for(i in names(f)){
       if(i=="..." || i %in% ignore) next
       o_i <- o_i + 1
@@ -82,6 +85,7 @@ enve.cliopts <- function(
       }
       if(i %in% number) optopt$metavar <- "NUMERIC"
       optopt$dest <- i
+      
       opts[[o_i]] <- do.call("make_option", optopt)
    }
    opt <- parse_args(
