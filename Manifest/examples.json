@@ -38,6 +38,13 @@
         null,null,null,null,null,null,null,null]
     },
     {
+      "task": "Table.df2dist.R",
+      "description": ["Transforms a list of AAI values between Xanthomonas",
+        "oryzae genomes into a distance matrix."],
+      "values": ["Xanthomonas_oryzae.aai.tsv",null,null,null,null,100.0,
+        "Xanthomonas_oryzae.mat.tsv"]
+    },
+    {
       "_": "== Examples of functional annotations ==",
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy bacterial genes present in",
