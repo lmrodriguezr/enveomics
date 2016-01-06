@@ -1,5 +1,5 @@
 
-enve.barplot <- structure(function(
+enve.barplot <- function(
 	### Creates nice barplots from tab-delimited tables
 	x,
 	### Can be either the input data or the path to the file containing the table. If it
@@ -127,8 +127,5 @@ enve.barplot <- structure(function(
    if(top < nrow(p)) nam <- c(nam, paste('Other (',nrow(p)-length(color.col),')', sep=''));
    legend('center', col=c(color.col, other.col), legend=nam, pch=15, bty='n', pt.cex=2, ncol=legend.ncol);
    par(mar=mar);
-},ex=function(){
-   # Create a barplot sorted by standard deviation displaying the abundance of categories with >2%
-   enve.barplot('taxo-counts.txt', sort.by=sd, min.report=2);
-});
+}
 

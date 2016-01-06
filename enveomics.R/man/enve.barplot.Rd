@@ -46,7 +46,4 @@ but `other.col` is still used if the vector is insufficient for all the rows.}
 
 
 
-\examples{
-# Create a barplot sorted by standard deviation displaying the abundance of categories with >2\%
-enve.barplot('taxo-counts.txt', sort.by=sd, min.report=2);
-}
+
