@@ -104,6 +104,13 @@
 	"(TRIBS)."],
       "values": ["Xanthomonas_oryzae.aai-mat.tsv","Xanthomonas_oryzae-PilA.txt",
         5000,null,null,null,null,0,"Xanthomonas_oryzae-PilA.tribs.Rdata",100]
+    },
+    {
+      "task": "TRIBS.plot-test.R",
+      "description": ["Show the TRIBS-normalized distances between Xanthomonas",
+        "oryzae genomes (grey) and X. oryzae encoding for PilA (red)."],
+      "values": ["Xanthomonas_oryzae-PilA.tribs.Rdata",null,null,null,null,null,
+        null,null,"Xanthomonas_oryzae-PilA.tribs.pdf",null,null]
     }
   ]
 }
