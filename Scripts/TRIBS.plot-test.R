@@ -26,6 +26,7 @@ opt <- enve.cliopts(plot.enve.TRIBStest,
 a <- new.env()
 load(opt$options[['x']], a)
 opt$options[['x']] <- get(ls(envir=a),envir=a)
+summary(opt$options[['x']])
 if(is.na(opt$options[['xlim']][1])) opt$options[['xlim']] <- NULL
 if(is.na(opt$options[['ylim']][1])) opt$options[['ylim']] <- NULL
 args = as.list(opt$args)
