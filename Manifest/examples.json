@@ -42,7 +42,7 @@
       "description": ["Transforms a list of AAI values between Xanthomonas",
         "oryzae genomes into a distance matrix."],
       "values": ["Xanthomonas_oryzae.aai.tsv",null,null,null,null,100.0,
-        "Xanthomonas_oryzae.mat.tsv"]
+        "Xanthomonas_oryzae.aai-mat.tsv"]
     },
     {
       "_": "== Examples of functional annotations ==",
