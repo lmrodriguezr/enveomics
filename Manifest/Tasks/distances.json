@@ -7,6 +7,7 @@
 	"statistical significance."],
       "help_arg": "--help",
       "requires": [ { "r_package": "enveomics.R" } ],
+      "see_also": ["TRIBS.plot-test.R"],
       "options": [
         {
 	  "opt": "--dist",
@@ -68,6 +69,85 @@
 	  "arg": "integer",
 	  "default": 50,
 	  "description": "Number of bins to evaluate in the range of distances."
+	}
+      ]
+    },
+    {
+      "task": "TRIBS.plot-test.R",
+      "description": "Plots an `enve.TRIBStest` object.",
+      "requires": [ { "r_package": "enveomics.R" } ],
+      "see_also": ["TRIBS.test.R"],
+      "help_arg": "--help",
+      "options": [
+        {
+	  "name": "Input TRIBS Test",
+	  "opt": "--x",
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "description": "'enve.TRIBStest' object to plot."
+	},
+	{
+	  "opt": "--type",
+	  "arg": "select",
+	  "values": ["overlap","difference"],
+	  "default": "overlap",
+	  "description": ["What to plot. 'overlap' generates a plot of the two",
+	    "contrasting empirical PDFs (to compare against each other),",
+	    "'difference' produces a plot of the differences between the",
+	    "empirical PDFs (to compare against zero)."]
+	},
+	{
+	  "opt": "--col",
+	  "arg": "string",
+	  "default": "#00000044",
+	  "description": "Main color of the plot if type='difference'."
+	},
+	{
+	  "opt": "--col1",
+	  "arg": "string",
+	  "description": ["First color of the plot if 'Type' is overlap. 'Col'",
+	    "by default."]
+	},
+	{
+	  "opt": "--col2",
+	  "arg": "string",
+	  "default": "#44001144",
+	  "description": "Second color of the plot if 'Type' is overlap."
+	},
+	{
+	  "opt": "--ylab",
+	  "arg": "string",
+	  "default": "Probability",
+	  "description": "Y-axis label."
+	},
+	{
+	  "opt": "--xlim",
+	  "arg": "string",
+	  "description": "X-axis limits, separate values by comma."
+	},
+	{
+	  "opt": "--ylim",
+	  "arg": "string",
+	  "description": "Y-axis limits, separate values by comma."
+	},
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output file in PDF format."
+	},
+	{
+	  "name": "Width",
+	  "arg": "float",
+	  "default": 7.0,
+	  "mandatory": true,
+	  "description": "Width of the plot in inches."
+	},
+	{
+	  "name": "Height",
+	  "arg": "float",
+	  "default": 7.0,
+	  "mandatory": true,
+	  "description": "Height of the plot in inches."
 	}
       ]
     }

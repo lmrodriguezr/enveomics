@@ -99,7 +99,8 @@
         "JPlace.distances.rb",
         "JPlace.to_iToL.rb",
         "Newick.autoprune.R",
-	"TRIBS.test.R",
+        "TRIBS.test.R",
+        "TRIBS.plot-test.R",
         "Table.df2dist.R"
       ],
       "Taxonomic": [
