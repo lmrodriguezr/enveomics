@@ -52,6 +52,13 @@
       "values": [null,null,null,null,"hiv1.fna","hiv_mix-hiv1.blast"]
     },
     {
+      "task": "BlastTab.recplot2.R",
+      "description": ["Generates recruitment plots for a comparison",
+        "between a virome containing HIV and the HIV-1 genome."],
+      "values": ["hiv_mix-hiv1.blast",50,100,null,null,null,null,null,
+        "hiv_mix-hiv1.Rdata","hiv_mix-hiv1.pdf",null,null]
+    },
+    {
       "_": "== Examples of functional annotations ==",
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy bacterial genes present in",

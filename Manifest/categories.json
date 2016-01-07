@@ -4,6 +4,7 @@
       "Statistics": [
         "BlastPairwise.AAsubs.pl",
         "BlastTab.advance.bash",
+        "BlastTab.recplot2.R",
         "BlastTab.seqdepth.pl",
         "BlastTab.seqdepth_nomedian.pl",
         "BlastTab.seqdepth_ZIP.pl",
