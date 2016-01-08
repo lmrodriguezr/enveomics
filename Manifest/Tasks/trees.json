@@ -4,7 +4,7 @@
       "task": "Newick.autoprune.R",
       "description": ["Automatically prunes a tree, to keep representatives of",
         "each clade."],
-      "requires": [ { "r_package": "optparse" }, { "r_package": "picante" } ],
+      "requires": [ { "r_package": "optparse" }, { "r_package": "ape" } ],
       "help_arg": "--help",
       "options": [
         {

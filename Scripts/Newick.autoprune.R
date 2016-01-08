@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 #
 # @author  Luis M. Rodriguez-R
-# @update  Jan-03-2016
+# @update  Jan-07-2016
 # @license artistic license 2.0
 #
 
@@ -23,7 +23,5 @@ opt <- enve.cliopts(enve.prune.dist,
    o_desc=list(t="A tree to prune in Newick format."))
 
 #= Run it!
-suppressPackageStartupMessages(library(picante))
-opt$options[['t']] <- read.tree(opt$options[['t']])
 pt <- do.call("enve.prune.dist", opt$options)
-write.tree(pt, opt$args[1])
+ape::write.tree(pt, opt$args[1])
