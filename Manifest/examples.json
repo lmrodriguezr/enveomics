@@ -95,6 +95,14 @@
         null,"a_mg.reads-cds.counts.tsv"]
     },
     {
+      "task": "BlastTab.sumPerHit.pl",
+      "description": ["Estimate the total abundance of Gene Ontology",
+        "annotations in the A metagenome, using metagenome-derived proteins,",
+	"and normalizing by the read counts of each protein."],
+      "values": ["a_mg.reads-cds.counts.tsv",null,null,null,null,true,null,
+        "a_mg.cds-go.blast.tsv",null,"a_mg.go.read-counts.tsv"]
+    },
+    {
       "_": "== Examples of diversity ==",
       "task": "Table.barplot.R",
       "description": ["Barplot with the distribution of bacterial phyla in",
