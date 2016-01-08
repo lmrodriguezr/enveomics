@@ -88,6 +88,13 @@
         null,"a_mg.cds-go.blast-bm.tsv"]
     },
     {
+      "task": "BlastTab.sumPerHit.pl",
+      "description": ["Count the number of reads per gene in a mapping of a",
+        "metagenome to a metagenome-derived genes (from the 'A metagenome')."],
+      "values": [null,null,null,null,null,null,null,"a_mg.reads-cds.blast.tsv",
+        null,"a_mg.reads-cds.counts.tsv"]
+    },
+    {
       "_": "== Examples of diversity ==",
       "task": "Table.barplot.R",
       "description": ["Barplot with the distribution of bacterial phyla in",
