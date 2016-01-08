@@ -564,8 +564,7 @@
     },
     {
       "task": "BlastTab.topHits_sorted.rb",
-      "description": ["Reports the top-N best hits of a BLAST, pre-sorted by",
-        "query."],
+      "description": "Reports the top-N best hits of a BLAST.",
       "help_arg": "--help",
       "see_also": "BlastTab.best_hit_sorted.pl",
       "options": [
@@ -602,6 +601,12 @@
 	{
 	  "opt": "--quiet",
 	  "description": "Run quietly."
+	},
+	">",
+	{
+	  "arg": "out_file",
+	  "mandatory": true,
+	  "description": "Output (filtered) Tabular BLAST."
 	}
       ]
     },

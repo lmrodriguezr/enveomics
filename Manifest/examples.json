@@ -2,7 +2,7 @@
   "_": "Input files and directories are included in the 'Tests' folder.",
   "examples": [
     {
-      "_": "== Examples of sequence comparisons ==",
+      "_": "== Examples of genome comparisons ==",
       "task": "ogs.stats.rb",
       "description": ["Statistics on the groups of orthology in the Primate",
         "Lentivirus Group, including HIV-1, HIV-2, and SIV."],
@@ -78,6 +78,14 @@
       "description": ["Prune an AlkB tree with 110 tips to get only distant",
         "representatives (41)."],
       "values": ["alkB.nwk",0.9,null,null,null,null,null,"alkB-pruned.nwk"]
+    },
+    {
+      "_": "== Examples of BLAST statistics and manipulation",
+      "task": "BlastTab.topHits_sorted.rb",
+      "description": ["Extract the best match of metagenome-derived proteins",
+        "(from the 'A metagenome') against a Gene Ontology collection."],
+      "values": ["sort","a_mg.cds-go.blast.tsv",null,null,null,null,1,null,null,
+        null,"a_mg.cds-go.blast-bm.tsv"]
     },
     {
       "_": "== Examples of diversity ==",
