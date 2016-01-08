@@ -29,7 +29,7 @@ function description unless this value is an empty string.}
 the function's arguments; and `args`, a vector with zero or more strings
 containing the positional arguments.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

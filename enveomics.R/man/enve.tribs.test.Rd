@@ -13,7 +13,7 @@ objects and a subset, together with its statistical significance.}
 
 \value{Returns an `enve.TRIBStest` object.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

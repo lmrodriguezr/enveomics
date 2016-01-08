@@ -1,32 +1,23 @@
 #==============> Define S4 classes
-setClass("enve.recplot2",
-### Enve-omics representation of "Recruitment plots".
+setClass("enve.RecPlot2",
+   ### Enve-omics representation of Recruitment plots. This object can
+   ### be produced by `enve.recplot2` and supports S4 method plot.
    representation(
-   counts='matrix',
-   ### Counts as a two-dimensional histogram.
-   pos.counts.in='numeric',
-   ### Counts of in-group hits per position bin.
-   pos.counts.out='numeric',
-   ### Counts of out-group hits per position bin.
-   id.counts='numeric',
-   ### Counts per ID bin.
-   id.breaks='numeric',
-   ### Breaks of identity bins.
-   pos.breaks='numeric',
-   ### Breaks of position bins.
+   counts='matrix',		##<< Counts as a two-dimensional histogram.
+   pos.counts.in='numeric',	##<< Counts of in-group hits per position bin.
+   pos.counts.out='numeric',	##<< Counts of out-group hits per position bin.
+   id.counts='numeric',		##<< Counts per ID bin.
+   id.breaks='numeric',		##<< Breaks of identity bins.
+   pos.breaks='numeric',	##<< Breaks of position bins.
    seq.breaks='numeric',
    ### Limits of the subject sequences after concatenation.
-   seq.names='character',
-   ### Names of the subject sequences.
-   id.metric='character',
-   ### Metric used as 'identity'.
-   id.ingroup='logical',
-   ### Identity bins considered in-group.
-   call='call')
-   ### Call producing this object.
+   seq.names='character',	##<< Names of the subject sequences.
+   id.metric='character',	##<< Metric used as 'identity'.
+   id.ingroup='logical',	##<< Identity bins considered in-group.
+   call='call')			##<< Call producing this object.
    ,package='enveomics.R'
    );
-setClass("enve.recplot2.peak",
+setClass("enve.RecPlot2.Peak",
 ### Enve-omics representation of a peak in the sequencing depth histogram
 ### of a Recruitment plot (see `enve.recplot2.findPeaks`).
    representation(
@@ -52,14 +43,14 @@ setClass("enve.recplot2.peak",
    merge.logdist='numeric'
    ### Attempted `merge.logdist` parameter.
    ));
-setMethod("$", "enve.recplot2", function(x, name) attr(x, name))
-setMethod("$", "enve.recplot2.peak", function(x, name) attr(x, name))
+setMethod("$", "enve.RecPlot2", function(x, name) attr(x, name))
+setMethod("$", "enve.RecPlot2.Peak", function(x, name) attr(x, name))
 
 #==============> Define S4 methods
-plot.enve.recplot2 <- function
-   ### Plots an `enve.recplot2` object.
+plot.enve.RecPlot2 <- function
+   ### Plots an `enve.RecPlot2` object.
       (x,
-      ### `enve.recplot2` object to plot.
+      ### `enve.RecPlot2` object to plot.
       layout=matrix(c(5,5,2,1,4,3), nrow=2),
       ### Matrix indicating the position of the different panels in the layout, where:
       ### 0: Empty space, 1: Counts matrix, 2: position histogram (sequencing depth),
@@ -110,10 +101,11 @@ plot.enve.recplot2 <- function
       ### Color associated to out-group matches.
       id.col='black',
       ### Color for the identity histogram.
-      peaks.opts=list()
+      peaks.opts=list(),
       ### Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.
+      ...
+      ### Any other graphic parameters (currently ignored).
    ){
-   if(!require(stats, quietly=TRUE)) stop('Unavailable required package: `stats`.');
    pos.units	<- match.arg(pos.units);
    pos.factor	<- ifelse(pos.units=='bp',1,ifelse(pos.units=='Kbp',1e3,1e6));
    pos.lim	<- pos.lim/pos.factor;
@@ -279,7 +271,7 @@ plot.enve.recplot2 <- function
    
    par(mar=ori.mar);
    return(peaks);
-   ### Returns a list of `enve.recplot2.peak` objects (see `enve.recplot2.findPeaks`). If `peaks.col`=NA or
+   ### Returns a list of `enve.RecPlot2.Peak` objects (see `enve.recplot2.findPeaks`). If `peaks.col`=NA or
    ### `layout` doesn't include 4, returns NA.
 }
 
@@ -314,10 +306,9 @@ enve.recplot2 <- function(
       verbose=TRUE,
       ### Indicates if the function should report the advance.
       ...
-      ### Any additional parameters supported by `plot.enve.recplot2`.
+      ### Any additional parameters supported by `plot.enve.RecPlot2`.
    ){
    # Settings
-   if(!require(parallel, quietly=TRUE)) stop('Unavailable required package: `parallel`.');
    id.metric <- match.arg(id.metric);
    
    #Read files
@@ -351,7 +342,7 @@ enve.recplot2 <- function(
    pos.counts.out  <- apply(counts[,!id.ingroup], 1, sum);
 
    # Plot and return
-   recplot <- new('enve.recplot2',
+   recplot <- new('enve.RecPlot2',
       counts=counts, id.counts=id.counts, pos.counts.in=pos.counts.in,
       pos.counts.out=pos.counts.out,
       id.breaks=id.breaks, pos.breaks=pos.breaks,
@@ -363,14 +354,14 @@ enve.recplot2 <- function(
       plot(recplot, ...);
    }
    return(recplot);
-   ### Returns an object of class `enve.recplot2`.
+   ### Returns an object of class `enve.RecPlot2`.
 }
 
 enve.recplot2.findPeaks <- function(
    ### Identifies peaks in the population histogram potentially indicating
    ### sub-population mixtures.
       x,
-      ### An `enve.recplot2` object.
+      ### An `enve.RecPlot2` object.
       min.points=50,
       ### Minimum number of points in the quantile-estimation-range (`quant.est`) to estimate a peak.
       quant.est=c(0.005, 0.995),
@@ -405,9 +396,6 @@ enve.recplot2.findPeaks <- function(
       verbose=FALSE
       ### Display (mostly debugging) information.
    ){
-   if(!require(fitdistrplus, quietly=TRUE)) stop('Unavailable required package: `fitdistrplus`.');
-   if(!require(modeest, quietly=TRUE)) stop('Unavailable required package: `modeest`.');
-   if(with.skewness & !require(sn, quietly=TRUE)) stop('Unavailable required package: `sn`.');
    
    # Essential vars
    pos.binsize	<- x$pos.breaks[-1] - x$pos.breaks[-length(x$pos.breaks)];
@@ -453,18 +441,18 @@ enve.recplot2.findPeaks <- function(
    
    if(verbose) cat('Found',length(peaks),'peak(s)\n')
    return(peaks);
-   ### Returns a list of `enve.recplot2.peak` objects.
+   ### Returns a list of `enve.RecPlot2.Peak` objects.
 }
 
 enve.recplot2.corePeak <- function
    ### Finds the peak in a list of peaks that is most likely to represent the
    ### "core genome" of a population.
       (x
-      ### `list` of `enve.recplot2.peak` objects.
+      ### `list` of `enve.RecPlot2.Peak` objects.
    ){
    # Find the peak with maximum depth (centrality)
    maxPeak <- x[[
-	 which.max(as.numeric(lapply(peaks,
+	 which.max(as.numeric(lapply(x,
 	    function(y) y$param.hat[[ length(y$param.hat) ]])))
       ]]
    # If a "larger" peak (a peak explaining more bins of the genome) is within
@@ -483,7 +471,7 @@ enve.recplot2.corePeak <- function
 
 
 enve.recplot2.__counts <- function
-   ### Internal ancilliary function (see `enve.recplot2.peak`).
+   ### Internal ancilliary function (see `enve.RecPlot2.Peak`).
       (x, pos.breaks, id.breaks, rec.idcol){
    rec <- x$rec
    verbose <- x$verbose
@@ -500,7 +488,7 @@ enve.recplot2.__counts <- function
 }
 
 enve.recplot2.__peakHist <- function
-   ### Internal ancilliary function (see `enve.recplot2.peak`).
+   ### Internal ancilliary function (see `enve.RecPlot2.Peak`).
       (x, mids, counts=TRUE){
    d.o <- x$param.hat
    d.o$x <- mids
@@ -550,7 +538,7 @@ enve.recplot2.__findPeak <- function
    lsd2 <- c();
    lsd.pop <- c();
    n.hat <- length(lsd1.pop)/diff(quant.est)
-   peak <- new('enve.recplot2.peak', dist=dist, values=as.numeric(), mode=mode1, param.hat=param.hat,
+   peak <- new('enve.RecPlot2.Peak', dist=dist, values=as.numeric(), mode=mode1, param.hat=param.hat,
       n.hat=n.hat, n.total=n.total, merge.logdist=merge.logdist)
    peak.breaks <- seq(min(lsd1), max(lsd1), length=20)
    peak.cnt <- enve.recplot2.__peakHist(peak, (peak.breaks[-length(peak.breaks)]+peak.breaks[-1])/2)

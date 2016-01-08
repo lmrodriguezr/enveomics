@@ -18,7 +18,7 @@ Applies transformation: distance = (max.sim - values)/max.sim.}
 
 \value{Returns a `dist` object.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

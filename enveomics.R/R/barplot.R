@@ -1,5 +1,5 @@
 
-enve.barplot <- function(
+enve.barplot <- structure(function(
 	### Creates nice barplots from tab-delimited tables
 	x,
 	### Can be either the input data or the path to the file containing the table. If it
@@ -49,7 +49,8 @@ enve.barplot <- function(
    
    # Read input
    if(is.character(x)){
-      c <- read.table(x, sep='\t', h=T, row.names=1, quote='', comment.char='');
+      c <- read.table(x, sep='\t', header=TRUE, row.names=1, quote='',
+	 comment.char='');
    }else{
       c <- as.data.frame(x);
    }
@@ -127,5 +128,15 @@ enve.barplot <- function(
    if(top < nrow(p)) nam <- c(nam, paste('Other (',nrow(p)-length(color.col),')', sep=''));
    legend('center', col=c(color.col, other.col), legend=nam, pch=15, bty='n', pt.cex=2, ncol=legend.ncol);
    par(mar=mar);
-}
+}, ex=function(){
+   # Load data
+   data("phyla.counts", package="enveomics.R", envir=environment())
+   # Create a barplot sorted by variance with organic trends
+   enve.barplot(phyla.counts, # Counts of phyla in four sites
+      sizes=c(250,100,75,200), # Total sizes of the datasets of each site
+      bars.width=2, # Decrease from default, so the names are fully displayed
+      organic.trend=TRUE, # Nice curvy background
+      sort.by=var # Sort by variance across sites
+   )
+});
 

@@ -5,7 +5,7 @@
 \usage{enve.prune.dist(t, dist.quantile = 0.25, min_dist, quiet = FALSE, 
     max_iters = 100, min_nodes_random = 40000, random_nodes_frx = 1)}
 \arguments{
-  \item{t}{A `phylo` object}
+  \item{t}{A `phylo` object or a path to the Newick file.}
   \item{dist.quantile}{The quantile of edge lengths.}
   \item{min_dist}{The minimum distance to allow between two tips. If not set, dist.quantile is
 used instead to calculate it.}
@@ -20,7 +20,7 @@ cannot be represented in R.}
 
 \value{Returns a pruned phylo object.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

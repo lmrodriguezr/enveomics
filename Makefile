@@ -7,25 +7,45 @@ include globals.mk
 
 TEST=Tests
 enveomics_r=enveomics.R
+.PHONY: test install install-scripts install-r uninstall install-deps
 
-test:
+test: $(enveomics_r).tar.gz
+	@echo 
+	@echo Testing 
 	cd $(TEST) && $(MAKE)
+	@echo 
+	@echo Testing $(enveomics_r)
+	$(R) CMD check --as-cran $(enveomics_r).tar.gz
 
-install:
+install: install-r install-scripts
+
+install-scripts:
 	[[ -d $(bindir)/lib ]] || mkdir $(bindir)/lib
 	ln -s $(foreach file,$(SCRIPTS),$(shell pwd)/$(file)) $(bindir)
 	ln -s $(shell pwd)/Scripts/lib/enveomics_rb $(bindir)/lib/
-	$(R) CMD INSTALL $(enveomics_r)/
 	@echo
 	@echo Important note:
 	@echo This installation has simply created symbolic links to Scripts.
 	@echo If you need to move this folder, use uninstall/install afterwards.
 	@echo
 
-uninstall:
-	for file in $(foreach f,$(SCRIPTS),$(bindir)/$(notdir $f)) ; do \
-	   [[ -h $$file ]] && rm $$file ; \
-	done
-	[[ -h $(bindir)/lib/enveomics_rb ]] && rm $(bindir)/lib/enveomics_rb
-	$(R) CMD REMOVE $(enveomics_r)
+install-r:
+	$(R) CMD INSTALL $(enveomics_r)/
 
+uninstall:
+	-for file in $(foreach f,$(SCRIPTS),$(bindir)/$(notdir $f)) ; do \
+	   [[ -h $$file ]] && rm -r $$file ; \
+	done
+	-[[ -h $(bindir)/lib/enveomics_rb ]] && rm -r $(bindir)/lib/enveomics_rb
+	-$(R) CMD REMOVE $(enveomics_r)
+
+$(enveomics_r).tar.gz: install-deps
+	rm -r $(enveomics_r).tar.gZ
+	./build_enveomics_r.bash
+	tar zcf $(enveomics_r).tar.gz $(enveomics_r)
+	$(MAKE) install-r
+
+install-deps: /usr/local/bin/brew /Library/TeX/texbin/pdflatex
+	#pandoc -v %%>/dev/null || brew install pandoc
+	#qpdf -v %%>/dev/null || brew install qpdf
+	[[ -d /usr/local/opt/texinfo/bin ]] || brew install texinfo

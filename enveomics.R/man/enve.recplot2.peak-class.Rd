@@ -1,14 +1,14 @@
-\name{enve.recplot2.peak-class}
+\name{enve.RecPlot2.Peak-class}
 \Rdversion{1.1}
 \docType{class}
-\alias{enve.recplot2.peak-class}
-\alias{enve.recplot2.peak}
+\alias{enve.RecPlot2.Peak-class}
+\alias{enve.RecPlot2.Peak}
 %% \alias{$}
 
-\title{enve.recplot2.peak S4 class}
+\title{enve.RecPlot2.Peak S4 class}
 \description{Enve-omics representation of a peak in the sequencing depth histogram
 of a Recruitment plot (see `enve.recplot2.findPeaks`).}
-\section{Objects from the Class}{Objects can be created by calls of the form \code{new(enve.recplot2.peak ...)}}
+\section{Objects from the Class}{Objects can be created by calls of the form \code{new(enve.RecPlot2.Peak ...)}}
 \section{Slots}{
   \describe{
     \item{\code{dist}:}{(\code{character}) Distribution of the peak. Currently supported: 'norm' (normal) and 'sn' (skew-normal).}
@@ -27,11 +27,11 @@ the length of `values`, but it's not and integer.}
 }
 \section{Methods}{
   \describe{
-    \item{$}{\code{signature(x = "enve.recplot2.peak")}: ... }
+    \item{$}{\code{signature(x = "enve.RecPlot2.Peak")}: ... }
 	 }
 }
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

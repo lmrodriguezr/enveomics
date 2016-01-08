@@ -75,11 +75,7 @@ enve.recplot <- structure(function(
    METRICS <- c('identity', 'corrected identity', 'bit score');
    SUMMARY <- c('sum', 'average', 'median', '');
    if(is.null(prefix)) stop('Parameter prefix is mandatory.');
-   if(!require(gplots, quietly=TRUE)) stop('Unavailable gplots library.');
-   if(id.splines + pos.splines > 0 && !require(stats, quietly=TRUE))
-   	stop('Splines requested, but the stats library is unavailable.');
-   if(ret.mode && !require(modeest, quietly=TRUE))
-   	stop('The mode of the identity was requested, but the modeest library is unavailable.');
+   if(!requireNamespace("gplots", quietly=TRUE)) stop('Unavailable gplots library.');
 
    # Read files
    if(verbose) cat("Reading files.\n")
@@ -177,7 +173,7 @@ enve.recplot <- structure(function(
       }
    }
    id.top <- c((1-id.topclasses):0) + id.breaks;
-   rec.col=colorpanel(256, rec.col1, rec.col2);
+   rec.col=gplots::colorpanel(256, rec.col1, rec.col2);
    image(x=pos.marks, y=id.marks, z=log10(rec.hist),
    		breaks=seq(0, log10(max(rec.hist)), length.out=1+length(rec.col)), col=rec.col,
 		xlim=pos.lim, ylim=id.lim, xlab='Position in genome (Mbp)',
@@ -209,7 +205,7 @@ enve.recplot <- structure(function(
    legend('bottomright', paste(id.shortname, 'histogram'), bg=rgb(1,1,1,2/3));
    out <- c(out, list(id.mean=mean(rec[, id.reccol])));
    out <- c(out, list(id.median=median(rec[, id.reccol])));
-   if(ret.mode)   out <- c(out, list(id.mode=mlv(rec[, id.reccol], method='mfv')$M));
+   if(ret.mode)   out <- c(out, list(id.mode=modeest::mlv(rec[, id.reccol], method='mfv')$M));
    if(ret.hist)  out <- c(out, list(id.hist=id.hist));
 
    # Position histogram
@@ -264,7 +260,7 @@ enve.recplot <- structure(function(
    par(mar=c(0,0,4,2)+0.1);
    plot(1, t='n', xlab='', xaxt='n', ylab='', yaxt='n', xlim=c(0,1), ylim=c(0,1), xaxs='r', yaxs='i', ...);
    text(1/2, 5/6, labels=paste('Reads per ', signif((pos.max-pos.min)/pos.breaks, 2), ' bp (rec. plot)', sep=''), pos=3);
-   leg.col <- colorpanel(100, rec.col1, rec.col2);
+   leg.col <- gplots::colorpanel(100, rec.col1, rec.col2);
    leg.lab <- signif(10^seq(0, log10(max(rec.hist)), length.out=10), 2);
    for(i in 1:10){
       for(j in 1:10){

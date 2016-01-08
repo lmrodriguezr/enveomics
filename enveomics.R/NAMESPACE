@@ -1,7 +1,18 @@
+import(methods)
+import(modeest)
+import(parallel)
+import(fitdistrplus)
+import(sn)
+exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest)
+S3method(plot, enve.RecPlot2)
+S3method(plot, enve.TRIBS)
+S3method(plot, enve.TRIBStest)
+S3method(summary, enve.TRIBS)
+S3method(summary, enve.TRIBStest)
 export(enve.cliopts, enve.barplot, enve.recplot, enve.prune.dist,
    enve.tribs, plot.enve.TRIBS, summary.enve.TRIBS, enve.tribs.test,
    plot.enve.TRIBStest, summary.enve.TRIBStest,
    enve.df2dist, enve.df2dist.group, enve.df2dist.list,
-   enve.recplot2, plot.enve.recplot2, enve.recplot2.findPeaks,
+   enve.recplot2, plot.enve.RecPlot2, enve.recplot2.findPeaks,
    enve.recplot2.corePeak)
 

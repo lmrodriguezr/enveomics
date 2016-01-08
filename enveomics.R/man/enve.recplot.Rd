@@ -89,7 +89,7 @@ id.metric: Full name of the used identity metric.
 
 id.summary: Full name of the summary method used to build the identity plot.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

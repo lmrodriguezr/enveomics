@@ -5,12 +5,12 @@
 "core genome" of a population.}
 \usage{enve.recplot2.corePeak(x)}
 \arguments{
-  \item{x}{`list` of `enve.recplot2.peak` objects.}
+  \item{x}{`list` of `enve.RecPlot2.Peak` objects.}
 }
 
 
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

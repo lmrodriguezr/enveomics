@@ -25,12 +25,12 @@ include: `median` to estimate the median instead of total bins, and
 ANI<95\% within species.}
   \item{threads}{Number of threads to use.}
   \item{verbose}{Indicates if the function should report the advance.}
-  \item{\dots}{Any additional parameters supported by `plot.enve.recplot2`.}
+  \item{\dots}{Any additional parameters supported by `plot.enve.RecPlot2`.}
 }
 
-\value{Returns an object of class `enve.recplot2`.}
+\value{Returns an object of class `enve.RecPlot2`.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

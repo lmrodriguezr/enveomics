@@ -1,54 +1,38 @@
-\name{enve.recplot2-class}
+\name{enve.RecPlot2-class}
 \Rdversion{1.1}
 \docType{class}
-\alias{enve.recplot2-class}
-\alias{$,enve.recplot2-method}
+\alias{enve.RecPlot2-class}
+\alias{enve.RecPlot2}
+%% \alias{$}
 
-\title{Class \code{"enve.recplot2"}}
-\description{
-%%  ~~ A concise (1-5 lines) description of what the class is. ~~
-}
-\section{Objects from the Class}{
-Objects can be created by calls of the form \code{new("enve.recplot2", ...)}.
-%%  ~~ describe objects here ~~ 
-}
+\title{enve.RecPlot2 S4 class}
+\description{Enve-omics representation of Recruitment plots. This object can
+be produced by `enve.recplot2` and supports S4 method plot.}
+\section{Objects from the Class}{Objects can be created by calls of the form \code{new(enve.RecPlot2 ...)}}
 \section{Slots}{
   \describe{
-    \item{\code{counts}:}{Object of class \code{"matrix"} ~~ }
-    \item{\code{pos.counts.in}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{pos.counts.out}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{id.counts}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{id.breaks}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{pos.breaks}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{seq.breaks}:}{Object of class \code{"numeric"} ~~ }
-    \item{\code{seq.names}:}{Object of class \code{"character"} ~~ }
-    \item{\code{id.metric}:}{Object of class \code{"character"} ~~ }
-    \item{\code{id.ingroup}:}{Object of class \code{"logical"} ~~ }
-    \item{\code{call}:}{Object of class \code{"call"} ~~ }
+    \item{\code{counts}:}{(\code{matrix}) Counts as a two-dimensional histogram.}
+    \item{\code{pos.counts.in}:}{(\code{numeric}) Counts of in-group hits per position bin.}
+    \item{\code{pos.counts.out}:}{(\code{numeric}) Counts of out-group hits per position bin.}
+    \item{\code{id.counts}:}{(\code{numeric}) Counts per ID bin.}
+    \item{\code{id.breaks}:}{(\code{numeric}) Breaks of identity bins.}
+    \item{\code{pos.breaks}:}{(\code{numeric}) Breaks of position bins.}
+    \item{\code{seq.breaks}:}{(\code{numeric}) Limits of the subject sequences after concatenation.}
+    \item{\code{seq.names}:}{(\code{character}) Names of the subject sequences.}
+    \item{\code{id.metric}:}{(\code{character}) Metric used as 'identity'.}
+    \item{\code{id.ingroup}:}{(\code{logical}) Identity bins considered in-group.}
+    \item{\code{call}:}{(\code{call}) Call producing this object.}
   }
 }
 \section{Methods}{
   \describe{
-    \item{$}{\code{signature(x = "enve.recplot2")}: ... }
+    \item{$}{\code{signature(x = "enve.RecPlot2")}: ... }
 	 }
 }
-\references{
-%%  ~~put references to the literature/web site here~~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
+\author{Luis M. Rodriguez-R [aut, cre]}
 
-\seealso{
-%%  ~~objects to See Also as \code{\link{~~fun~~}}, ~~~
-%%  ~~or \code{\linkS4class{CLASSNAME}} for links to other classes ~~~
-}
-\examples{
-showClass("enve.recplot2")
-}
-\keyword{classes}
+
+
+
+

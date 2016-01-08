@@ -18,11 +18,12 @@ with minimum impact of sampling biases. This object can be produced by
 \section{Objects from the Class}{Objects can be created by calls of the form \code{new(enve.TRIBS ...)}}
 \section{Slots}{
   \describe{
-    \item{\code{distance}:}{(\code{numeric}) Centrality measurement of the distances between the selected objects
-(without subsampling).}
-    \item{\code{points}:}{(\code{matrix}) Position of the different objects in distance space.}
-    \item{\code{distances}:}{(\code{matrix}) Subsampled distances, where the rows are replicates and the columns are
-subsampling levels.}
+    \item{\code{distance}:}{(\code{numeric}) Centrality measurement of the distances between the
+<< selected objects (without subsampling).}
+    \item{\code{points}:}{(\code{matrix}) Position of the different objects in distance
+<< space.}
+    \item{\code{distances}:}{(\code{matrix}) Subsampled distances, where the rows are replicates
+<< and the columns are subsampling levels.}
     \item{\code{spaceSize}:}{(\code{numeric}) Number of objects.}
     \item{\code{selSize}:}{(\code{numeric}) Number of selected objects.}
     \item{\code{dimensions}:}{(\code{numeric}) Number of dimensions in the distance space.}
@@ -34,7 +35,7 @@ subsampling levels.}
 No methods defined with class "enve.TRIBS" in the signature.
 }
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

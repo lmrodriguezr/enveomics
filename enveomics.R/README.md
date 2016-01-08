@@ -1,7 +1,7 @@
 ## enveomics.R
 
-Execute `./install.bash` to install enveomics.R. If you're using a non-standard R
-location, open your own R in this location and execute:
+Execute `./install.bash` to install enveomics.R. If you're using a non-standard
+R location, open your own R in this location and execute:
 
     > install.packages('./', repos=NULL);
 
@@ -20,4 +20,6 @@ And open help messages using any of the following commands:
     > ?enve.tribs
     > ?enve.tribs.test
 
+You can run some examples using these libraries in the
+[enveomics-GUI](https://github.com/lmrodriguezr/enveomics-gui).
 

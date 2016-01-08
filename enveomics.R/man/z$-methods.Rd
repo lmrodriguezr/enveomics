@@ -1,8 +1,8 @@
 \name{$-methods}
 \docType{methods}
 \alias{$-methods}
-\alias{$,enve.recplot2-method}
-\alias{$,enve.recplot2.peak-method}
+\alias{$,enve.RecPlot2-method}
+\alias{$,enve.RecPlot2.Peak-method}
 \title{ ~~ Methods for Function \code{$}  ~~}
 \description{
  ~~ Methods for function \code{$}  ~~
@@ -10,11 +10,11 @@
 \section{Methods}{
 \describe{
 
-\item{\code{signature(x = "enve.recplot2")}}{
+\item{\code{signature(x = "enve.RecPlot2")}}{
 %%  ~~describe this method here~~
 }
 
-\item{\code{signature(x = "enve.recplot2.peak")}}{
+\item{\code{signature(x = "enve.RecPlot2.Peak")}}{
 %%  ~~describe this method here~~
 }
 }}

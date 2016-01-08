@@ -1,7 +1,7 @@
 \name{enve.recplot2.__peakHist}
 \alias{enve.recplot2.__peakHist}
 \title{enve recplot2   peakHist}
-\description{Internal ancilliary function (see `enve.recplot2.peak`).}
+\description{Internal ancilliary function (see `enve.RecPlot2.Peak`).}
 \usage{enve.recplot2.__peakHist(x, mids, counts = TRUE)}
 \arguments{
   \item{x}{
@@ -14,7 +14,7 @@
 
 
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

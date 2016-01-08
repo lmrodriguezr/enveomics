@@ -31,14 +31,16 @@ enve.cliopts <- function(
       ){
    
    #= Load stuff
-   suppressPackageStartupMessages(library(optparse))
-   library(tools)
+   if(!suppressPackageStartupMessages(
+      requireNamespace("optparse", quietly=TRUE)))
+	 stop("Package 'optparse' is required.")
+   requireNamespace("tools", quietly=TRUE)
    if(missing(positional_arguments)) positional_arguments <- FALSE
    if(missing(usage)) usage <- "usage: %prog [options]"
    
    #= Get help (if any)
    if(!missing(rd_file)){
-      rd <- parse_Rd(rd_file)
+      rd <- tools::parse_Rd(rd_file)
       for(i in 1:length(rd)){
          tag <- attr(rd[[i]],'Rd_tag')
 	 if(tag=="\\description" && p_desc==""){
@@ -60,7 +62,9 @@ enve.cliopts <- function(
    o_i <- 0
    opts <- list()
    f <- formals(fx)
-   for(i in 1:length(defaults)) f[[names(defaults)[i]]] <- defaults[[i]]
+   if(length(defaults)>0){
+      for(i in 1:length(defaults)) f[[names(defaults)[i]]] <- defaults[[i]]
+   }
    for(i in names(f)){
       if(i=="..." || i %in% ignore) next
       o_i <- o_i + 1
@@ -68,7 +72,7 @@ enve.cliopts <- function(
 
       optopt <- list(help="")
       if(length(o_desc[[i]])==1) optopt$help <- o_desc[[i]]
-      if(!suppressWarnings(is.na(f[[i]])) & is.logical(f[[i]])){
+      if(!is.null(f[[i]]) && !suppressWarnings(is.na(f[[i]])) && is.logical(f[[i]])){
 	 optopt$opt_str <- paste(ifelse(f[[i]], "--no-", "--"), flag, sep='')
 	 optopt$action  <- ifelse(f[[i]], "store_false", "store_true")
       }else{
@@ -86,10 +90,10 @@ enve.cliopts <- function(
       if(i %in% number) optopt$metavar <- "NUMERIC"
       optopt$dest <- i
       
-      opts[[o_i]] <- do.call("make_option", optopt)
+      opts[[o_i]] <- do.call(optparse::make_option, optopt)
    }
-   opt <- parse_args(
-      OptionParser(option_list=opts, description=p_desc, usage=usage),
+   opt <- optparse::parse_args(
+      optparse::OptionParser(option_list=opts, description=p_desc, usage=usage),
       positional_arguments=positional_arguments)
 
    #= Post-hoc checks

@@ -36,7 +36,7 @@ on the same objects (the selection is unimportant).}
 
 \value{Returns an `enve.TRIBS` object.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

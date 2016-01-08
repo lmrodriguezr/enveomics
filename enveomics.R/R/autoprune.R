@@ -2,7 +2,7 @@
 enve.prune.dist <- function
 ### Automatically prunes a tree, to keep representatives of each clade.
    (t,
-### A `phylo` object
+### A `phylo` object or a path to the Newick file.
    dist.quantile=0.25,
 ### The quantile of edge lengths.
    min_dist,
@@ -20,7 +20,9 @@ enve.prune.dist <- function
    random_nodes_frx=1
 ### Fraction of the nodes to be sampled if more than `min_nodes_random`.
    ){
-   if(!require(picante, quietly=TRUE)) stop('Unavailable picante library.');
+   if(!requireNamespace("ape", quietly=TRUE))
+      stop('Unavailable ape library.');
+   if(is.character(t)) t <- ape::read.tree(t)
    if(missing(min_dist)){
       if(dist.quantile>0){
 	 min_dist <- as.numeric(quantile(t$edge.length, dist.quantile));
@@ -60,7 +62,6 @@ enve.prune.dist <- function
 enve.__prune.reduce <- function
 ### Internal function for enve.prune.dist
    (t, nodes, min_dist, quiet){
-   if(!require(picante, quietly=TRUE)) stop('Unavailable picante library.');
    if(!quiet) pb <- txtProgressBar(1, length(nodes), style=3);
    for(i in 1:length(nodes)){
       node.name <- nodes[i];
@@ -76,7 +77,7 @@ enve.__prune.reduce <- function
       for(j in parent.edges){
 	 for(k in parent.edges){
 	    if(j != k & t$edge[j,2]<length(t$tip.label) & t$edge[k,2]<length(t$tip.label) & sum(t$edge.length[c(j,k)]) < min_dist){
-	       t <- drop.tip(t, t$edge[k,2]);
+	       t <- ape::drop.tip(t, t$edge[k,2]);
 	       stopit <- TRUE;
 	       break;
 	    }
@@ -94,7 +95,6 @@ enve.__prune.iter <- function
    dist,
    min_dist,
    quiet){
-   if(!require(picante, quietly=TRUE)) stop('Unavailable picante library.');
    ori_len <- length(t$tip.label);
    # Prune
    if(!quiet) pb <- txtProgressBar(1, ncol(dist)-1, style=3);
@@ -103,7 +103,7 @@ enve.__prune.iter <- function
       if(i %in% ignore) next;
       for(j in (i+1):nrow(dist)){
 	 if(dist[j, i]<min_dist){
-	    t <- drop.tip(t, rownames(dist)[j]);
+	    t <- ape::drop.tip(t, rownames(dist)[j]);
 	    ignore <- c(ignore, j);
 	    break;
 	 }

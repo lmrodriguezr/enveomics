@@ -1,14 +1,28 @@
 Package: enveomics.R
-Version: 2016.01.05
+Version: 1.0.0
 Authors@R: c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
 	   email="lmrodriguezr@gmail.com"))
-Title: Various R functions from the Kostas lab
+Title: Various R Functions from the Kostas Lab
 Description: A collection of R functions of common use in
    the Kostas Lab for microbial ecology.
-Author: Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]
+Author: Luis M. Rodriguez-R [aut, cre]
 Maintainer: Luis M. Rodriguez-R <lmrodriguezr@gmail.com>
 URL: http://enve-omics.gatech.edu/
-Depends: R (>= 2.9), stats, gplots, modeest, fitdistrplus, sn, optparse
-License: Artistic (>= 2)
+Depends:
+   R (>= 2.9),
+   stats,
+   methods,
+   parallel,
+   modeest,
+   fitdistrplus,
+   sn
+Suggests:
+   tools,
+   vegan,
+   ape,
+   picante,
+   gplots,
+   optparse
+License: Artistic-2.0
 LazyLoad: yes
 Encoding: UTF-8

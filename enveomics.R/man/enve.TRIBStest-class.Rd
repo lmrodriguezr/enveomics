@@ -29,7 +29,7 @@ lesser than zero.}
 No methods defined with class "enve.TRIBStest" in the signature.
 }
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

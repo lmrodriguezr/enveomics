@@ -12,7 +12,7 @@ sub-population mixtures.}
         0)), rm.top = 0.05, with.skewness = TRUE, optim.rounds = 200, 
     optim.epsilon = 1e-08, merge.logdist = log(1.25), verbose = FALSE)}
 \arguments{
-  \item{x}{An `enve.recplot2` object.}
+  \item{x}{An `enve.RecPlot2` object.}
   \item{min.points}{Minimum number of points in the quantile-estimation-range (`quant.est`) to estimate a peak.}
   \item{quant.est}{Range of quantiles to be used in the estimation of a peak's parameters.}
   \item{mlv.opts}{Options passed to `mlv` to estimate the mode.}
@@ -37,9 +37,9 @@ of ~0.22 corresponds to a maximum difference of 25\%.}
   \item{verbose}{Display (mostly debugging) information.}
 }
 
-\value{Returns a list of `enve.recplot2.peak` objects.}
+\value{Returns a list of `enve.RecPlot2.Peak` objects.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

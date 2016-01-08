@@ -37,24 +37,17 @@ setClass("enve.TRIBS",
    ### with minimum impact of sampling biases. This object can be produced by
    ### `enve.tribs` and supports S4 methods `plot` and `summary`.
    representation(
-   distance='numeric',
-   ### Centrality measurement of the distances between the selected objects
-   ### (without subsampling).
-   points='matrix',
-   ### Position of the different objects in distance space.
-   distances='matrix',
-   ### Subsampled distances, where the rows are replicates and the columns are
-   ### subsampling levels.
-   spaceSize='numeric',
-   ### Number of objects.
-   selSize='numeric',
-   ### Number of selected objects.
-   dimensions='numeric',
-   ### Number of dimensions in the distance space.
-   subsamples='numeric',
-   ### Subsampling levels (as fractions, from 0 to 1).
-   call='call')
-   ### Call producing this object.
+   distance='numeric',	##<< Centrality measurement of the distances between the
+			##<< selected objects (without subsampling).
+   points='matrix',	##<< Position of the different objects in distance
+			##<< space.
+   distances='matrix',	##<< Subsampled distances, where the rows are replicates
+			##<< and the columns are subsampling levels.
+   spaceSize='numeric',	##<< Number of objects.
+   selSize='numeric',	##<< Number of selected objects.
+   dimensions='numeric',##<< Number of dimensions in the distance space.
+   subsamples='numeric',##<< Subsampling levels (as fractions, from 0 to 1).
+   call='call')		##<< Call producing this object.
    ,package='enveomics.R'
    );
 setClass("enve.TRIBStest",
@@ -355,18 +348,17 @@ enve.tribs <- function
    ){
    if(!is(dist, 'dist'))
       stop('`dist` parameter must be a `dist` object.');
-   if(!require(parallel, quietly=TRUE))
-      stop('Unavailable required package: `parallel`.');
    # 1. NMDS
    if(missing(points)){
       if(missing(pre.tribs)){
 	 if(verbosity > 0)
 	    cat('===[ Estimating NMDS ]\n');
-	 if(!suppressPackageStartupMessages(require(vegan, quietly=TRUE)))
-	    stop('Unavailable required package: `vegan`.');
+	 if(!suppressPackageStartupMessages(
+	    requireNamespace("vegan", quietly=TRUE)))
+	       stop('Unavailable required package: `vegan`.');
 	 mds.args <- c(metaMDS.opts, list(comm=dist, k=dimensions,
 	    trace=verbosity));
-	 points <- do.call(metaMDS, mds.args)$points;
+	 points <- do.call(vegan::metaMDS, mds.args)$points;
       }else{
 	 points <- attr(pre.tribs, 'points');
 	 dimensions <- ncol(points);

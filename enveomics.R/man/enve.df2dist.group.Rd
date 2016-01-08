@@ -17,7 +17,7 @@ there are 1 or more distances between each pair of objects.}
 
 \value{Returns a `dist` object.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 

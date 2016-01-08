@@ -1,8 +1,8 @@
-\name{plot.enve.recplot2}
-\alias{plot.enve.recplot2}
-\title{plot enve recplot2}
-\description{Plots an `enve.recplot2` object.}
-\usage{\method{plot}{enve.recplot2}(x, layout = matrix(c(5, 5, 2, 1, 4, 3), nrow = 2), 
+\name{plot.enve.RecPlot2}
+\alias{plot.enve.RecPlot2}
+\title{plot enve RecPlot2}
+\description{Plots an `enve.RecPlot2` object.}
+\usage{\method{plot}{enve.RecPlot2}(x, layout = matrix(c(5, 5, 2, 1, 4, 3), nrow = 2), 
     widths = c(1, 7, 2), heights = c(1, 2), palette = grey((100:0)/100), 
     underlay.group = TRUE, peaks.col = "darkred", id.lim = range(x$id.breaks), 
     pos.lim = range(x$pos.breaks), pos.units = c("Mbp", "Kbp", 
@@ -14,9 +14,10 @@
     pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
         0, 1/2, 2), out.lwd = ifelse(pos.splines > 0, 1/2, 2), 
     id.lwd = ifelse(id.splines > 0, 1/2, 2), in.col = "darkblue", 
-    out.col = "lightblue", id.col = "black", peaks.opts = list())}
+    out.col = "lightblue", id.col = "black", peaks.opts = list(), 
+    ...)}
 \arguments{
-  \item{x}{`enve.recplot2` object to plot.}
+  \item{x}{`enve.RecPlot2` object to plot.}
   \item{layout}{Matrix indicating the position of the different panels in the layout, where:
 0: Empty space, 1: Counts matrix, 2: position histogram (sequencing depth),
 3: identity histogram, 4: Populations histogram (histogram of sequencing depths),
@@ -47,12 +48,13 @@ If non-zero, requires the stats package.}
   \item{out.col}{Color associated to out-group matches.}
   \item{id.col}{Color for the identity histogram.}
   \item{peaks.opts}{Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.}
+  \item{\dots}{Any other graphic parameters (currently ignored).}
 }
 
-\value{Returns a list of `enve.recplot2.peak` objects (see `enve.recplot2.findPeaks`). If `peaks.col`=NA or
+\value{Returns a list of `enve.RecPlot2.Peak` objects (see `enve.recplot2.findPeaks`). If `peaks.col`=NA or
 `layout` doesn't include 4, returns NA.}
 
-\author{Luis M. Rodriguez-R <lmrodriguezr@gmail.com> [aut, cre]}
+\author{Luis M. Rodriguez-R [aut, cre]}
 
 
 
