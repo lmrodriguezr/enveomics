@@ -7,6 +7,7 @@
 
 require "enveomics_rb/enveomics"
 use "restclient"
+use "json"
 
 class RemoteData
    # Class-level variables
@@ -34,6 +35,18 @@ class RemoteData
    end
    def self.elink(*etc)
       eutils "elink.fcgi", *etc
+   end
+   def self.esummary(*etc)
+      eutils "esummary.fcgi", *etc
+   end
+   def self.update_gi(db, old_gi)
+      summ = JSON.parse RemoteData.esummary({:db=>db, :id=>old_gi,
+	 :retmode=>"json"})
+      return nil,nil if summ["result"].nil? or summ["result"][old_gi.to_s].nil?
+      new_acc = summ["result"][old_gi.to_s]["replacedby"]
+      new_gi = (new_acc.nil? ? nil :
+	 RemoteData.efetch({:db=>db, :id=>new_acc, :rettype=>"gi"}))
+      return new_gi,summ["result"][old_gi.to_s]["status"]
    end
    def self.ebiFetch(db, id, format, outfile=nil)
       url = "#{@@EBIREST}/dbfetch/dbfetch/#{db}/#{id}/#{format}"

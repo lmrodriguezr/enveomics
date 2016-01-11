@@ -5,13 +5,8 @@
       "description": ["Takes a BLAST against KEGG_PEP (or KO) and retrieves",
         "the pathways in which the subject peptides are involved."],
       "requires": [
-        {
-	  "perl_lib": "JSON"
-        },
-        {
-          "description": "Perl library LWP::Simple",
-          "test": "perl -MLWP::Simple -e ''"
-        }
+        { "perl_lib": "JSON" },
+	{ "perl_lib": "LWP::Simple" }
       ],
       "help_arg": "",
       "options": [
@@ -52,40 +47,40 @@
       ],
       "options": [
         {
-	  "opt": "--function",
-	  "arg": "string",
-	  "mandatory": true,
-	  "description": "Functional annotation."
-	},
-	{
-	  "name": "Output file",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "File containing the sequences."
-	},
-	{
-	  "opt": "--max",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": ["Maximum number of sequences to download. Set to",
-	    "0 to download all."]
-	},
-	{
-	  "opt": "--recover",
-	  "description": "If set, tries to recover a previous FastA."
-	},
-	{
-	  "name": "URL",
-	  "opt": "--url",
-	  "arg": "string",
-	  "default": "http://api.metagenomics.anl.gov/m5nr",
-	  "description": "URL for M5nr API."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "opt": "--function",
+          "arg": "string",
+          "mandatory": true,
+          "description": "Functional annotation."
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "File containing the sequences."
+        },
+        {
+          "opt": "--max",
+          "arg": "integer",
+          "default": 0,
+          "description": ["Maximum number of sequences to download. Set to",
+            "0 to download all."]
+        },
+        {
+          "opt": "--recover",
+          "description": "If set, tries to recover a previous FastA."
+        },
+        {
+          "name": "URL",
+          "opt": "--url",
+          "arg": "string",
+          "default": "http://api.metagenomics.anl.gov/m5nr",
+          "description": "URL for M5nr API."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
@@ -95,51 +90,49 @@
       "warn": ["Avoid using this script on millions of entries at a time,",
         "since each entry elicits requests to EBI and NCBI servers."],
       "requires": [
-        {
-	  "ruby_gem": "nokogiri"
-	}
+        { "ruby_gem": "nokogiri" }
       ],
       "help_arg": "--help",
       "options": [
         {
-	  "name": "IDs",
-	  "opt": "--ids",
-	  "arg": "string",
-	  "description": "Comma-separated list of EBI IDs.",
-	  "note": "Required unless 'Input file' is passed."
-	},
-	{
-	  "name": "Input file",
-	  "opt": "--infile",
-	  "arg": "in_file",
-	  "description": ["Raw text file containing the list of EBI IDs,",
-	    "one per line."],
-	  "note": "Required unless 'IDs' is passed."
-	},
-	{
-	  "opt": "--database",
-	  "arg": "string",
-	  "default": "uniprotkb",
-	  "description": "EBI database defining the EBI IDs."
-	},
-	{
-	  "opt": "--ranks",
-	  "arg": "string",
-	  "description": "Comma-delimited list of taxonomic ranks to report.",
-	  "default": "superkingdom,phylum,class,order,family,genus,species"
-	},
-	{
-	  "opt": "--noheader",
-	  "description": "Do not includ a header in the output."
-	},
-	{
-	  "opt": "--taxids",
-	  "description": "Return Taxonomy IDs instead of scientific names."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly."
-	}
+          "name": "IDs",
+          "opt": "--ids",
+          "arg": "string",
+          "description": "Comma-separated list of EBI IDs.",
+          "note": "Required unless 'Input file' is passed."
+        },
+        {
+          "name": "Input file",
+          "opt": "--infile",
+          "arg": "in_file",
+          "description": ["Raw text file containing the list of EBI IDs,",
+            "one per line."],
+          "note": "Required unless 'IDs' is passed."
+        },
+        {
+          "opt": "--database",
+          "arg": "string",
+          "default": "uniprotkb",
+          "description": "EBI database defining the EBI IDs."
+        },
+        {
+          "opt": "--ranks",
+          "arg": "string",
+          "description": "Comma-delimited list of taxonomic ranks to report.",
+          "default": "superkingdom,phylum,class,order,family,genus,species"
+        },
+        {
+          "opt": "--noheader",
+          "description": "Do not includ a header in the output."
+        },
+        {
+          "opt": "--taxids",
+          "description": "Return Taxonomy IDs instead of scientific names."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        }
       ]
     },
     {
@@ -149,42 +142,42 @@
       "help_arg": "",
       "requires": [
         {
-	  "description": "curl",
-	  "test": "curl --version"
-	}
+          "description": "curl",
+          "test": "curl --version"
+        }
       ],
       "options": [
         {
-	  "name": "Organism",
-	  "arg": "string",
-	  "mandatory": true,
-	  "description": ["The organism to download (e.g.,",
-	    "Streptococcus_pneumoniae)."]
-	},
-	{
-	  "name": "Extension",
-	  "arg": "string",
-	  "mandatory": true,
-	  "default": ".*.gz",
-	  "description": ["Extension to download. Common extensions include",
-	    ".fna.gz (genomic sequences), .faa.gz (protein sequences),",
-	    ".gff.gz (annotations), and .*.gz (all data)."]
-	},
-	{
-	  "name": "Level",
-	  "arg": "string",
-	  "mandatory": true,
-	  "default": "Any",
-	  "description": ["Use only genomes with this assembly level. Common",
-	    "levels are 'Complete Genome' and 'Contig'. By default, any",
-	    "assembly level is allowed ('Any')."]
-	},
-	{
-	  "name": "Directory",
-	  "arg": "out_dir",
-	  "description": ["Directory where the files are to be downladed.",
-	    "By default, same as 'Organism'."]
-	}
+          "name": "Organism",
+          "arg": "string",
+          "mandatory": true,
+          "description": ["The organism to download (e.g.,",
+            "Streptococcus_pneumoniae)."]
+        },
+        {
+          "name": "Extension",
+          "arg": "string",
+          "mandatory": true,
+          "default": ".*.gz",
+          "description": ["Extension to download. Common extensions include",
+            ".fna.gz (genomic sequences), .faa.gz (protein sequences),",
+            ".gff.gz (annotations), and .*.gz (all data)."]
+        },
+        {
+          "name": "Level",
+          "arg": "string",
+          "mandatory": true,
+          "default": "Any",
+          "description": ["Use only genomes with this assembly level. Common",
+            "levels are 'Complete Genome' and 'Contig'. By default, any",
+            "assembly level is allowed ('Any')."]
+        },
+        {
+          "name": "Directory",
+          "arg": "out_dir",
+          "description": ["Directory where the files are to be downladed.",
+            "By default, same as 'Organism'."]
+        }
       ]
     },
     {
@@ -194,23 +187,23 @@
       "help_arg": "",
       "requires": [
         {
-	  "description": "curl",
-	  "test": "curl --version"
-	}
+          "description": "curl",
+          "test": "curl --version"
+        }
       ],
       "options": [
         {
-	  "name": "SRA ID",
-	  "arg": "string",
-	  "mandatory": true,
-	  "description": "ID of the SRA Project, Sample, or Experiment."
-	},
-	{
-	  "name": "dir",
-	  "arg": "out_dir",
-	  "description": ["Directory where the files are to be downladed. By",
-	    "default, same as 'SRA ID'."]
-	}
+          "name": "SRA ID",
+          "arg": "string",
+          "mandatory": true,
+          "description": "ID of the SRA Project, Sample, or Experiment."
+        },
+        {
+          "name": "dir",
+          "arg": "out_dir",
+          "description": ["Directory where the files are to be downladed. By",
+            "default, same as 'SRA ID'."]
+        }
       ]
     },
     {
@@ -220,59 +213,70 @@
       "warn": ["Avoid using this script on millions of entries at a time,",
         "since each entry elicits two requests to NCBI's servers."],
       "requires": [
-        {
-	  "ruby_gem": "nokogiri"
-	}
+        { "ruby_gem": "nokogiri" },
+        { "ruby_gem": "json" }
       ],
       "help_arg": "--help",
       "options": [
         {
-	  "name": "GIs",
-	  "opt": "--gis",
-	  "arg": "string",
-	  "description": "Comma-separated list of GIs.",
-	  "note": "Required unless 'Input file' is passed."
-	},
-	{
-	  "name": "Input file",
-	  "opt": "--infile",
-	  "arg": "in_file",
-	  "description": ["Raw text file containing the list of GIs, one per",
-	    "line."],
-	  "note": "Required unless 'GIs' is passed."
-	},
-	{
-	  "opt": "--protein",
-	  "description": ["Use if the GIs are proteins. Otherwise, GIs are",
-	    "assumed to be from the Nuccore Database."]
-	},
-	{
-	  "opt": "--ranks",
-	  "arg": "string",
-	  "description": "Taxonomic ranks to report, separated by commas.",
-	  "default": "superkingdom,phylum,class,order,family,genus,species"
-	},
-	{
-	  "name": "No header",
-	  "opt": "--noheader",
-	  "description": "Do not include a header in the output."
-	},
-	{
-	  "name": "Tax IDs",
-	  "opt": "--taxids",
-	  "description": "Return Taxonomy IDs instead of scientific names."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["Tab-delimited table with GIs and taxonomic",
-	    "classification."]
-	}
+          "name": "GIs",
+          "opt": "--gis",
+          "arg": "string",
+          "description": "Comma-separated list of GIs.",
+          "note": "Required unless 'Input file' is passed."
+        },
+        {
+          "name": "Input file",
+          "opt": "--infile",
+          "arg": "in_file",
+          "description": ["Raw text file containing the list of GIs, one per",
+            "line."],
+          "note": "Required unless 'GIs' is passed."
+        },
+        {
+          "opt": "--protein",
+          "description": ["Use if the GIs are proteins. Otherwise, GIs are",
+            "assumed to be from the Nuccore Database."]
+        },
+        {
+          "opt": "--ranks",
+          "arg": "string",
+          "description": "Taxonomic ranks to report, separated by commas.",
+          "default": "superkingdom,phylum,class,order,family,genus,species"
+        },
+        {
+          "name": "No header",
+          "opt": "--noheader",
+          "description": "Do not include a header in the output."
+        },
+        {
+          "name": "Tax IDs",
+          "opt": "--taxids",
+          "description": "Return Taxonomy IDs instead of scientific names."
+        },
+        {
+          "name": "Exact GI",
+          "opt": "--exact-gi",
+          "description": ["Returns only taxonomy associated with the exact GI",
+            "passed. By default, it attempts to update accession versions if",
+            "possible."]
+        },
+        {
+          "opt": "--ignore-missing",
+          "description": ["Does not report missing GIs in the output file. By",
+            "default, it reports GI and empty values for all other columns."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Tab-delimited table with GIs and taxonomic",
+            "classification."]
+        }
       ]
     }
   ]
