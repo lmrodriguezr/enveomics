@@ -40,12 +40,12 @@ uninstall:
 	-$(R) CMD REMOVE $(enveomics_r)
 
 $(enveomics_r).tar.gz: install-deps
-	rm -r $(enveomics_r).tar.gZ
+	-rm -r $(enveomics_r).tar.gz
 	./build_enveomics_r.bash
 	tar zcf $(enveomics_r).tar.gz $(enveomics_r)
 	$(MAKE) install-r
 
 install-deps: /usr/local/bin/brew /Library/TeX/texbin/pdflatex
-	#pandoc -v %%>/dev/null || brew install pandoc
+	pandoc -v %%>/dev/null || brew install pandoc
 	#qpdf -v %%>/dev/null || brew install qpdf
 	[[ -d /usr/local/opt/texinfo/bin ]] || brew install texinfo

@@ -27,6 +27,6 @@ http://www.perlfoundation.org/artistic_license_2_0.
 # DOCUMENTATION
 
 Most scripts in this repository are self-documented.  However,
-more extensive documentation (and some discussion) can be found
-at the [Kostas lab blog](http://enveomics.blogspot.com/).
+more extensive documentation (and some discussion) can be found at the
+[documentation website](http://enve-omics.ce.gatech.edu/enveomics/docs).
 

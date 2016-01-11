@@ -3,6 +3,15 @@ import(modeest)
 import(parallel)
 import(fitdistrplus)
 import(sn)
+importFrom("grDevices", "boxplot.stats", "col2rgb", "grey", "rainbow",
+   "rgb")
+importFrom("graphics", "abline", "axis", "barplot", "hist", "image",
+   "layout", "legend", "lines", "par", "points", "polygon",
+   "rect", "text")
+importFrom("stats", "as.dist", "cophenetic", "cor", "median",
+   "quantile", "runif", "smooth.spline")
+importFrom("utils", "read.table", "setTxtProgressBar", "tail",
+   "txtProgressBar")
 exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest)
 S3method(plot, enve.RecPlot2)
 S3method(plot, enve.TRIBS)
