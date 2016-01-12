@@ -17,8 +17,14 @@ class RemoteData
    # Class-level methods
    def self.eutils(script, params={}, outfile=nil)
       response = nil
-      (1 .. 5).each do |i|
-	 response = RestClient.get "#{@@EUTILS}/#{script}", {:params=>params}
+      10.times do
+	 begin
+	    response = RestClient.get "#{@@EUTILS}/#{script}", {:params=>params}
+	 rescue => err
+	    warn "Request failed #{response.nil? ? "without error code" :
+	       "with error code #{response.code}"}."
+	    next
+	 end
 	 break if response.code == 200
       end
       abort "Unable to reach NCBI EUtils, error code #{response.code}." unless
