@@ -22,9 +22,10 @@ opt <- suppressWarnings(enve.cliopts(enve.tribs,
    ignore=c("metaMDS.opts","points","pre.tribs","subsamples"),
    o_desc=list(dist="A tab-delimited matrix of distances.",
       selection="A list of names with the selection to evaluate."),
-   p_desc=paste("Estimates the empirical difference between all the distances",
+   p_desc=paste("",
+      "Estimates the empirical difference between all the distances",
       "in a set of objects and a subset, together with its statistical",
-      "significance.")))
+      "significance.",sep="\n\t")))
 
 #= Run it!
 opt$options[['dist']] <- as.dist(read.table(opt$options[['dist']],
