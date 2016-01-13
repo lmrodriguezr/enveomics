@@ -132,7 +132,7 @@
       "description": ["Classification of anthrax genomes based on can-SNPs, as",
         "described in Van Ert 2007 (PLoS ONE 2(5):e461)."],
       "values": ["anthrax-cansnp-data.tsv","anthrax-cansnp-key.tsv",
-        "anthrax-cansnp-classif.tsv","anthrax-cansnp-classif.nwk",null,null]
+        "anthrax-cansnp-classif.tsv","anthrax-cansnp-classif.nwk",null]
     },
     {
       "task": "TRIBS.test.R",

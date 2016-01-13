@@ -264,26 +264,26 @@
         {
 	  "opt": "--table",
 	  "arg": "in_file",
-	  "note": "Mandatory unless 'Example' is used.",
+	  "mandatory": true,
 	  "description": ["Input table containing the states (columns) per",
 	    "object (row). It must be tab-delimited and with row and column",
-	    "names. Use 'Example' table to see an example."]
+	    "names."]
 	},
 	{
 	  "opt": "--key",
 	  "arg": "in_file",
-	  "note": "Mandatory unless 'Example' is used.",
+	  "mandatory": true,
 	  "description": ["Input table containing the dychotomous key in",
 	    "linked style, defined in four columns (can contain #-lead comment",
 	    "lines): (1) ID of the step, typically a sequential integer. (2)",
-	    "Name of the character to evaluate. It must coincide with the",
-	    "headers of -t. (3) First character decision (see below). (4)",
-	    "Second character decision (see below).\nA character decision must",
-	    "be formated as: state (must coincide with the values in -t),",
-	    "colon (:), step to follow. If the state is * (star) any state",
-	    "triggers the decision (this should be the norm in column 4). The",
-	    "step to follow should be a step ID in square brackets, or the",
-	    "name of the classification. Use 'Example' key to see an example."]
+	    "Name of character to evaluate. Must coincide with the -t headers.",
+	    "(3) First character decision (see below). (4) Second character",
+	    "decision (see below).\nA character decision must be formated as:",
+	    "state (must coincide with the values in -t), colon (:), step to",
+	    "follow. If the state is * (star) any state triggers the decision",
+	    "(this should be the norm in column 4). The step to follow should",
+	    "be a step ID in square brackets, or the name of the",
+	    "classification."]
 	},
 	{
 	  "opt": "--classification",
@@ -300,14 +300,6 @@
 	{
 	  "opt": "--quiet",
 	  "description": "Run quietly (no STDERR output)."
-	},
-	{
-	  "opt": "--example",
-	  "arg": "select",
-	  "values": ["table", "key", "classification", "output"],
-	  "description": ["Show an example file based on Van Ert et al 2007",
-	    "(PLoS ONE 2(5):e461) and exit."],
-	  "source_url": "http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0000461"
 	}
       ]
     },
