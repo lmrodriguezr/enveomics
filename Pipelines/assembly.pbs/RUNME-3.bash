@@ -18,6 +18,6 @@ for LIB in $LIBRARIES; do
    VARS="LIB=$LIB,PDIR=$PDIR"
    # Launch Stats
    NAME="N50_${LIB}"
-   msub "$PDIR/stats.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME"
+   qsub "$PDIR/stats.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME"
 done
 

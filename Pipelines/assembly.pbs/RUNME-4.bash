@@ -32,13 +32,13 @@ for LIB in $LIBRARIES; do
    # Launch Newbler
    NAME="Newbler_${LIB}"
    if [[ "$QUEUE" != "" ]] ; then
-      msub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l "walltime=$WTIME" -q "$QUEUE"
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l "walltime=$WTIME" -q "$QUEUE"
    elif [[ $RAM -gt 150 ]] ; then
-      msub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=360:00:00 -q biohimem-6
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=360:00:00 -q biohimem-6
    elif [[ $SIZE -lt 4 ]] ; then
-      msub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00 -q iw-shared-6
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=12:00:00 -q iw-shared-6
    else
-      msub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=120:00:00 -q biocluster-6
+      qsub "$PDIR/newbler.pbs" -v "$VARS" -d "$SCRATCH" -N "$NAME" -l nodes=1:ppn=$PPN -l mem=${RAM}g -l walltime=120:00:00 -q biocluster-6
    fi
 done
 

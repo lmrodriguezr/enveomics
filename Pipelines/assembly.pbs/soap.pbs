@@ -23,7 +23,7 @@ fi
 
 # Prepare input
 module load perl/5.14.4
-KMER=$MOAB_JOBARRAYINDEX
+KMER=$PBS_ARRAYID
 DIR="$LIB.soap_$KMER"
 if [[ "$USECOUPLED" == "yes" ]]; then
    MAXRDLEN=${MAXRDLEN:-$(perl $PDIR/FastA.length.pl "$DATA/$LIB.CoupledReads.fa" | head -n 200000 | awk '{if($2>MAX) MAX=$2} END{print MAX}')}
