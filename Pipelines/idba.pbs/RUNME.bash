@@ -67,7 +67,7 @@ for i in $dir/04.trimmed_fasta/*.CoupledReads.fa ; do
    SIZE_M=$(($(ls -pl 04.trimmed_fasta/$b.CoupledReads.fa \
 	       | awk '{print $5}')/1000000))
    let TIME_H=6+$SIZE_M*2/1000
-   let RAM_G=20+$SIZE_M*10/1000
+   let RAM_G=20+$SIZE_M*20/1000
    
    # Find the right queue
    if [[ $TIME_H -lt 12 ]] ; then
