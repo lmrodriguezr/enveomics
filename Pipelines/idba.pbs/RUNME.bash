@@ -59,7 +59,7 @@ for i in $dir/04.trimmed_fasta/*.CoupledReads.fa ; do
    EXTRA_MSG=""
    if [[ $k -ge $MAX ]] ; then
       let prek=$k-$MAX
-      EXTRA="-l depend=afterany:${jids[$prek]}"
+      EXTRA="-W depend=afterany:${jids[$prek]}"
       EXTRA_MSG=" (waiting for ${jids[$prek]})"
    fi
    
@@ -88,7 +88,7 @@ for i in $dir/04.trimmed_fasta/*.CoupledReads.fa ; do
    else
       OPTS="$OPTS,FA=$dir/04.trimmed_fasta/$b.CoupledReads.fa"
    fi
-   jids[$k]=$(msub -v "$OPTS" -N "IDBA-$b" -l "mem=${RAM_G}g" \
+   jids[$k]=$(qsub -v "$OPTS" -N "IDBA-$b" -l "mem=${RAM_G}g" \
 	       $QUEUE $EXTRA $pac/run.pbs | grep .)
    echo "$b: ${jids[$k]}$EXTRA_MSG"
    let k=$k+1

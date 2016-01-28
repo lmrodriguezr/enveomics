@@ -84,29 +84,29 @@ Simplifies submitting and tracking large BLAST jobs in cluster.
    Lets review an example of a problematic run. When you run `./RUNME.bash <name> check`, you see the
    following in the "Active jobs" section:
    ````
-   Idle: Moab.155829: 02: 00: Mon Mar 17 14:10:28 EDT 2014
+   Idle: 155829.shared-sched.pace.gatech.edu: 02: 00: Mon Mar 17 14:10:28 EDT 2014
      Sub-jobs:500 Active:4 ( 0.8% ) Eligible:0 ( 0.0% ) Blocked:0 ( 0.0% ) Completed:496 ( 99.2% ) 
-   Idle: Moab.155830: 02: 00: Mon Mar 17 14:10:28 EDT 2014
+   Idle: 155830.shared-sched.pace.gatech.edu: 02: 00: Mon Mar 17 14:10:28 EDT 2014
    
    Running jobs: 0.
    Idle jobs: 2.
    ````
-   That means that the job "Moab.155829" has four Active jobs, while all the others are Completed. This is
+   That means that the job "155829.shared-sched.pace.gatech.edu" has four Active jobs, while all the others are Completed. This is
    a sign of something problematic.  You can see the complete status of each array using
-   `checkjob -v <JOB_NAME>`. In our example above, you would run `checkjob -v Moab.155829`. In the output
+   `checkjob -v <JOB_NAME>`. In our example above, you would run `checkjob -v 155829`. In the output
    of checkjob, most jobs should report "Completed". In this example, there are four jobs that are not
    complete:
    ````
    ...
-   387 : Moab.155829[387] : Completed
-   388 : Moab.155829[388] : Running
-   389 : Moab.155829[389] : Running
-   390 : Moab.155829[390] : Running
-   391 : Moab.155829[391] : Running
-   392 : Moab.155829[392] : Completed
+   387 : 155829[387] : Completed
+   388 : 155829[388] : Running
+   389 : 155829[389] : Running
+   390 : 155829[390] : Running
+   391 : 155829[391] : Running
+   392 : 155829[392] : Completed
    ...
    ````
-   So you can simply check these sub-jobs in more detail. For example, if I run `checkjob -v Moab.155829[388]`,
+   So you can simply check these sub-jobs in more detail. For example, if I run `checkjob -v 155829[388]`,
    I see that the job is running in the machine `iw-k30-12.pace.gatech.edu` (Task Distribution), so I can try
    to login to that machine to check if the job is actually running, using `top -u $(whoami)`. However, when
    I run `ssh iw-k30-12`, I got a "Connection closed" error, which means that the machine hung up. At this point,

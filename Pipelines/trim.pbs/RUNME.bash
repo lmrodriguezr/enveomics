@@ -41,7 +41,7 @@ for i in $dir/*.1.fastq ; do
    EXTRA_MSG="" ;
    if [[ $k -ge $MAX ]] ; then
       let prek=$k-$MAX ;
-      EXTRA="-l depend=afterany:${jids[$prek]}" ;
+      EXTRA="-W depend=afterany:${jids[$prek]}" ;
       EXTRA_MSG=" (waiting for ${jids[$prek]})"
    fi ;
    b=$(basename $i .1.fastq) ;
@@ -62,7 +62,7 @@ for i in $dir/*.1.fastq ; do
       QUEUE="-q microcluster -l walltime=2000:00:00" ;
    fi ;
    # Launch job
-   jids[$k]=$(msub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" -l "mem=${RAM_G}g" $QUEUE $EXTRA $pac/run.pbs | grep .) ;
+   jids[$k]=$(qsub -v "SAMPLE=$b,FOLDER=$dir,CLIPPER=$CLIPPER" -N "Trim-$b" -l "mem=${RAM_G}g" $QUEUE $EXTRA $pac/run.pbs | grep .) ;
    echo "$b: ${jids[$k]}$EXTRA_MSG" ;
    let k=$k+1 ;
 done ;

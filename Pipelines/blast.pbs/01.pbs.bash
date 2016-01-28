@@ -5,7 +5,7 @@
 cd $SCRATCH ;
 TASK="dry" ;
 source "$PDIR/RUNME.bash" ;
-echo "$MOAB_JOBID" > "$SCRATCH/success/01.00" ;
+echo "$PBS_JOBID" > "$SCRATCH/success/01.00" ;
 
 if [[ ! -e "$SCRATCH/success/01.01" ]] ; then
    # 01. BEGIN

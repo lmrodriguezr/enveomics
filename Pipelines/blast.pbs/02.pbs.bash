@@ -1,6 +1,5 @@
 # blast.pbs pipeline
 # Step 02 : Run BLAST
-#PBS -E
 
 # Read configuration
 cd $SCRATCH ;
@@ -8,7 +7,7 @@ TASK="dry" ;
 source "$PDIR/RUNME.bash" ;
 
 # 00. Initial vars
-ID_N=$MOAB_JOBARRAYINDEX
+ID_N=$PBS_ARRAYID
 [[ "$ID_N" == "" ]] && exit 1 ;
 [[ -e "$SCRATCH/success/02.$ID_N" ]] && exit 0 ;
 IN="$SCRATCH/tmp/in/$PROJ.$ID_N.fa" ;
@@ -24,7 +23,7 @@ if [[ -e "$SCRATCH/success/02.$ID_N.00" ]] ; then
       echo "Warning: This task was initialized by $pre_job, but it's currently not running. Superseding." >&2 ;
    fi ;
 fi
-echo "$MOAB_JOBID" > "$SCRATCH/success/02.$ID_N.00" ;
+echo "$PBS_JOBID" > "$SCRATCH/success/02.$ID_N.00" ;
 
 # 01. Before BLAST
 if [[ ! -e "$SCRATCH/success/02.$ID_N.01" ]] ; then

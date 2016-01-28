@@ -28,26 +28,26 @@ if [[ ! -e "$SCRATCH/success/00" ]] ; then
    mkdir -p "$SCRATCH/log/status" "$SCRATCH/log/eo" || exit 1 ;
    echo "Preparing structure." >> "$SCRATCH/log/status/00" ;
    # Build 01.bash
-   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' \\
+   echo "NEW_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-01' \\
       '$PDIR/01.pbs.bash'|tr -d '\\n')" \
       > "$SCRATCH/etc/01.bash" || exit 1 ;
-   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l \"depend=afterany:\$NEW_JOBID\" \\
+   echo "SENTINEL_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=2:00:00' -W \"depend=afterany:\$NEW_JOBID\" \\
       -v \"$MINVARS,STEP=01,AFTERJOB=\$NEW_JOBID\" -N '$PROJ-01-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
       >> "$SCRATCH/etc/01.bash" || exit 1 ;
    # Build 02.bash
-   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM,nodes=1:ppn=$PPN' \\
-      -v '$MINVARS' -N '$PROJ-02' -t '$PROJ-02[1-$MAX_JOBS]' '$PDIR/02.pbs.bash'|tr -d '\\n')" \
+   echo "NEW_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM,nodes=1:ppn=$PPN' \\
+      -v '$MINVARS' -N '$PROJ-02' -t '1-$MAX_JOBS' '$PDIR/02.pbs.bash'|tr -d '\\n')" \
       > "$SCRATCH/etc/02.bash" \
       || exit 1 ;
-   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l \"depend=afterany:\$NEW_JOBID\" \\
+   echo "SENTINEL_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=2:00:00' -W \"depend=afterany:\$NEW_JOBID\" \\
       -v \"$MINVARS,STEP=02,AFTERJOB=\$NEW_JOBID\" -N '$PROJ-02-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
       >> "$SCRATCH/etc/02.bash" \
       || exit 1 ;
    # Build 03.bash
-   echo "NEW_JOBID=\$(msub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-03' \\
+   echo "NEW_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=$MAX_H:00:00,mem=$RAM' -v '$MINVARS' -N '$PROJ-03' \\
       '$PDIR/03.pbs.bash'|tr -d '\\n')" \
       > "$SCRATCH/etc/03.bash" || exit 1 ;
-   echo "SENTINEL_JOBID=\$(msub -q '$QUEUE' -l 'walltime=2:00:00' -l \"depend=afterany:\$NEW_JOBID\" \\
+   echo "SENTINEL_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=2:00:00' -W \"depend=afterany:\$NEW_JOBID\" \\
       -v \"$MINVARS,STEP=03,AFTERJOB=\$NEW_JOBID\" -N '$PROJ-03-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
       >> "$SCRATCH/etc/03.bash" || exit 1 ;
    
