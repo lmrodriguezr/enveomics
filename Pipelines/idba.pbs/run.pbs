@@ -5,7 +5,8 @@
 module load idba/1.1.1
 
 b=$SAMPLE
-enve=/nv/pmicro1/shared/apps/enveomics/Scripts
+shared=/nv/gpfs-gateway-pace1/project/bio-konstantinidis/shared3
+enve=$shared/apps/enveomics/Scripts
 THR=10
 
 #---------------------------------------------------------
