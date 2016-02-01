@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update Mar-23-2015
+# @update Feb-01-2016
 # @license artistic license 2.0
 #
 
@@ -29,7 +29,7 @@ my $file = shift @ARGV;
 ";
 $o{i} ||= "\t";
 $o{o} ||= "";
-$o{o} = $o{d}."/".$o{o} unless $o{d};
+$o{o} = $o{d}."/".$o{o} if $o{d};
 
 my $open=0;
 my @fhs=();
