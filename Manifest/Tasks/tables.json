@@ -255,6 +255,47 @@
 	  "description": "Input table."
 	}
       ]
+    },
+    {
+       "task": "Table.replace.rb",
+       "description": "Replace a field in a table using a mapping file.",
+       "help_arg": "--help",
+       "options": [
+         {
+	   "opt": "--map",
+	   "arg": "in_file",
+	   "mandatory": true,
+	   "description": "Mapping file with two columns (key and replacement)."
+	 },
+	 {
+	   "opt": "--in",
+	   "arg": "in_file",
+	   "mandatory": true,
+	   "description": "Input table."
+	 },
+	 {
+	   "opt": "--out",
+	   "arg": "out_file",
+	   "mandatory": true,
+	   "description": "Output table."
+	 },
+	 {
+	   "opt": "--key",
+	   "arg": "integer",
+	   "default": 1,
+	   "description": "Column to replace in Input table."
+	 },
+	 {
+	   "opt": "--unknown",
+	   "arg": "string",
+	   "description": "String to use whenever the key is not found in Map."
+	 },
+	 {
+	   "opt": "--delimiter",
+	   "arg": "string",
+	   "description": "String delimiting columns. By default, tabulation."
+	 }
+      ]
     }
   ]
 }

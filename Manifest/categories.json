@@ -80,6 +80,7 @@
         "Table.df2dist.R",
         "Table.filter.pl",
         "Table.merge.pl",
+	"Table.replace.rb",
         "Table.round.rb",
         "Table.split.pl"
       ],
