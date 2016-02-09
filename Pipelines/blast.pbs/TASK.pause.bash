@@ -18,7 +18,7 @@ echo "======[ pause ]======"
 for i in $(ls $SCRATCH/log/active/* 2>/dev/null) ; do
    echo "  Pausing $jid." ;
    jid=$(basename $i) ;
-   canceljob $jid ;
+   qdel $jid ;
 done ;
 
 # Restart auto-trials

@@ -70,7 +70,7 @@ else
       echo -n "  Cleaning completed sub-jobs on $JOB02: " >&2 ;
       for jobi in $(seq 1 $MAX_JOBS) ; do
 	 if [[ -e "$SCRATCH/success/02.$jobi" ]] ; then
-	    canceljob "$JOB02""[$jobi]" &> /dev/null ;
+	    qdel "$JOB02""[$jobi]" &> /dev/null ;
 	    let cleaned=$cleaned+1 ;
 	 fi ;
       done ;
