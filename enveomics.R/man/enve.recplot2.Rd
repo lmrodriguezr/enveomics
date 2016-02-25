@@ -12,7 +12,9 @@ been previously executed.}
 least the files .rec and .lim must exist with this prefix.}
   \item{plot}{Should the object be plotted?}
   \item{pos.breaks}{Breaks in the positions histogram. It can also be a vector of break
-points, and values outside the range are ignored.}
+points, and values outside the range are ignored. If zero (0), it
+uses the sequence breaks as defined in the .lim file, which means
+one bin per contig (or gene, if the mapping is agains genes).}
   \item{id.breaks}{Breaks in the identity histogram. It can also be a vector of break
 points, and values outside the range are ignored.}
   \item{id.metric}{Metric of identity to be used (Y-axis). Corrected identity is only
