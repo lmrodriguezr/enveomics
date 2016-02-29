@@ -2,16 +2,17 @@
 
 #
 # @author: Luis M. Rodriguez-R
-# @update: Jul-14-2015
+# @update: Feb-28-2016
 # @license: artistic license 2.0
 #
 
-$:.push File.expand_path(File.dirname(__FILE__) + '/lib')
-require 'enveomics_rb/jplace'
-require 'optparse'
-require 'json'
+$:.push File.expand_path("../lib", __FILE__)
+require "enveomics_rb/jplace"
+require "optparse"
+require "json"
 
-o = {:q=>FALSE, :regex=>'^(?<dataset>.+?):.*', :area=>FALSE, :norm=>:counts}
+o = {:q=>false, :regex=>'^(?<dataset>.+?):.*', :area=>false, :norm=>:counts,
+   :olditol=>false}
 ARGV << '-h' if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -38,9 +39,12 @@ Usage: #{$0} [options]"
 	"count (default): The counts are normalized (divided) by the total counts per dataset.",
 	"size: The counts are normalized (divided) by the size column in metadata (must be integer).",
 	"norm: The counts are normalized (divided) by the norm column in metadata (can be any float)."){ |v| o[:norm]=v.to_sym }
+   opts.on("--old-itol",
+      "Generate output file using the old iToL format (pre v3.0)."
+      ){ |v| o[:olditol] = v }
    opts.on("-c", "--collapse FILE", "Internal nodes to collapse (requires rootted tree)."){ |v| o[:collapse]=v }
-   opts.on("-a", "--area", "If set, the area of the pies is proportional to the placements. Otherwise, the radius is."){ o[:area]=TRUE }
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = TRUE }
+   opts.on("-a", "--area", "If set, the area of the pies is proportional to the placements. Otherwise, the radius is."){ o[:area]=true }
+   opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = true }
    opts.on("-h", "--help", "Display this screen.") do
       puts opts
       exit
@@ -51,7 +55,7 @@ Usage: #{$0} [options]"
    opts.separator "       producing a compliant .jplace file [3]. If you're using multiple datasets, include the name of"
    opts.separator "       the dataset somewhere in the read names."
    opts.separator "    2. If you have multiple datasets, it's convenient to create a metadata table. It's not necessary,"
-   opts.separator "        but it allows you to control the colors and the normalization method (see -m)."
+   opts.separator "       but it allows you to control the colors and the normalization method (see -m)."
    opts.separator "    3. Execute this script passing the .jplace file created in step 1 (see -i).  If you have a single"
    opts.separator "       dataset, use the option -u to give it a short name.  If you have multiple datasets, use the -s"
    opts.separator "       or -r options to tell the script how to find the dataset name within the read name.  Note that"
@@ -191,7 +195,8 @@ begin
    tree.pre_order do |n|
       n.placements.each do |p|
 	 p.nm.each do |r|
-	    m = (o[:unique].nil? ? (/#{o[:regex]}/.match(r[:n]) or abort "Cannot parse read name: #{r[:n]}, placed at edge #{n.index}") : {:dataset=>o[:unique]})
+	    m = (o[:unique].nil? ? (/#{o[:regex]}/.match(r[:n]) or
+	       abort "Cannot parse read name: #{r[:n]}, placed at edge #{n.index}") : {:dataset=>o[:unique]})
 	    metadata[ m[:dataset] ].add_count(r[:m])
 	 end
       end
@@ -239,15 +244,26 @@ begin
 
 
    $stderr.puts "Generating iToL dataset." unless o[:q]
-   f = File.open(o[:out]+'.itol', "w")
-   f.puts "LABELS\t" + metadata.names.join("\t")
-   f.puts "COLORS\t" + metadata.colors.join("\t")
-   max_norm_sum, min_norm_sum, max_norm_n, min_norm_n = 0.0, Float::INFINITY, '', ''
+   f = File.open(o[:out] + ".itol.txt", "w")
+   if o[:olditol]
+      f.puts "LABELS\t" + metadata.names.join("\t")
+      f.puts "COLORS\t" + metadata.colors.join("\t")
+   else
+      f.puts "DATASET_PIECHART"
+      f.puts "SEPARATOR TAB"
+      f.puts "DATASET_LABEL\tReadPlacement"
+      f.puts "COLOR\t#1f2122"
+      f.puts "FIELD_LABELS\t" + metadata.names.join("\t")
+      f.puts "FIELD_COLORS\t" + metadata.colors.join("\t")
+      f.puts "DATA"
+   end
+   max_norm_sum,min_norm_sum,max_norm_n,min_norm_n = 0.0,Float::INFINITY,"",""
    tree.pre_order do |n|
       ds_counts = Hash.new(0.0)
       n.placements.each do |p|
 	 p.nm.each do |r|
-	    m = (o[:unique].nil? ? (/#{o[:regex]}/.match(r[:n]) or abort "Cannot parse read name: #{r[:n]}, placed at edge #{n.index}") : {:dataset=>o[:unique]})
+	    m = (o[:unique].nil? ? (/#{o[:regex]}/.match(r[:n]) or
+	       abort "Cannot parse read name: #{r[:n]}, placed at edge #{n.index}") : {:dataset=>o[:unique]})
 	    ds_counts[ m[:dataset] ] += r[:m] / metadata[ m[:dataset] ].norm
 	 end
       end
@@ -255,7 +271,10 @@ begin
       unless counts_sum.nil?
          # In the area option, the radius is "twice" to make the smallest > 1 (since counts_sum is >= 1)
 	 radius = (o[:area] ? 2*Math.sqrt(counts_sum/Math::PI) : counts_sum)*max_norm
-	 f.puts n.cannonical_name + "\tR" + radius.to_i.to_s + "\t" + metadata.names.map{ |n| ds_counts[n] }.join("\t")
+	 f.puts n.cannonical_name +
+	    "#{"\t0.5" unless o[:olditol]}\t#{"R" if o[:olditol]}" +
+	    radius.to_i.to_s + "\t" +
+	    metadata.names.map{ |n| ds_counts[n] }.join("\t")
 	 if counts_sum > max_norm_sum
 	    max_norm_n = n.cannonical_name
 	    max_norm_sum = counts_sum

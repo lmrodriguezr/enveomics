@@ -611,6 +611,11 @@
 	    "metadata (can be any float)."]
 	},
 	{
+	  "opt": "--old-itol",
+	  "description": ["Generate output file using the old iToL format",
+	    " (pre v3.0)."]
+	},
+	{
 	  "opt": "--collapse",
 	  "arg": "in_file",
 	  "description": "Internal nodes to collapse (requires rootted tree)."
