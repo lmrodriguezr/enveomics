@@ -3,3 +3,4 @@
 CONFIG.*.bash
 !CONFIG.mock.bash
 enveomics.R.tar.gz
+enveomics.R.Rcheck/*
