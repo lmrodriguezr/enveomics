@@ -101,6 +101,8 @@ plot.enve.RecPlot2 <- function
       ### Color associated to out-group matches.
       id.col='black',
       ### Color for the identity histogram.
+      breaks.col='#AAAAAA40',
+      ### Color of the vertical lines indicating sequence breaks.
       peaks.opts=list(),
       ### Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.
       ...
@@ -149,7 +151,7 @@ plot.enve.RecPlot2 <- function
 	 rect(pos.lim[1], id.lim[1], pos.lim[2], min(id.breaks[c(id.ingroup,TRUE)]), col=out.bg, border=NA);
 	 rect(pos.lim[1], min(id.breaks[c(id.ingroup,TRUE)]), pos.lim[2], id.lim[2], col=in.bg,  border=NA);
       }
-      abline(v=x$seq.breaks/pos.factor, col=grey(2/3, alpha=1/4));
+      abline(v=x$seq.breaks/pos.factor, col=breaks.col);
       image(x=pos.breaks, y=id.breaks, z=log10(counts),col=palette, bg=grey(1,0),
 	 breaks=seq(-.1,log10(max(counts)), length.out=1+length(palette)), add=TRUE);
    }
@@ -167,7 +169,7 @@ plot.enve.RecPlot2 <- function
       plot(1,t='n', bty='l', log='y',
 	 xlim=pos.lim, xlab=xlab, xaxt=xaxt, xaxs='i',
 	 ylim=seqdepth.lim, yaxs='i', ylab='Sequencing depth (X)');
-      abline(v=x$seq.breaks/pos.factor, col=grey(2/3, alpha=1/4));
+      abline(v=x$seq.breaks/pos.factor, col=breaks.col)
       pos.x <- rep(pos.breaks,each=2)[-c(1,2*length(pos.breaks))]
       pos.f <- rep(seqdepth.in,each=2)
       lines(pos.x, rep(seqdepth.out,each=2), lwd=out.lwd, col=out.col);

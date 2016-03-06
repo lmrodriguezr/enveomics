@@ -14,8 +14,8 @@
     pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
         0, 1/2, 2), out.lwd = ifelse(pos.splines > 0, 1/2, 2), 
     id.lwd = ifelse(id.splines > 0, 1/2, 2), in.col = "darkblue", 
-    out.col = "lightblue", id.col = "black", peaks.opts = list(), 
-    ...)}
+    out.col = "lightblue", id.col = "black", breaks.col = "#AAAAAA40", 
+    peaks.opts = list(), ...)}
 \arguments{
   \item{x}{`enve.RecPlot2` object to plot.}
   \item{layout}{Matrix indicating the position of the different panels in the layout, where:
@@ -47,6 +47,7 @@ If non-zero, requires the stats package.}
   \item{in.col}{Color associated to in-group matches.}
   \item{out.col}{Color associated to out-group matches.}
   \item{id.col}{Color for the identity histogram.}
+  \item{breaks.col}{Color of the vertical lines indicating sequence breaks.}
   \item{peaks.opts}{Options passed to `enve.recplot2.findPeaks`, if `peaks.col` is not NA.}
   \item{\dots}{Any other graphic parameters (currently ignored).}
 }
