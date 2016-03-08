@@ -1,11 +1,19 @@
-## enveomics.R
+# enveomics.R
 
-Execute `R CMD INSTALL ./` to install enveomics.R. If you're using a
-non-standard R location, open your own R in this location and execute:
+## Installing `enveomics.R`
+To install the latest version of `enveomics.R` uploaded to CRAN, execute in R:
 ```R
-    install.packages('./', repos=NULL);
+    install.packages('enveomics.R')
 ```
 
+To install the current developer version of `enveomics.R`, execute in R:
+```R
+    install.packages('devtools')
+    library('devtools')
+    install_github('lmrodriguezr/enveomics', subdir='enveomics.R')
+```
+
+## Using `enveomics.R`
 To load enveomics.R, simply execute:
 ```R
     library(enveomics.R);
@@ -26,9 +34,8 @@ And open help messages using any of the following commands:
 You can run some examples using these libraries in the
 [enveomics-GUI](https://github.com/lmrodriguezr/enveomics-gui).
 
-
 ## Changelog
-
+* 1.0.2: Fine-tuned default parameters in enve.recplot2.findPeaks.
 * 1.0.1: enve.recplot2 now supports pos.breaks=0 to define a
   bin per subject sequence.
 

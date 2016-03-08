@@ -422,15 +422,15 @@ enve.recplot2.findPeaks <- function(
    ### sub-population mixtures.
       x,
       ### An `enve.RecPlot2` object.
-      min.points=50,
+      min.points=10,
       ### Minimum number of points in the quantile-estimation-range
       ### (`quant.est`) to estimate a peak.
-      quant.est=c(0.005, 0.995),
+      quant.est=c(0.002, 0.998),
       ### Range of quantiles to be used in the estimation of a peak's
       ### parameters.
       mlv.opts=list(method='parzen'),
       ### Options passed to `mlv` to estimate the mode.
-      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(.1, .5, .8),
+      fitdist.opts.sn=list(distr='sn', method='qme', probs=c(0.1,0.5,0.8),
 	 start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0),
 	 upper=c(Inf, 0, Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if
@@ -460,7 +460,7 @@ enve.recplot2.findPeaks <- function(
       ### reached first). The trace change is estimated as the sum of square
       ### differences between parameters in one round and those from two rounds
       ### earlier (to avoid infinite loops from approximation).
-      merge.logdist=log(1.25),
+      merge.logdist=log(1.75),
       ### Maximum value of |log-ratio| between centrality parameters in peaks to
       ### attempt merging. The default of ~0.22 corresponds to a maximum
       ### difference of 25%.
