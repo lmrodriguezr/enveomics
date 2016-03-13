@@ -40,7 +40,9 @@ setClass("enve.RecPlot2.Peak",
    ### Number of bins estimated to be explained by this peak. This should
    ### ideally be equal to the length of `values`, but it's not and integer.
    n.total='numeric',
-   ### Total number of bins from which the peak was extracted.
+   ### Total number of bins from which the peak was extracted. I.e., total
+   ### number of position bins with non-zero sequencing depth in the recruitment
+   ### plot (regardless of peak count).
    err.res='numeric',
    ### Error left after adding the peak.
    merge.logdist='numeric'
@@ -524,6 +526,7 @@ enve.recplot2.findPeaks <- function(
    ### Returns a list of `enve.RecPlot2.Peak` objects.
 }
 
+#==============> Define utils
 enve.recplot2.corePeak <- function
    ### Finds the peak in a list of peaks that is most likely to represent the
    ### "core genome" of a population.
@@ -550,7 +553,27 @@ enve.recplot2.corePeak <- function
    return(corePeak)
 }
 
+enve.recplot2.changeCutoff <- function
+   ### Change the intra-species cutoff of an existing recruitment plot.
+      (rp,
+      ### enve.RecPlot2 object.
+      new.cutoff=98
+      ### New cutoff to use.
+      ){
+   # Re-calculate vectors
+   id.mids	<- (rp$id.breaks[-length(rp$id.breaks)]+rp$id.breaks[-1])/2
+   id.ingroup	<- (id.mids > new.cutoff)
+   pos.counts.in  <- apply(rp$counts[,id.ingroup], 1, sum)
+   pos.counts.out <- apply(rp$counts[,!id.ingroup], 1, sum)
+   # Update object
+   attr(rp, "id.ingroup")     <- id.ingroup
+   attr(rp, "pos.counts.in")  <- pos.counts.in
+   attr(rp, "pos.counts.out") <- pos.counts.out
+   attr(rp, "call")           <- match.call()
+   return(rp)
+}
 
+#==============> Define internal functions
 enve.recplot2.__counts <- function
    ### Internal ancilliary function (see `enve.recplot2`).
       (x, pos.breaks, id.breaks, rec.idcol){

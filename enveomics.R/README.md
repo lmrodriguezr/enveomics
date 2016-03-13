@@ -24,6 +24,7 @@ And open help messages using any of the following commands:
     ?enveomics.R
     ?enve.barplot
     ?enve.recplot2
+    ?enve.recplot2.changeCutoff
     ?enve.recplot2.findPeaks
     ?enve.recplot2.corePeak
     ?enve.prune.dist

@@ -23,7 +23,9 @@ xi=location). Note that the "dispersion" parameter is always first and
 the "location" parameter is always last.}
     \item{\code{n.hat}:}{(\code{numeric}) Number of bins estimated to be explained by this peak. This should
 ideally be equal to the length of `values`, but it's not and integer.}
-    \item{\code{n.total}:}{(\code{numeric}) Total number of bins from which the peak was extracted.}
+    \item{\code{n.total}:}{(\code{numeric}) Total number of bins from which the peak was extracted. I.e., total
+number of position bins with non-zero sequencing depth in the recruitment
+plot (regardless of peak count).}
     \item{\code{err.res}:}{(\code{numeric}) Error left after adding the peak.}
     \item{\code{merge.logdist}:}{(\code{numeric}) Attempted `merge.logdist` parameter.}
   }
