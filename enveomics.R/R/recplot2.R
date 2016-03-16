@@ -381,6 +381,7 @@ enve.recplot2 <- function(
    }
    
    # Run in parallel
+   if(nrow(rec) < 200) threads <- 1 # It doesn't worth the overhead
    cl		<- makeCluster(threads)
    rec.l	<- list()
    thl		<- ceiling(nrow(rec)/threads)

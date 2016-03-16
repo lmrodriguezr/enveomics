@@ -36,7 +36,9 @@ You can run some examples using these libraries in the
 [enveomics-GUI](https://github.com/lmrodriguezr/enveomics-gui).
 
 ## Changelog
-* 1.0.2: Fine-tuned default parameters in enve.recplot2.findPeaks.
+* 1.0.2: Fine-tuned default parameters in enve.recplot2.findPeaks and
+  solved a minor bug in enve.recplot2 that caused failures in low-coverage
+  datasets when using too many threads.
 * 1.0.1: enve.recplot2 now supports pos.breaks=0 to define a
   bin per subject sequence.
 
