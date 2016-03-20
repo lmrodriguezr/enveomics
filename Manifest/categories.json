@@ -41,6 +41,7 @@
         "FastA.filterLen.pl",
         "FastA.filterN.pl",
         "FastA.interpose.pl",
+	"FastA.per_file.pl",
         "FastA.rename.pl",
         "FastA.revcom.pl",
         "FastA.slider.pl",

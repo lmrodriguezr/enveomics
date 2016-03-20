@@ -462,6 +462,26 @@
 	  "description": "Run quietly (no STDERR output)."
 	}
       ]
+    },
+    {
+      "task": "FastA.per_file.pl",
+      "description": ["Extracts all the sequences in a multi-FastA into",
+        "multiple single-FastA files."],
+      "see_also": "FastA.split.pl",
+      "help_arg": "",
+      "options": [
+	{
+	  "arg": "out_dir",
+	  "mandatory": true,
+	  "description": "Output directory for the individual files."
+	},
+        {
+	  "arg": "in_file",
+	  "mandatory": true,
+	  "multiple_sep": " ",
+	  "description": "Input multi-FastA file(s)."
+	}
+      ]
     }
   ]
 }
