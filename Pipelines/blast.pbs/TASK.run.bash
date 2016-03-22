@@ -39,7 +39,7 @@ if [[ ! -e "$SCRATCH/success/00" ]] ; then
       -v '$MINVARS' -N '$PROJ-02' -t '1-$MAX_JOBS' '$PDIR/02.pbs.bash'|tr -d '\\n')" \
       > "$SCRATCH/etc/02.bash" \
       || exit 1 ;
-   echo "SENTINEL_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=2:00:00' -W \"depend=afterany:\$NEW_JOBID\" \\
+   echo "SENTINEL_JOBID=\$(qsub -q '$QUEUE' -l 'walltime=2:00:00' -W \"depend=afteranyarray:\$NEW_JOBID\" \\
       -v \"$MINVARS,STEP=02,AFTERJOB=\$NEW_JOBID\" -N '$PROJ-02-sentinel' '$PDIR/sentinel.pbs.bash'|tr -d '\\n')" \
       >> "$SCRATCH/etc/02.bash" \
       || exit 1 ;
