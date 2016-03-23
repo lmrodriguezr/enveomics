@@ -1,8 +1,8 @@
 #!/usr/bin/env perl
 #
-# @author Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
+# @author  Luis M Rodriguez-R <lmrodriguezr at gmail dot com>
 # @license artistic license 2.0
-# @update Mar-23-2015
+# @update  Mar-23-2015
 #
 
 use strict;
@@ -26,9 +26,8 @@ Usage:
 print STDERR "== Reading sequences\n";
 my $seq = {};
 open FASTA, "<", $fasta or die "Cannot read the file: $fasta: $!\n";
-#%$seq = map { s/^>(.*)[\n\r]*$/$1/ => 1 } grep { /^>/ } <FASTA>;
 while(<FASTA>){
-   next unless /^>(.*)[\n\r]*$/;
+   next unless /^>(\S+)/;
    $seq->{$1} = 1;
 }
 close FASTA;

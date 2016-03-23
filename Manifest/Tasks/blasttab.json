@@ -420,6 +420,7 @@
       "description": ["Filters a BLAST output including only the hits produced",
         "by any of the given sequences as query."],
       "help_arg": "",
+      "see_also": "BlastTab.filter.pl",
       "options": [
         {
 	  "name": "blast.tab",
