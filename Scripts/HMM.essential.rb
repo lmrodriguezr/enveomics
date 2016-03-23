@@ -3,7 +3,7 @@
 #
 # @author  Luis M. Rodriguez-R
 # @license artistic license 2.0
-# @update  Dec-27-2015
+# @update  Mar-23-2016
 #
 
 $:.push File.expand_path("../lib", __FILE__)
@@ -110,7 +110,7 @@ begin
    Dir.mktmpdir do |dir|
       $stderr.puts "Temporal directory: #{dir}." unless o[:q]
 
-      # Create database and run HMMsearch.
+      # Create database.
       $stderr.puts "Searching models." unless o[:q]
       models = {}
       model_id = nil
@@ -134,6 +134,12 @@ begin
       if o[:list]
 	 models.each_pair{ |id,desc| puts [id,desc].join("\t") }
 	 exit
+      end
+      
+      # Check HMMer version and run HMMsearch.
+      if `"#{o[:bin]}hmmsearch" -h`.lines[1] !~ /HMMER 3/
+	 raise "You have provided an unsupported version of HMMER. " +
+	    "This script requires HMMER 3.0+."
       end
       `"#{o[:bin]}hmmsearch" --cpu #{o[:thr]} --tblout "#{dir}/hmmsearch" \
 	 --cut_tc --notextw "#{dir}/essential.hmm" "#{o[:in]}" \
