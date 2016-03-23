@@ -35,33 +35,33 @@
       "see_also": ["FastQ.filter.pl"],
       "options": [
         {
-	  "opt": "-r",
-	  "description": ["Reverse list. Extracts sequences NOT present in the",
-	    "list."]
-	},
-	{
-	  "opt": "-q",
-	  "description": "Runs quietly."
-	},
-	{
-	  "name": "List",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "List of sequences to extract."
-	},
-	{
-	  "name": "Sequences",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "FastA file containing the superset of sequences."
-	},
-	">",
-	{
-	  "name": "Subset",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "FastA file to be created."
-	}
+          "opt": "-r",
+          "description": ["Reverse list. Extracts sequences NOT present in the",
+            "list."]
+        },
+        {
+          "opt": "-q",
+          "description": "Runs quietly."
+        },
+        {
+          "name": "List",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "List of sequences to extract."
+        },
+        {
+          "name": "Sequences",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the superset of sequences."
+        },
+        ">",
+        {
+          "name": "Subset",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "FastA file to be created."
+        }
       ]
     },
     {
@@ -71,22 +71,22 @@
       "help_arg": "",
       "options": [
         {
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input FastA file."
-	},
-	{
-	  "name": "Minimum length",
-	  "arg": "integer",
-	  "mandatory": true,
-	  "description": "Minimum length to report a sequence."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Filtered FastA file."
-	}
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file."
+        },
+        {
+          "name": "Minimum length",
+          "arg": "integer",
+          "mandatory": true,
+          "description": "Minimum length to report a sequence."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Filtered FastA file."
+        }
       ]
     },
     {
@@ -96,34 +96,34 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "Sequences",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input file in FastA format."
-	},
-	{
-	  "name": "Content",
-	  "arg": "float",
-	  "default": 0.5,
-	  "mandatory": true,
-	  "description": ["A number between 0 and 1 indicating the maximum",
-	    "proportion of Ns (1 to turn off, 0.5 by default)."]
-	},
-	{
-	  "name": "Stretch",
-	  "arg": "integer",
-	  "default": 100,
-	  "description": ["A number indicating the maximum number of",
-	    "consecutive identical nucleotides allowed (0 to turn off, 100 by",
-	    "default)."]
-	},
-	">",
-	{
-	  "name": "Filtered",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Filtered set of sequences."
-	}
+          "name": "Sequences",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in FastA format."
+        },
+        {
+          "name": "Content",
+          "arg": "float",
+          "default": 0.5,
+          "mandatory": true,
+          "description": ["A number between 0 and 1 indicating the maximum",
+            "proportion of Ns (1 to turn off, 0.5 by default)."]
+        },
+        {
+          "name": "Stretch",
+          "arg": "integer",
+          "default": 100,
+          "description": ["A number indicating the maximum number of",
+            "consecutive identical nucleotides allowed (0 to turn off, 100 by",
+            "default)."]
+        },
+        ">",
+        {
+          "name": "Filtered",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Filtered set of sequences."
+        }
       ]
     },
     {
@@ -132,59 +132,59 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "seqs.fa",
-	  "arg": "in_file",
-	  "multiple_sep": " ",
-	  "mandatory": true,
-	  "description": "One or more FastA files."
-	},
-	">",
-	{
-	  "name": "gc.txt",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "A table with the G+C content of the sequences."
-	}
+          "name": "seqs.fa",
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": "One or more FastA files."
+        },
+        ">",
+        {
+          "name": "gc.txt",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "A table with the G+C content of the sequences."
+        }
       ]
     },
     {
       "task": "FastA.interpose.pl",
       "description": ["Interpose sequences in FastA format from two files into",
         "one output file. If more than two files are provided, the script will",
-	"interpose all the input files."],
+        "interpose all the input files."],
       "see_also": ["FastA.split.pl","FastQ.interpose.pl"],
       "warn": ["Please note that this script will check for the consistency of",
         "the names (assuming a pair of related reads contains the same name",
-	"varying only in a trailing slash (/) followed by a digit. If you want",
-	"to turn this feature off just set the $eval_T variable to zero. If",
-	"you want to decrease the sampling period (to speed the script up) or",
-	"increase it (to make it more sensitive to errors) just change $eval_T",
-	"accordingly."],
+        "varying only in a trailing slash (/) followed by a digit. If you want",
+        "to turn this feature off just set the $eval_T variable to zero. If",
+        "you want to decrease the sampling period (to speed the script up) or",
+        "increase it (to make it more sensitive to errors) just change $eval_T",
+        "accordingly."],
       "help_arg": "",
       "options": [
         {
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output FastA file."
-	},
-	{
-	  "name": "Input FastA 1",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "First FastA file."
-	},
-	{
-	  "name": "Input FastA 2",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Second FastA file."
-	},
-	{
-	  "name": "Additional FastA",
-	  "arg": "in_file",
-	  "multiple_sep": " ",
-	  "description": "Any additional FastA files (or none)."
-	}
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output FastA file."
+        },
+        {
+          "name": "Input FastA 1",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "First FastA file."
+        },
+        {
+          "name": "Input FastA 2",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Second FastA file."
+        },
+        {
+          "name": "Additional FastA",
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "description": "Any additional FastA files (or none)."
+        }
       ]
     },
     {
@@ -194,40 +194,40 @@
       "help_arg": "",
       "options": [
         {
-	  "arg": "in_file",
-	  "multiple_sep": " ",
-	  "mandatory": true,
-	  "description": "One or more FastA files."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "A table with the lengths of the sequences."
-	}
+          "arg": "in_file",
+          "multiple_sep": " ",
+          "mandatory": true,
+          "description": "One or more FastA files."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "A table with the lengths of the sequences."
+        }
       ]
     },
     {
       "task": "FastA.qlen.pl",
       "description": ["Calculates the quartiles of the length in a set of",
         "sequences. The Q2 is also known as the median. Q0 is the minimum",
-	"length, and Q4 is the maximum length. It also calculates TOTAL, the",
-	"added length of the sequences in the file, and AVG, the average",
-	"length."],
+        "length, and Q4 is the maximum length. It also calculates TOTAL, the",
+        "added length of the sequences in the file, and AVG, the average",
+        "length."],
       "help_arg": "",
       "options": [
         {
-	  "name": "Sequences",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "A FastA file containing the sequences."
-	},
-	{
-	  "name": "Minimum Length",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "The minimum length to take into consideration."
-	}
+          "name": "Sequences",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "A FastA file containing the sequences."
+        },
+        {
+          "name": "Minimum Length",
+          "arg": "integer",
+          "default": 0,
+          "description": "The minimum length to take into consideration."
+        }
       ]
     },
     {
@@ -236,35 +236,35 @@
       "help_arg": "-h",
       "options": [
         {
-	  "name": "Filter list",
-	  "opt": "-f",
-	  "description": "Ignore sequences NOT present in the list."
-	},
-	{
-	  "name": "Quiet",
-	  "opt": "-q",
-	  "description": "Runs quietly."
-	},
-	{
-	  "name": "List.txt",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Tab-delimited list of sequences, with the original",
-	    "ID in the first column and the ID to use in the second."]
-	},
-	{
-	  "name": "Seqs.fa",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "FastA file containing the superset of sequences."
-	},
-	">",
-	{
-	  "name": "Renamed.fa",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "FastA file to be created."
-	}
+          "name": "Filter list",
+          "opt": "-f",
+          "description": "Ignore sequences NOT present in the list."
+        },
+        {
+          "name": "Quiet",
+          "opt": "-q",
+          "description": "Runs quietly."
+        },
+        {
+          "name": "List.txt",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Tab-delimited list of sequences, with the original",
+            "ID in the first column and the ID to use in the second."]
+        },
+        {
+          "name": "Seqs.fa",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the superset of sequences."
+        },
+        ">",
+        {
+          "name": "Renamed.fa",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "FastA file to be created."
+        }
       ]
     },
     {
@@ -274,17 +274,17 @@
       "help_arg": "--help",
       "options": [
         "<",
-	{
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input file in FastA format."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file in FastA format."
-	}
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in FastA format."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file in FastA format."
+        }
       ]
     },
     {
@@ -293,53 +293,53 @@
       "help_arg": "-help",
       "options": [
         {
-	  "opt": "-seq",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input file in FastA format."
-	},
-	{
-	  "opt": "-out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file in FastA format."
-	},
-	{
-	  "opt": "-win",
-	  "arg": "integer",
-	  "default": 18,
-	  "description": "Window size."
-	},
-	{
-	  "opt": "-step",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": "Step size."
-	},
-	{
-	  "name": "Length error",
-	  "opt": "-lerr",
-	  "arg": "integer",
-	  "default": 2,
-	  "description": "Expected error in chunks length."
-	},
-	{
-	  "opt": "-comm",
-	  "arg": "select",
-	  "values": [0,1],
-	  "default": 0,
-	  "description": ["Generate FastA comments (leaded by semi-colon) to",
-	    "separate input sequences. Set to 0 for no-comments, to 1 for",
-	    "comments."]
-	},
-	{
-	  "opt": "-short",
-	  "arg": "select",
-	  "values": [0,1],
-	  "default": 0,
-	  "description": ["Use chunks shorter than the window size 'as is'.",
-	    "Set to 0 to discard those chunks, to 1 to use them."]
-	}
+          "opt": "-seq",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in FastA format."
+        },
+        {
+          "opt": "-out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file in FastA format."
+        },
+        {
+          "opt": "-win",
+          "arg": "integer",
+          "default": 18,
+          "description": "Window size."
+        },
+        {
+          "opt": "-step",
+          "arg": "integer",
+          "default": 1,
+          "description": "Step size."
+        },
+        {
+          "name": "Length error",
+          "opt": "-lerr",
+          "arg": "integer",
+          "default": 2,
+          "description": "Expected error in chunks length."
+        },
+        {
+          "opt": "-comm",
+          "arg": "select",
+          "values": [0,1],
+          "default": 0,
+          "description": ["Generate FastA comments (leaded by semi-colon) to",
+            "separate input sequences. Set to 0 for no-comments, to 1 for",
+            "comments."]
+        },
+        {
+          "opt": "-short",
+          "arg": "select",
+          "values": [0,1],
+          "default": 0,
+          "description": ["Use chunks shorter than the window size 'as is'.",
+            "Set to 0 to discard those chunks, to 1 to use them."]
+        }
       ]
     },
     {
@@ -349,24 +349,24 @@
       "help_arg": "",
       "options": [
         {
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input file in FastA format."
-	},
-	{
-	  "name": "Out base",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["Prefix for the name of the output files. It will be",
-	    "appended with .<i>.fa, where <i> is a consecutive number starting",
-	    "in 1."]
-	},
-	{
-	  "name": "Number of files",
-	  "arg": "integer",
-	  "default": 12,
-	  "description": "Number of files to generate."
-	}
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in FastA format."
+        },
+        {
+          "name": "Out base",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Prefix for the name of the output files. It will be",
+            "appended with .<i>.fa, where <i> is a consecutive number starting",
+            "in 1."]
+        },
+        {
+          "name": "Number of files",
+          "arg": "integer",
+          "default": 12,
+          "description": "Number of files to generate."
+        }
       ]
     },
     {
@@ -375,52 +375,58 @@
       "help_arg": "-h",
       "options": [
         {
-	  "name": "Fraction",
-	  "opt": "-f",
-	  "arg": "string",
-	  "default": "10",
-	  "description": ["Fraction of the library to be sampled (as",
-	    "percentage). It can include several values (separated by comma),",
-	    "as well as ranges of values in the form 'from-to/by'. For",
-	    "example, the -f value 1-5/1,10-50/10,75,99 will produce 12",
-	    "subsamples with expected fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%,",
-	    "30%, 40%, 50%, 75%, and 99%."]
-	},
-	{
-	  "name": "Replicates",
-	  "opt": "-r",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": "Number of replicates per fraction."
-	},
-	{
-	  "name": "Out base",
-	  "opt": "-o",
-	  "arg": "out_file",
-	  "description": ["Prefix of the output files to be created. The",
-	    "output files will have a suffix of the form",
-	    "'.fraction-replicate.fa', where 'fraction' is the percentage",
-	    "sampled and 'replicate' is an increasing integer for replicates",
-	    "of the same fraction. By default: Path to the input file."]
-	},
-	{
-	  "name": "Force",
-	  "opt": "-F",
-	  "description": "Force overwriting output file(s)."
-	},
-	{
-	  "name": "Zeroes",
-	  "opt": "-z",
-	  "description": ["Include leading zeroes in the numeric parts of the",
-	    "output files (e.g., file.002.50-01.fa instead of file.2.50-1.fa),",
-	    "so that alphabetic sorting of files reflects the sampled",
-	    "fraction."]
-	},
-	{
-	  "name": "Quiet",
-	  "opt": "-q",
-	  "description": "Run quietly."
-	}
+          "name": "Fraction",
+          "opt": "-f",
+          "arg": "string",
+          "default": "10",
+          "description": ["Fraction of the library to be sampled (as",
+            "percentage). It can include several values (separated by comma),",
+            "as well as ranges of values in the form 'from-to/by'. For",
+            "example, the -f value 1-5/1,10-50/10,75,99 will produce 12",
+            "subsamples with expected fractions 1%, 2%, 3%, 4%, 5%, 10%, 20%,",
+            "30%, 40%, 50%, 75%, and 99%."]
+        },
+        {
+          "name": "Replicates",
+          "opt": "-r",
+          "arg": "integer",
+          "default": 1,
+          "description": "Number of replicates per fraction."
+        },
+        {
+          "name": "Out base",
+          "opt": "-o",
+          "arg": "out_file",
+          "description": ["Prefix of the output files to be created. The",
+            "output files will have a suffix of the form",
+            "'.fraction-replicate.fa', where 'fraction' is the percentage",
+            "sampled and 'replicate' is an increasing integer for replicates",
+            "of the same fraction. By default: Path to the input file."]
+        },
+        {
+          "name": "Force",
+          "opt": "-F",
+          "description": "Force overwriting output file(s)."
+        },
+        {
+          "name": "Zeroes",
+          "opt": "-z",
+          "description": ["Include leading zeroes in the numeric parts of the",
+            "output files (e.g., file.002.50-01.fa instead of file.2.50-1.fa),",
+            "so that alphabetic sorting of files reflects the sampled",
+            "fraction."]
+        },
+        {
+          "name": "Quiet",
+          "opt": "-q",
+          "description": "Run quietly."
+        },
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "multiple_sep": " ",
+          "description": "Input multi-FastA file(s)."
+        }
       ]
     },
     {
@@ -430,37 +436,37 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--in",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "FastA file containing the sequences."
-	},
-	{
-	  "name": "Output file",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "FastA file to create."
-	},
-	{
-	  "opt": "--prefix",
-	  "arg": "string",
-	  "description": "Prefix to use in all IDs."
-	},
-	{
-	  "opt": "--suffix",
-	  "arg": "string",
-	  "description": "Suffix to use in all IDs."
-	},
-	{
-	  "opt": "--defline",
-	  "description": "Keep the original defline after a space."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "name": "Input file",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the sequences."
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "FastA file to create."
+        },
+        {
+          "opt": "--prefix",
+          "arg": "string",
+          "description": "Prefix to use in all IDs."
+        },
+        {
+          "opt": "--suffix",
+          "arg": "string",
+          "description": "Suffix to use in all IDs."
+        },
+        {
+          "opt": "--defline",
+          "description": "Keep the original defline after a space."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
@@ -470,17 +476,17 @@
       "see_also": "FastA.split.pl",
       "help_arg": "",
       "options": [
-	{
-	  "arg": "out_dir",
-	  "mandatory": true,
-	  "description": "Output directory for the individual files."
-	},
         {
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "multiple_sep": " ",
-	  "description": "Input multi-FastA file(s)."
-	}
+          "arg": "out_dir",
+          "mandatory": true,
+          "description": "Output directory for the individual files."
+        },
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "multiple_sep": " ",
+          "description": "Input multi-FastA file(s)."
+        }
       ]
     }
   ]
