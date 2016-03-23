@@ -1,4 +1,4 @@
-# Enve-omics
+# Enveomics
 
 Scripts and reference libraries at [Kostas lab](http://enve-omics.gatech.edu).
 
