@@ -190,6 +190,7 @@
       "description": ["Extracts a subset of hits (queries or subjects) from a",
         "tabular BLAST."],
       "help_arg": "",
+      "see_also": "BlastTab.subsample.pl",
       "options": [
         {
           "name": "Subject",
