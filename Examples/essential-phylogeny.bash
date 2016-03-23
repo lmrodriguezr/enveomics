@@ -2,7 +2,7 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Oct-20-2015
+# @update  Mar-23-2016
 # @license artistic license 2.0
 #
 
@@ -39,12 +39,12 @@ if [[ -e $ORG ]] ; then
    exit 1
 fi
 mkdir $ORG
-for i in 01.proteome 02.essential 03.aln 04.cat 05.raxml ; do
+for i in 01.proteome 02.essential 03.aln 04.cat 05.raxml 06.autoprune ; do
    mkdir $ORG/$i
 done
 
 # 01. Download proteomes
-echo "[01/05] Downloading and guzipping data"
+echo "[01/06] Downloading and guzipping data"
 RefSeq.download.bash $ORG .faa.gz "Complete Genome" $ORG/01.proteome
 rm $ORG/01.proteome/assembly_summary.txt
 for i in $ORG/01.proteome/* ; do
@@ -57,7 +57,7 @@ for i in $ORG/01.proteome/* ; do
 done
 
 # 02. Essential genes
-echo "[02/05] Idenfifying essential genes"
+echo "[02/06] Idenfifying essential genes"
 N=0
 for i in $ORG/01.proteome/*.faa ; do # <- This loop could be parallelized
    genomeA=$(basename $i .faa)
@@ -68,7 +68,7 @@ for i in $ORG/01.proteome/*.faa ; do # <- This loop could be parallelized
 done
 
 # 03. Find core and align groups
-echo "[03/05] Identifying core essentials and aligning groups"
+echo "[03/06] Identifying core essentials and aligning groups"
 CORE_ESS=$(basename -s .faa $ORG/02.essential/*/*.faa | sort | uniq -c \
    | awk '$1=='$N'{print $2}') 
 for b in $CORE_ESS ; do # <- This loop could be parallelized
@@ -77,12 +77,12 @@ for b in $CORE_ESS ; do # <- This loop could be parallelized
 done
 
 # 04. Concatenate alignment
-echo "[04/05] Concatenating alignments and removing invariable sites"
+echo "[04/06] Concatenating alignments and removing invariable sites"
 Aln.cat.rb -I -c $ORG/04.cat/essential.raxcoords -i '|' $ORG/03.aln/*.aln \
    > $ORG/04.cat/essential.aln 2> $ORG/04.cat/essential.log
 
-# 06. Run RAxML
-echo "[05/05] Inferring phylogeny"
+# 05. Run RAxML
+echo "[05/06] Inferring phylogeny"
 # You REALLY should consider running the following with more threads (-T) and,
 # if possible, multi-nodes using MPI
 cd $ORG/05.raxml
@@ -90,11 +90,16 @@ raxmlHPC-PTHREADS -T $THR -p 1234 \
    -s ../04.cat/essential.aln -q ../04.cat/essential.raxcoords \
    -m PROTCATGTR -n UNUS #  IMPORTANT:	Please read the documentation of RAxML
    			 # 		before running this line, so you know
-			 # 		that you're running what you really
-			 #		want. Check options for bootstrapping
-			 #		and the different algorithms (-f). Note
-			 #		that -m is required, but the file
-			 #		unus.raxcoords specifies "AUTO", so
-			 #		RAxML will attempt to find the model
-			 #		resulting in the highest likelihood.
+			 #  that you're running what you really want. Check
+			 #  options for bootstrapping and the different
+			 #  algorithms (-f). Note that -m is required, but the
+			 #  file unus.raxcoords specifies "AUTO", so RAxML will
+			 #  attempt to find the model resulting in the highest
+			 #  likelihood.
+cd ../..
+
+# 06. Autoprune
+echo "[06/06] Auto-pruning the tree"
+Newick.autoprune.R --t $ORG/05.raxml/RAxML_bestTree.UNUS --min_dist 0.001 \
+   $ORG/06.autoprune/essential-pruned.nwk
 
