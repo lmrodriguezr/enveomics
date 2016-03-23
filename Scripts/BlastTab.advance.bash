@@ -1,9 +1,9 @@
 #!/bin/bash
 
 #
-# @author: Luis M. Rodriguez-R
-# @update: Aug-17-2013
-# @license: artistic license 2.0
+# @author  Luis M. Rodriguez-R
+# @update  Mar-23-2016
+# @license artistic license 2.0
 #
 
 if [[ ! $2 ]] ; then
@@ -17,7 +17,7 @@ if [[ ! $2 ]] ; then
 .USAGE
    $0 blast.txt qry.fasta
 
-   blast.txt	Incomplete BLAST output.
+   blast.txt	Incomplete Tabular BLAST output.
    qry.fasta	FastA file with query sequences.
 ";
    exit 1;

@@ -48,7 +48,7 @@
         {
           "name": "Blast",
           "arg": "in_file",
-          "description": "Incomplete BLAST output.",
+          "description": "Incomplete Tabular BLAST output.",
           "mandatory": true
         },
         {
@@ -158,7 +158,7 @@
           "opt": "--blast",
           "arg": "in_file",
           "mandatory": true,
-          "description": "Tabular BLAST file."
+          "description": "Tabular BLAST file with COG IDs as subject."
         },
         {
           "opt": "--cog",
