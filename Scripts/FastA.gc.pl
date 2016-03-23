@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author  Luis M Rodriguez-R
-# @update  Oct-07-2015
+# @update  Mar-23-2016
 # @license artistic license 2.0
 #
 
@@ -19,18 +19,18 @@ Usage:
 
 for my $fa (@ARGV){
    open FA, "<", $fa or die "Cannot open file: $fa: $!\n";
-   my $def = '';
+   my $def = "";
    my $len = 0;
    my $gc  = 0;
    while(<FA>){
       next if /^;/;
-      if(m/^>(\S+)\s?/){
-         print "$def\t".($gc/$len)."\n" if $def;
+      if(m/^>(\S*)/){
+         print "$def\t".($gc/$len)."\n" if $len;
 	 $def = $1;
 	 $len = 0;
 	 $gc  = 0;
       }else{
-         s/[^A-Za-z]//g;
+         s/[^ACTGactg]//g;
 	 $len += length $_;
 	 s/[^GC]//g;
 	 $gc  += length $_;
