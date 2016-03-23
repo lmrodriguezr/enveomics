@@ -456,7 +456,7 @@
           "opt": "-w",
           "arg": "in_file",
           "description": ["A two-columns tab-delimited file containing the",
-            "weight of each query."]
+            "the name (column 1) and the weight (column 2) of each query."]
         },
         {
           "name": "Minimum score",
