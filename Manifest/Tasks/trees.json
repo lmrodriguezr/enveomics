@@ -5,6 +5,8 @@
       "description": ["Automatically prunes a tree, to keep representatives of",
         "each clade."],
       "requires": [ { "r_package": "optparse" }, { "r_package": "ape" } ],
+      "cite": [["Paradis et al 2004",
+        "http://dx.doi.org/10.1093/bioinformatics/btg412"]],
       "help_arg": "--help",
       "options": [
         {
