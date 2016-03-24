@@ -6,6 +6,12 @@
         "genomes."],
       "help_arg": "--help",
       "see_also": ["ani.rb", "rbm.rb"],
+      "cite": [
+        ["Konstantinidis & Tiedje, 2005, JBac",
+          "http://dx.doi.org/10.1128%2FJB.187.18.6258-6264.2005"],
+        ["Altschul et al, 2000, JMB",
+          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+      ],
       "options": [
         {
           "opt": "--seq1",
@@ -152,6 +158,12 @@
         "genomes."],
       "help_arg": "--help",
       "see_also": ["aai.rb","rbm.rb"],
+      "cite": [
+        ["Konstantinidis & Tiedje, 2005, PNAS",
+          "http://dx.doi.org/10.1073%2Fpnas.0409727102"],
+        ["Altschul et al 2000",
+          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+      ],
       "options": [
         {
           "opt": "--seq1",
@@ -305,6 +317,10 @@
       "description": ["Finds the reciprocal best matches between two sets of",
         "sequences."],
       "help_arg": "--help",
+      "cite":[
+        ["Altschul et al, 2000, JMB",
+          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+      ],
       "options": [
         {
 	  "opt": "--seq1",

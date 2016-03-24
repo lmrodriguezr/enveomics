@@ -175,6 +175,8 @@
 	"Markov Cluster Algorithm."],
       "see_also": ["ogs.annotate.rb", "ogs.core-pan.rb", "ogs.extract.rb",
         "ogs.stats.rb"],
+      "cite": [["Enright et al, 2002, NAR",
+        "http://dx.doi.org/10.1093/nar/30.7.1575"]],
       "help_arg": "--help",
       "options": [
         {

@@ -76,7 +76,8 @@
 	  "perl_lib": "Bio::AlignIO"
         }
       ],
-      "cite": [["Stajich et al 2002","http://dx.doi.org/10.1101/gr.361602"]],
+      "cite": [["Stajich et al, 2002, GRes",
+        "http://dx.doi.org/10.1101/gr.361602"]],
       "options": [
         {
           "name": "In-format",
@@ -368,7 +369,8 @@
 	  "source_url": "http://hmmer.janelia.org/software"
 	}
       ],
-      "cite": [["Eddy 2011","http://dx.doi.org/10.1371/journal.pcbi.1002195"]],
+      "cite": [["Eddy, 2011, PLoS CB",
+        "http://dx.doi.org/10.1371/journal.pcbi.1002195"]],
       "options": [
         {
 	  "name": "Input file",

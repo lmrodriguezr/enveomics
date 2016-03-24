@@ -8,6 +8,8 @@
 	"estimation (.boot file) and the null model based on label-permutation",
 	"(.null file)."],
       "see_also": ["BlastPairwise.AAsubs.pl"],
+      "cite": [["Konstantinidis et al, 2009, AEM",
+        "http://dx.doi.org/10.1128%2FAEM.00473-09"]],
       "help_arg": "--help",
       "options": [
         {
@@ -68,6 +70,8 @@
         "blast alignments, from a BLASTP pairwise format output (-outfmt 0 in",
 	"BLAST+, -m 0 in legacy BLAST)."],
       "see_also": ["AAsubs.log2ratio.rb"],
+      "cite": [["Konstantinidis et al, 2009, AEM",
+        "http://dx.doi.org/10.1128%2FAEM.00473-09"]],
       "help_arg": "",
       "options": [
         {

@@ -68,7 +68,8 @@
       "task": "FastA.filterLen.pl",
       "description": "Filters a multi-FastA file by length.",
       "requires": [ { "perl_lib": "Bio::SeqIO" } ],
-      "cite": [["Stajich et al 2002","http://dx.doi.org/10.1101/gr.361602"]],
+      "cite": [["Stajich et al, 2002, GRes",
+        "http://dx.doi.org/10.1101/gr.361602"]],
       "help_arg": "",
       "options": [
         {
@@ -272,7 +273,8 @@
       "task": "FastA.revcom.pl",
       "description": "Reverse-complement sequences in FastA format.",
       "requires": [ { "perl_lib": "Bio::SeqIO" } ],
-      "cite": [["Stajich et al 2002","http://dx.doi.org/10.1101/gr.361602"]],
+      "cite": [["Stajich et al, 2002, GRes",
+        "http://dx.doi.org/10.1101/gr.361602"]],
       "help_arg": "--help",
       "options": [
         "<",
