@@ -14,14 +14,15 @@
         "of Mycoplasma genitalium (M2288 and M2321)."],
       "values": ["Mgen_M2288.fna","Mgen_M2321.fna",null,null,null,null,null,
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-	null,null]
+        null,null]
     },
     {
       "task": "aai.rb",
       "description": ["Average Amino acid Identity (AAI) between Mycoplasma",
         "genitalium (Bacteria) and Nanoarchaeum equitans (Archaea)."],
       "values": ["Mgen_M2288.faa","Nequ_Kin4M.faa",null,null,null,null,null,
-        null,null,null,null,null,null,null,null,null,null,null,null,null,null]
+        null,null,null,null,null,null,null,null,null,null,null,null,null,null,
+        null]
     },
     {
       "task": "rbm.rb",
@@ -33,7 +34,7 @@
     {
       "task": "ogs.mcl.rb",
       "description": ["Groups of orthology in the Primate Letivirus Group,",
-	 "including HIV-1, HIV-2, and SIV."],
+         "including HIV-1, HIV-2, and SIV."],
       "values": ["primate_lentivirus.ogs","primate_lentivirus.rbm",null,null,
         null,null,null,null,null,null,null,null]
     },
@@ -64,14 +65,14 @@
       "description": ["Typical single-copy bacterial genes present in",
         "Mycoplasma genitalium."],
       "values": ["Mgen_M2288.faa",null,null,null,true,null,null,null,null,null,
-	null,null,null,null,null,null]
+        null,null,null,null,null,null]
     },
     {
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy archaeal genes present in",
         "Nanoarchaeum equitans."],
       "values": ["Mgen_M2288.faa",null,null,null,null,true,null,null,null,null,
-	null,null,null,null,null,null]
+        null,null,null,null,null,null]
     },
     {
       "task": "Newick.autoprune.R",
@@ -98,7 +99,7 @@
       "task": "BlastTab.sumPerHit.pl",
       "description": ["Estimate the total abundance of Gene Ontology",
         "annotations in the A metagenome, using metagenome-derived proteins,",
-	"and normalizing by the read counts of each protein."],
+        "and normalizing by the read counts of each protein."],
       "values": ["a_mg.reads-cds.counts.tsv",null,null,null,null,true,null,
         "a_mg.cds-go.blast.tsv",null,"a_mg.go.read-counts.tsv"]
     },
@@ -114,17 +115,17 @@
       "task": "Chao1.pl",
       "description": ["Phylum-richness estimated by the Chao1 index with 95%",
         "confidence, using the distributions of bacterial phyla in four",
-	"different sites."],
+        "different sites."],
       "values": ["phyla_counts.tsv",null,1,null,null,true,null,
-	 "phyla_chao1.tsv"]
+         "phyla_chao1.tsv"]
     },
     {
       "task": "AlphaDiversity.pl",
       "description": ["Phylum-diversity estimated by the indices of Shannon",
         "(H'), Inverse Simpson (1/Lambda), and true diversity of order 1 (1D),",
-	"using the distributions of bacterial phyla in four different sites."],
+        "using the distributions of bacterial phyla in four different sites."],
       "values": ["phyla_counts.tsv",null,1,null,null,true,null,true,1,null,
-	 "phyla_diversity.tsv"]
+         "phyla_diversity.tsv"]
     },
     {
       "_": "== Other miscelaneous examples ==",
@@ -138,7 +139,7 @@
       "task": "TRIBS.test.R",
       "description": ["Test overclustering of Xanthomonas oryzae genomes",
         "encoding for PilA using Transformed-space Resampling In Biased Sets",
-	"(TRIBS)."],
+        "(TRIBS)."],
       "values": ["Xanthomonas_oryzae.aai-mat.tsv","Xanthomonas_oryzae-PilA.txt",
         5000,null,null,null,null,0,"Xanthomonas_oryzae-PilA.tribs.Rdata",100]
     },

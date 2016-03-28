@@ -1,29 +1,27 @@
 #!/usr/bin/env ruby
 
-#
 # @author  Luis M. Rodriguez-R
-# @update  Dec-09-2015
+# @update  Mar-28-2016
 # @license artistic license 2.0
-#
 
-require 'optparse'
-require 'tmpdir'
+require "optparse"
+require "tmpdir"
 has_rest_client = true
 has_sqlite3 = true
 begin
-   require 'rubygems'
-   require 'restclient'
+   require "rubygems"
+   require "restclient"
 rescue LoadError
    has_rest_client = false
 end
 begin
-   require 'sqlite3'
+   require "sqlite3"
 rescue LoadError
    has_sqlite3 = false
 end
 
 o = {bits:0, id:20, len:0, hits:50, q:false, bin:"", program:"blast+", thr:1,
-   dec:2, auto:false, lookupfirst:false, dbrbm: true}
+   dec:2, auto:false, lookupfirst:false, dbrbm: true, nucl: false}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -47,7 +45,7 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Search Options"
    opts.on("-l", "--len INT",
-      "Minimum alignment length (in aa).  By default: #{o[:len].to_s}."
+      "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."
       ){ |v| o[:len] = v.to_i }
    opts.on("-i", "--id NUM",
       "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
@@ -58,6 +56,9 @@ Usage: #{$0} [options]"
    opts.on("-n", "--hits INT",
       "Minimum number of hits.  By default: #{o[:hits].to_s}."
       ){ |v| o[:hits] = v.to_i }
+   opts.on("-N", "--nucl",
+      "The input sequences are nucleotides (genes), not proteins."
+      ){ |v| o[:nucl] = v }
    opts.separator ""
    opts.separator "Software Options"
    opts.on("-b", "--bin DIR",
@@ -84,8 +85,8 @@ Usage: #{$0} [options]"
       "filename."){ |v| o[:seq2name] = v }
    opts.on("--lookup-first",
       "Indicates if the AAI should be looked up first in the database.",
-      "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with --res and --tab."
-      ){ |v| o[:lookupfirst] = v }
+      "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with " +
+      "--res and --tab."){ |v| o[:lookupfirst] = v }
    opts.on("--[no-]save-rbm",
       "Save (or don't save) the reciprocal best matches in the --sqlite3 db.",
       "By default: #{o[:dbrbm]}."){ |v| o[:dbrbm] = !!v }
@@ -163,6 +164,8 @@ Dir.mktmpdir do |dir|
       if not gi.nil?
 	 abort "GI requested but rest-client not supported.  First install " +
 	    "gem rest-client." unless has_rest_client
+	 abort "GIs are currently not supported with --nucl. Please use " +
+	    "ani.rb instead." if o[:nucl]
 	 $stderr.puts "  Downloading dataset from GI:#{gi[1]}." unless o[:q]
 	 responseLink = RestClient.get(
 	    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
@@ -220,9 +223,11 @@ Dir.mktmpdir do |dir|
       minfrg = seqs if minfrg > seqs
       case o[:program].downcase
       when "blast"
-         `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" -p T`
+         `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" \
+	 -p #{o[:nucl] ? "F" : "T"}`
       when "blast+"
-         `"#{o[:bin]}makeblastdb" -in "#{dir}/#{seq.to_s}.fa" -dbtype prot`
+         `"#{o[:bin]}makeblastdb" -in "#{dir}/#{seq.to_s}.fa" \
+	 -dbtype #{o[:nucl] ? "nucl" : "prot"}`
       when "blat"
       	 # Nothing to do
       else
@@ -248,14 +253,15 @@ Dir.mktmpdir do |dir|
       s = "#{dir}/seq#{i==1?2:1}.fa"
       case o[:program].downcase
       when "blast"
-	 `"#{o[:bin]}blastall" -p blastp -d "#{s}" -i "#{q}" \
-	 -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
+	 `"#{o[:bin]}blastall" -p blast#{o[:nucl] ? "n": "p"} -d "#{s}" \
+	 -i "#{q}" -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
       when "blast+"
-	 `"#{o[:bin]}blastp" -db "#{s}" -query "#{q}" \
-	 -max_target_seqs 1 \
-	 -num_threads #{o[:thr]} -outfmt 6 -out "#{dir}/#{i}.tab"`
+	 `"#{o[:bin]}blast#{o[:nucl] ? "n" : "p"}" -db "#{s}" -query "#{q}" \
+	 -max_target_seqs 1 -num_threads #{o[:thr]} -outfmt 6 \
+	 -out "#{dir}/#{i}.tab"`
       when "blat"
-	 `#{o[:bin]}blat "#{s}" "#{q}" -prot -out=blast8 "#{dir}/#{i}.tab.uns"`
+	 `#{o[:bin]}blat "#{s}" "#{q}" #{"-prot" unless o[:nucl]} -out=blast8 \
+	 "#{dir}/#{i}.tab.uns"`
 	 `sort -k 1 "#{dir}/#{i}.tab.uns" > "#{dir}/#{i}.tab"`
       else
 	 abort "Unsupported program: #{o[:program]}."
