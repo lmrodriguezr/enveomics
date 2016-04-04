@@ -37,6 +37,14 @@
           "default": 0
         },
         {
+          "name": "Length fraction",
+          "opt": "--len-fraction",
+          "arg": "float",
+          "description": ["Minimum alignment length as a fraction of the",
+            "shorter sequence (range 0-1)."],
+          "default": 0.0
+        },
+        {
           "name": "Identity",
           "opt": "--id",
           "arg": "float",

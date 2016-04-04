@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
 # @author  Luis M. Rodriguez-R
-# @update  Mar-28-2016
-# @license artistic license 2.0
+# @update  Apr-04-2016
+# @license Artistic-2.0
 
 require "optparse"
 require "tmpdir"
@@ -21,7 +21,8 @@ rescue LoadError
 end
 
 o = {bits:0, id:20, len:0, hits:50, q:false, bin:"", program:"blast+", thr:1,
-   dec:2, auto:false, lookupfirst:false, dbrbm: true, nucl: false}
+   dec:2, auto:false, lookupfirst:false, dbrbm: true, nucl: false,
+   len_fraction:0.0}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
    opts.banner = "
@@ -45,16 +46,20 @@ Usage: #{$0} [options]"
    opts.separator ""
    opts.separator "Search Options"
    opts.on("-l", "--len INT",
-      "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."
+      "Minimum alignment length (in residues).  By default: #{o[:len]}."
       ){ |v| o[:len] = v.to_i }
+   opts.on("-L", "--len-fraction NUM",
+      "Minimum alignment length as a fraction of the shorter sequence",
+      "(range 0-1).  By default: #{o[:len_fraction]}."
+      ){ |v| o[:len_fraction] = v.to_f }
    opts.on("-i", "--id NUM",
-      "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
+      "Minimum alignment identity (in %).  By default: #{o[:id]}."
       ){ |v| o[:id] = v.to_f }
    opts.on("-s", "--bitscore NUM",
-      "Minimum bit score (in bits).  By default: #{o[:bits].to_s}."
+      "Minimum bit score (in bits).  By default: #{o[:bits]}."
       ){ |v| o[:bits] = v.to_f }
    opts.on("-n", "--hits INT",
-      "Minimum number of hits.  By default: #{o[:hits].to_s}."
+      "Minimum number of hits.  By default: #{o[:hits]}."
       ){ |v| o[:hits] = v.to_i }
    opts.on("-N", "--nucl",
       "The input sequences are nucleotides (genes), not proteins."
@@ -159,6 +164,7 @@ Dir.mktmpdir do |dir|
    minfrg = nil
    seq_names = []
    ori_ids = {}
+   seq_len = {}
    [:seq1, :seq2].each do |seq|
       gi = /^gi:(\d+)/.match(o[seq])
       if not gi.nil?
@@ -204,16 +210,19 @@ Dir.mktmpdir do |dir|
 	 sqlite_db.execute "delete from aai where seq1=? and seq2=?", seq_names
       end
       ori_ids[seq] = [nil]
+      seq_len[seq] = [nil]
       seqs = 0
       fi = File.open(o[seq], "r")
       fo = File.open("#{dir}/#{seq.to_s}.fa", "w")
       fi.each_line do |ln|
 	 if ln =~ /^>(\S+)/
-	    ori_ids[seq] << $1 unless o[:rbm].nil? and o[:sqlite3].nil?
 	    seqs += 1
+	    ori_ids[seq] << $1 unless o[:rbm].nil? and o[:sqlite3].nil?
+	    seq_len[seq][seqs] = 0
 	    fo.puts ">#{seqs}"
 	 else
 	    fo.puts ln
+	    seq_len[seq][seqs] += ln.chomp.gsub(/[^A-Za-z]/,"").length
 	 end
       end
       fi.close
@@ -273,28 +282,33 @@ Dir.mktmpdir do |dir|
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
-	 if qry_seen[ row[0].to_i ].nil? and row[3].to_i >= o[:len] and
-	       row[2].to_f >= o[:id] and row[11].to_f >= o[:bits]
-	    qry_seen[ row[0].to_i ] = 1
-	    id += row[2].to_f
-	    sq += row[2].to_f ** 2
-	    n  += 1
-	    if i==1
-	       rbh[ row[0].to_i ] = row[1].to_i
-	    else
-	       if !rbh[ row[1].to_i ].nil? and rbh[ row[1].to_i ]==row[0].to_i
-		  id2 += row[2].to_f
-		  sq2 += row[2].to_f**2
-		  n2  += 1
-		  fo.puts [row[2..5],row[10..11]].join("\t") unless o[:out].nil?
-		  rbm.puts [ori_ids[:seq1][row[1].to_i],
-		     ori_ids[:seq2][row[0].to_i], row[2..5], row[8..9],
-		     row[6..7], row[10..11]].join("\t") unless o[:rbm].nil?
-		  sqlite_db.execute("insert into rbm values(?,?,?,?,?,?,?)",
-		     seq_names + [ori_ids[:seq1][row[1].to_i],
-		     ori_ids[:seq2][row[0].to_i], row[2], row[10], row[11]]
-		     ) if not o[:sqlite3].nil? and o[:dbrbm]
-	       end
+	 next unless qry_seen[ row[0].to_i ].nil?
+	 next if row[3].to_i < o[:len] and
+	 next if row[2].to_f < o[:id]
+	 next if row[11].to_f < o[:bits]
+	 next if row[3].to_f/[
+	       seq_len[i==1 ? :seq1 : :seq2][row[0].to_i],
+	       seq_len[i==1 ? :seq2 : :seq1][row[1].to_i]
+	    ].min < o[:len_fraction]
+	 qry_seen[ row[0].to_i ] = 1
+	 id += row[2].to_f
+	 sq += row[2].to_f ** 2
+	 n  += 1
+	 if i==1
+	    rbh[ row[0].to_i ] = row[1].to_i
+	 else
+	    if !rbh[ row[1].to_i ].nil? and rbh[ row[1].to_i ]==row[0].to_i
+	       id2 += row[2].to_f
+	       sq2 += row[2].to_f**2
+	       n2  += 1
+	       fo.puts [row[2..5],row[10..11]].join("\t") unless o[:out].nil?
+	       rbm.puts [ori_ids[:seq1][row[1].to_i],
+		  ori_ids[:seq2][row[0].to_i], row[2..5], row[8..9],
+		  row[6..7], row[10..11]].join("\t") unless o[:rbm].nil?
+	       sqlite_db.execute("insert into rbm values(?,?,?,?,?,?,?)",
+		  seq_names + [ori_ids[:seq1][row[1].to_i],
+		  ori_ids[:seq2][row[0].to_i], row[2], row[10], row[11]]
+		  ) if not o[:sqlite3].nil? and o[:dbrbm]
 	    end
 	 end
       end

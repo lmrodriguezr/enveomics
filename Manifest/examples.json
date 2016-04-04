@@ -22,7 +22,7 @@
         "genitalium (Bacteria) and Nanoarchaeum equitans (Archaea)."],
       "values": ["Mgen_M2288.faa","Nequ_Kin4M.faa",null,null,null,null,null,
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null]
+        null,null]
     },
     {
       "task": "rbm.rb",

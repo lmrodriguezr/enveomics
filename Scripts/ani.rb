@@ -1,10 +1,8 @@
 #!/usr/bin/env ruby
 
-#
 # @author  Luis M. Rodriguez-R
-# @update  Nov-30-2015
-# @license artistic license 2.0
-#
+# @update  Apr-04-2016
+# @license Artistic-2.0
 
 require "optparse"
 require "tmpdir"
@@ -52,13 +50,13 @@ Usage: #{$0} [options]"
       "Step size in the ANI calculation (in bp).  By default: " +
       "#{o[:step].to_s}."){ |v| o[:step] = v.to_i }
    opts.on("-l", "--len INT",
-      "Minimum alignment length (in bp).  By default: #{o[:len].to_s}."
+      "Minimum alignment length (in bp).  By default: #{o[:len]}."
       ){ |v| o[:len] = v.to_i }
    opts.on("-i", "--id NUM",
-      "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
+      "Minimum alignment identity (in %).  By default: #{o[:id]}."
       ){ |v| o[:id] = v.to_f }
    opts.on("-n", "--hits INT",
-      "Minimum number of hits.  By default: #{o[:hits].to_s}."
+      "Minimum number of hits.  By default: #{o[:hits]}."
       ){ |v| o[:hits] = v.to_i }
    opts.on("-N", "--nocorrection",
       "Report values without post-hoc correction."){ |v| o[:correct] = false }
