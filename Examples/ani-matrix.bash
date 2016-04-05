@@ -1,10 +1,8 @@
 #!/bin/bash
 
-#
 # @author  Luis M. Rodriguez-R
-# @update  Jan-04-2016
-# @license artistic license 2.0
-#
+# @update  Apr-05-2016
+# @license Artistic-2.0
 
 set -e # <- So it stops if there is an error
 function exists { [[ -e "$1" ]] ; } # <- To test *any* of many files
@@ -13,7 +11,7 @@ OUT=$1	# < Output file
 [[ -n "$1" ]] && shift
 SEQS=$@	# <- list of all genomes
 THR=2	# <- Number or threads
-DEF_DIST=30  # <- Default distance when ANI cannot be reliably estimated (0-100)
+DEF_DIST=80  # <- Default distance when ANI cannot be reliably estimated (0-100)
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
