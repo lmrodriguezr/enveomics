@@ -57,10 +57,13 @@
       ]
     },
     "Diversity": {
-      "OTUs": [
+      "Community": [
         "AlphaDiversity.pl",
         "Chao1.pl",
         "Table.barplot.R"
+      ],
+      "Population": [
+        "VCF.SNPs.rb"
       ]
     },
     "Annotation": {

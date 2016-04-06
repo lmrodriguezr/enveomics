@@ -1,0 +1,58 @@
+{
+  "tasks": [
+    {
+      "task": "VCF.SNPs.rb",
+      "description": ["Counts the number of Single-Nucleotide Polymorphisms",
+        "(SNPs) in a VCF file."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--input",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input file in Variant Call Format (VCF)."
+        },
+        {
+          "opt": "--min-dp",
+          "arg": "integer",
+          "description": "Minimum number of reads covering the position.",
+          "default": 4
+        },
+        {
+          "opt": "--max-dp",
+          "arg": "integer",
+          "description": ["Maximum number of reads covering the position. By",
+            "default no limit."]
+        },
+        {
+          "opt": "--min-ref-dp",
+          "arg": "integer",
+          "description": "Minimum number of reads supporting the REF allele.",
+          "default": 2
+        },
+        {
+          "opt": "--min-alt-dp",
+          "arg": "integer",
+          "description": "Minimum number of reads supporting the ALT allele.",
+          "default": 2
+        },
+        {
+          "opt": "--min-quality",
+          "arg": "float",
+          "description": "Minimum quality of the position mapping.",
+          "default": 0.0
+        },
+        {
+          "opt": "--min-shannon",
+          "arg": "integer",
+          "description": "Minimum information content (in bits, from 0 to 1).",
+          "default": 0.0
+        },
+	{
+	  "opt": "--indels",
+	  "description": "Process indels."
+	}
+      ]
+    }
+  ]
+}
