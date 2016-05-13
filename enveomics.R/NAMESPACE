@@ -3,25 +3,29 @@ import(modeest)
 import(parallel)
 import(fitdistrplus)
 import(sn)
+importFrom("investr", "predFit")
 importFrom("grDevices", "boxplot.stats", "col2rgb", "grey", "rainbow",
-   "rgb")
+  "rgb")
 importFrom("graphics", "abline", "axis", "barplot", "hist", "image",
-   "layout", "legend", "lines", "par", "points", "polygon",
-   "rect", "text")
+  "layout", "legend", "lines", "par", "points", "polygon",
+  "rect", "text")
 importFrom("stats", "as.dist", "cophenetic", "cor", "median",
-   "quantile", "runif", "smooth.spline")
+  "quantile", "runif", "smooth.spline", "nls")
 importFrom("utils", "read.table", "setTxtProgressBar", "tail",
-   "txtProgressBar")
-exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest)
+  "txtProgressBar")
+exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest,
+  enve.GrowthCurve)
 S3method(plot, enve.RecPlot2)
 S3method(plot, enve.TRIBS)
 S3method(plot, enve.TRIBStest)
+S3method(plot, enve.GrowthCurve)
 S3method(summary, enve.TRIBS)
 S3method(summary, enve.TRIBStest)
+S3method(summary, enve.GrowthCurve)
 export(enve.cliopts, enve.barplot, enve.recplot, enve.prune.dist,
-   enve.tribs, plot.enve.TRIBS, summary.enve.TRIBS, enve.tribs.test,
-   plot.enve.TRIBStest, summary.enve.TRIBStest,
-   enve.df2dist, enve.df2dist.group, enve.df2dist.list,
-   enve.recplot2, plot.enve.RecPlot2, enve.recplot2.findPeaks,
-   enve.recplot2.corePeak, enve.recplot2.changeCutoff)
-
+  enve.tribs, plot.enve.TRIBS, summary.enve.TRIBS, enve.tribs.test,
+  plot.enve.TRIBStest, summary.enve.TRIBStest,
+  enve.df2dist, enve.df2dist.group, enve.df2dist.list,
+  enve.recplot2, plot.enve.RecPlot2, enve.recplot2.findPeaks,
+  enve.recplot2.corePeak, enve.recplot2.changeCutoff,
+  enve.growthcurve, plot.enve.GrowthCurve, summary.enve.GrowthCurve)

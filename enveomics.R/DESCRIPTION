@@ -1,5 +1,5 @@
 Package: enveomics.R
-Version: 1.0.2
+Version: 1.1.0
 Authors@R: c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
 	   email="lmrodriguezr@gmail.com"))
 Title: Various R Functions from the Kostas Lab
@@ -15,7 +15,8 @@ Depends:
    parallel,
    modeest,
    fitdistrplus,
-   sn
+   sn,
+   investr
 Suggests:
    tools,
    vegan,
