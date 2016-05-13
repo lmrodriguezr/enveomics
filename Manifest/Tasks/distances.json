@@ -6,7 +6,10 @@
         "distances in a set of objects and a subset, together with its",
 	"statistical significance."],
       "help_arg": "--help",
-      "requires": [ { "r_package": "enveomics.R" } ],
+      "requires": [
+        { "r_package": "optparse" },
+        { "r_package": "enveomics.R" }
+      ],
       "see_also": ["TRIBS.plot-test.R"],
       "options": [
         {
@@ -75,7 +78,10 @@
     {
       "task": "TRIBS.plot-test.R",
       "description": "Plots an `enve.TRIBStest` object.",
-      "requires": [ { "r_package": "enveomics.R" } ],
+      "requires": [
+        { "r_package": "optparse" },
+        { "r_package": "enveomics.R" }
+      ],
       "see_also": ["TRIBS.test.R"],
       "help_arg": "--help",
       "options": [

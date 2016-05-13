@@ -617,7 +617,10 @@
       "description": ["Produce recruitment plot objects provided that",
         "BlastTab.catsbj.pl has been previously executed."],
       "help_arg": "--help",
-      "requires": [ { "r_package": "enveomics.R" } ],
+      "requires": [
+        { "r_package": "optparse" },
+        { "r_package": "enveomics.R" }
+      ],
       "options": [
         {
 	  "opt": "--prefix",
