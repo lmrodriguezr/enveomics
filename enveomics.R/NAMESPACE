@@ -28,4 +28,5 @@ export(enve.cliopts, enve.barplot, enve.recplot, enve.prune.dist,
   enve.df2dist, enve.df2dist.group, enve.df2dist.list,
   enve.recplot2, plot.enve.RecPlot2, enve.recplot2.findPeaks,
   enve.recplot2.corePeak, enve.recplot2.changeCutoff,
-  enve.growthcurve, plot.enve.GrowthCurve, summary.enve.GrowthCurve)
+  enve.growthcurve, plot.enve.GrowthCurve, summary.enve.GrowthCurve,
+  enve.col2alpha)

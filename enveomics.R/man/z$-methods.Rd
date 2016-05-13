@@ -1,6 +1,7 @@
 \name{$-methods}
 \docType{methods}
 \alias{$-methods}
+\alias{$,enve.GrowthCurve-method}
 \alias{$,enve.RecPlot2-method}
 \alias{$,enve.RecPlot2.Peak-method}
 \title{ ~~ Methods for Function \code{$}  ~~}
@@ -9,6 +10,10 @@
 }
 \section{Methods}{
 \describe{
+
+\item{\code{signature(x = "enve.GrowthCurve")}}{
+%%  ~~describe this method here~~
+}
 
 \item{\code{signature(x = "enve.RecPlot2")}}{
 %%  ~~describe this method here~~

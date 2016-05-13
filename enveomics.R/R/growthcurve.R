@@ -1,4 +1,3 @@
-
 #==============> Define S4 classes
 setClass("enve.GrowthCurve",
   ### Enve-omics representation of fitted growth curves.
@@ -15,9 +14,7 @@ plot.enve.GrowthCurve <- function
   ### Plots an `enve.GrowthCurve` object.
     (x,
     ### `enve.GrowthCurve` object to plot.
-    col=
-      if(length(x$design)==0) grey(0.2)
-      else rainbow(length(x$design), v=3/5, s=3/5),
+    col,
     ### Base colors to use for the different samples. Can be recycled. By
     ### default, grey for one sample or rainbow colors for more than one.
     pt.alpha=0.9,
@@ -58,6 +55,13 @@ plot.enve.GrowthCurve <- function
     ### Any other graphic parameters.
   ){
   
+  # Arguments
+  if(missing(col)){
+    col <-
+      if(length(x$design)==0) grey(0.2)
+      else rainbow(length(x$design), v=3/5, s=3/5)
+  }
+
   if(new){
     # Initiate canvas
     od.fit.max <- max(sapply(x$predict, function(x) max(x[,"upr"])))
@@ -94,10 +98,13 @@ plot.enve.GrowthCurve <- function
       lines(d[sel,"t"], d[sel,"od"], col=xp.col[i], lwd=xp.lwd, lty=xp.lty)
     }
     # Fitted growth curves
-    d <- x$predict[[i]]
-    lines(d[,"t"], d[,"fit"], col=ln.col[i], lwd=ln.lwd, lty=ln.lty)
-    polygon(c(d[,"t"], rev(d[,"t"])), c(d[,"lwr"], rev(d[,"upr"])),
-      border=NA, col=band.col[i], density=band.density[i], angle=band.angle[i])
+    if(x$models[[i]]$convInfo$isConv){
+      d <- x$predict[[i]]
+      lines(d[,"t"], d[,"fit"], col=ln.col[i], lwd=ln.lwd, lty=ln.lty)
+      polygon(c(d[,"t"], rev(d[,"t"])), c(d[,"lwr"], rev(d[,"upr"])),
+        border=NA, col=band.col[i], density=band.density[i],
+        angle=band.angle[i])
+    }
   }
   
   if(!all(is.logical(legend)) || legend){
@@ -115,16 +122,31 @@ plot.enve.GrowthCurve <- function
 
 summary.enve.GrowthCurve <- function(
     ### Summary of an `enve.GrowthCurve` object.
-    x,
+    object,
     ### `enve.GrowthCurve` object.
     ...
     ### No additional parameters are currently supported.
   ){
-  cat('===[ enve.GrowthCurves ]------------------\n');
-  # TODO add details!
-  cat('------------------------------------------\n');
-  cat('call:',as.character(attr(object,'call')),'\n');
-  cat('------------------------------------------\n');
+
+  x <- object
+  cat('===[ enve.GrowthCurves ]------------------\n')
+  for(i in names(x$design)){
+     cat(i, ':\n', sep='')
+     if(x$models[[i]]$convInfo$isConv){
+       for(j in names(coef(x$models[[i]]))){
+         cat('  - ', j, ' = ', coef(x$models[[i]])[j], '\n', sep='')
+       }
+     }else{
+       cat('  Model didn\'t converge:\n    ',
+         x$models[[i]]$convInfo$stopMessage, '\n', sep='')
+     }
+     cat('  ', nrow(x$models[[i]]$data), ' observations, ',
+       length(unique(x$models[[i]]$data[,"replicate"])), ' replicates.\n',
+       sep='')
+  }
+  cat('------------------------------------------\n')
+  cat('call:',as.character(attr(x,'call')),'\n')
+  cat('------------------------------------------\n')
 }
 
 #==============> Core functions
@@ -140,11 +162,7 @@ enve.growthcurve <- structure(function(
     triplicates=FALSE,
     ### If TRUE, the columns are assumed to be sorted by sample with three
     ### replicates by sample. It requires a number of columns multiple of 3.
-    design=
-      if(triplicates)
-        tapply(colnames(x),
-          colnames(x)[rep(1:(ncol(x)/3)*3-2, each=3)], c, simplify=FALSE)
-      else tapply(colnames(x), colnames(x), c, simplify=FALSE),
+    design,
     ### Experimental design of the data. An `array` of mode list with sample
     ### names as index and the list of column names in each sample as the
     ### values. By default, each column is assumed to be an independent sample
@@ -169,11 +187,19 @@ enve.growthcurve <- structure(function(
     ### Any additional parameters to be passed to `plot.enve.GrowthCurve`.
   ){
   
+  # Arguments
+  if(missing(design)){
+    design <-
+      if(triplicates)
+        tapply(colnames(x), colnames(x)[rep(1:(ncol(x)/3)*3-2, each=3)], c,
+          simplify=FALSE)
+      else tapply(colnames(x), colnames(x), c, simplify=FALSE)
+  }
   mod <- list()
   fit <- list()
   interval <- match.arg(interval)
-  if(exists("growth.fx")) global.growth.fx <- growth.fx
-  growth.fx <<- FUN
+  enve._growth.fx <- NULL
+  enve._growth.fx <<- FUN
   
   for(sample in names(design)){
     od <- c()
@@ -185,21 +211,25 @@ enve.growthcurve <- structure(function(
     data <- data[!is.na(data$od),]
     opts <- nls.opt
     opts[["data"]] <- data
-    if(is.null(opts[["formula"]])){
-      opts[["formula"]] <- od ~ growth.fx(t, K, r, P0)
-    }
-    if(is.null(opts[["start"]])){
-      opts[["start"]] <- list(
+    opt.defaults <- list(formula = od ~ enve._growth.fx(t, K, r, P0),
+      algorithm="port", lower=list(P0=1e-16),
+      control=nls.control(warnOnly=TRUE),
+      start=list(
         K  = 2*max(data$od),
         r  = length(times)/max(data$t),
-        P0 = min(data$od[data$od>0]))
+        P0 = min(data$od[data$od>0])
+      ))
+    for(i in names(opt.defaults)){
+      if(is.null(opts[[i]])){
+        opts[[i]] <- opt.defaults[[i]]
+      }
     }
     mod[[sample]] <- do.call(nls, opts)
     fit[[sample]] <- cbind(t=new.times,
       predFit(mod[[sample]], level=level, interval=interval,
         newdata=data.frame(t=new.times)))
   }
-  if(exists("global.growth.fx")) growth.fx <<- global.growth.fx
+  enve._growth.fx <<- NULL
   gc <- new("enve.GrowthCurve",
     design=design, models=mod, predict=fit,
     call=match.call());
