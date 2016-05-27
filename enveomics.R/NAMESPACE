@@ -10,7 +10,7 @@ importFrom("graphics", "abline", "axis", "barplot", "hist", "image",
   "layout", "legend", "lines", "par", "points", "polygon",
   "rect", "text")
 importFrom("stats", "as.dist", "cophenetic", "cor", "median",
-  "quantile", "runif", "smooth.spline", "nls")
+  "quantile", "runif", "smooth.spline", "nls", "nls.control")
 importFrom("utils", "read.table", "setTxtProgressBar", "tail",
   "txtProgressBar")
 exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest,
