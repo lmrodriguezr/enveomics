@@ -50,6 +50,8 @@ bioforce-6)
    MAX_H=120 ;;
 iw-shared-6)
    MAX_H=12 ;;
+micro-largedata)
+   MAX_H=120 ;;
 biocluster-6 | biohimem-6 | microcluster)
    MAX_H=240 ;;
 *)
