@@ -574,6 +574,49 @@ enve.recplot2.changeCutoff <- function
    return(rp)
 }
 
+enve.recplot2.extractWindows <- function
+   ### Extract windows significantly below (or above) the peak in sequencing
+   ### depth.
+      (rp,
+      ### Recruitment plot, a enve.Recplot2 object.
+      peak,
+      ### Peak, a enve.RecPlot2.Peak object. If list, it is assumed to be a list
+      ### of enve.RecPlot2.Peak objects, in which case the core peak is used
+      ### (see enve.recplot2.corePeak).
+      lower.tail=TRUE,
+      ### If FALSE, it returns windows significantly above the peak in
+      ### sequencing depth.
+      significance=0.05,
+      ### Significance threshold (alpha) to select windows.
+      seq.names=FALSE
+      ### Returns subject sequence names instead of a vector of Booleans. It
+      ### assumes that the recruitment plot was generated with pos.breaks=0.
+      ){
+   # Determine the threshold
+   if(is.list(peak)) peak <- enve.recplot2.corePeak(peak)
+   par <- peak$param.hat
+   par[["p"]] <- ifelse(lower.tail, significance, 1-significance)
+   thr <- do.call(ifelse(length(par)==4, qsn, qnorm), par)
+   
+   # Estimate sequencing depths per window
+   pos.cnts.in <- rp$pos.counts.in
+   pos.breaks  <- rp$pos.breaks
+   pos.binsize <- (pos.breaks[-1] - pos.breaks[-length(pos.breaks)])
+   seqdepth.in <- pos.cnts.in/pos.binsize
+
+   # Select windows past the threshold
+   if(lower.tail){
+      sel <- seqdepth.in < thr
+   }else{
+      sel <- seqdepth.in > thr
+   }
+   if(!seq.names) return(sel)
+   if(length(seqdepth.in) != length(rp$seq.names))
+      stop(paste("Requesting subject sequence names, but the recruitment plot",
+         "was not generated with pos.breaks=0."))
+   return(rp$seq.names[sel])
+}
+
 #==============> Define internal functions
 enve.recplot2.__counts <- function
    ### Internal ancilliary function (see `enve.recplot2`).

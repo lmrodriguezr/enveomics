@@ -31,6 +31,7 @@ And open help messages using any of the following commands:
     ?enve.recplot2.changeCutoff
     ?enve.recplot2.findPeaks
     ?enve.recplot2.corePeak
+    ?enve.recplot2.extractWindows
     ?enve.prune.dist
     ?enve.tribs
     ?enve.tribs.test
