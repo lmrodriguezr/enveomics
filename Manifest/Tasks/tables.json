@@ -168,6 +168,13 @@
 	    "dot (if any)."]
 	},
 	{
+	  "name": "Rows to ignore",
+	  "opt": "-r",
+	  "arg": "integer",
+	  "default": 0,
+	  "description": "Number of leading rows to ignore in the input files."
+	},
+	{
 	  "arg": "in_file",
 	  "mandatory": true,
 	  "multiple_sep": " ",

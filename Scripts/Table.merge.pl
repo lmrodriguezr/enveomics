@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 #
 # @author: Luis M. Rodriguez-R <lmrodriguezr at gmail dot com>
-# @update: Apr-02-2015
+# @update: Sep-20-2015
 # @license: artistic license 2.0
 #
 
@@ -10,7 +10,7 @@ use strict;
 use Getopt::Std;
 
 my %o;
-getopts('si:o:ne:h:H:', \%o);
+getopts('si:o:ne:h:H:r:', \%o);
 my @files = @ARGV;
 
 $#files>0 or die "
@@ -33,6 +33,7 @@ $#files>0 or die "
 		parenthesis.  Non-capturing paretheses can be defined as (?:...).  By
 		default: \"(?:.*/)?([^\\.]+)\", which captures the part of the basename
 		of the file before the first dot (if any).
+      -r <int>	Number of leading rows to ignore in the input files. Zero by default.
 
 ";
 $o{i} ||= "\t";
@@ -40,6 +41,7 @@ $o{o} ||= "\t";
 $o{e} ||= ($o{s} ? "" : 0);
 $o{h} ||= "Tag";
 $o{H} ||= "(?:.*/)?([^\\.]+)";
+$o{r} += 0;
 
 my $notes = {};
 
@@ -53,6 +55,7 @@ for my $file (@files){
    }
    open IN, "<", $file or die "Cannot read file: $file: $!\n";
    while(<IN>){
+      next if $. <= $o{r};
       chomp;
       my @l = split $o{i};
       $l[1]+=0 unless $o{s};
