@@ -492,6 +492,48 @@
           "description": "Input multi-FastA file(s)."
         }
       ]
+    },
+    {
+      "task": "FastA.fragment.rb",
+      "description": ["Simulates incomplete (fragmented) drafts from complete",
+        "genomes."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing the complete sequences."
+        },
+        {
+          "opt": "--opt",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "FastA to create."
+        },
+        {
+          "opt": "--completeness",
+          "arg": "float",
+          "mandatory": true,
+          "description": ["Fraction of genome completeness to simulate from 0",
+            "to 1."]
+        },
+        {
+          "opt": "--minlen",
+          "arg": "integer",
+          "description": "Minimum fragment length to report.",
+          "default": 500
+        },
+        {
+          "opt": "--sorted",
+          "description": ["Keep fragments sorted as in the input file. By",
+            "default, fragments are shuffled."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
     }
   ]
 }
