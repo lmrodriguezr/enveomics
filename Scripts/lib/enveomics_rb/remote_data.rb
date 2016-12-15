@@ -11,7 +11,7 @@ use "json"
 
 class RemoteData
    # Class-level variables
-   @@EUTILS = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils"
+   @@EUTILS = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
    @@EBIREST = "http://www.ebi.ac.uk/Tools"
    
    # Class-level methods

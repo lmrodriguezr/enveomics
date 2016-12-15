@@ -174,7 +174,7 @@ Dir.mktmpdir do |dir|
 	    "ani.rb instead." if o[:nucl]
 	 $stderr.puts "  Downloading dataset from GI:#{gi[1]}." unless o[:q]
 	 responseLink = RestClient.get(
-	    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
+	    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
 	    {params:{db:"protein",dbfrom:"nuccore",id:gi[1]}})
 	 abort "Unable to reach NCBI EUtils, error code " +
 	    responseLink.code.to_s + "." unless responseLink.code == 200
@@ -190,7 +190,7 @@ Dir.mktmpdir do |dir|
 	    end
 	 end
 	 response = RestClient.post(
-	    "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
+	    "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
 	    :db=>"nuccore",:rettype=>"fasta",:id=>protIds.join(","))
 	 abort "Unable to reach NCBI EUtils, error code " +
 	    response.code.to_s + "." unless response.code == 200
