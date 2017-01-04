@@ -36,6 +36,7 @@ And open help messages using any of the following commands:
     ?enve.tribs
     ?enve.tribs.test
     ?enve.growthcurve
+    ?enve.col.alpha
 ```
 
 You can run some examples using these libraries in the

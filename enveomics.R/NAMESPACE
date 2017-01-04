@@ -23,7 +23,7 @@ S3method(summary, enve.TRIBS)
 S3method(summary, enve.TRIBStest)
 S3method(summary, enve.GrowthCurve)
 export(
-  enve.cliopts,
+  enve.cliopts, enve.col.alpha,
   enve.barplot, enve.recplot, enve.prune.dist,
   enve.tribs, plot.enve.TRIBS, summary.enve.TRIBS, enve.tribs.test,
   plot.enve.TRIBStest, summary.enve.TRIBStest,
