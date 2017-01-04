@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # @author  Luis M. Rodriguez-R
-# @update  Apr-05-2016
 # @license Artistic-2.0
 
 set -e # <- So it stops if there is an error
@@ -43,8 +42,9 @@ echo "[01/03] Calculating ANI"
 for i in $SEQS ; do
    for j in $SEQS ; do
       echo -n " o $i vs $j: "
-      ani.rb -1 $i -2 $j -S $OUT.db \
-	 --no-save-rbm --no-save-regions --auto --quiet
+      ANI=$(ani.rb -1 $i -2 $j -S $OUT.db \
+	 --no-save-rbm --no-save-regions --auto --quiet)
+      echo ${ANI:-Below detection}
       [[ "$i" == "$j" ]] && break
    done
 done
