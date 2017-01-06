@@ -10,7 +10,7 @@ OUT=$1	# < Output file
 [[ -n "$1" ]] && shift
 SEQS=$@	# <- list of all genomes
 THR=2	# <- Number or threads
-DEF_DIST=80  # <- Default distance when ANI cannot be reliably estimated (0-100)
+DEF_DIST=100 # <- Default distance when ANI cannot be reliably estimated (0-100)
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
@@ -40,27 +40,28 @@ export PATH=$(dirname $0)/../Scripts:$PATH
 # 01. Calculate ANI
 echo "[01/03] Calculating ANI"
 for i in $SEQS ; do
-   for j in $SEQS ; do
-      echo -n " o $i vs $j: "
-      ANI=$(ani.rb -1 $i -2 $j -S $OUT.db \
-	 --no-save-rbm --no-save-regions --auto --quiet)
-      echo ${ANI:-Below detection}
-      [[ "$i" == "$j" ]] && break
-   done
+  for j in $SEQS ; do
+    echo -n " o $i vs $j: "
+    ANI=$(ani.rb -1 $i -2 $j -S $OUT.db \
+      --no-save-rbm --no-save-regions --auto --quiet)
+    echo ${ANI:-Below detection}
+    [[ "$i" == "$j" ]] && break
+  done
 done
 
 # 02. Extract matrix
 echo "[02/03] Extracting list"
 echo -e "SeqA\tSeqB\tANI\tSD\tN\tOmega\tFrx" > $OUT
 echo "select seq1, seq2, ani, sd, n, omega, (100.0*n/omega) from ani;" \
-   | sqlite3 $OUT.db | tr '|' '\t' >> $OUT
+  | sqlite3 $OUT.db | tr '|' '\t' >> $OUT
 
 # 03. Make it a distance matrix.
 echo "[03/03] Generating distance matrix"
 echo "
 source('$(dirname $0)/../enveomics.R/R/df2dist.R');
 a <- read.table('$OUT', sep='\\t', h=TRUE, as.is=T);
-ani.d <- enve.df2dist(cbind(a\$SeqA, a\$SeqB, 100-a\$ANI), default.d=$DEF_DIST);
+ani.d <- enve.df2dist(data.frame(a\$SeqA, a\$SeqB, 100-a\$ANI),
+  default.d=$DEF_DIST);
 write.table(as.matrix(ani.d), '$OUT.dist',
-   quote=FALSE, col.names=NA, row.names=TRUE, sep='\\t')
+  quote=FALSE, col.names=NA, row.names=TRUE, sep='\\t')
 " | R --vanilla >/dev/null
