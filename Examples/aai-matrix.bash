@@ -11,7 +11,7 @@ OUT=$1	# < Output file
 [[ -n "$1" ]] && shift
 SEQS=$@	# <- list of all genomes
 THR=2	# <- Number or threads
-DEF_DIST=20  # <- Default distance when AAI cannot be reliably estimated (0-100)
+DEF_DIST=80  # <- Default distance when AAI cannot be reliably estimated (0-100)
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
