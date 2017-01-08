@@ -13,24 +13,34 @@
           "description": "Input file in Variant Call Format (VCF)."
         },
         {
+          "name": "Filtered VCF",
+          "opt": "--out",
+          "arg": "out_file",
+          "description": "Output (filtered) file in Variant Call Format (VCF)."
+        },
+        {
+          "name": "Min DP",
           "opt": "--min-dp",
           "arg": "integer",
           "description": "Minimum number of reads covering the position.",
           "default": 4
         },
         {
+          "name": "Max DP",
           "opt": "--max-dp",
           "arg": "integer",
           "description": ["Maximum number of reads covering the position. By",
             "default no limit."]
         },
         {
+          "name": "Min Ref-DP",
           "opt": "--min-ref-dp",
           "arg": "integer",
           "description": "Minimum number of reads supporting the REF allele.",
           "default": 2
         },
         {
+          "name": "Min Alt-DP",
           "opt": "--min-alt-dp",
           "arg": "integer",
           "description": "Minimum number of reads supporting the ALT allele.",

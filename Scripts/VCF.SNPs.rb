@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
 # @author  Luis M. Rodriguez-R
-# @update  Apr-06-2016
 # @license Artistic-2.0
 
 $:.push File.expand_path(File.dirname(__FILE__) + "/lib")
@@ -21,6 +20,8 @@ OptionParser.new do |opt|
     "Input file in Variant Call Format (VCF)."){ |v| o[:file] = v}
   opt.separator ""
   opt.separator "Parameters"
+  opt.on("-o", "--out FILE",
+    "Output (filtered) file in Variant Call Format (VCF)."){ |v| o[:out] = v}
   opt.on("-m", "--min-dp INT",
     "Minimum number of reads covering the position. By default: #{o[:min_dp]}."
     ){ |v| o[:min_dp] = v.to_i }
@@ -59,6 +60,10 @@ dp = 0
 ref_dp = 0
 alt_dp = 0
 h = 0
+unless o[:out].nil?
+  ofh = File.open(o[:out], "w")
+  vcf.each_header{ |h| ofh.print h }
+end
 vcf.each_variant do |v|
   next if v.indel? and not o[:indels]
   next if v.dp < o[:min_dp]
@@ -72,7 +77,10 @@ vcf.each_variant do |v|
   ref_dp += v.ref_dp
   alt_dp += v.alt_dp
   h += v.shannon
+  ofh.print v.to_s unless o[:out].nil?
 end
+ofh.close unless o[:out].nil?
+
 puts "SNPs: #{c}", "Information content: #{h}",
   "Average SNP depth: #{dp.to_f/c}",
   "Average REF allele depth: #{ref_dp.to_f/c}",

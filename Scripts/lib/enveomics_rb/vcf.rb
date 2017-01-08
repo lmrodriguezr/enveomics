@@ -1,5 +1,4 @@
 # @author  Luis M. Rodriguez-R
-# @update  Apr-06-2016
 # @license Artistic-2.0
 
 ##
@@ -21,6 +20,16 @@ class VCF
     fh.each_line do |ln|
       next if ln =~ /^#/
       blk.call VCF::Variant.new(ln)
+    end
+  end
+
+  ##
+  # Iterate through each header (i.e., each comment line), passing a String to +blk+.
+  def each_header(&blk)
+    fh.rewind
+    fh.each_line do |ln|
+      next unless ln =~ /^#/
+      blk.call ln
     end
   end
 end
@@ -96,5 +105,13 @@ class VCF::Variant
   ##
   # Is it an indel?
   def indel? ; !info[:INDEL].nil? and info[:INDEL] ; end
+
+  ##
+  # Return as String.
+  def to_s ; (data[0..6] + [info_to_s] + data[8..-1].to_a).join("\t") + "\n" ; end
+
+  ##
+  # Returns the INFO entry as String.
+  def info_to_s ; data[7].to_a.map{ |i| i.join("=") }.join(";") ; end
   
 end
