@@ -58,7 +58,7 @@ class VCF::Variant
   ##
   # Named functions for each column.
   @@COLUMNS.each_index do |i|
-    define_method(@@COLUMNS[i]) { data[i] }
+    define_method(@@COLUMNS[i]) { @@COLUMNS[i]==:pos ? data[i].to_i : data[i] }
   end
 
   ##

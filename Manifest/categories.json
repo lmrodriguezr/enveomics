@@ -64,7 +64,8 @@
         "Table.barplot.R"
       ],
       "Population": [
-        "VCF.SNPs.rb"
+        "VCF.SNPs.rb",
+        "VCF.KaKs.rb"
       ]
     },
     "Annotation": {
