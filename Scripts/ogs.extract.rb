@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 #
 # @author Luis M. Rodriguez-R
-# @update Oct-21-2015
 # @license artistic license 2.0
 #
 
@@ -9,7 +8,8 @@ $:.push File.expand_path("lib", File.dirname(__FILE__))
 require "enveomics_rb/enveomics"
 require "enveomics_rb/og"
 
-o = {q:false, pergenome:false, prefix:false, first:false, core:0.0, dups:0}
+o = {q:false, pergenome:false, prefix:false, first:false, rand:false,
+   core:0.0, dups:0}
 OptionParser.new do |opts|
    opts.banner = "
 Extracts sequences of Orthology Groups (OGs) from genomes (proteomes).
@@ -39,9 +39,13 @@ Usage: #{$0} [options]"
    opts.on("-p", "--prefix",
       "If set, each sequence is prefixed with the genome name",
       "(or OG number, if --per-genome) and a dash."){ |v| o[:prefix]=v }
+   opts.on("-r", "--rand",
+      "Get only one gene per genome per OG (random) regardless of in-paralogs.",
+      "By default all genes are extracted."){ |v| o[:rand]=v }
    opts.on("-f", "--first",
       "Get only one gene per genome per OG (first) regardless of in-paralogs.",
-      "By default all genes are extracted."){ |v| o[:first]=v }
+      "By default all genes are extracted. Takes precendece over --rand."
+      ){ |v| o[:first]=v }
    opts.on("-q", "--quiet", "Run quietly (no STDERR output)."){ o[:q] = TRUE }
    opts.on("-h", "--help", "Display this screen.") do
       puts opts
@@ -93,7 +97,7 @@ begin
       genome_i = Gene.genomes.index(genome)
       $stderr.print "  Genome #{genome_i+1}.   \r" unless o[:q]
       genes = ( collection.get_genome_genes(genome).map do |og|
-	    o[:first] ? [og.first] : og
+	    o[:first] ? [og.first] : (o[:rand] ? [og.sample] : og)
 	 end )
       hand = nil
       File.open(sprintf(o[:seqs], genome), "r").each do |ln|
