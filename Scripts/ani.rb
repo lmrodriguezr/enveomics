@@ -35,10 +35,10 @@ Usage: #{$0} [options]"
   opts.on("-2", "--seq2 FILE",
     "Path to the FastA file containing the genome 2."){ |v| o[:seq2] = v }
   if has_rest_client
-    opts.separator "    Alternatively, you can supply a GI with the format " +
-      "gi:12345 instead of files."
+    opts.separator "    Alternatively, you can supply a NCBI-acc with the " +
+      "format ncbi:CP014272 instead of files."
   else
-    opts.separator "    Install rest-client to enable gi support."
+    opts.separator "    Install rest-client to enable NCBI-acc support."
   end
   opts.separator ""
   opts.separator "Search Options"
@@ -165,21 +165,23 @@ Dir.mktmpdir do |dir|
   minfrg = nil
   seq_names = []
   [:seq1, :seq2].each do |seq|
-    gi = /^gi:(\d+)/.match(o[seq])
-    if not gi.nil?
-      abort "GI requested but rest-client not supported.  First install " +
-        "gem rest-client." unless has_rest_client
+    abort "GIs are no longer supported by NCBI. Please use NCBI-acc instead" if
+      /^gi:/.match(o[seq])
+    acc = /^ncbi:(\S+)/.match(o[seq])
+    if not acc.nil?
+      abort "NCBI-acc requested but rest-client not supported.  First " +
+        "install gem rest-client." unless has_rest_client
       response = RestClient.get(
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
-        {params:{db:"nuccore",rettype:"fasta",id:gi[1]}})
+        {params:{db:"nuccore",rettype:"fasta",id:acc[1],idtype:"acc"}})
       abort "Unable to reach NCBI EUtils, error code " +
         response.code.to_s + "." unless response.code == 200
-      o[seq] = "#{dir}/gi-#{seq.to_s}.fa"
+      o[seq] = "#{dir}/ncbi-#{seq.to_s}.fa"
       fo = File.open(o[seq], "w")
       fo.puts response.to_str
       fo.close
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
-        "gi:#{gi[1]}" : o[ "#{seq}name".to_sym ] )
+        "ncbi:#{acc[1]}" : o[ "#{seq}name".to_sym ] )
     else
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
         File.basename(o[seq], ".fna") : o[ "#{seq}name".to_sym ] )

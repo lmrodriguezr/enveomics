@@ -183,16 +183,16 @@
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 1.",
-          "note": ["Alternatively, you can supply a GI with the format",
-            "gi:12345 instead of files."]
+          "note": ["Alternatively, you can supply an NCBI-acc with the format",
+            "ncbi:CP014272 instead of files."]
         },
         {
           "opt": "--seq2",
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 2.",
-          "note": ["Alternatively, you can supply a GI with the format",
-            "gi:12345 instead of files."]
+          "note": ["Alternatively, you can supply an NCBI-acc with the format",
+            "ncbi:AE005174 instead of files."]
         },
         {
           "name": "Window",
