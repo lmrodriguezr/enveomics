@@ -122,6 +122,14 @@
             "--sqlite3 database."]
         },
         {
+          "name": "Max ACTG",
+          "opt": "--max-actg",
+          "arg": "float",
+          "default": 0.95,
+          "description": ["Maximum fraction of ACTGN in the sequences before",
+            "assuming nucleotides."]
+        },
+        {
           "name": "Precision",
           "opt": "--dec",
           "arg": "integer",

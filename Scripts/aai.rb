@@ -21,7 +21,7 @@ end
 
 o = {bits:0, id:20, len:0, hits:50, q:false, bin:"", program:"blast+", thr:1,
   dec:2, auto:false, lookupfirst:false, dbrbm: true, nucl: false,
-  len_fraction:0.0}
+  len_fraction:0.0, max_actg:0.95}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
   opts.banner = "
@@ -94,6 +94,9 @@ Usage: #{$0} [options]"
   opts.on("--[no-]save-rbm",
     "Save (or don't save) the reciprocal best matches in the --sqlite3 db.",
     "By default: #{o[:dbrbm]}."){ |v| o[:dbrbm] = !!v }
+  opts.on("--max-actg FLOAT",
+    "Maximum fraction of ACTGN in the sequences before assuming nucleotides."
+    ){ |v| o[:max_actg] = v.to_f }
   opts.on("-d", "--dec INT",
     "Decimal positions to report. By default: #{o[:dec]}"
     ){ |v| o[:dec] = v.to_i }
@@ -162,6 +165,7 @@ Dir.mktmpdir do |dir|
   $stderr.puts "Creating databases." unless o[:q]
   minfrg = nil
   seq_names = []
+  actg_cnt = {}
   ori_ids = {}
   seq_len = {}
   [:seq1, :seq2].each do |seq|
@@ -211,7 +215,8 @@ Dir.mktmpdir do |dir|
       sqlite_db.execute "delete from aai where seq1=? and seq2=?", seq_names
     end
     ori_ids[seq] = [nil]
-    seq_len[seq] = [nil]
+    seq_len[seq] = [0]
+    actg_cnt[seq] = 0
     seqs = 0
     fi = File.open(o[seq], "r")
     fo = File.open("#{dir}/#{seq.to_s}.fa", "w")
@@ -224,10 +229,16 @@ Dir.mktmpdir do |dir|
       else
         fo.puts ln
         seq_len[seq][seqs] += ln.chomp.gsub(/[^A-Za-z]/,"").length
+        actg_cnt[seq] += ln.chomp.gsub(/[^ACTGN]/,"").length
       end
     end
     fi.close
     fo.close
+    unless o[:nucl]
+      actg_frx = actg_cnt[seq].to_f/seq_len[seq].inject(:+).to_f
+      abort "Input sequences appear to be nucleotides " +
+        "(ACTGN fraction: %.2f%%)." % (actg_frx*100) if actg_frx > o[:max_actg]
+    end
     $stderr.puts "    File contains #{seqs} sequences." unless o[:q]
     minfrg ||= seqs
     minfrg = seqs if minfrg > seqs
