@@ -74,6 +74,7 @@
         "BlastTab.kegg_pep2path_rest.pl",
         "BlastTab.taxid2taxrank.pl",
         "EBIseq2tax.rb",
+        "NCBIacc2tax.rb",
         "gi2tax.rb",
         "M5nr.getSequences.rb",
         "RefSeq.download.bash",
@@ -114,6 +115,7 @@
       "Taxonomic": [
         "CharTable.classify.rb",
         "EBIseq2tax.rb",
+        "NCBIacc2tax.rb",
         "Table.barplot.R",
         "gi2tax.rb",
         "MyTaxa.fragsByTax.pl",

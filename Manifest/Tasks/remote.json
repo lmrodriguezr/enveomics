@@ -92,6 +92,7 @@
       "requires": [
         { "ruby_gem": "nokogiri" }
       ],
+      "see_also": ["NCBIacc2tax.rb"],
       "help_arg": "--help",
       "options": [
         {
@@ -211,11 +212,14 @@
       "description": ["Maps a list of NCBI GIs to their corresponding taxonomy",
         "using the NCBI EUtilities."],
       "warn": ["Avoid using this script on millions of entries at a time,",
-        "since each entry elicits two requests to NCBI's servers."],
+        "since each entry elicits two requests to NCBI's servers.",
+        "*IMPORTANT NOTE*: NCBI is phasing out support for GIs. Please use",
+        "acc.ver instead with NCBIacc2tax.rb."],
       "requires": [
         { "ruby_gem": "nokogiri" },
         { "ruby_gem": "json" }
       ],
+      "see_also": ["NCBIacc2tax.rb"],
       "help_arg": "--help",
       "options": [
         {
@@ -275,6 +279,74 @@
           "arg": "out_file",
           "mandatory": true,
           "description": ["Tab-delimited table with GIs and taxonomic",
+            "classification."]
+        }
+      ]
+    },
+    {
+      "task": "NCBIacc2tax.rb",
+      "description": ["Maps a list of NCBI accessions to their corresponding",
+        "taxonomy using the NCBI EUtilities."],
+      "warn": ["Avoid using this script on millions of entries at a time,",
+        "since each entry elicits two requests to NCBI's servers."],
+      "requires": [
+        { "ruby_gem": "nokogiri" },
+        { "ruby_gem": "json" }
+      ],
+      "see_also": ["EBIseq2tax.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+          "name": "Accessions",
+          "opt": "--acc",
+          "arg": "string",
+          "description": "Comma-separated list of accessions.",
+          "note": "Required unless 'Input file' is passed."
+        },
+        {
+          "name": "Input file",
+          "opt": "--infile",
+          "arg": "in_file",
+          "description": ["Raw text file containing the list of accessions,",
+            "one per line."],
+          "note": "Required unless 'Accessions' is passed."
+        },
+        {
+          "opt": "--protein",
+          "description": ["Use if the accessions are proteins. Otherwise,",
+            "accessions are assumed to be from the Nuccore Database."]
+        },
+        {
+          "opt": "--ranks",
+          "arg": "string",
+          "description": "Taxonomic ranks to report, separated by commas.",
+          "default": "superkingdom,phylum,class,order,family,genus,species"
+        },
+        {
+          "name": "No header",
+          "opt": "--noheader",
+          "description": "Do not include a header in the output."
+        },
+        {
+          "name": "Tax IDs",
+          "opt": "--taxids",
+          "description": "Return Taxonomy IDs instead of scientific names."
+        },
+        {
+          "opt": "--ignore-missing",
+          "description": ["Does not report missing accessions in the output",
+            "file. By default, it reports GI and empty values for all other",
+            "columns."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Tab-delimited table with accessions and taxonomic",
             "classification."]
         }
       ]
