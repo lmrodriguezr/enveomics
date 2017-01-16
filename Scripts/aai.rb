@@ -37,10 +37,10 @@ Usage: #{$0} [options]"
     "Path to the FastA file containing the genome 2 (proteins)."
     ){ |v| o[:seq2] = v }
   if has_rest_client
-    opts.separator "    Alternatively, you can supply the GI of a genome " +
-      "(nucleotides) with the format gi:12345 instead of files."
+    opts.separator "    Alternatively, you can supply the NCBI-acc of a " +
+      "genome (nucleotides) with the format ncbi:CP014272 instead of files."
   else
-    opts.separator "    Install rest-client to enable gi support."
+    opts.separator "    Install rest-client to enable NCBI-acc support."
   end
   opts.separator ""
   opts.separator "Search Options"
@@ -165,24 +165,26 @@ Dir.mktmpdir do |dir|
   ori_ids = {}
   seq_len = {}
   [:seq1, :seq2].each do |seq|
-    gi = /^gi:(\d+)/.match(o[seq])
-    if not gi.nil?
-      abort "GI requested but rest-client not supported.  First install " +
-        "gem rest-client." unless has_rest_client
-      abort "GIs are currently not supported with --nucl. Please use " +
+    abort "GIs are no longer supported by NCBI. Please use NCBI-acc instead." if
+      /^gi:/.match(o[seq])
+    acc = /^ncbi:(\S+)/.match(o[seq])
+    if not acc.nil?
+      abort "NCBI-acc requested, but rest-client not supported.  First " +
+        "install gem rest-client." unless has_rest_client
+      abort "NCBI-acc are currently not supported with --nucl. Please use " +
         "ani.rb instead." if o[:nucl]
-      $stderr.puts "  Downloading dataset from GI:#{gi[1]}." unless o[:q]
+      $stderr.puts "  Downloading dataset from NCBI:#{acc[1]}." unless o[:q]
       responseLink = RestClient.get(
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/elink.fcgi",
-        {params:{db:"protein",dbfrom:"nuccore",id:gi[1]}})
+        {params:{db:"protein",dbfrom:"nuccore",id:acc[1],idtype:"acc"}})
       abort "Unable to reach NCBI EUtils, error code " +
         responseLink.code.to_s + "." unless responseLink.code == 200
       fromId = true
       protIds = []
-      o[seq] = "#{dir}/gi-#{seq.to_s}.fa"
+      o[seq] = "#{dir}/ncbi-#{seq.to_s}.fa"
       fo = File.open(o[seq], "w")
-      responseLink.to_str.each_line.grep(/<Id>/) do |ln|
-        idMatch = /<Id>(\d+)<\/Id>/.match(ln)
+      responseLink.to_str.each_line.grep(/\s<Id>/) do |ln|
+        idMatch = /<Id>(\S+)<\/Id>/.match(ln)
         unless idMatch.nil?
           protIds.push(idMatch[1]) unless fromId
           fromId = false
@@ -190,13 +192,13 @@ Dir.mktmpdir do |dir|
       end
       response = RestClient.post(
         "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
-        :db=>"nuccore",:rettype=>"fasta",:id=>protIds.join(","))
+        db:"nuccore",rettype:"fasta",id:protIds.join(","),idtype:"acc")
       abort "Unable to reach NCBI EUtils, error code " +
         response.code.to_s + "." unless response.code == 200
       fo.puts response.to_str
       fo.close
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
-        "gi:#{gi[1]}" :
+        "ncbi:#{acc[1]}" :
         o[ "#{seq}name".to_sym ])
     else
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?

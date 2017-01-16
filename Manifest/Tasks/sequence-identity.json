@@ -18,16 +18,16 @@
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 1 (proteins).",
-          "note": ["Alternatively, you can supply the GI of a genome",
-            " (nucleotides) with the format gi:12345 instead of files."]
+          "note": ["Alternatively, you can supply the NCBI-acc of a genome",
+            " (nucleotides) with the format ncbi:CP014272 instead of files."]
         },
         {
           "opt": "--seq2",
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 2.",
-          "note": ["Alternatively, you can supply the GI of a genome",
-            " (nucleotides) with the format gi:12345 instead of files."]
+          "note": ["Alternatively, you can supply the NCBI-acc of a genome",
+            " (nucleotides) with the format ncbi:NC_004337 instead of files."]
         },
         {
           "name": "Length",
