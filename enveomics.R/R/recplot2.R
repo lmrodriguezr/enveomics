@@ -10,6 +10,7 @@ setClass("enve.RecPlot2",
    id.breaks='numeric',		##<< Breaks of identity bins.
    pos.breaks='numeric',	##<< Breaks of position bins.
    seq.breaks='numeric',
+   peaks='list',                ##<< Peaks identified in the recplot.
    ### Limits of the subject sequences after concatenation.
    seq.names='character',	##<< Names of the subject sequences.
    id.metric='character',	##<< Metric used as 'identity'.
@@ -414,7 +415,8 @@ enve.recplot2 <- function(
       call=match.call());
    if(plot){
       if(verbose) cat("Plotting.\n")
-      plot(recplot, ...);
+      peaks <- plot(recplot, ...);
+      attr(recplot, "peaks") <- peaks
    }
    return(recplot);
    ### Returns an object of class `enve.RecPlot2`.

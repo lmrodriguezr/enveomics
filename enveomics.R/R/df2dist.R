@@ -27,8 +27,8 @@ enve.df2dist <- function(
    diag(m) <- 0.0
    for(i in 1:nrow(x)){
       m[a[i], b[i]] <- d[i];
-      m[b[i], a[i]] <- d[i];
    }
+   m <- pmin(m, t(m), na.rm=TRUE)
    return(as.dist(m));
    ### Returns a `dist` object.
 }

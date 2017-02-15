@@ -17,7 +17,9 @@ be produced by `enve.recplot2` and supports S4 method plot.}
     \item{\code{id.counts}:}{(\code{numeric}) Counts per ID bin.}
     \item{\code{id.breaks}:}{(\code{numeric}) Breaks of identity bins.}
     \item{\code{pos.breaks}:}{(\code{numeric}) Breaks of position bins.}
-    \item{\code{seq.breaks}:}{(\code{numeric}) Limits of the subject sequences after concatenation.}
+    \item{\code{seq.breaks}:}{Object of class \code{"numeric"}}
+    \item{\code{peaks}:}{(\code{list}) Peaks identified in the recplot.
+Limits of the subject sequences after concatenation.}
     \item{\code{seq.names}:}{(\code{character}) Names of the subject sequences.}
     \item{\code{id.metric}:}{(\code{character}) Metric used as 'identity'.}
     \item{\code{id.ingroup}:}{(\code{logical}) Identity bins considered in-group.}
