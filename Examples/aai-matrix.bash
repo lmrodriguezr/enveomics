@@ -6,11 +6,11 @@
 set -e # <- So it stops if there is an error
 function exists { [[ -e "$1" ]] ; } # <- To test *any* of many files
 
-OUT=$1	# < Output file
+OUT=$1		# <- Output file
 [[ -n "$1" ]] && shift
-SEQS=$@	# <- list of all genomes
-THR=2	# <- Number or threads
-DEF_DIST=10 # <- Default distance when AAI cannot be reliably estimated (0-100)
+SEQS=("$@")	# <- list of all genomes
+THR=2		# <- Number or threads
+DEF_DIST=10	# <- Default distance when AAI cannot be reliably estimated
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
@@ -35,14 +35,14 @@ exit
 fi
 
 # 00. Create environment
-export PATH=$(dirname $0)/../Scripts:$PATH
+export PATH=$(dirname "$0")/../Scripts:$PATH
 
 # 01. Calculate AAI
 echo "[01/03] Calculating AAI"
-for i in $SEQS ; do
-  for j in $SEQS ; do
+for i in "${SEQS[@]}" ; do
+  for j in "${SEQS[@]}" ; do
     echo -n " o $i vs $j: "
-    AAI=$(aai.rb -1 $i -2 $j -S $OUT.db \
+    AAI=$(aai.rb -1 "$i" -2 "$j" -S "$OUT.db" \
       --no-save-rbm --auto --quiet)
     echo ${AAI:-Below detection}
     [[ "$i" == "$j" ]] && break
@@ -51,9 +51,9 @@ done
 
 # 02. Extract matrix
 echo "[02/03] Extracting list"
-echo -e "SeqA\tSeqB\tAAI\tSD\tN\tOmega\tFrx" > $OUT
+echo -e "SeqA\tSeqB\tAAI\tSD\tN\tOmega\tFrx" > "$OUT"
 echo "select seq1, seq2, aai, sd, n, omega, (100.0*n/omega) from aai;" \
-  | sqlite3 $OUT.db | tr '|' '\t' >> $OUT
+  | sqlite3 "$OUT.db" | tr '|' '\t' >> "$OUT"
 
 # 03. Make it a distance matrix.
 echo "[03/03] Generating distance matrix"
