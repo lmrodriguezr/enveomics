@@ -11,7 +11,7 @@ importFrom("graphics", "abline", "axis", "barplot", "hist", "image",
   "rect", "text")
 importFrom("stats", "as.dist", "cophenetic", "cor", "median",
   "quantile", "runif", "smooth.spline", "nls", "nls.control", "qnorm")
-importFrom("utils", "read.table", "setTxtProgressBar", "tail",
+importFrom("utils", "head", "read.table", "setTxtProgressBar", "tail",
   "txtProgressBar")
 exportClasses(enve.RecPlot2, enve.RecPlot2.Peak, enve.TRIBS, enve.TRIBStest,
   enve.GrowthCurve)
