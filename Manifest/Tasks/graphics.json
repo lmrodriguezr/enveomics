@@ -98,7 +98,8 @@
 	  "description": ["Colors to use. If provided, overrides the variables",
 	    "`top` and `colors.per.group`, but `other.col` is still used if",
 	    "the vector is insufficient for all the rows. Separate values by",
-	    "commas."]
+            "commas. An additional palette is available when using value",
+            "'coto' (palette contributed by Luis (Coto) Orellana)."]
 	},
 	{
 	  "arg": "out_file",
