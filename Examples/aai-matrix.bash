@@ -60,8 +60,7 @@ echo "[03/03] Generating distance matrix"
 echo "
 source('$(dirname $0)/../enveomics.R/R/df2dist.R');
 a <- read.table('$OUT', sep='\\t', h=TRUE, as.is=T);
-aai.d <- enve.df2dist(data.frame(a\$SeqA, a\$SeqB, 100-a\$AAI),
-  default.d=$DEF_DIST);
+aai.d <- enve.df2dist(a, default.d=$DEF_DIST);
 write.table(as.matrix(aai.d), '$OUT.dist',
   quote=FALSE, col.names=NA, row.names=TRUE, sep='\\t')
 " | R --vanilla >/dev/null
