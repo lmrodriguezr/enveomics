@@ -24,7 +24,8 @@ class VCF
   end
 
   ##
-  # Iterate through each header (i.e., each comment line), passing a String to +blk+.
+  # Iterate through each header (i.e., each comment line), passing a String to
+  # +blk+.
   def each_header(&blk)
     fh.rewind
     fh.each_line do |ln|
@@ -53,6 +54,13 @@ class VCF::Variant
     # Split info
     info = data[7].split(";").map{ |i| i=~/=/ ? i.split("=", 2) : [i, true] }
     @data[7] = Hash[*info.map{ |i| [i[0].to_sym, i[1]] }.flatten]
+    # Read formatted data
+    unless data[9].nil? or data[9].empty?
+      f = format.split(":")
+      b = bam.split(":")
+      f.each_index{ |i| @data[7][f[i].to_sym] = b[i] }
+    end
+    @data[7][:INDEL] = true if ref.size != alt.split(",").first.size
   end
 
   ##
@@ -75,19 +83,29 @@ class VCF::Variant
     @dp4 ||= info[:DP4].split(",").map{ |i| i.to_i }
     @dp4
   end
+
+  ##
+  ## Sequencing depth of REF and ALT.
+  def ad
+    return nil if info[:AD].nil?
+    @ad ||= info[:AD].split(",").map{ |i| i.to_i }
+    @ad
+  end
   
   ##
   # Sequencing depth of the REF allele.
   def ref_dp
-    dp = dp4
-    dp.nil? ? nil : dp[0] + dp[1]
+    return dp4[0] + dp4[1] unless dp4.nil?
+    return ad[0] unless ad.nil?
+    nil
   end
 
   ##
   # Sequencing depth of the ALT allele.
   def alt_dp
-    dp = dp4
-    dp.nil? ? nil : dp[2] + dp[3]
+    return dp4[2] + dp4[3] unless dp4.nil?
+    return ad[1] unless ad.nil?
+    nil
   end
 
   ##
