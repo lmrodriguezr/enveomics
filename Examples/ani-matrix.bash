@@ -42,7 +42,7 @@ echo "[01/03] Calculating ANI"
 for i in "${SEQS[@]}" ; do
   for j in "${SEQS[@]}" ; do
     echo -n " o $i vs $j: "
-    ANI=$(ani.rb -1 "$i" -2 "$j" -S "$OUT.db" \
+    ANI=$(ani.rb -1 "$i" -2 "$j" -S "$OUT.db" -t "$THR" \
       --no-save-rbm --no-save-regions --auto --quiet)
     echo ${ANI:-Below detection}
     [[ "$i" == "$j" ]] && break
