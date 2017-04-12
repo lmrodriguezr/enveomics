@@ -98,6 +98,12 @@
           "description": ["Sets the synonymous fraction to 0.760417,",
             "approximately the proportion of synonymous substitutions in the",
             "bacterial code."]
+        },
+        {
+          "opt": "--codon-file",
+          "arg": "out_file",
+          "description": ["Output file including the codons of substitution",
+            "variants."]
         }
       ]
     }

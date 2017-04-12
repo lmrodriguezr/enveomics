@@ -30,6 +30,11 @@ OptionParser.new do |opt|
   opt.on("-b", "--syn-bacterial-code",
     "Sets --syn-frx to 0.760417, approximately the proportion of synonymous",
     "substitutions in the bacterial code."){ o[:syn_frx] = 0.760417 }
+  opt.separator ""
+  opt.separator "Miscellaneous"
+  opt.on("-c", "--codon-file FILE",
+    "Output file including the codons of substitution variants."
+    ){ |v| o[:codon_file] = v }
   opt.on("-h", "--help", "Display this screen.") do
     puts opt
     exit
@@ -58,16 +63,12 @@ $codon_st = {}
 end
 
 ##
-# Is the change +cod+ to +cod_alt+ synonymous? +cod_st+ indicates if the codon
-# the first in the gene (start codon).
-def syn?(cod, cod_alt, cod_st=false)
-  aa_ref = $codon_aa[cod]
-  aa_alt = $codon_aa[cod_alt]
-  if cod_st
-    aa_ref = $codon_st[cod]
-    aa_alt = $codon_st[cod_alt]
-  end
-  aa_ref == aa_alt
+# Is the change +cod+ to +cod_alt+ synonymous? +start_codon+ indicates if the
+# codon the first in the gene.
+def syn?(cod, cod_alt, start_codon=false)
+  start_codon ?
+    ( $codon_st[cod] == $codon_st[cod_alt] ) :
+    ( $codon_aa[cod] == $codon_aa[cod_alt] )
 end
 
 ##
@@ -79,11 +80,13 @@ def syn_fraction(seq, pos, alts)
   cod_pos = (pos-1) - cod_let
   cod = seq[cod_pos .. (cod_pos+2)]
   syn = 0
-  alts.each do |alt|
+  cod_alts = alts.map do |alt|
     cod_alt = "#{cod}"
     cod_alt[cod_let] = alt
-    syn += 1 if syn?(cod, cod_alt, pos<=3)
+    cod_alt
   end
+  syn = cod_alts.map{ |i| syn?(cod, i, pos<=3) ? 1 : 0 }.inject(0,:+)
+  $codon_fh.puts [syn, cod, cod_alts.join(",")].join("\t") unless $codon_fh.nil?
   syn.to_f/alts.size
 end
 
@@ -102,6 +105,11 @@ File.open(o[:seqs], "r") do |fh|
 end
 
 # Process variants
+$codon_fh = nil
+unless o[:codon_file].nil?
+  $codon_fh = File.open(o[:codon_file], "w")
+  $codon_fh.puts "#" + %w[Syn Ref Alt].join("\t")
+end
 vcf = VCF.new(o[:file])
 gen = {}
 vcf.each_variant do |v|
@@ -113,6 +121,8 @@ vcf.each_variant do |v|
   gen[v.chrom][0] += 1.0-syn
   gen[v.chrom][1] += syn
 end
+$codon_fh.close unless $codon_fh.nil?
+$codon_fh = nil
 
 # Ka/Ks
 puts "#" +
