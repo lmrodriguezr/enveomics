@@ -97,6 +97,7 @@ Usage: #{$0} [options]"
     "Indicates if the ANI should be looked up first in the database.",
     "Requires --sqlite3, --auto, --name1, and --name2.",
     "Incompatible with --res, --tab, and --out."){ |v| o[:lookupfirst] = v }
+  opts.separator ""
   opts.separator "Other Output Options"
   opts.on("-d", "--dec INT",
     "Decimal positions to report. By default: #{o[:dec]}"

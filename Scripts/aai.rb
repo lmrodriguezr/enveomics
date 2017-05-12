@@ -97,7 +97,9 @@ Usage: #{$0} [options]"
   opts.on("--lookup-first",
     "Indicates if the AAI should be looked up first in the database.",
     "Requires --sqlite3, --auto, --name1, and --name2.",
-    "Incompatible with --res, --tab, --out, and --rbm."){ |v| o[:lookupfirst] = v }
+    "Incompatible with --res, --tab, --out, and --rbm."
+    ){ |v| o[:lookupfirst] = v }
+  opts.separator ""
   opts.separator "Other Output Options"
   opts.on("-d", "--dec INT",
     "Decimal positions to report. By default: #{o[:dec]}"
