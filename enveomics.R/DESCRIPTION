@@ -2,12 +2,14 @@ Package: enveomics.R
 Version: 1.1.5
 Authors@R: c(person("Luis M.","Rodriguez-R",role=c("aut","cre"),
 	   email="lmrodriguezr@gmail.com"))
-Title: Various R Functions from the Kostas Lab
-Description: A collection of R functions of common use in
-   the Kostas Lab for microbial ecology.
+Title: Various Utilities for Microbial Genomics and Metagenomics
+Description: A collection of functions for microbial ecology and other
+   applications of genomics and metagenomics. Companion package for the
+   Enveomics Collection (Rodriguez-R, L.M. and Konstantinidis, K.T., 2016
+   <DOI:10.7287/peerj.preprints.1900v1>).
 Author: Luis M. Rodriguez-R [aut, cre]
 Maintainer: Luis M. Rodriguez-R <lmrodriguezr@gmail.com>
-URL: http://enve-omics.gatech.edu/
+URL: http://enve-omics.ce.gatech.edu/enveomics
 Depends:
    R (>= 2.9),
    stats,
