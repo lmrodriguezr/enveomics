@@ -63,6 +63,10 @@ Usage: #{$0} [options]"
   opts.on("-N", "--nucl",
     "The input sequences are nucleotides (genes), not proteins."
     ){ |v| o[:nucl] = v }
+  opts.on("--max-actg FLOAT",
+    "Maximum fraction of ACTGN in the sequences before assuming nucleotides.",
+    "By default: #{o[:max_actg]}."
+    ){ |v| o[:max_actg] = v.to_f }
   opts.separator ""
   opts.separator "Software Options"
   opts.on("-b", "--bin DIR",
@@ -75,28 +79,26 @@ Usage: #{$0} [options]"
     "Number of parallel threads to be used.  By default: #{o[:thr]}."
     ){ |v| o[:thr] = v.to_i }
   opts.separator ""
-  opts.separator "Other Options"
+  opts.separator "SQLite3 Options"
   opts.on("-S", "--sqlite3 FILE",
     "Path to the SQLite3 database to create (or update) with the results."
     ){ |v| o[:sqlite3] = v }
   opts.separator "    Install sqlite3 gem to enable database support." unless
     has_sqlite3
   opts.on("--name1 STR",
-    "Name of --seq1 to use in --sqlite3. By default it's determined by the " +
-    "filename."){ |v| o[:seq1name] = v }
+    "Name of --seq1 to use in --sqlite3.  By default determined by filename."
+    ){ |v| o[:seq1name] = v }
   opts.on("--name2 STR",
-    "Name of --seq2 to use in --sqlite3. By default it's determined by the " +
-    "filename."){ |v| o[:seq2name] = v }
-  opts.on("--lookup-first",
-    "Indicates if the AAI should be looked up first in the database.",
-    "Requires --sqlite3, --auto, --name1, and --name2. Incompatible with " +
-    "--res and --tab."){ |v| o[:lookupfirst] = v }
+    "Name of --seq2 to use in --sqlite3.  By default determined by filename."
+    ){ |v| o[:seq2name] = v }
   opts.on("--[no-]save-rbm",
     "Save (or don't save) the reciprocal best matches in the --sqlite3 db.",
     "By default: #{o[:dbrbm]}."){ |v| o[:dbrbm] = !!v }
-  opts.on("--max-actg FLOAT",
-    "Maximum fraction of ACTGN in the sequences before assuming nucleotides."
-    ){ |v| o[:max_actg] = v.to_f }
+  opts.on("--lookup-first",
+    "Indicates if the AAI should be looked up first in the database.",
+    "Requires --sqlite3, --auto, --name1, and --name2.",
+    "Incompatible with --res, --tab, --out, and --rbm."){ |v| o[:lookupfirst] = v }
+  opts.separator "Other Output Options"
   opts.on("-d", "--dec INT",
     "Decimal positions to report. By default: #{o[:dec]}"
     ){ |v| o[:dec] = v.to_i }
@@ -109,8 +111,9 @@ Usage: #{$0} [options]"
     "Saves a file with the final results."){ |v| o[:res] = v }
   opts.on("-T", "--tab FILE",
     "Saves a file with the final two-way results in a tab-delimited form.",
-    "The columns are (in that order): AAI, standard deviation, proteins " +
-    "used, proteins in the smallest genome."){ |v| o[:tab]=v }
+    "The columns are (in that order):",
+    "AAI, standard deviation, proteins used, proteins in the smallest genome."
+    ){ |v| o[:tab]=v }
   opts.on("-a", "--auto",
     "ONLY outputs the AAI value in STDOUT (or nothing, if calculation fails)."
     ){ o[:auto] = true }
@@ -133,6 +136,8 @@ if o[:lookupfirst]
   abort "--lookup-first requires --name2" if o[:seq2name].nil?
   abort "--lookup-first conflicts with --res" unless o[:res].nil?
   abort "--lookup-first conflicts with --tab" unless o[:tab].nil?
+  abort "--lookup-first conflicts with --out" unless o[:out].nil?
+  abort "--lookup-first conflicts with --rbm" unless o[:rbm].nil?
 end
 
 # Create SQLite3 file
@@ -165,9 +170,9 @@ Dir.mktmpdir do |dir|
   $stderr.puts "Creating databases." unless o[:q]
   minfrg = nil
   seq_names = []
+  seq_len = {}
   actg_cnt = {}
   ori_ids = {}
-  seq_len = {}
   [:seq1, :seq2].each do |seq|
     abort "GIs are no longer supported by NCBI. Please use NCBI-acc instead." if
       /^gi:/.match(o[seq])

@@ -21,7 +21,7 @@ end
 
 o = {win:1000, step:200, id:70, len:700, correct:true, hits:50, q:false, bin:"",
   program:"blast+", thr:1, dec:2, auto:false, lookupfirst:false,
-  dbregions:true, dbrbm: true}
+  dbregions:true, dbrbm: true, min_actg:0.95}
 ARGV << "-h" if ARGV.size==0
 OptionParser.new do |opts|
   opts.banner = "
@@ -59,6 +59,10 @@ Usage: #{$0} [options]"
     ){ |v| o[:hits] = v.to_i }
   opts.on("-N", "--nocorrection",
     "Report values without post-hoc correction."){ |v| o[:correct] = false }
+  opts.on("--min-actg FLOAT",
+    "Minimum fraction of ACTGN in the sequences before assuming proteins.",
+    "By default: #{o[:min_actg]}."
+    ){ |v| o[:min_actg] = v.to_f }
   opts.separator ""
   opts.separator "Software Options"
   opts.on("-b", "--bin DIR",
@@ -71,18 +75,18 @@ Usage: #{$0} [options]"
     "Number of parallel threads to be used.  By default: #{o[:thr]}."
     ){ |v| o[:thr] = v.to_i }
   opts.separator ""
-  opts.separator "Other Options"
+  opts.separator "SQLite3 Options"
   opts.on("-S", "--sqlite3 FILE",
     "Path to the SQLite3 database to create (or update) with the results."
     ){ |v| o[:sqlite3] = v }
   opts.separator "    Install sqlite3 gem to enable database support." unless
     has_sqlite3
   opts.on("--name1 STR",
-    "Name of --seq1 to use in --sqlite3. By default it's determined by the " +
-    "filename."){ |v| o[:seq1name] = v }
+    "Name of --seq1 to use in --sqlite3.  By default determined by filename."
+    ){ |v| o[:seq1name] = v }
   opts.on("--name2 STR",
-    "Name of --seq2 to use in --sqlite3. By default it's determined by the " +
-    "filename."){ |v| o[:seq2name] = v }
+    "Name of --seq2 to use in --sqlite3.  By default determined by filename."
+    ){ |v| o[:seq2name] = v }
   opts.on("--[no-]save-regions",
     "Save (or don't save) the fragments in the --sqlite3 database.",
     "By default: #{o[:dbregions]}."){ |v| o[:dbregions] = !!v }
@@ -92,7 +96,8 @@ Usage: #{$0} [options]"
   opts.on("--lookup-first",
     "Indicates if the ANI should be looked up first in the database.",
     "Requires --sqlite3, --auto, --name1, and --name2.",
-    "Incompatible with --res and --tab."){ |v| o[:lookupfirst] = v }
+    "Incompatible with --res, --tab, and --out."){ |v| o[:lookupfirst] = v }
+  opts.separator "Other Output Options"
   opts.on("-d", "--dec INT",
     "Decimal positions to report. By default: #{o[:dec]}"
     ){ |v| o[:dec] = v.to_i }
@@ -104,11 +109,11 @@ Usage: #{$0} [options]"
   opts.on("-T", "--tab FILE",
     "Saves a file with the final two-way results in a tab-delimited form.",
     "The columns are (in that order):",
-    "ANI, standard deviation, fragments used, " +
-    "fragments in the smallest genome."){ |v| o[:tab]=v }
+    "ANI, standard deviation, fragments used, fragments in the smallest genome."
+    ){ |v| o[:tab]=v }
   opts.on("-a", "--auto",
-    "ONLY outputs the ANI value in STDOUT (or nothing, if calculation " +
-    "fails)."){ o[:auto] = true }
+    "ONLY outputs the ANI value in STDOUT (or nothing, if calculation fails)."
+    ){ o[:auto] = true }
   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
   opts.on("-h", "--help", "Display this screen") do
     puts opts
@@ -129,6 +134,7 @@ if o[:lookupfirst]
   abort "--lookup-first requires --name2" if o[:seq2name].nil?
   abort "--lookup-first conflicts with --res" unless o[:res].nil?
   abort "--lookup-first conflicts with --tab" unless o[:tab].nil?
+  abort "--lookup-first conflicts with --out" unless o[:out].nil?
 end
 
 # Create SQLite3 file
@@ -164,6 +170,8 @@ Dir.mktmpdir do |dir|
   $stderr.puts "Creating databases." unless o[:q]
   minfrg = nil
   seq_names = []
+  seq_len = {}
+  actg_cnt = {}
   [:seq1, :seq2].each do |seq|
     abort "GIs are no longer supported by NCBI. Please use NCBI-acc instead" if
       /^gi:/.match(o[seq])
@@ -191,6 +199,8 @@ Dir.mktmpdir do |dir|
       [seq_names.last]) unless o[:sqlite3].nil?
     buffer = ""
     frgs = 0
+    seq_len[seq] = 0
+    actg_cnt[seq] = 0
     seqs = 0
     disc = 0
     seqn = ""
@@ -206,6 +216,8 @@ Dir.mktmpdir do |dir|
         from = 1
       else
         ln.gsub!(/[^A-Za-z]/, '')
+        seq_len[seq]  += ln.length
+        actg_cnt[seq] += ln.gsub(/[^ACTGN]/,"").length
         buffer = buffer + ln
         while buffer.size > o[:win]
           seq_i = buffer[0, o[:win]]
@@ -226,6 +238,9 @@ Dir.mktmpdir do |dir|
     end
     fi.close
     fo.close
+    actg_frx = actg_cnt[seq].to_f/seq_len[seq].to_f
+    abort "Input sequences appear to be proteins " +
+      "(ACTGN fraction: %.2f%%)." % (actg_frx*100) if actg_frx < o[:min_actg]
     $stderr.puts "    Created #{frgs} fragments from #{seqs} sequences, " +
       "discarded #{disc} bp." unless o[:q]
     minfrg ||= frgs

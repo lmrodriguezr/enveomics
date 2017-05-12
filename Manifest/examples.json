@@ -14,7 +14,7 @@
         "of Mycoplasma genitalium (M2288 and M2321)."],
       "values": ["Mgen_M2288.fna","Mgen_M2321.fna",null,null,null,null,null,
         null,null,null,null,null,null,null,null,null,null,null,null,null,null,
-        null,null]
+        null,null,null]
     },
     {
       "task": "aai.rb",

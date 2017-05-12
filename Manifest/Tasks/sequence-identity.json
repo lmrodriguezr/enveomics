@@ -14,6 +14,7 @@
       ],
       "options": [
         {
+          "name": "Sequence 1",
           "opt": "--seq1",
           "arg": "in_file",
           "mandatory": true,
@@ -22,6 +23,7 @@
             " (nucleotides) with the format ncbi:CP014272 instead of files."]
         },
         {
+          "name": "Sequence 2",
           "opt": "--seq2",
           "arg": "in_file",
           "mandatory": true,
@@ -65,9 +67,18 @@
           "default": 50.0
         },
         {
+          "name": "Nucleotides",
           "opt": "--nucl",
           "description": ["The input sequences are nucleotides (genes), not",
             "proteins."]
+        },
+        {
+          "name": "Max ACTG",
+          "opt": "--max-actg",
+          "arg": "float",
+          "default": 0.95,
+          "description": ["Maximum fraction of ACTGN in the sequences before",
+            "assuming nucleotides."]
         },
         {
           "name": "Executables",
@@ -84,7 +95,7 @@
           "description": "Search program to be used.",
           "note": ["Make sure that you have installed the search program you",
             "want to use. If you have downloaded the program, but it's not",
-            "installed, please use the --bin option above."]
+            "installed, please use the Executables option above."]
         },
         {
           "opt": "--threads",
@@ -93,41 +104,37 @@
           "default": 1
         },
         {
+          "name": "SQLite3 DB",
           "opt": "--sqlite3",
           "arg": "out_file",
           "description": ["Path to the SQLite3 database to create (or update)",
             "with the results."]
         },
         {
+          "name": "Name 1",
           "opt": "--name1",
           "arg": "string",
-          "description": ["Name of --seq1 to use in --sqlite3. By default it's",
-            "determined by the filename."]
+          "description": ["Name of Sequence 1 to use in SQLite3 DB. By default",
+            "determined by filename."]
         },
         {
+          "name": "Name 2",
           "opt": "--name2",
           "arg": "string",
-          "description": ["Name of --seq2 to use in --sqlite3. By default it's",
-            "determined by the filename."]
+          "description": ["Name of Sequence 2 to use in SQLite3 DB. By default",
+            "determined by filename."]
         },
         {
-          "opt": "--lookup-first",
-          "description": ["Indicates if the AAI should be looked up first in",
-            "the database. Requires --sqlite3, --auto, --name1, and --name2.",
-            "Incompatible with --res and --tab."]
-        },
-        {
+          "name": "Don't save RBM",
           "opt": "--no-save-rbm",
           "description": ["Don't save the reciprocal best matches in the",
             "--sqlite3 database."]
         },
         {
-          "name": "Max ACTG",
-          "opt": "--max-actg",
-          "arg": "float",
-          "default": 0.95,
-          "description": ["Maximum fraction of ACTGN in the sequences before",
-            "assuming nucleotides."]
+          "opt": "--lookup-first",
+          "description": ["Indicates if the AAI should be looked up first in",
+            "the database. Requires SQLite3 DB, Auto, Name 1, and Name 2.",
+            "Incompatible with Result, Tab, Out, and RBM."]
         },
         {
           "name": "Precision",
@@ -187,6 +194,7 @@
       ],
       "options": [
         {
+          "name": "Sequence 1",
           "opt": "--seq1",
           "arg": "in_file",
           "mandatory": true,
@@ -195,6 +203,7 @@
             "ncbi:CP014272 instead of files."]
         },
         {
+          "name": "Sequence 2",
           "opt": "--seq2",
           "arg": "in_file",
           "mandatory": true,
@@ -236,8 +245,17 @@
           "default": 50
         },
         {
+          "name": "No correction",
           "opt": "--nocorrection",
           "description": "Report values without post-hoc correction."
+        },
+        {
+          "name": "Min ACTG",
+          "opt": "--min-actg",
+          "arg": "float",
+          "default": 0.95,
+          "description": ["Minimum fraction of ACTGN in the sequences before",
+            "assuming proteins."]
         },
         {
           "name": "Executables",
@@ -254,7 +272,7 @@
           "description": "Search program to be used.",
           "note": ["Make sure that you have installed the search program you",
             "want to use. If you have downloaded the program, but it's not",
-            "installed, please use the --bin option above."]
+            "installed, please use the Executables option above."]
         },
         {
           "opt": "--threads",
@@ -263,28 +281,33 @@
           "default": 1
         },
         {
+          "name": "SQLite3 DB",
           "opt": "--sqlite3",
           "arg": "out_file",
           "description": ["Path to the SQLite3 database to create (or update)",
             "with the results."]
         },
         {
+          "name": "Name 1",
           "opt": "--name1",
           "arg": "string",
-          "description": ["Name of --seq1 to use in --sqlite3. By default",
+          "description": ["Name of Sequence 1 to use in SQLite3 DB. By default",
             "it's determined by the filename."]
         },
         {
+          "name": "Name 2",
           "opt": "--name2",
           "arg": "string",
-          "description": ["Name of --seq2 to use in --sqlite3. By default",
+          "description": ["Name of Sequence 2 to use in SQLite3 DB. By default",
             "it's determined by the filename."]
         },
         {
+          "name": "Don't save regions",
           "opt": "--no-save-regions",
-          "description": "Don't save the fragments in the --sqlite3 database."
+          "description": "Don't save the fragments in the SQLite3 database."
         },
         {
+          "name": "Don't save RBM",
           "opt": "--no-save-rbm",
           "description": ["Don't save the reciprocal best matches in the",
             "--sqlite3 database."]
@@ -292,8 +315,8 @@
         {
           "opt": "--lookup-first",
           "description": ["Indicates if the ANI should be looked up first in",
-            "the database. Requires --sqlite3, --auto, --name1, and --name2.",
-            "Incompatible with --res and --tab."]
+            "the database. Requires SQLite3 DB, Auto, Name 1, and Name 2.",
+            "Incompatible with Result, Tab, and Out."]
         },
         {
           "name": "Precision",
@@ -344,18 +367,21 @@
       ],
       "options": [
         {
+          "name": "Sequence 1",
           "opt": "--seq1",
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 1."
         },
         {
+          "name": "Sequence 2",
           "opt": "--seq2",
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing the genome 2."
         },
         {
+          "name": "Nucleotides",
           "opt": "--nucl",
           "description": ["Sequences are assumed to be nucleotides (proteins",
             "by default)."]
@@ -373,7 +399,7 @@
           "arg": "float",
           "default": 0.0,
           "description": ["Minimum alignment length (as a fraction of the",
-            "query). If set, requires BLAST+ (see --program)."]
+            "query). If set, requires BLAST+ (see Program)."]
         },
         {
           "name": "Identity",
@@ -404,7 +430,7 @@
           "description": "Search program to be used. Default: blast+.",
           "note": ["Make sure that you have installed the search program you",
             "want to use. If you have downloaded the program, but it's not",
-            "installed, please use the --bin option above."]
+            "installed, please use the Executables option above."]
         },
         {
           "opt": "--threads",
