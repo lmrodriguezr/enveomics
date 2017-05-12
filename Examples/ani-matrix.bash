@@ -10,7 +10,7 @@ OUT=$1		# <- Output file
 [[ -n "$1" ]] && shift
 SEQS=("$@")	# <- list of all genomes
 THR=2		# <- Number or threads
-DEF_DIST=10	# <- Default distance when ANI cannot be reliably estimated
+DEF_DIST=0.9	# <- Default distance when ANI cannot be reliably estimated
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
