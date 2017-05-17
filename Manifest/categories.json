@@ -16,7 +16,6 @@
         "BlastTab.catsbj.pl",
         "BlastTab.cogCat.rb",
         "BlastTab.filter.pl",
-        "BlastTab.kegg_pep2ko_rest.pl",
         "BlastTab.kegg_pep2path_rest.pl",
         "BlastTab.pairedHits.rb",
         "BlastTab.subsample.pl",
@@ -49,6 +48,7 @@
         "FastA.split.pl",
         "FastA.subsample.pl",
         "FastA.tag.rb",
+        "FastA.wrap.rb",
         "FastQ.filter.pl",
         "FastQ.interpose.pl",
         "FastQ.offset.pl",
@@ -70,7 +70,6 @@
     },
     "Annotation": {
       "Database mapping": [
-        "BlastTab.kegg_pep2ko_rest.pl",
         "BlastTab.kegg_pep2path_rest.pl",
         "BlastTab.taxid2taxrank.pl",
         "EBIseq2tax.rb",

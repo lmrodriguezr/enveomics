@@ -537,6 +537,35 @@
           "description": "Run quietly (no STDERR output)."
         }
       ]
+    },
+    {
+      "task": "FastA.wrap.rb",
+      "description": "Wraps sequences in a FastA to a given line length.",
+      "help_arg": "--help",
+      "options": [
+        {
+          "name": "Input FastA",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file."
+        },
+        {
+          "name": "Output FastA",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output FastA file."
+        },
+        {
+          "name": "Wrap length",
+          "opt": "--wrap",
+          "arg": "integer",
+          "description": ["Line length to wrap sequences. Use 0 to generate",
+            "1-line sequences."],
+          "default": 70
+        }
+      ]
     }
   ]
 }
