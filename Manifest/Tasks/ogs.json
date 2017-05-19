@@ -64,15 +64,10 @@
 	  "description": "Input file containing the precomputed OGs."
 	},
 	{
-	  "opt": "--replicates",
-	  "arg": "integer",
-	  "description": "Number of replicates to estimate.",
-	  "default": 10
-	},
-	{
-	  "opt": "--json",
+	  "opt": "--summary",
 	  "arg": "out_file",
-	  "description": "Output file in JSON format."
+	  "description": ["Output file in tabular format with summary",
+	    "statistics."]
 	},
 	{
 	  "opt": "--tab",
@@ -80,19 +75,20 @@
 	  "description": "Output file in tabular format."
 	},
 	{
+	  "opt": "--json",
+	  "arg": "out_file",
+	  "description": "Output file in JSON format."
+	},
+	{
+	  "opt": "--replicates",
+	  "arg": "integer",
+	  "description": "Number of replicates to estimate.",
+	  "default": 100
+	},
+	{
 	  "opt": "--threads",
 	  "arg": "integer",
 	  "description": "Children threads to spawn."
-	},
-	{
-	  "opt": "--summary",
-	  "arg": "out_file",
-	  "description": ["Output file in tabular format with summary",
-	    "statistics."]
-	},
-	{
-	  "opt": "--auto",
-	  "description": "Run completely quiertly (no STDERR or STDOUT)."
 	},
 	{
 	  "opt": "--quiet",
