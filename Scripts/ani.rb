@@ -193,7 +193,7 @@ Dir.mktmpdir do |dir|
         "ncbi:#{acc[1]}" : o[ "#{seq}name".to_sym ] )
     else
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
-        File.basename(o[seq], ".fna") : o[ "#{seq}name".to_sym ] )
+        File.basename(o[seq], ".*") : o[ "#{seq}name".to_sym ] )
     end
     $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
     sqlite_db.execute("delete from regions where seq=?",

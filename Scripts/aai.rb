@@ -213,7 +213,7 @@ Dir.mktmpdir do |dir|
         o[ "#{seq}name".to_sym ])
     else
       seq_names << ( o[ "#{seq}name".to_sym ].nil? ?
-        File.basename(o[seq], ".faa") :
+        File.basename(o[seq], ".*") :
         o[ "#{seq}name".to_sym ])
     end
     $stderr.puts "  Reading FastA file: #{o[seq]}" unless o[:q]
