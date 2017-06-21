@@ -218,7 +218,7 @@ Dir.mktmpdir do |dir|
       else
         ln.gsub!(/[^A-Za-z]/, '')
         seq_len[seq]  += ln.length
-        actg_cnt[seq] += ln.gsub(/[^ACTGN]/,"").length
+        actg_cnt[seq] += ln.gsub(/[^ACTGNactgn]/,"").length
         buffer = buffer + ln
         while buffer.size > o[:win]
           seq_i = buffer[0, o[:win]]

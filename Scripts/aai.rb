@@ -236,7 +236,7 @@ Dir.mktmpdir do |dir|
       else
         fo.puts ln
         seq_len[seq][seqs] += ln.chomp.gsub(/[^A-Za-z]/,"").length
-        actg_cnt[seq] += ln.chomp.gsub(/[^ACTGN]/,"").length
+        actg_cnt[seq] += ln.chomp.gsub(/[^ACTGNactgn]/,"").length
       end
     end
     fi.close
