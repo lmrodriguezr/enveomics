@@ -46,6 +46,7 @@
         "FastA.revcom.pl",
         "FastA.slider.pl",
         "FastA.split.pl",
+        "FastA.split.rb",
         "FastA.subsample.pl",
         "FastA.tag.rb",
         "FastA.wrap.rb",

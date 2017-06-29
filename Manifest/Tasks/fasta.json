@@ -154,7 +154,7 @@
       "description": ["Interpose sequences in FastA format from two files into",
         "one output file. If more than two files are provided, the script will",
         "interpose all the input files."],
-      "see_also": ["FastA.split.pl","FastQ.interpose.pl"],
+      "see_also": ["FastA.split.rb","FastQ.interpose.pl"],
       "warn": ["Please note that this script will check for the consistency of",
         "the names (assuming a pair of related reads contains the same name",
         "varying only in a trailing slash (/) followed by a digit. If you want",
@@ -347,9 +347,57 @@
       ]
     },
     {
+      "task": "FastA.split.rb",
+      "description": ["Evenly splits a multi-FastA file into multiple",
+        "multi-FastA files."],
+      "see_also": ["FastA.interpose.pl","FastQ.split.pl"],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--input",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file."
+        },
+        {
+          "opt": "--prefix",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Prefix of output FastA files."
+        },
+        {
+          "opt": "--number",
+          "arg": "integer",
+          "default": 12,
+          "description": "Number of output files to produce."
+        },
+        {
+          "opt": "--zero-padded",
+          "description": "Use zero-padded numbers as output index."
+        },
+        {
+          "opt": "--lowercase-letters",
+          "description": "Use lowercase letters as output index."
+        },
+        {
+          "name": "Output format",
+          "opt": "--out",
+          "arg": "string",
+          "default": "%s.%s.fa",
+          "description": ["Format of output filenames, where %s are replaced",
+            "by prefix and index."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
+    },
+    {
       "task": "FastA.split.pl",
       "description": "Splits a FastA file into two or more files.",
-      "see_also": ["FastA.interpose.pl","FastQ.split.pl"],
+      "warn": "Deprecated in favor of FastA.split.rb.",
+      "see_also": ["FastA.split.rb","FastA.interpose.pl","FastQ.split.pl"],
       "help_arg": "",
       "options": [
         {
@@ -477,7 +525,7 @@
       "task": "FastA.per_file.pl",
       "description": ["Extracts all the sequences in a multi-FastA into",
         "multiple single-FastA files."],
-      "see_also": "FastA.split.pl",
+      "see_also": "FastA.split.rb",
       "help_arg": "",
       "options": [
         {
