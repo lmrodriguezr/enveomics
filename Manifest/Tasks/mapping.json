@@ -1,0 +1,30 @@
+{
+  "tasks": [
+    {
+      "task": "BedGraph.tad.rb",
+      "description": ["Estimates the truncated average sequencing depth (TAD)",
+        "from a BedGraph file."],
+      "warn": ["This script doesn't consider zero-coverage positions if",
+        "missing from the file. If you produce your BedGraph file with",
+        "bedtools genomecov and want to consider zero-coverage position, be",
+        "sure to use -bga (not -bg)."],
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_ZIP.pl"],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--input",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input BedGraph file."
+        },
+        {
+          "opt": "--range",
+          "arg": "float",
+          "default": 0.5,
+          "description": ["Central range to consider, between 0 and 1. By",
+            "default: inter-quartile range (0.5)."]
+        }
+      ]
+    }
+  ]
+}

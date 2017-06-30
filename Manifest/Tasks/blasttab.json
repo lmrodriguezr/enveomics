@@ -295,7 +295,8 @@
       "task": "BlastTab.seqdepth.pl",
       "description": "Estimates the sequencing depth of subject sequences.",
       "help_arg": "",
-      "see_also": ["BlastTab.seqdepth_ZIP.pl", "BlastTab.seqdepth_nomedian.pl"],
+      "see_also": ["BlastTab.seqdepth_ZIP.pl", "BlastTab.seqdepth_nomedian.pl",
+        "BedGraph.tad.rb"],
       "options": [
         "cat",
         {
@@ -341,7 +342,8 @@
         "http://anisette.ucs.louisiana.edu/Academic/Sciences/MATH/stage/stat2012.pdf\n",
         "[2] Lindner et al, Bioinformatics, 2013."],
       "help_arg": "",
-      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_nomedian.pl"],
+      "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_nomedian.pl",
+        "BedGraph.tad.rb"],
       "options": [
         "cat",
         {

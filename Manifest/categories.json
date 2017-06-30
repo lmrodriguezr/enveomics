@@ -2,6 +2,7 @@
   "categories": {
     "Sequence similarity search": {
       "Statistics": [
+        "BedGraph.tad.rb",
         "BlastPairwise.AAsubs.pl",
         "BlastTab.advance.bash",
         "BlastTab.recplot2.R",
