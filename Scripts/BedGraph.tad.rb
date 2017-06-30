@@ -2,7 +2,7 @@
 
 require "optparse"
 
-opts = {range:0.5}
+o = {range:0.5}
 ARGV << "-h" if ARGV.empty?
 OptionParser.new do |opt|
   opt.banner = "
@@ -18,7 +18,7 @@ OptionParser.new do |opt|
     "Input BedGraph file (mandatory)."){ |v| o[:i]=v }
   opt.on("-r", "--range FLOAT",
     "Central range to consider, between 0 and 1.",
-    "By default: #{opts[:range]} (inter-quartile range)."
+    "By default: #{o[:range]} (inter-quartile range)."
     ){ |v| o[:range]=v.to_f }
   opt.on("-h", "--help", "Display this screen.") do
     puts opt
