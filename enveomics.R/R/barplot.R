@@ -82,7 +82,7 @@ enve.barplot <- structure(function(
           rainbow(min(colors.per.group*2, top)-colors.per.group, s=3/4, v=3/5))
     if(top > colors.per.group*2) color.col <- c(color.col,
           rainbow(top-colors.per.group*2, s=1, v=1.25/4))
-  }else if(length(col)==1 & col=='coto'){
+  }else if(length(col)==1 & col[1]=="coto"){
     color.col <- c("#5BC0EB","#FDE74C","#9BC53D","#E55934","#FA7921","#EF476F",
                     "#FFD166","#06D6A0","#118AB2","#073B4C","#264653","#2A9D8F",
                     "#E9C46A","#F4A261","#E76F51")
@@ -102,7 +102,7 @@ enve.barplot <- structure(function(
     col=rev(c(color.col, rep(other.col, nrow(p)-length(color.col)))),
     border=NA,space=ifelse(add.trend,ifelse(organic.trend,0.75,0.5),0.2), ...)
   if(add.trend || min.report < max(p)){
-    color.alpha <- paste(c(substr(color.col, 1, 7), other.col), '40', sep='')
+    color.alpha <- enve.col.alpha(c(color.col, other.col), 1/4)
     if(top < nrow(p)){
       cf <- colSums(p[1:(nrow(p)-top), ])
     }else{
