@@ -124,7 +124,7 @@ module JPlace
 	 @nwk = nwk
 	 @parent = parent
 	 @placements = []
-	 @collapsed = FALSE
+	 @collapsed = false
 	 # Find index
 	 index_m = /^(?<pre>.*){(?<idx>[0-9]+)}(?<post>[^\(\),;]*);?$/.match(nwk)
 	 if index_m.nil? and parent.nil? and nwk[nwk.length-1]==';'
@@ -239,7 +239,7 @@ module JPlace
 	       end
 	    end
 	 end
-	 @collapsed = TRUE
+	 @collapsed = true
       end
       def add_placement!(placement)
 	 @placements << placement
