@@ -334,6 +334,49 @@
 	  "description": "Run quietly (no STDERR output)."
 	}
       ]
+    },
+    {
+      "task": "clust.rand.rb",
+      "description": ["Calculates the Rand Index and the Adjusted Rand Index",
+        "between two clusterings. The clustering format is a raw text file",
+        "with one cluster per line, each defined as comma-delimited members,",
+        "and a header line (ignored). Note that this is equivalent to the OGs",
+        "format for 1 genome."],
+      "see_also": ["ogs.mcl.rb"],
+      "help_arg": "--help",
+      "cite": [
+        ["Rand, 1971, J Am Stat Assoc",
+          "https://doi.org/10.2307%2F2284239"],
+        ["Hubert & Arabie, 1985, J Classif",
+          "https://doi.org/10.1007%2FBF01908075"]
+      ],
+      "options": [
+        {
+          "name": "Input file 1",
+          "opt": "--clust1",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "First input file."
+        },
+        {
+          "name": "Input file 2",
+          "opt": "--clust2",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Second input file."
+        },
+        {
+          "name": "Precision",
+          "opt": "--prec",
+          "arg": "integer",
+          "description": "Precision to report.",
+          "default": 6
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
     }
   ]
 }
