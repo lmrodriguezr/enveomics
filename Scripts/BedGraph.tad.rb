@@ -62,6 +62,10 @@ d = pad(d, d.each_index.to_a, r+0)
 d = pad(d, d.each_index.to_a.reverse, r+0)
 
 # Average
-s = d.each_with_index.to_a.map{ |v,i| v.nil? ? 0 : i*v }.inject(0,:+)
-p s.to_f/d.compact.inject(:+)
+if d.compact.empty?
+  p 0.0
+else
+  s = d.each_with_index.to_a.map{ |v,i| v.nil? ? 0 : i*v }.inject(0,:+)
+  p s.to_f/d.compact.inject(:+)
+end
 
