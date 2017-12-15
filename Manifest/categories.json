@@ -9,7 +9,8 @@
         "BlastTab.seqdepth.pl",
         "BlastTab.seqdepth_nomedian.pl",
         "BlastTab.seqdepth_ZIP.pl",
-        "BlastTab.sumPerHit.pl"
+        "BlastTab.sumPerHit.pl",
+        "FastQ.test-error.rb"
       ],
       "Manipulation": [
         "BlastTab.addlen.rb",
@@ -34,7 +35,8 @@
         "FastA.gc.pl",
         "FastA.length.pl",
         "FastA.N50.pl",
-        "FastA.qlen.pl"
+        "FastA.qlen.pl",
+        "FastQ.test-error.rb"
       ],
       "Manipulation": [
         "FastA.filter.pl",

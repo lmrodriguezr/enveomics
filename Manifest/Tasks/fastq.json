@@ -183,13 +183,13 @@
           "opt": "--quiet",
           "description": "Run quietly (no STDERR output)."
         }
-            ]
-          },
-          {
-            "task": "FastQ.toFastA.awk",
-            "description": "Translates FastQ files into FastA.",
-            "help_arg": "'' --help",
-            "options": [
+      ]
+    },
+    {
+      "task": "FastQ.toFastA.awk",
+      "description": "Translates FastQ files into FastA.",
+      "help_arg": "'' --help",
+      "options": [
         "<",
         {
           "arg": "in_file",
@@ -201,6 +201,41 @@
           "arg": "out_file",
           "mandatory": true,
           "description": "Output FastA file."
+        }
+      ]
+    },
+    {
+      "task": "FastQ.test-error.rb",
+      "description": ["Compares the estimated error of sequencing reads",
+        "(Q-score) with observed mismatches (identity against a know",
+        "reference sequence)."],
+      "help_arg": "--help",
+      "options": [
+        {
+          "name": "FastQ",
+          "opt": "--fastq",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastQ file containing the sequences."
+        },
+        {
+          "name": "Tabular BLAST",
+          "opt": "--blast",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Tabular BLAST file mapping reads to reference",
+            "sequences."]
+        },
+        {
+          "name": "Output",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output tab-delimited file to create."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
         }
       ]
     }
