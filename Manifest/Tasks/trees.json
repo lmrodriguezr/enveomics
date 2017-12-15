@@ -10,58 +10,58 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input tree",
-	  "opt": "--t",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "A tree to prune in Newick format."
-	},
-	{
-	  "opt": "--dist-quantile",
-	  "arg": "float",
-	  "default": 0.25,
-	  "description": "The quantile of edge lengths."
-	},
-	{
-	  "opt": "--min_dist",
-	  "arg": "float",
-	  "description": ["The minimum distance to allow between two tips. If",
-	    "not set, dist.quantile is used instead to calculate it."]
-	},
-	{
-	  "opt": "--quiet",
-	  "description": ["Boolean indicating if the function must run without",
-	    "output."]
-	},
-	{
-	  "opt": "--max_iters",
-	  "arg": "integer",
-	  "default": 1000,
-	  "description": "Maximum number of iterations."
-	},
-	{
-	  "opt": "--min_nodes_random",
-	  "arg": "integer",
-	  "default": 40000,
-	  "description": ["Minimum number of nodes to trigger 'tip-pairs'",
-	    "nodes sampling. This sampling is less reproducible and more",
-	    "computationally expensive, but it's the only solution if the",
-	    "cophenetic matrix exceeds 2^31-1 entries; above that, it cannot",
-	    "be represented in R."]
-	},
-	{
-	  "opt": "--random_nodes_frx",
-	  "arg": "float",
-	  "default": 1.0,
-	  "description": ["Fraction of the nodes to be sampled if more than",
-	    "'Min nodes random'."]
-	},
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["Output file in Newick format containing the pruned",
-	    "tree."]
-	}
+          "name": "Input tree",
+          "opt": "--t",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "A tree to prune in Newick format."
+        },
+        {
+          "opt": "--dist-quantile",
+          "arg": "float",
+          "default": 0.25,
+          "description": "The quantile of edge lengths."
+        },
+        {
+          "opt": "--min_dist",
+          "arg": "float",
+          "description": ["The minimum distance to allow between two tips. If",
+            "not set, dist.quantile is used instead to calculate it."]
+        },
+        {
+          "opt": "--quiet",
+          "description": ["Boolean indicating if the function must run without",
+            "output."]
+        },
+        {
+          "opt": "--max_iters",
+          "arg": "integer",
+          "default": 1000,
+          "description": "Maximum number of iterations."
+        },
+        {
+          "opt": "--min_nodes_random",
+          "arg": "integer",
+          "default": 40000,
+          "description": ["Minimum number of nodes to trigger 'tip-pairs'",
+            "nodes sampling. This sampling is less reproducible and more",
+            "computationally expensive, but it's the only solution if the",
+            "cophenetic matrix exceeds 2^31-1 entries; above that, it cannot",
+            "be represented in R."]
+        },
+        {
+          "opt": "--random_nodes_frx",
+          "arg": "float",
+          "default": 1.0,
+          "description": ["Fraction of the nodes to be sampled if more than",
+            "'Min nodes random'."]
+        },
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Output file in Newick format containing the pruned",
+            "tree."]
+        }
       ]
     }
   ]

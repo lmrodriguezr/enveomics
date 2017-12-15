@@ -73,7 +73,7 @@
       "help_arg": "",
       "requires": [
         {
-	  "perl_lib": "Bio::AlignIO"
+          "perl_lib": "Bio::AlignIO"
         }
       ],
       "cite": [["Stajich et al, 2002, GRes",
@@ -200,61 +200,61 @@
       "task": "Chao1.pl",
       "description": ["Takes a table of OTU abundance in one or more samples",
         "and calculates the chao1 index (with 95% Confidence Interval) for",
-	"each sample. To use it with Qiime OTU Tables, run it ignoring 1",
-	"left column and with header."],
+        "each sample. To use it with Qiime OTU Tables, run it ignoring 1",
+        "left column and with header."],
       "see_also": ["AlphaDiversity.pl"],
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "-i",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input table (columns:samples, rows:OTUs)."
-	},
-	{
-	  "name": "Rows",
-	  "opt": "-r",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "Number of rows to ignore."
-	},
-	{
-	  "name": "Left columns to ignore",
-	  "opt": "-c",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "Number of columns to ignore."
-	},
-	{
-	  "name": "Right columns to ignore",
-	  "opt": "-C",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "Number of columns to ignore at the end."
-	},
-	{
-	  "name": "Delimiter",
-	  "opt": "-d",
-	  "arg": "string",
-	  "default": "\\t",
-	  "description": "Delimiter between columns.",
-	  "note": ["Supported escaped characters are: \\t (tabulation),",
-	    "and \\0 (null bit)."]
-	},
-	{
-	  "name": "Header",
-	  "opt": "-h",
-	  "description": ["If set, the first row is assumed to have the names",
-	    "of the samples."]
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["Chao1 index and 95% CI bounds for each sample, in",
-	    "tab-delimited format."]
-	}
+          "name": "Input file",
+          "opt": "-i",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input table (columns:samples, rows:OTUs)."
+        },
+        {
+          "name": "Rows",
+          "opt": "-r",
+          "arg": "integer",
+          "default": 0,
+          "description": "Number of rows to ignore."
+        },
+        {
+          "name": "Left columns to ignore",
+          "opt": "-c",
+          "arg": "integer",
+          "default": 0,
+          "description": "Number of columns to ignore."
+        },
+        {
+          "name": "Right columns to ignore",
+          "opt": "-C",
+          "arg": "integer",
+          "default": 0,
+          "description": "Number of columns to ignore at the end."
+        },
+        {
+          "name": "Delimiter",
+          "opt": "-d",
+          "arg": "string",
+          "default": "\\t",
+          "description": "Delimiter between columns.",
+          "note": ["Supported escaped characters are: \\t (tabulation),",
+            "and \\0 (null bit)."]
+        },
+        {
+          "name": "Header",
+          "opt": "-h",
+          "description": ["If set, the first row is assumed to have the names",
+            "of the samples."]
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Chao1 index and 95% CI bounds for each sample, in",
+            "tab-delimited format."]
+        }
       ]
     },
     {
@@ -264,45 +264,45 @@
       "help_arg": "--help",
       "options": [
         {
-	  "opt": "--table",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Input table containing the states (columns) per",
-	    "object (row). It must be tab-delimited and with row and column",
-	    "names."]
-	},
-	{
-	  "opt": "--key",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Input table containing the dychotomous key in",
-	    "linked style, defined in four columns (can contain #-lead comment",
-	    "lines): (1) ID of the step, typically a sequential integer. (2)",
-	    "Name of character to evaluate. Must coincide with the -t headers.",
-	    "(3) First character decision (see below). (4) Second character",
-	    "decision (see below).\nA character decision must be formated as:",
-	    "state (must coincide with the values in -t), colon (:), step to",
-	    "follow. If the state is * (star) any state triggers the decision",
-	    "(this should be the norm in column 4). The step to follow should",
-	    "be a step ID in square brackets, or the name of the",
-	    "classification."]
-	},
-	{
-	  "opt": "--classification",
-	  "arg": "out_file",
-	  "description": ["Two-column table with the classification of the",
-	    "input objects."]
-	},
-	{
-	  "opt": "--newick",
-	  "arg": "out_file",
-	  "description": ["Tree containing all the classified objects. This",
-	    "only makes sense for synoptic keys."]
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "opt": "--table",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Input table containing the states (columns) per",
+            "object (row). It must be tab-delimited and with row and column",
+            "names."]
+        },
+        {
+          "opt": "--key",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Input table containing the dychotomous key in",
+            "linked style, defined in four columns (can contain #-lead comment",
+            "lines): (1) ID of the step, typically a sequential integer. (2)",
+            "Name of character to evaluate. Must coincide with the -t headers.",
+            "(3) First character decision (see below). (4) Second character",
+            "decision (see below).\nA character decision must be formated as:",
+            "state (must coincide with the values in -t), colon (:), step to",
+            "follow. If the state is * (star) any state triggers the decision",
+            "(this should be the norm in column 4). The step to follow should",
+            "be a step ID in square brackets, or the name of the",
+            "classification."]
+        },
+        {
+          "opt": "--classification",
+          "arg": "out_file",
+          "description": ["Two-column table with the classification of the",
+            "input objects."]
+        },
+        {
+          "opt": "--newick",
+          "arg": "out_file",
+          "description": ["Tree containing all the classified objects. This",
+            "only makes sense for synoptic keys."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
@@ -311,157 +311,157 @@
       "help_arg": "--help",
       "options": [
         {
-	  "opt": "--genbank",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input GenBank file."
-	},
-	{
-	  "opt": "--table",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Input file containing the annotations. It must be a",
-	    "tab-delimited raw table including a header row with the names of",
-	    "the fields."]
-	},
-	{
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file containing the annotated GenBank."
-	},
-	{
-	  "opt": "--key",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": "Key of the column to use as identifier."
-	},
-	{
-	  "opt": "--split",
-	  "arg": "string",
-	  "default": "#",
-	  "description": ["String that separates multiple entries in the",
-	    "annotation features."]
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "opt": "--genbank",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input GenBank file."
+        },
+        {
+          "opt": "--table",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Input file containing the annotations. It must be a",
+            "tab-delimited raw table including a header row with the names of",
+            "the fields."]
+        },
+        {
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file containing the annotated GenBank."
+        },
+        {
+          "opt": "--key",
+          "arg": "integer",
+          "default": 1,
+          "description": "Key of the column to use as identifier."
+        },
+        {
+          "opt": "--split",
+          "arg": "string",
+          "default": "#",
+          "description": ["String that separates multiple entries in the",
+            "annotation features."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
       "task": "HMM.essential.rb",
       "description": ["Finds and extracts a collection of essential proteins",
         "suitable for genome completeness evaluation and phylogenetic",
-	"analyses in Archaea and Bacteria."],
+        "analyses in Archaea and Bacteria."],
       "warn": ["Most complete bacterial genomes contain only 106/111 genes in",
         "this collection, therefore producing a completeness of 95.5%, and",
-	"most archaeal genomes only contain 26/111 genes, producing a",
-	"completeness of 23.4%. Use the options --bacteria and/or --archaea to",
-	"ignore models often missing in one or both domains. Note that even",
-	"with these options, some complete archaeal genomes result in very low",
-	"values of completeness (e.g., Nanoarchaeum equitans returns 88.5%)."],
+        "most archaeal genomes only contain 26/111 genes, producing a",
+        "completeness of 23.4%. Use the options --bacteria and/or --archaea to",
+        "ignore models often missing in one or both domains. Note that even",
+        "with these options, some complete archaeal genomes result in very low",
+        "values of completeness (e.g., Nanoarchaeum equitans returns 88.5%)."],
       "help_arg": "--help",
       "requires": [
         {
-	  "description": "HMMer 3.0+",
-	  "test": "hmmsearch -h",
-	  "source_url": "http://hmmer.janelia.org/software"
-	}
+          "description": "HMMer 3.0+",
+          "test": "hmmsearch -h",
+          "source_url": "http://hmmer.janelia.org/software"
+        }
       ],
       "cite": [["Eddy, 2011, PLoS CB",
         "http://dx.doi.org/10.1371/journal.pcbi.1002195"]],
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--in",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "FastA file containing all the proteins in the genome."
-	},
-	{
-	  "name": "Output file",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "description": ["FastA file with the translated essential genes. By",
-	    "default the file is not produced."]
-	},
-	{
-	  "opt": "--per-model",
-	  "arg": "out_file",
-	  "description": ["Prefix of translated genes in independent files",
-	    "with the name of the model appended. By default files are not",
-	    "produced."]
-	},
-	{
-	  "opt": "--report",
-	  "arg": "out_file",
-	  "description": ["Path to the report file. By default, the report is",
-	    "sent to the STDOUT."]
-	},
-	{
-	  "opt": "--bacteria",
-	  "description": "If set, ignores models typically missing in Bacteria."
-	},
-	{
-	  "opt": "--archaea",
-	  "description": "If set, ignores models typically missing in Archaea."
-	},
-	{
-	  "opt": "--genome-eq",
-	  "description": ["If set, ignores models not suitable for",
-	    "genome-equivalents estimations. See Rodriguez-R et al, 2015, ISME",
-	    "J 9(9):1928-1940."],
-	  "source_url": "http://www.nature.com/ismej/journal/vaop/ncurrent/full/ismej20155a.html"
-	},
-	{
-	  "opt": "--rename",
-	  "arg": "string",
-	  "description": ["If set, renames the sequences with the string",
-	    "provided and appends it with pipe (|) and the gene name (except",
-	    "in --per-model files)."]
-	},
-	{
-	  "opt": "--no-stats",
-	  "description": ["If set, no statistics are reported on genome",
-	    "evaluation."]
-	},
-	{
-	  "opt": "--no-genes",
-	  "description": ["If set, statistics won't include the lists of",
-	    "missing/multi-copy genes."]
-	},
-	{
-	  "opt": "--metagenome",
-	  "description": ["If set, it allows for multiple copies of each gene",
-	    "and turns on metagenomic report mode."]
-	},
-	{
-	  "opt": "--list-models",
-	  "description": ["If set, it only lists the models and exits.",
-	    "Compatible with 'Archaea', 'Bacteria', 'Genome eq', and 'Quiet';",
-	    "ignores all other parameters."]
-	},
-	{
-	  "opt": "--bin",
-	  "arg": "in_dir",
-	  "description": "Directory containing the binaries of HMMer 3.0+."
-	},
-	{
-	  "opt": "--model-file",
-	  "arg": "in_file",
-	  "description": "External file containing models to search."
-	},
-	{
-	  "opt": "--threads",
-	  "arg": "integer",
-	  "default": 2,
-	  "description": "Number of parallel threads to be used."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "name": "Input file",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "FastA file containing all the proteins in the genome."
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "description": ["FastA file with the translated essential genes. By",
+            "default the file is not produced."]
+        },
+        {
+          "opt": "--per-model",
+          "arg": "out_file",
+          "description": ["Prefix of translated genes in independent files",
+            "with the name of the model appended. By default files are not",
+            "produced."]
+        },
+        {
+          "opt": "--report",
+          "arg": "out_file",
+          "description": ["Path to the report file. By default, the report is",
+            "sent to the STDOUT."]
+        },
+        {
+          "opt": "--bacteria",
+          "description": "If set, ignores models typically missing in Bacteria."
+        },
+        {
+          "opt": "--archaea",
+          "description": "If set, ignores models typically missing in Archaea."
+        },
+        {
+          "opt": "--genome-eq",
+          "description": ["If set, ignores models not suitable for",
+            "genome-equivalents estimations. See Rodriguez-R et al, 2015, ISME",
+            "J 9(9):1928-1940."],
+          "source_url": "http://www.nature.com/ismej/journal/vaop/ncurrent/full/ismej20155a.html"
+        },
+        {
+          "opt": "--rename",
+          "arg": "string",
+          "description": ["If set, renames the sequences with the string",
+            "provided and appends it with pipe (|) and the gene name (except",
+            "in --per-model files)."]
+        },
+        {
+          "opt": "--no-stats",
+          "description": ["If set, no statistics are reported on genome",
+            "evaluation."]
+        },
+        {
+          "opt": "--no-genes",
+          "description": ["If set, statistics won't include the lists of",
+            "missing/multi-copy genes."]
+        },
+        {
+          "opt": "--metagenome",
+          "description": ["If set, it allows for multiple copies of each gene",
+            "and turns on metagenomic report mode."]
+        },
+        {
+          "opt": "--list-models",
+          "description": ["If set, it only lists the models and exits.",
+            "Compatible with 'Archaea', 'Bacteria', 'Genome eq', and 'Quiet';",
+            "ignores all other parameters."]
+        },
+        {
+          "opt": "--bin",
+          "arg": "in_dir",
+          "description": "Directory containing the binaries of HMMer 3.0+."
+        },
+        {
+          "opt": "--model-file",
+          "arg": "in_file",
+          "description": "External file containing models to search."
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "default": 2,
+          "description": "Number of parallel threads to be used."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
@@ -471,45 +471,45 @@
       "help_arg": "--help",
       "options": [
         {
-	  "opt": "--all-evalue",
-	  "arg": "float",
-	  "description": "Maximum e-value of sequence to report result."
-	},
-	{
-	  "opt": "--all-score",
-	  "arg": "float",
-	  "description": "Minimum score of sequence to report result."
-	},
-	{
-	  "opt": "--best-evalue",
-	  "arg": "float",
-	  "description": "Maximum e-value of best domain to report result."
-	},
-	{
-	  "opt": "--best-score",
-	  "arg": "float",
-	  "description": "Minimum score of best domain to report result."
-	},
-	{
-	  "opt": "--no-model",
-	  "description": "Do not include the query model in the output list."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly."
-	},
-	"<",
-	{
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input HMMsearch text file."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output list of IDs."
-	}
+          "opt": "--all-evalue",
+          "arg": "float",
+          "description": "Maximum e-value of sequence to report result."
+        },
+        {
+          "opt": "--all-score",
+          "arg": "float",
+          "description": "Minimum score of sequence to report result."
+        },
+        {
+          "opt": "--best-evalue",
+          "arg": "float",
+          "description": "Maximum e-value of best domain to report result."
+        },
+        {
+          "opt": "--best-score",
+          "arg": "float",
+          "description": "Minimum score of best domain to report result."
+        },
+        {
+          "opt": "--no-model",
+          "description": "Do not include the query model in the output list."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        },
+        "<",
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input HMMsearch text file."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output list of IDs."
+        }
       ]
     },
     {
@@ -520,119 +520,119 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--in",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ".jplace input file containing the read placement."
-	},
-	{
-	  "name": "Node",
-	  "opt": "--node",
-	  "arg": "string",
-	  "mandatory": true,
-	  "description": ["Index (number in curly brackets) of the node to",
-	    "which distances should be measured."]
-	},
-	{
-	  "name": "Output file",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file in tabular format."
-	},
-	{
-	  "opt": "--in-node",
-	  "arg": "string",
-	  "description": ["Report only reads placed at this node or it's",
-	    "children."]
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "name": "Input file",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ".jplace input file containing the read placement."
+        },
+        {
+          "name": "Node",
+          "opt": "--node",
+          "arg": "string",
+          "mandatory": true,
+          "description": ["Index (number in curly brackets) of the node to",
+            "which distances should be measured."]
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file in tabular format."
+        },
+        {
+          "opt": "--in-node",
+          "arg": "string",
+          "description": ["Report only reads placed at this node or it's",
+            "children."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
       "task": "JPlace.to_iToL.rb",
       "description": ["Generates iToL-compatible files from a .jplace file",
         "(produced by RAxML's EPA or pplacer), that can be used to draw",
-	"pie-charts in the nodes of the reference tree."],
+        "pie-charts in the nodes of the reference tree."],
       "requires": [ { "ruby_gem": "json" } ],
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--in",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ".jplace input file containing the read placement."
-	},
-	{
-	  "name": "Out base",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Base of the output files."
-	},
-	{
-	  "opt": "--unique",
-	  "arg": "string",
-	  "description": ["Name of the dataset (if only one is used).",
-	    "Conflicts with 'Regex' and 'Separator'."]
-	},
-	{
-	  "opt": "--regex",
-	  "arg": "string",
-	  "description": ["Regular expression capturing the sample ID (named",
-	    "dataset) in read names. By default: '^(?<dataset>.+?):.*'.",
-	    "Conflicts with 'Separator'."]
-	},
-	{
-	  "opt": "--separator",
-	  "arg": "string",
-	  "description": ["String separating the dataset name and the rest of",
-	    "the read name. It assumes that the read name starts by the",
-	    "dataset name. Conflicts with 'Regex'."]
-	},
-	{
-	  "opt": "--metadata",
-	  "arg": "in_file",
-	  "description": ["Datasets metadata in tab-delimited format with a",
-	    "header row. Valid headers: name (required), color (in Hex),",
-	    "size (# reads), norm (any float)."]
-	},
-	{
-	  "opt": "--norm",
-	  "arg": "string",
-	  "description": ["Normalization strategy. Must be one of:\n",
-	    "none: Direct read counts are reported without normalization.\n",
-	    "count (default): The counts are normalized (divided) by the total",
-	    "counts per dataset.\n",
-	    "size: The counts are normalized (divided) by the size column in",
-	    "metadata (must be integer).\n",
-	    "norm: The counts are normalized (divided) by the norm column in",
-	    "metadata (can be any float)."]
-	},
-	{
-	  "opt": "--old-itol",
-	  "description": ["Generate output file using the old iToL format",
-	    " (pre v3.0)."]
-	},
-	{
-	  "opt": "--collapse",
-	  "arg": "in_file",
-	  "description": "Internal nodes to collapse (requires rootted tree)."
-	},
-	{
-	  "opt": "--area",
-	  "description": ["If set, the area of the pies is proportional to the",
-	    "placements. Otherwise, the radius is."]
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly (no STDERR output)."
-	}
+          "name": "Input file",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ".jplace input file containing the read placement."
+        },
+        {
+          "name": "Out base",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Base of the output files."
+        },
+        {
+          "opt": "--unique",
+          "arg": "string",
+          "description": ["Name of the dataset (if only one is used).",
+            "Conflicts with 'Regex' and 'Separator'."]
+        },
+        {
+          "opt": "--regex",
+          "arg": "string",
+          "description": ["Regular expression capturing the sample ID (named",
+            "dataset) in read names. By default: '^(?<dataset>.+?):.*'.",
+            "Conflicts with 'Separator'."]
+        },
+        {
+          "opt": "--separator",
+          "arg": "string",
+          "description": ["String separating the dataset name and the rest of",
+            "the read name. It assumes that the read name starts by the",
+            "dataset name. Conflicts with 'Regex'."]
+        },
+        {
+          "opt": "--metadata",
+          "arg": "in_file",
+          "description": ["Datasets metadata in tab-delimited format with a",
+            "header row. Valid headers: name (required), color (in Hex),",
+            "size (# reads), norm (any float)."]
+        },
+        {
+          "opt": "--norm",
+          "arg": "string",
+          "description": ["Normalization strategy. Must be one of:\n",
+            "none: Direct read counts are reported without normalization.\n",
+            "count (default): The counts are normalized (divided) by the total",
+            "counts per dataset.\n",
+            "size: The counts are normalized (divided) by the size column in",
+            "metadata (must be integer).\n",
+            "norm: The counts are normalized (divided) by the norm column in",
+            "metadata (can be any float)."]
+        },
+        {
+          "opt": "--old-itol",
+          "description": ["Generate output file using the old iToL format",
+            " (pre v3.0)."]
+        },
+        {
+          "opt": "--collapse",
+          "arg": "in_file",
+          "description": "Internal nodes to collapse (requires rootted tree)."
+        },
+        {
+          "opt": "--area",
+          "description": ["If set, the area of the pies is proportional to the",
+            "placements. Otherwise, the radius is."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
       ]
     },
     {
@@ -641,28 +641,28 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "MyTaxa output",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Classification file generated by MyTaxa."
-	},
-	{
-	  "name": "Taxon",
-	  "arg": "string",
-	  "mandatory": true,
-	  "description": "Taxon to look for."
-	},
-	{
-	  "name": "Rank",
-	  "arg": "string",
-	  "description": "Rank of taxon (optional). By default: any rank."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "List of fragment IDs."
-	}
+          "name": "MyTaxa output",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Classification file generated by MyTaxa."
+        },
+        {
+          "name": "Taxon",
+          "arg": "string",
+          "mandatory": true,
+          "description": "Taxon to look for."
+        },
+        {
+          "name": "Rank",
+          "arg": "string",
+          "description": "Rank of taxon (optional). By default: any rank."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "List of fragment IDs."
+        }
       ]
     },
     {
@@ -672,22 +672,22 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "MyTaxa",
-	  "opt": "--mytaxa",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input MyTaxa file."
-	},
-	{
-	  "opt": "--rank",
-	  "arg": "string",
-	  "default": "genus",
-	  "description": "Taxonomic rank."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly."
-	}
+          "name": "MyTaxa",
+          "opt": "--mytaxa",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input MyTaxa file."
+        },
+        {
+          "opt": "--rank",
+          "arg": "string",
+          "default": "genus",
+          "description": "Taxonomic rank."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        }
       ]
     },
     {
@@ -697,49 +697,49 @@
       "help_arg": "--help",
       "options": [
         {
-	  "opt": "--silvaranks",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Input Silva ranks file (e.g.,",
-	    "tax_ranks_ssu_115.txt)."],
-	  "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
-	},
-	{
-	  "opt": "--silvaref",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Input Silva ref alignment file (e.g.,",
-	    "SSURef_NR99_115_tax_silva_full_align_trunc.fasta)."],
-	  "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
-	},
-	{
-	  "opt": "--patch",
-	  "arg": "in_file",
-	  "description": ["If passed, it replaces the paths specified in the",
-	    "patch."],
-	  "source_url": "http://enve-omics.ce.gatech.edu/data/public_misc/patch_Silva_SSU_r115.txt"
-	},
-	{
-	  "opt": "--seqinfo",
-	  "arg": "out_file",
-	  "description": ["If passed, it creates a CSV seq-info file",
-	    "compatible with taxtastic."]
-	},
-	{
-	  "opt": "--taxfile",
-	  "arg": "out_file",
-	  "description": "If passed, it creates a simple TSV taxonomy file."
-	},
-	{
-	  "opt": "--ncbi",
-	  "arg": "out_dir",
-	  "description": ["If passed, output folder for the NCBI dump files",
-	    "(e.g., taxdmp)."]
-	},
-	{
-	  "opt": "--warns",
-	  "description": "Verbously display warnings."
-	}
+          "opt": "--silvaranks",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Input Silva ranks file (e.g.,",
+            "tax_ranks_ssu_115.txt)."],
+          "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
+        },
+        {
+          "opt": "--silvaref",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Input Silva ref alignment file (e.g.,",
+            "SSURef_NR99_115_tax_silva_full_align_trunc.fasta)."],
+          "source_url": "https://www.arb-silva.de/no_cache/download/archive/release_115/Exports/"
+        },
+        {
+          "opt": "--patch",
+          "arg": "in_file",
+          "description": ["If passed, it replaces the paths specified in the",
+            "patch."],
+          "source_url": "http://enve-omics.ce.gatech.edu/data/public_misc/patch_Silva_SSU_r115.txt"
+        },
+        {
+          "opt": "--seqinfo",
+          "arg": "out_file",
+          "description": ["If passed, it creates a CSV seq-info file",
+            "compatible with taxtastic."]
+        },
+        {
+          "opt": "--taxfile",
+          "arg": "out_file",
+          "description": "If passed, it creates a simple TSV taxonomy file."
+        },
+        {
+          "opt": "--ncbi",
+          "arg": "out_dir",
+          "description": ["If passed, output folder for the NCBI dump files",
+            "(e.g., taxdmp)."]
+        },
+        {
+          "opt": "--warns",
+          "description": "Verbously display warnings."
+        }
       ]
     }
   ]

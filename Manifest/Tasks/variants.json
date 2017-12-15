@@ -58,10 +58,10 @@
           "description": "Minimum information content (in bits, from 0 to 1).",
           "default": 0.0
         },
-	{
-	  "opt": "--indels",
-	  "description": "Process indels."
-	}
+        {
+          "opt": "--indels",
+          "description": "Process indels."
+        }
       ]
     },
     {

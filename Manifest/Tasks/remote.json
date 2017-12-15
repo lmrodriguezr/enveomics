@@ -6,7 +6,7 @@
         "the pathways in which the subject peptides are involved."],
       "requires": [
         { "perl_lib": "JSON" },
-	{ "perl_lib": "LWP::Simple" }
+        { "perl_lib": "LWP::Simple" }
       ],
       "help_arg": "",
       "options": [

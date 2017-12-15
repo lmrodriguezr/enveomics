@@ -273,10 +273,10 @@
           "description": ["Sister read number prefix in the name of the reads.",
             "Escape characters as dots (\\.), parenthesis (\\(, \\), \\[,",
             "\\]), other characters with special meaning in regular",
-	    "expressions (\\*, \\+, \\^, \\$, \\|). This prefix allows regular",
-	    "expressions (for example, use ':|\\.' to use any of colon or",
-	    "dot). Note that the prefix will not be included in the base name",
-	    "reported in the output."]
+            "expressions (\\*, \\+, \\^, \\$, \\|). This prefix allows regular",
+            "expressions (for example, use ':|\\.' to use any of colon or",
+            "dot). Note that the prefix will not be included in the base name",
+            "reported in the output."]
         },
         ">",
         {
@@ -307,7 +307,7 @@
             "(or contigs)."]
         },
         "|",
-	{ "arg": "task" },
+        { "arg": "task" },
         {
           "name": "genes_or_ctgs.fna",
           "arg": "in_file",
@@ -384,22 +384,22 @@
       "task": "BlastTab.seqdepth_nomedian.pl",
       "description": ["Estimates the sequencing depth of subject",
         "sequences. The values reported by this script may differ from those",
-	"of BlastTab.seqdepth.pl, because this script uses the aligned length",
-	"of the read while BlastTab.seqdepth.pl uses the aligned length of the",
-	"subject sequence."],
+        "of BlastTab.seqdepth.pl, because this script uses the aligned length",
+        "of the read while BlastTab.seqdepth.pl uses the aligned length of the",
+        "subject sequence."],
       "help_arg": "",
       "see_also": ["BlastTab.seqdepth.pl", "BlastTab.seqdepth_ZIP.pl"],
       "options": [
         "cat",
-	{
-	  "arg": "in_file",
+        {
+          "arg": "in_file",
           "multiple_sep": " ",
           "mandatory": true,
           "description": ["One or more Tabular BLAST files of reads vs genes",
             "(or contigs)."]
-	},
-	"|",
-	{ "arg": "task" },
+        },
+        "|",
+        { "arg": "task" },
         {
           "name": "genes_or_ctgs.fna",
           "arg": "in_file",
@@ -414,7 +414,7 @@
           "mandatory": true,
           "description": ["A tab-delimited file with the following columns:",
             "(1) Subject ID. (2) Average sequencing depth. (3) Number of",
-	    "mapped reads. (4) Length of the subject sequence."]
+            "mapped reads. (4) Length of the subject sequence."]
         }
       ]
     },
@@ -426,23 +426,23 @@
       "see_also": "BlastTab.filter.pl",
       "options": [
         {
-	  "name": "blast.tab",
-	  "mandatory": true,
-	  "arg": "in_file",
-	  "description": "BLAST output to be filtered (tabular format)."
-	},
-	{
-	  "name": "sample.fa",
-	  "mandatory": true,
-	  "arg": "in_file",
-	  "description": "Sequences to use as query (FastA format)."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "The filtered BLAST output (tabular format)."
-	}
+          "name": "blast.tab",
+          "mandatory": true,
+          "arg": "in_file",
+          "description": "BLAST output to be filtered (tabular format)."
+        },
+        {
+          "name": "sample.fa",
+          "mandatory": true,
+          "arg": "in_file",
+          "description": "Sequences to use as query (FastA format)."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "The filtered BLAST output (tabular format)."
+        }
       ]
     },
     {
@@ -519,51 +519,51 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "tax_blast.txt",
-	  "mandatory": true,
-	  "arg": "in_file",
-	  "description": ["BLAST output, where subject IDs are NCBI Taxonomy",
-	    "IDs."]
-	},
-	{
-	  "name": "nodes.dmp",
-	  "mandatory": true,
-	  "arg": "in_file",
-	  "description": "Nodes file from NCBI Taxonomy.",
-	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
-	},
-	{
-	  "name": "names.dmp",
-	  "mandatory": true,
-	  "arg": "in_file",
-	  "description": "Names file from NCBI Taxonomy.",
-	  "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
-	},
-	{
-	  "name": "rank",
-	  "arg": "string",
-	  "mandatory": true,
-	  "default": "genus",
-	  "description": ["The rank to be reported. All the reported nodes",
-	    "will have the same rank. To see supported values, run:\n",
-	    "`cut -f 5 nodes.dmp | sort -u`."]
-	},
-	{
-	  "name": "Best-hit",
-	  "arg": "select",
-	  "values": ["yes", "no"],
-	  "default": "yes",
-	  "description": ["Should it take into account the best hit per query",
-	    "only? This is: should it filter by best-hit?"]
-	},
-	">",
-	{
-	  "name": "taxrank_list.txt",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["BLAST-like output, where subject IDs are Taxonomy",
-	    "names."]
-	}
+          "name": "tax_blast.txt",
+          "mandatory": true,
+          "arg": "in_file",
+          "description": ["BLAST output, where subject IDs are NCBI Taxonomy",
+            "IDs."]
+        },
+        {
+          "name": "nodes.dmp",
+          "mandatory": true,
+          "arg": "in_file",
+          "description": "Nodes file from NCBI Taxonomy.",
+          "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+        },
+        {
+          "name": "names.dmp",
+          "mandatory": true,
+          "arg": "in_file",
+          "description": "Names file from NCBI Taxonomy.",
+          "source_url": "ftp://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz"
+        },
+        {
+          "name": "rank",
+          "arg": "string",
+          "mandatory": true,
+          "default": "genus",
+          "description": ["The rank to be reported. All the reported nodes",
+            "will have the same rank. To see supported values, run:\n",
+            "`cut -f 5 nodes.dmp | sort -u`."]
+        },
+        {
+          "name": "Best-hit",
+          "arg": "select",
+          "values": ["yes", "no"],
+          "default": "yes",
+          "description": ["Should it take into account the best hit per query",
+            "only? This is: should it filter by best-hit?"]
+        },
+        ">",
+        {
+          "name": "taxrank_list.txt",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["BLAST-like output, where subject IDs are Taxonomy",
+            "names."]
+        }
       ]
     },
     {
@@ -579,39 +579,39 @@
           "mandatory": true,
           "description": ["Use 'sort' if your BLAST is not pre-sorted by the",
             "first column (or if you're not sure). Use 'cat' otherwise."]
-	},
-	{
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Tabular BLAST file."
-	},
-	"|",
-	{ "arg": "task" },
-	"--blast",
-	"/dev/stdin",
-	{
-	  "opt": "--top",
-	  "arg": "integer",
-	  "default": 5,
-	  "description": "Maximum number of hits to report for each query."
-	},
-	{
-	  "opt": "--sort-by",
-	  "arg": "select",
-	  "values": ["bitscore", "evalue", "identity", "length"],
-	  "default": "bitscore",
-	  "description": "Parameter used to detect the 'best' hits."
-	},
-	{
-	  "opt": "--quiet",
-	  "description": "Run quietly."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output (filtered) Tabular BLAST."
-	}
+        },
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Tabular BLAST file."
+        },
+        "|",
+        { "arg": "task" },
+        "--blast",
+        "/dev/stdin",
+        {
+          "opt": "--top",
+          "arg": "integer",
+          "default": 5,
+          "description": "Maximum number of hits to report for each query."
+        },
+        {
+          "opt": "--sort-by",
+          "arg": "select",
+          "values": ["bitscore", "evalue", "identity", "length"],
+          "default": "bitscore",
+          "description": "Parameter used to detect the 'best' hits."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output (filtered) Tabular BLAST."
+        }
       ]
     },
     {
@@ -625,80 +625,80 @@
       ],
       "options": [
         {
-	  "opt": "--prefix",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["Path to the prefix of the BlastTab.catsbj.pl output",
-	    "files. At least the files .rec and .lim must exist with this",
-	    "prefix."]
-	},
-	{
-	  "opt": "--pos-breaks",
-	  "arg": "integer",
-	  "default": 1000,
-	  "description": ["Breaks in the positions histogram."]
-	},
-	{
-	  "opt": "--id-breaks",
-	  "arg": "integer",
-	  "default": 300,
-	  "description": ["Breaks in the identity histogram."]
-	},
-	{
-	  "opt": "--id-metric",
-	  "arg": "select",
-	  "values": ["identity", "corrected identity", "bit score"],
-	  "default": "identity",
-	  "description": ["Metric of identity to be used (Y-axis). Corrected",
-	    "identity is only supported if the original BLAST file included",
-	    "sequence lengths."]
-	},
-	{
-	  "opt": "--id-summary",
-	  "arg": "string",
-	  "default": "sum",
-	  "description": "Function summarizing the identity bins."
-	},
-	{
-	  "opt": "--id-cutoff",
-	  "arg": "float",
-	  "default": 95.0,
-	  "description": ["Cutoff of identity metric above which the hits are",
-	    "considered 'in-group'. The 95% identity corresponds to the",
-	    "expectation of ANI<95% within species."]
-	},
-	{
-	  "opt": "--threads",
-	  "arg": "integer",
-	  "default": 2,
-	  "description": "Number of threads to use."
-	},
-	{
-	  "opt": "--no-verbose",
-	  "description": "Indicates if the function should report the advance."
-	},
-	{
-	  "name": "R Object Output",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": ["Recplo2 object that can be re-plotted using",
-	    "R function plot."]
-	},
-	{
-	  "name": "Graphical Output",
-	  "arg": "out_file",
-	  "description": "Recruitment plot in PDF."
-	},
-	{
-	  "name": "Width",
-	  "arg": "float",
-	  "description": "Width of the plot in inches (7 by default)."
-	},
-	{
-	  "name": "Height",
-	  "arg": "float",
-	  "description": "Height of the plot in inches (7 by default)."
-	}
+          "opt": "--prefix",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Path to the prefix of the BlastTab.catsbj.pl output",
+            "files. At least the files .rec and .lim must exist with this",
+            "prefix."]
+        },
+        {
+          "opt": "--pos-breaks",
+          "arg": "integer",
+          "default": 1000,
+          "description": ["Breaks in the positions histogram."]
+        },
+        {
+          "opt": "--id-breaks",
+          "arg": "integer",
+          "default": 300,
+          "description": ["Breaks in the identity histogram."]
+        },
+        {
+          "opt": "--id-metric",
+          "arg": "select",
+          "values": ["identity", "corrected identity", "bit score"],
+          "default": "identity",
+          "description": ["Metric of identity to be used (Y-axis). Corrected",
+            "identity is only supported if the original BLAST file included",
+            "sequence lengths."]
+        },
+        {
+          "opt": "--id-summary",
+          "arg": "string",
+          "default": "sum",
+          "description": "Function summarizing the identity bins."
+        },
+        {
+          "opt": "--id-cutoff",
+          "arg": "float",
+          "default": 95.0,
+          "description": ["Cutoff of identity metric above which the hits are",
+            "considered 'in-group'. The 95% identity corresponds to the",
+            "expectation of ANI<95% within species."]
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "default": 2,
+          "description": "Number of threads to use."
+        },
+        {
+          "opt": "--no-verbose",
+          "description": "Indicates if the function should report the advance."
+        },
+        {
+          "name": "R Object Output",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Recplo2 object that can be re-plotted using",
+            "R function plot."]
+        },
+        {
+          "name": "Graphical Output",
+          "arg": "out_file",
+          "description": "Recruitment plot in PDF."
+        },
+        {
+          "name": "Width",
+          "arg": "float",
+          "description": "Width of the plot in inches (7 by default)."
+        },
+        {
+          "name": "Height",
+          "arg": "float",
+          "description": "Height of the plot in inches (7 by default)."
+        }
       ]
     }
   ]

@@ -4,7 +4,7 @@
       "task": "TRIBS.test.R",
       "description": ["Estimates the empirical difference between all the",
         "distances in a set of objects and a subset, together with its",
-	"statistical significance."],
+        "statistical significance."],
       "help_arg": "--help",
       "requires": [
         { "r_package": "optparse" },
@@ -13,66 +13,66 @@
       "see_also": ["TRIBS.plot-test.R"],
       "options": [
         {
-	  "opt": "--dist",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "A tab-delimited matrix of distances."
-	},
-	{
-	  "opt": "--selection",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "A list of names with the selection to evaluate."
-	},
-	{
-	  "opt": "--replicates",
-	  "arg": "integer",
-	  "default": 1000,
-	  "description": "Number of replications per point."
-	},
-	{
-	  "opt": "--summary-fx",
-	  "arg": "string",
-	  "description": ["Function to summarize the distance distributions in",
-	    "a given replicate. By default, the median distance is estimated."]
-	},
-	{
-	  "opt": "--dist-method",
-	  "arg": "string",
-	  "default": "euclidean",
-	  "description": ["Distance method between random points and samples",
-	    "in the transformed space. See the R function 'dist'."]
-	},
-	{
-	  "opt": "--dimensions",
-	  "arg": "integer",
-	  "description": ["Dimensions to use in the NMDS. By default, 5% of",
-	    "the selection length."]
-	},
-	{
-	  "opt": "--threads",
-	  "arg": "integer",
-	  "default": 2,
-	  "description": "Number of threads to use."
-	},
-	{
-	  "opt": "--verbosity",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": ["Verbosity. Use 0 to run quietly, increase for",
-	    "additional information."]
-	},
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file with the TRIBS test R object."
-	},
-	{
-	  "name": "Bins",
-	  "arg": "integer",
-	  "default": 50,
-	  "description": "Number of bins to evaluate in the range of distances."
-	}
+          "opt": "--dist",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "A tab-delimited matrix of distances."
+        },
+        {
+          "opt": "--selection",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "A list of names with the selection to evaluate."
+        },
+        {
+          "opt": "--replicates",
+          "arg": "integer",
+          "default": 1000,
+          "description": "Number of replications per point."
+        },
+        {
+          "opt": "--summary-fx",
+          "arg": "string",
+          "description": ["Function to summarize the distance distributions in",
+            "a given replicate. By default, the median distance is estimated."]
+        },
+        {
+          "opt": "--dist-method",
+          "arg": "string",
+          "default": "euclidean",
+          "description": ["Distance method between random points and samples",
+            "in the transformed space. See the R function 'dist'."]
+        },
+        {
+          "opt": "--dimensions",
+          "arg": "integer",
+          "description": ["Dimensions to use in the NMDS. By default, 5% of",
+            "the selection length."]
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "default": 2,
+          "description": "Number of threads to use."
+        },
+        {
+          "opt": "--verbosity",
+          "arg": "integer",
+          "default": 1,
+          "description": ["Verbosity. Use 0 to run quietly, increase for",
+            "additional information."]
+        },
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file with the TRIBS test R object."
+        },
+        {
+          "name": "Bins",
+          "arg": "integer",
+          "default": 50,
+          "description": "Number of bins to evaluate in the range of distances."
+        }
       ]
     },
     {
@@ -86,75 +86,75 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input TRIBS Test",
-	  "opt": "--x",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "'enve.TRIBStest' object to plot."
-	},
-	{
-	  "opt": "--type",
-	  "arg": "select",
-	  "values": ["overlap","difference"],
-	  "default": "overlap",
-	  "description": ["What to plot. 'overlap' generates a plot of the two",
-	    "contrasting empirical PDFs (to compare against each other),",
-	    "'difference' produces a plot of the differences between the",
-	    "empirical PDFs (to compare against zero)."]
-	},
-	{
-	  "opt": "--col",
-	  "arg": "string",
-	  "default": "#00000044",
-	  "description": "Main color of the plot if type='difference'."
-	},
-	{
-	  "opt": "--col1",
-	  "arg": "string",
-	  "description": ["First color of the plot if 'Type' is overlap. 'Col'",
-	    "by default."]
-	},
-	{
-	  "opt": "--col2",
-	  "arg": "string",
-	  "default": "#44001144",
-	  "description": "Second color of the plot if 'Type' is overlap."
-	},
-	{
-	  "opt": "--ylab",
-	  "arg": "string",
-	  "default": "Probability",
-	  "description": "Y-axis label."
-	},
-	{
-	  "opt": "--xlim",
-	  "arg": "string",
-	  "description": "X-axis limits, separate values by comma."
-	},
-	{
-	  "opt": "--ylim",
-	  "arg": "string",
-	  "description": "Y-axis limits, separate values by comma."
-	},
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file in PDF format."
-	},
-	{
-	  "name": "Width",
-	  "arg": "float",
-	  "default": 7.0,
-	  "mandatory": true,
-	  "description": "Width of the plot in inches."
-	},
-	{
-	  "name": "Height",
-	  "arg": "float",
-	  "default": 7.0,
-	  "mandatory": true,
-	  "description": "Height of the plot in inches."
-	}
+          "name": "Input TRIBS Test",
+          "opt": "--x",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "'enve.TRIBStest' object to plot."
+        },
+        {
+          "opt": "--type",
+          "arg": "select",
+          "values": ["overlap","difference"],
+          "default": "overlap",
+          "description": ["What to plot. 'overlap' generates a plot of the two",
+            "contrasting empirical PDFs (to compare against each other),",
+            "'difference' produces a plot of the differences between the",
+            "empirical PDFs (to compare against zero)."]
+        },
+        {
+          "opt": "--col",
+          "arg": "string",
+          "default": "#00000044",
+          "description": "Main color of the plot if type='difference'."
+        },
+        {
+          "opt": "--col1",
+          "arg": "string",
+          "description": ["First color of the plot if 'Type' is overlap. 'Col'",
+            "by default."]
+        },
+        {
+          "opt": "--col2",
+          "arg": "string",
+          "default": "#44001144",
+          "description": "Second color of the plot if 'Type' is overlap."
+        },
+        {
+          "opt": "--ylab",
+          "arg": "string",
+          "default": "Probability",
+          "description": "Y-axis label."
+        },
+        {
+          "opt": "--xlim",
+          "arg": "string",
+          "description": "X-axis limits, separate values by comma."
+        },
+        {
+          "opt": "--ylim",
+          "arg": "string",
+          "description": "Y-axis limits, separate values by comma."
+        },
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file in PDF format."
+        },
+        {
+          "name": "Width",
+          "arg": "float",
+          "default": 7.0,
+          "mandatory": true,
+          "description": "Width of the plot in inches."
+        },
+        {
+          "name": "Height",
+          "arg": "float",
+          "default": 7.0,
+          "mandatory": true,
+          "description": "Height of the plot in inches."
+        }
       ]
     }
   ]

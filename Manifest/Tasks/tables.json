@@ -8,50 +8,50 @@
       "requires": [ { "r_package": "optparse" } ],
       "options": [
         {
-	  "name": "Input list",
-	  "opt": "--x",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "A tab-delimited table with the distances."
-	},
-	{
-	  "opt": "--obj1-index",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": ["Index of the column containing the ID of the object",
-	    "1."]
-	},
-	{
-	  "opt": "--obj2-index",
-	  "arg": "integer",
-	  "default": 2,
-	  "description": ["Index of the column containing the ID of the object",
-	    "2."]
-	},
-	{
-	  "opt": "--dist-index",
-	  "arg": "integer",
-	  "default": 3,
-	  "description": "Index of the column containing the distance."
-	},
-	{
-	  "opt": "--default-d",
-	  "arg": "integer",
-	  "description": "Default value for missing values. NA if empty."
-	},
-	{
-	  "opt": "--max-sim",
-	  "arg": "float",
-	  "description": ["If not-empty, assumes that the values are",
-	    "similarity (not distance) and this is the maximum similarity",
-	    "(corresponding to distance 0). Applies transformation:",
-	    "distance = (max.sim - values)/max.sim."]
-	},
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output squared matrix in tab-separated values format."
-	}
+          "name": "Input list",
+          "opt": "--x",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "A tab-delimited table with the distances."
+        },
+        {
+          "opt": "--obj1-index",
+          "arg": "integer",
+          "default": 1,
+          "description": ["Index of the column containing the ID of the object",
+            "1."]
+        },
+        {
+          "opt": "--obj2-index",
+          "arg": "integer",
+          "default": 2,
+          "description": ["Index of the column containing the ID of the object",
+            "2."]
+        },
+        {
+          "opt": "--dist-index",
+          "arg": "integer",
+          "default": 3,
+          "description": "Index of the column containing the distance."
+        },
+        {
+          "opt": "--default-d",
+          "arg": "integer",
+          "description": "Default value for missing values. NA if empty."
+        },
+        {
+          "opt": "--max-sim",
+          "arg": "float",
+          "description": ["If not-empty, assumes that the values are",
+            "similarity (not distance) and this is the maximum similarity",
+            "(corresponding to distance 0). Applies transformation:",
+            "distance = (max.sim - values)/max.sim."]
+        },
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output squared matrix in tab-separated values format."
+        }
       ]
     },
     {
@@ -61,55 +61,55 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "Key",
-	  "opt": "-k",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": "Column of the table to use as key to filter."
-	},
-	{
-	  "name": "Sep",
-	  "opt": "-s",
-	  "arg": "string",
-	  "description": ["String to use as separation between rows. By",
-	    "default, tabulation."]
-	},
-	{
-	  "name": "Inverse",
-	  "opt": "-i",
-	  "description": ["If set, reports the inverse of the list (i.e.,",
-	    "reports only rows absent in the list). Implies 'No re-order'."]
-	},
-	{
-	  "name": "Header",
-	  "opt": "-h",
-	  "description": "Keep first row of the table (header) untouched."
-	},
-	{
-	  "name": "No re-order",
-	  "opt": "-n",
-	  "description": ["The output has the same order of the table. By",
-	    "default, it prints in the order of the list."]
-	},
-	{
-	  "name": "List",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "List of IDs to extract."
-	},
-	{
-	  "name": "Table",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Table file containing the superset."
-	},
-	">",
-	{
-	  "name": "Subset",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Table file to be created."
-	}
+          "name": "Key",
+          "opt": "-k",
+          "arg": "integer",
+          "default": 1,
+          "description": "Column of the table to use as key to filter."
+        },
+        {
+          "name": "Sep",
+          "opt": "-s",
+          "arg": "string",
+          "description": ["String to use as separation between rows. By",
+            "default, tabulation."]
+        },
+        {
+          "name": "Inverse",
+          "opt": "-i",
+          "description": ["If set, reports the inverse of the list (i.e.,",
+            "reports only rows absent in the list). Implies 'No re-order'."]
+        },
+        {
+          "name": "Header",
+          "opt": "-h",
+          "description": "Keep first row of the table (header) untouched."
+        },
+        {
+          "name": "No re-order",
+          "opt": "-n",
+          "description": ["The output has the same order of the table. By",
+            "default, it prints in the order of the list."]
+        },
+        {
+          "name": "List",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "List of IDs to extract."
+        },
+        {
+          "name": "Table",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Table file containing the superset."
+        },
+        ">",
+        {
+          "name": "Subset",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Table file to be created."
+        }
       ]
     },
     {
@@ -119,73 +119,73 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "Strings",
-	  "opt": "-s",
-	  "description": ["Values are read as Strings. By default, values are",
-	    "read as numbers."]
-	},
-	{
-	  "name": "Input delimiter",
-	  "opt": "-i",
-	  "arg": "string",
-	  "description": "Input field-delimiter. By default, tabulation."
-	},
-	{
-	  "name": "Output delimiter",
-	  "opt": "-o",
-	  "arg": "string",
-	  "description": "Output field-delimiter. By default: tabulation."
-	},
-	{
-	  "name": "No header",
-	  "opt": "-n",
-	  "description": ["By default, the header is determined by the file",
-	    "names."]
-	},
-	{
-	  "name": "Empty",
-	  "opt": "-e",
-	  "description": ["Default string when no value is found. By default,",
-	    "the 'empty' value is 0 if values are numeric (i.e., unless -s is",
-	    "set) or an empty string otherwise."]
-	},
-	{
-	  "name": "Header",
-	  "opt": "-h",
-	  "arg": "string",
-	  "default": "Tag",
-	  "description": "Header of the first column, containing the IDs."
-	},
-	{
-	  "name": "Header format",
-	  "opt": "-H",
-	  "arg": "string",
-	  "default": "(?:.*/)?([^\\.]+)",
-	  "description": ["Format of filenames capturing the column header in",
-	    "the first capturing parenthesis. Non-capturing paretheses can be",
-	    "defined as (?:...). By default: '(?:.*/)?([^\\.]+)', which",
-	    "captures the part of the basename of the file before the first",
-	    "dot (if any)."]
-	},
-	{
-	  "name": "Rows to ignore",
-	  "opt": "-r",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "Number of leading rows to ignore in the input files."
-	},
-	{
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "multiple_sep": " ",
-	  "description": "Input two-column lists."
-	},
-	">",
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Merged table."
-	}
+          "name": "Strings",
+          "opt": "-s",
+          "description": ["Values are read as Strings. By default, values are",
+            "read as numbers."]
+        },
+        {
+          "name": "Input delimiter",
+          "opt": "-i",
+          "arg": "string",
+          "description": "Input field-delimiter. By default, tabulation."
+        },
+        {
+          "name": "Output delimiter",
+          "opt": "-o",
+          "arg": "string",
+          "description": "Output field-delimiter. By default: tabulation."
+        },
+        {
+          "name": "No header",
+          "opt": "-n",
+          "description": ["By default, the header is determined by the file",
+            "names."]
+        },
+        {
+          "name": "Empty",
+          "opt": "-e",
+          "description": ["Default string when no value is found. By default,",
+            "the 'empty' value is 0 if values are numeric (i.e., unless -s is",
+            "set) or an empty string otherwise."]
+        },
+        {
+          "name": "Header",
+          "opt": "-h",
+          "arg": "string",
+          "default": "Tag",
+          "description": "Header of the first column, containing the IDs."
+        },
+        {
+          "name": "Header format",
+          "opt": "-H",
+          "arg": "string",
+          "default": "(?:.*/)?([^\\.]+)",
+          "description": ["Format of filenames capturing the column header in",
+            "the first capturing parenthesis. Non-capturing paretheses can be",
+            "defined as (?:...). By default: '(?:.*/)?([^\\.]+)', which",
+            "captures the part of the basename of the file before the first",
+            "dot (if any)."]
+        },
+        {
+          "name": "Rows to ignore",
+          "opt": "-r",
+          "arg": "integer",
+          "default": 0,
+          "description": "Number of leading rows to ignore in the input files."
+        },
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "multiple_sep": " ",
+          "description": "Input two-column lists."
+        },
+        ">",
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Merged table."
+        }
       ]
     },
     {
@@ -194,41 +194,41 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--in",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input table."
-	},
-	{
-	  "name": "Output file",
-	  "opt": "--out",
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output table."
-	},
-	{
-	  "name": "Decimals",
-	  "opt": "--ndigits",
-	  "arg": "integer",
-	  "default": 0,
-	  "description": "Number of decimal digits."
-	},
-	{
-	  "opt": "--floor",
-	  "description": ["Floors the values instead of rounding them. Ignores",
-	    "'Decimals'."]
-	},
-	{
-	  "opt": "--ceil",
-	  "description": ["Ceils the values instead of rounding them. Ignores",
-	    "'Decimals'."]
-	},
-	{
-	  "opt": "--delimiter",
-	  "arg": "string",
-	  "description": "String delimiting columns. By default, tabulation."
-	}
+          "name": "Input file",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input table."
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output table."
+        },
+        {
+          "name": "Decimals",
+          "opt": "--ndigits",
+          "arg": "integer",
+          "default": 0,
+          "description": "Number of decimal digits."
+        },
+        {
+          "opt": "--floor",
+          "description": ["Floors the values instead of rounding them. Ignores",
+            "'Decimals'."]
+        },
+        {
+          "opt": "--ceil",
+          "description": ["Ceils the values instead of rounding them. Ignores",
+            "'Decimals'."]
+        },
+        {
+          "opt": "--delimiter",
+          "arg": "string",
+          "description": "String delimiting columns. By default, tabulation."
+        }
       ]
     },
     {
@@ -239,28 +239,28 @@
       "help_arg": "",
       "options": [
         {
-	  "name": "Input delimiter",
-	  "opt": "-i",
-	  "arg": "string",
-	  "description": "Input field-delimiter. By default, tabulation."
-	},
-	{
-	  "name": "Out prefix",
-	  "opt": "-o",
-	  "arg": "string",
-	  "description": "Prefix of the output files."
-	},
-	{
-	  "name": "Output directory",
-	  "opt": "-d",
-	  "arg": "out_dir",
-	  "description": "Output directory."
-	},
-	{
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": "Input table."
-	}
+          "name": "Input delimiter",
+          "opt": "-i",
+          "arg": "string",
+          "description": "Input field-delimiter. By default, tabulation."
+        },
+        {
+          "name": "Out prefix",
+          "opt": "-o",
+          "arg": "string",
+          "description": "Prefix of the output files."
+        },
+        {
+          "name": "Output directory",
+          "opt": "-d",
+          "arg": "out_dir",
+          "description": "Output directory."
+        },
+        {
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input table."
+        }
       ]
     },
     {
@@ -269,39 +269,39 @@
        "help_arg": "--help",
        "options": [
          {
-	   "opt": "--map",
-	   "arg": "in_file",
-	   "mandatory": true,
-	   "description": "Mapping file with two columns (key and replacement)."
-	 },
-	 {
-	   "opt": "--in",
-	   "arg": "in_file",
-	   "mandatory": true,
-	   "description": "Input table."
-	 },
-	 {
-	   "opt": "--out",
-	   "arg": "out_file",
-	   "mandatory": true,
-	   "description": "Output table."
-	 },
-	 {
-	   "opt": "--key",
-	   "arg": "integer",
-	   "default": 1,
-	   "description": "Column to replace in Input table."
-	 },
-	 {
-	   "opt": "--unknown",
-	   "arg": "string",
-	   "description": "String to use whenever the key is not found in Map."
-	 },
-	 {
-	   "opt": "--delimiter",
-	   "arg": "string",
-	   "description": "String delimiting columns. By default, tabulation."
-	 }
+           "opt": "--map",
+           "arg": "in_file",
+           "mandatory": true,
+           "description": "Mapping file with two columns (key and replacement)."
+         },
+         {
+           "opt": "--in",
+           "arg": "in_file",
+           "mandatory": true,
+           "description": "Input table."
+         },
+         {
+           "opt": "--out",
+           "arg": "out_file",
+           "mandatory": true,
+           "description": "Output table."
+         },
+         {
+           "opt": "--key",
+           "arg": "integer",
+           "default": 1,
+           "description": "Column to replace in Input table."
+         },
+         {
+           "opt": "--unknown",
+           "arg": "string",
+           "description": "String to use whenever the key is not found in Map."
+         },
+         {
+           "opt": "--delimiter",
+           "arg": "string",
+           "description": "String delimiting columns. By default, tabulation."
+         }
       ]
     }
   ]

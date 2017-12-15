@@ -7,119 +7,119 @@
       "help_arg": "--help",
       "options": [
         {
-	  "name": "Input file",
-	  "opt": "--x",
-	  "arg": "in_file",
-	  "mandatory": true,
-	  "description": ["A tab-delimited file containing header (first row)",
-	    "and row names (first column)."]
-	},
-	{
-	  "opt": "--sizes",
-	  "arg": "string",
-	  "description": ["A numeric vector containing the real size of the",
-	    "samples (columns) in the same order of the input table. If set,",
-	    "the values are assumed to be 100%, otherwise the sum of the",
-	    "columns is used. Separate values by commas."]
-	},
-	{
-	  "opt": "--top",
-	  "arg": "integer",
-	  "default": 25,
-	  "description": ["Maximum number of categories to display. Any",
-	    "additional categories will be listed as 'Others'."]
-	},
-	{
-	  "opt": "--colors-per-group",
-	  "arg": "integer",
-	  "default": 9,
-	  "description": ["Number of categories in the first two saturation",
-	    "groups of colors. The third group contains the remaining",
-	    "categories if needed."]
-	},
-	{
-	  "opt": "--bars-width",
-	  "arg": "integer",
-	  "default": 4,
-	  "description": "Width of the barplot with respect to the legend."
-	},
-	{
-	  "opt": "--legend-ncol",
-	  "arg": "integer",
-	  "default": 1,
-	  "description": "Number of columns in the legend."
-	},
-	{
-	  "opt": "--other-col",
-	  "arg": "string",
-	  "default": "#000000",
-	  "description": "Color of the 'Others' category."
-	},
-	{
-	  "opt": "--add-trend",
-	  "description": ["Controls if semi-transparent areas are to be",
-	    "plotted between the bars to connect the regions (trend regions)."]
-	},
-	{
-	  "opt": "--organic-trend",
-	  "description": ["Controls if the trend regions are to be smoothed",
-	    "(curves). By default, trend regions have straight edges. If TRUE,",
-	    "forces add.trend=TRUE."]
-	},
-	{
-	  "opt": "--sort-by",
-	  "arg": "string",
-	  "default": "median",
-	  "description": ["Any function that takes a numeric vector and",
-	    "returns a numeric scalar. This function is applied to each row,",
-	    "and the resulting values are used to sort the rows",
-	    "(decreasingly). Good options include: sd, min, max, mean, median."]
-	},
-	{
-	  "opt": "--min-report",
-	  "arg": "integer",
-	  "default": 101,
-	  "description": ["Minimum percentage to report the value in the plot.",
-	    "Any value above 100 indicates that no values are to be reported."]
-	},
-	{
-	  "opt": "--order",
-	  "arg": "string",
-	  "description": ["Controls how the rows should be ordered. If empty",
-	    "(default), sort.by is applied per row and the results are sorted",
-	    "decreasingly. If NA, no sorting is performed, i.e., the original",
-	    "order is respected. If a vector is provided, it is assumed to be",
-	    "the custom order to be used (either by numeric index or by row",
-	    "names). Separate values by commas."]
-	},
-	{
-	  "opt": "--col",
-	  "arg": "string",
-	  "description": ["Colors to use. If provided, overrides the variables",
-	    "`top` and `colors.per.group`, but `other.col` is still used if",
-	    "the vector is insufficient for all the rows. Separate values by",
+          "name": "Input file",
+          "opt": "--x",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["A tab-delimited file containing header (first row)",
+            "and row names (first column)."]
+        },
+        {
+          "opt": "--sizes",
+          "arg": "string",
+          "description": ["A numeric vector containing the real size of the",
+            "samples (columns) in the same order of the input table. If set,",
+            "the values are assumed to be 100%, otherwise the sum of the",
+            "columns is used. Separate values by commas."]
+        },
+        {
+          "opt": "--top",
+          "arg": "integer",
+          "default": 25,
+          "description": ["Maximum number of categories to display. Any",
+            "additional categories will be listed as 'Others'."]
+        },
+        {
+          "opt": "--colors-per-group",
+          "arg": "integer",
+          "default": 9,
+          "description": ["Number of categories in the first two saturation",
+            "groups of colors. The third group contains the remaining",
+            "categories if needed."]
+        },
+        {
+          "opt": "--bars-width",
+          "arg": "integer",
+          "default": 4,
+          "description": "Width of the barplot with respect to the legend."
+        },
+        {
+          "opt": "--legend-ncol",
+          "arg": "integer",
+          "default": 1,
+          "description": "Number of columns in the legend."
+        },
+        {
+          "opt": "--other-col",
+          "arg": "string",
+          "default": "#000000",
+          "description": "Color of the 'Others' category."
+        },
+        {
+          "opt": "--add-trend",
+          "description": ["Controls if semi-transparent areas are to be",
+            "plotted between the bars to connect the regions (trend regions)."]
+        },
+        {
+          "opt": "--organic-trend",
+          "description": ["Controls if the trend regions are to be smoothed",
+            "(curves). By default, trend regions have straight edges. If TRUE,",
+            "forces add.trend=TRUE."]
+        },
+        {
+          "opt": "--sort-by",
+          "arg": "string",
+          "default": "median",
+          "description": ["Any function that takes a numeric vector and",
+            "returns a numeric scalar. This function is applied to each row,",
+            "and the resulting values are used to sort the rows",
+            "(decreasingly). Good options include: sd, min, max, mean, median."]
+        },
+        {
+          "opt": "--min-report",
+          "arg": "integer",
+          "default": 101,
+          "description": ["Minimum percentage to report the value in the plot.",
+            "Any value above 100 indicates that no values are to be reported."]
+        },
+        {
+          "opt": "--order",
+          "arg": "string",
+          "description": ["Controls how the rows should be ordered. If empty",
+            "(default), sort.by is applied per row and the results are sorted",
+            "decreasingly. If NA, no sorting is performed, i.e., the original",
+            "order is respected. If a vector is provided, it is assumed to be",
+            "the custom order to be used (either by numeric index or by row",
+            "names). Separate values by commas."]
+        },
+        {
+          "opt": "--col",
+          "arg": "string",
+          "description": ["Colors to use. If provided, overrides the variables",
+            "`top` and `colors.per.group`, but `other.col` is still used if",
+            "the vector is insufficient for all the rows. Separate values by",
             "commas. An additional palette is available when using value",
             "'coto' (palette contributed by Luis (Coto) Orellana)."]
-	},
-	{
-	  "arg": "out_file",
-	  "mandatory": true,
-	  "description": "Output file in PDF format."
-	},
-	{
-	  "name": "width",
-	  "arg": "float",
-	  "mandatory": true,
-	  "default": 7,
-	  "description": "Width of the plot (in inches)."
-	},
-	{
-	  "name": "height",
-	  "arg": "float",
-	  "mandatory": true,
-	  "default": 7,
-	  "description": "Height of the plot (in inches)."
-	}
+        },
+        {
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output file in PDF format."
+        },
+        {
+          "name": "width",
+          "arg": "float",
+          "mandatory": true,
+          "default": 7,
+          "description": "Width of the plot (in inches)."
+        },
+        {
+          "name": "height",
+          "arg": "float",
+          "mandatory": true,
+          "default": 7,
+          "description": "Height of the plot (in inches)."
+        }
       ]
     }
   ]
