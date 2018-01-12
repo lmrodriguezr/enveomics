@@ -202,6 +202,8 @@
         "and calculates the chao1 index (with 95% Confidence Interval) for",
         "each sample. To use it with Qiime OTU Tables, run it ignoring 1",
         "left column and with header."],
+      "cite": [["Chao, 1984, Scandinavian J Stat",
+        "http://www.jstor.org/stable/4615964"]],
       "see_also": ["AlphaDiversity.pl"],
       "help_arg": "--help",
       "options": [
