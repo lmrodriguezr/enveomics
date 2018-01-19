@@ -678,6 +678,13 @@
           "description": "Indicates if the function should report the advance."
         },
         {
+          "opt": "--peaks-col",
+          "arg": "string",
+          "default": "NA",
+          "description": ["Color of peaks, mandatory for peak-finding (e.g.,",
+            "darkred)."]
+        },
+        {
           "name": "R Object Output",
           "arg": "out_file",
           "mandatory": true,
