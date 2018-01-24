@@ -8,9 +8,13 @@
       "see_also": ["ani.rb", "rbm.rb"],
       "cite": [
         ["Konstantinidis & Tiedje, 2005, JBac",
-          "http://dx.doi.org/10.1128%2FJB.187.18.6258-6264.2005"],
-        ["Altschul et al, 2000, JMB",
-          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+          "https://dx.doi.org/10.1128%2FJB.187.18.6258-6264.2005"],
+        ["Altschul et al, 2000, JMB (BLAST)",
+          "https://dx.doi.org/10.1016/S0022-2836(05)80360-2"],
+        ["Kent WJ, 2002, Genome Res (BLAT)",
+          "https://dx.doi.org/10.1101/gr.229202"],
+        ["Buchfink B, Xie C, Huson D, 2015, Nat Meth (Diamond)",
+          "https://dx.doi.org/10.1038/nmeth.3176"]
       ],
       "options": [
         {
@@ -90,7 +94,7 @@
         {
           "opt": "--program",
           "arg": "select",
-          "values": ["blast+","blast","blat"],
+          "values": ["blast+","blast","blat","diamond"],
           "default": "blast+",
           "description": "Search program to be used.",
           "note": ["Make sure that you have installed the search program you",
@@ -189,8 +193,10 @@
       "cite": [
         ["Konstantinidis & Tiedje, 2005, PNAS",
           "http://dx.doi.org/10.1073%2Fpnas.0409727102"],
-        ["Altschul et al, 2000, JMB",
-          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+        ["Altschul et al, 2000, JMB (BLAST)",
+          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"],
+        ["Kent WJ, 2002, Genome Res (BLAT)",
+          "https://dx.doi.org/10.1101/gr.229202"]
       ],
       "options": [
         {
@@ -362,8 +368,10 @@
         "sequences."],
       "help_arg": "--help",
       "cite":[
-        ["Altschul et al, 2000, JMB",
-          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"]
+        ["Altschul et al, 2000, JMB (BLAST)",
+          "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"],
+        ["Buchfink B, Xie C, Huson D, 2015, Nat Meth (Diamond)",
+          "https://dx.doi.org/10.1038/nmeth.3176"]
       ],
       "options": [
         {
@@ -399,7 +407,7 @@
           "arg": "float",
           "default": 0.0,
           "description": ["Minimum alignment length (as a fraction of the",
-            "query). If set, requires BLAST+ (see Program)."]
+            "query). If set, requires BLAST+ or Diamond (see Program)."]
         },
         {
           "name": "Identity",
@@ -425,7 +433,7 @@
         {
           "opt": "--program",
           "arg": "select",
-          "values": ["blast+", "blast", "blat"],
+          "values": ["blast+", "blast", "blat", "diamond"],
           "default": "blast+",
           "description": "Search program to be used. Default: blast+.",
           "note": ["Make sure that you have installed the search program you",

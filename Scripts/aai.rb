@@ -73,7 +73,7 @@ Usage: #{$0} [options]"
     "Path to the directory containing the binaries of the search program."
     ){ |v| o[:bin] = v }
   opts.on("-p", "--program STR",
-    "Search program to be used.  One of: blast+ (default), blast, blat."
+    "Search program to be used. One of: blast+ (default), blast, blat, diamond."
     ){ |v| o[:program] = v }
   opts.on("-t", "--threads INT",
     "Number of parallel threads to be used.  By default: #{o[:thr]}."
@@ -128,6 +128,7 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-1 is mandatory" if o[:seq1].nil?
 abort "-2 is mandatory" if o[:seq2].nil?
+abort "-p diamond is incompatible with -N" if o[:program]=="diamond" && o[:nucl]
 abort "SQLite3 requested (-S) but sqlite3 not supported.  First install gem " +
   "sqlite3." unless o[:sqlite3].nil? or has_sqlite3
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
@@ -251,13 +252,16 @@ Dir.mktmpdir do |dir|
     minfrg = seqs if minfrg > seqs
     case o[:program].downcase
     when "blast"
-      `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" \
+      `"#{o[:bin]}formatdb" -i "#{dir}/#{seq}.fa" \
       -p #{o[:nucl] ? "F" : "T"}`
     when "blast+"
-      `"#{o[:bin]}makeblastdb" -in "#{dir}/#{seq.to_s}.fa" \
+      `"#{o[:bin]}makeblastdb" -in "#{dir}/#{seq}.fa" \
       -dbtype #{o[:nucl] ? "nucl" : "prot"}`
     when "blat"
       # Nothing to do
+    when "diamond"
+      `"#{o[:bin]}diamond" makedb --in "#{dir}/#{seq}.fa" \
+      --db "#{dir}/#{seq}.fa.dmnd" --threads "#{o[:thr]}"`
     else
       abort "Unsupported program: #{o[:program]}."
     end
@@ -288,9 +292,12 @@ Dir.mktmpdir do |dir|
       -max_target_seqs 1 -num_threads #{o[:thr]} -outfmt 6 \
       -out "#{dir}/#{i}.tab"`
     when "blat"
-      `#{o[:bin]}blat "#{s}" "#{q}" #{"-prot" unless o[:nucl]} -out=blast8 \
+      `"#{o[:bin]}blat" "#{s}" "#{q}" #{"-prot" unless o[:nucl]} -out=blast8 \
       "#{dir}/#{i}.tab.uns"`
       `sort -k 1 "#{dir}/#{i}.tab.uns" > "#{dir}/#{i}.tab"`
+    when "diamond"
+      `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" --outfmt 6 \
+      --db "#{s}.dmnd" --query "#{q}" --out "#{dir}/#{i}.tab" --more-sensitive`
     else
       abort "Unsupported program: #{o[:program]}."
     end

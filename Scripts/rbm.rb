@@ -29,17 +29,17 @@ Usage: #{$0} [options]"
       "Sequences are assumed to be nucleotides (proteins by default)."
       ){ |v| o[:nucl] = true }
    opts.on("-l", "--len INT",
-      "Minimum alignment length (in residues).  By default: #{o[:len].to_s}."
+      "Minimum alignment length (in residues).  By default: #{o[:len]}."
       ){ |v| o[:len] = v.to_i }
    opts.on("-f", "--fract FLOAT",
-      "Minimum alignment length (as a fraction of the query). If set, " +
-      "requires BLAST+ (see -p).  By default: #{o[:fract].to_s}."
+      "Minimum alignment length (as a fraction of the query).",
+      "If set, requires BLAST+ or Diamond (see -p).  By default: #{o[:fract]}."
       ){ |v| o[:fract] = v.to_i }
    opts.on("-i", "--id NUM",
       "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
       ){ |v| o[:id] = v.to_f }
    opts.on("-s", "--score NUM",
-      "Minimum alignment score (in bits).  By default: #{o[:score].to_s}."
+      "Minimum alignment score (in bits).  By default: #{o[:score]}."
       ){ |v| o[:score] = v.to_f }
    opts.separator ""
    opts.separator "Software Options"
@@ -47,7 +47,7 @@ Usage: #{$0} [options]"
       "Path to the directory containing the binaries of the search program."
       ){ |v| o[:bin] = v }
    opts.on("-p", "--program STR",
-      "Search program to be used.  One of: blast+ (default), blast."
+      "Search program to be used.  One of: blast+ (default), blast, diamond."
       ){ |v| o[:program] = v }
    opts.on("-t", "--threads INT",
       "Number of parallel threads to be used.  By default: #{o[:thr]}."
@@ -63,8 +63,9 @@ Usage: #{$0} [options]"
 end.parse!
 abort "-1 is mandatory" if o[:seq1].nil?
 abort "-2 is mandatory" if o[:seq2].nil?
-abort "Argument -f/--fract requires -p blast+" if
-   o[:fract]>0 and o[:program]!="blast+"
+abort '-p diamond is incompatible with -n' if o[:program]=='diamond' && o[:nucl]
+abort 'Argument -f/--fract requires -p blast+ or -p diamond' if
+   o[:fract]>0 and o[:program]!='blast+' and o[:program]!='diamond'
 o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 
 Dir.mktmpdir do |dir|
@@ -74,12 +75,15 @@ Dir.mktmpdir do |dir|
    $stderr.puts "Creating databases." unless o[:q]
    [:seq1, :seq2].each do |seq|
       case o[:program].downcase
-      when "blast"
-         `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq.to_s}" \
+      when 'blast'
+         `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq}" \
 	 -p #{(o[:nucl]?"F":"T")}`
-      when "blast+"
-         `"#{o[:bin]}makeblastdb" -in "#{o[seq]}" -out "#{dir}/#{seq.to_s}" \
+      when 'blast+'
+         `"#{o[:bin]}makeblastdb" -in "#{o[seq]}" -out "#{dir}/#{seq}" \
 	 -dbtype #{(o[:nucl]?"nucl":"prot")}`
+      when 'diamond'
+         `"#{o[:bin]}diamond" makedb --in "#{dir}/#{seq}.fa" \
+         --db "#{dir}/#{seq}.fa.dmnd" --threads "#{o[:thr]}"`
       else
          abort "Unsupported program: #{o[:program]}."
       end
@@ -95,14 +99,19 @@ Dir.mktmpdir do |dir|
       s = "#{dir}/seq#{i==1?2:1}"
       $stderr.puts "  Query: #{q}." unless o[:q]
       case o[:program].downcase
-      when "blast"
+      when 'blast'
 	 `"#{o[:bin]}blastall" -p #{o[:nucl]?"blastn":"blastp"} -d "#{s}" \
 	 -i "#{q}" -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
-      when "blast+"
+      when 'blast+'
 	 `"#{o[:bin]}#{o[:nucl]?"blastn":"blastp"}" -db "#{s}" -query "#{q}" \
 	 -max_target_seqs 1 -num_threads #{o[:thr]} -out "#{dir}/#{i}.tab" \
 	 -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend \
 	 sstart send evalue bitscore qlen slen"`
+      when 'diamond'
+         `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" \
+         --outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend \
+         sstart send evalue bitscore qlen slen" --db "#{s}.dmnd" \
+         --query "#{q}" --out "#{dir}/#{i}.tab" --more-sensitive`
       else
 	 abort "Unsupported program: #{o[:program]}."
       end
@@ -111,7 +120,7 @@ Dir.mktmpdir do |dir|
       fh.each_line do |ln|
 	 ln.chomp!
 	 row = ln.split(/\t/)
-	 row[12] = "1" if o[:program]!="blast+"
+	 row[12] = "1" unless %w[blast+ diamond].include? o[:program]
 	 if qry_seen[ row[0] ].nil? and row[3].to_i >= o[:len] and
 	       row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and
 	       row[3].to_f/row[12].to_i >= o[:fract]
