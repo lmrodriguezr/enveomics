@@ -129,6 +129,7 @@ begin
       puts ">#{key}", a[key].join("").gsub(/(.{1,60})/, "\\1\n")
       a.delete(key)
    end
+   $stderr.puts "  #{lengths.inject(:+)} columns." unless o[:q]
    unless o[:coords].nil?
       $stderr.puts "Generating coordinates." unless o[:q]
       coords = File.open(o[:coords],"w")
