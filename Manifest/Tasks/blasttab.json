@@ -623,6 +623,7 @@
         { "r_package": "optparse" },
         { "r_package": "enveomics.R" }
       ],
+      "see_also": [ "RecPlot2.compareIdentities.R" ],
       "options": [
         {
           "opt": "--prefix",
@@ -705,6 +706,58 @@
           "name": "Height",
           "arg": "float",
           "description": "Height of the plot in inches (7 by default)."
+        }
+      ]
+    },
+    {
+      "task": "RecPlot2.compareIdentities.R",
+      "description": ["Calculates the difference between identity",
+        "distributions of two recruitment plots."],
+      "help_arg": "--help",
+      "requires": [
+        { "r_package": "optparse" },
+        { "r_package": "enveomics.R" }
+      ],
+      "see_also": [ "BlastTab.recplot2.R" ],
+      "options": [
+        {
+          "opt": "--method",
+          "arg": "string",
+          "default": "hellinger",
+          "description": ["Distance method to use. This should be (an",
+            "unambiguous abbreviation of) one of:",
+            "'hellinger' (Hellinger, 1090, doi:10.1515/crll.1909.136.210),",
+            "'bhattacharyya' (Bhattacharyya, 1943, Bull. Calcutta Math. Soc.",
+            "35), 'kl' or 'kullback–leibler' (Kullback & Leibler, 1951,",
+            "doi:10.1214/aoms/1177729694), or 'euclidean'."]
+        },
+        {
+          "opt": "--pseudocounts",
+          "arg": "float",
+          "default": 0.0,
+          "description": ["Smoothing parameter for Laplace smoothing. Use 0",
+            "for no smoothing, or 1 for add-one smoothing."]
+        },
+        {
+          "opt": "--max-deviation",
+          "arg": "float",
+          "description": ["Maximum mean deviation between identity breaks",
+            "tolerated (as percent identity). Difference in number of",
+            "id.breaks is never tolerated."]
+        },
+        {
+          "arg": "in_file",
+          "name": "RecPlot A",
+          "mandatory": true,
+          "description": ["File containing the R object `rp` for the first",
+            "recruitment plot."]
+        },
+        {
+          "arg": "in_file",
+          "name": "RecPlot B",
+          "mandatory": true,
+          "description": ["File containing the R object `rp` for the second",
+            "recruitment plot."]
         }
       ]
     }

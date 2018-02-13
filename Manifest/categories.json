@@ -10,7 +10,8 @@
         "BlastTab.seqdepth_nomedian.pl",
         "BlastTab.seqdepth_ZIP.pl",
         "BlastTab.sumPerHit.pl",
-        "FastQ.test-error.rb"
+        "FastQ.test-error.rb",
+        "RecPlot2.compareIdentities.R"
       ],
       "Manipulation": [
         "BlastTab.addlen.rb",
@@ -134,6 +135,12 @@
       "Clustering": [
         "ogs.mcl.rb",
         "clust.rand.rb"
+      ],
+      "Read recruitments": [
+        "BedGraph.tad.rb",
+        "BlastTab.pairedHits.rb",
+        "BlastTab.recplot2.R",
+        "RecPlot2.compareIdentities.R"
       ]
     }
   }

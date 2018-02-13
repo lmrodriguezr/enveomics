@@ -580,7 +580,7 @@ enve.recplot2.extractWindows <- function
    ### Extract windows significantly below (or above) the peak in sequencing
    ### depth.
       (rp,
-      ### Recruitment plot, a enve.Recplot2 object.
+      ### Recruitment plot, a enve.RecPlot2 object.
       peak,
       ### Peak, a enve.RecPlot2.Peak object. If list, it is assumed to be a list
       ### of enve.RecPlot2.Peak objects, in which case the core peak is used
@@ -617,6 +617,57 @@ enve.recplot2.extractWindows <- function
       stop(paste("Requesting subject sequence names, but the recruitment plot",
          "was not generated with pos.breaks=0."))
    return(rp$seq.names[sel])
+}
+
+enve.recplot2.compareIdentities <- function
+  ### Compare the distribution of identities between two enve.RecPlot2 objects.
+    (x,
+    ### First enve.RecPlot2 object.
+    y,
+    ### Second enve.RecPlot2 object.
+    method="hellinger",
+    ### Distance method to use. This should be (an unambiguous abbreviation of)
+    ### one of:
+    ### "hellinger" (Hellinger, 1090, doi:10.1515/crll.1909.136.210),
+    ### "bhattacharyya" (Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35),
+    ### "kl" or "kullback–leibler" (Kullback & Leibler, 1951,
+    ### doi:10.1214/aoms/1177729694), or "euclidean".
+    pseudocounts=0,
+    ### Smoothing parameter for Laplace smoothing. Use 0 for no smoothing, or
+    ### 1 for add-one smoothing.
+    max.deviation=0.75
+    ### Maximum mean deviation between identity breaks tolerated (as percent
+    ### identity). Difference in number of id.breaks is never tolerated.
+    ){
+  METHODS <- c("hellinger","bhattacharyya","kullback–leibler","kl","euclidean")
+  i.meth <- pmatch(method, METHODS)
+  if (is.na(i.meth)) stop("invalid clustering method", paste("", method))
+  if(!inherits(x, "enve.RecPlot2"))
+    stop("'x' must inherit from class `enve.RecPlot2`")
+  if(!inherits(y, "enve.RecPlot2"))
+    stop("'y' must inherit from class `enve.RecPlot2`")
+  if(length(x$id.breaks) != length(y$id.breaks))
+    stop("'x' and 'y' must have the same number of `id.breaks`")
+  dev <- mean(abs(x$id.breaks - y$id.breaks))
+  if(dev > max.deviation)
+    stop("'x' and 'y' must have similar `id.breaks`; exceeding max.deviation: ",
+          dev)
+  a <- as.numeric(pseudocounts)
+  p <- (x$id.counts + a) / sum(x$id.counts + a)
+  q <- (y$id.counts + a) / sum(y$id.counts + a)
+  d <- NA
+  if(i.meth %in% c(1L, 2L)){
+    d <- sqrt(sum((sqrt(p) - sqrt(q))**2))/sqrt(2)
+    if(i.meth==2L) d <- 1 - d**2
+  }else if(i.meth %in% c(3L, 4L)){
+    sel <- p>0
+    if(any(q[sel]==0))
+      stop("Undefined distance without absolute continuity, use pseudocounts")
+    d <- -sum(p[sel]*log(q[sel]/p[sel]))
+  }else if(i.meth == 5L){
+    d <- sqrt(sum((q-p)**2))
+  }
+  return(d)
 }
 
 #==============> Define internal functions
