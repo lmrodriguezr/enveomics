@@ -11,7 +11,7 @@
 one of:
 "hellinger" (Hellinger, 1090, doi:10.1515/crll.1909.136.210),
 "bhattacharyya" (Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35),
-"kl" or "kullback–leibler" (Kullback & Leibler, 1951,
+"kl" or "kullback-leibler" (Kullback & Leibler, 1951,
 doi:10.1214/aoms/1177729694), or "euclidean".}
   \item{pseudocounts}{Smoothing parameter for Laplace smoothing. Use 0 for no smoothing, or
 1 for add-one smoothing.}
