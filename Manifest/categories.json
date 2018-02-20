@@ -138,6 +138,7 @@
       ],
       "Read recruitments": [
         "BedGraph.tad.rb",
+        "BlastTab.catsbj.pl",
         "BlastTab.pairedHits.rb",
         "BlastTab.recplot2.R",
         "RecPlot2.compareIdentities.R"
