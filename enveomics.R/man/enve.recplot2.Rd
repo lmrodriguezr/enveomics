@@ -4,9 +4,9 @@
 \description{Produces recruitment plots provided that BlastTab.catsbj.pl has
 been previously executed.}
 \usage{enve.recplot2(prefix, plot = TRUE, pos.breaks = 1000, id.breaks = 300, 
-    id.metric = c("identity", "corrected identity", "bit score"), 
-    id.summary = sum, id.cutoff = 95, threads = 2, verbose = TRUE, 
-    ...)}
+    id.free.range = FALSE, id.metric = c("identity", "corrected identity", 
+        "bit score"), id.summary = sum, id.cutoff = 95, threads = 2, 
+    verbose = TRUE, ...)}
 \arguments{
   \item{prefix}{Path to the prefix of the BlastTab.catsbj.pl output files. At
 least the files .rec and .lim must exist with this prefix.}
@@ -17,6 +17,9 @@ uses the sequence breaks as defined in the .lim file, which means
 one bin per contig (or gene, if the mapping is agains genes).}
   \item{id.breaks}{Breaks in the identity histogram. It can also be a vector of break
 points, and values outside the range are ignored.}
+  \item{id.free.range}{Indicates that the range should be freely set from the observed
+values. Otherwise, 70-100\% is included in the identity histogram
+(default).}
   \item{id.metric}{Metric of identity to be used (Y-axis). Corrected identity is only
 supported if the original BLAST file included sequence lengths.}
   \item{id.summary}{Function summarizing the identity bins. Other recommended options

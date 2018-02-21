@@ -19,11 +19,12 @@ opt <- enve.cliopts(enve.recplot2,
   o_desc=list(pos.breaks="Breaks in the positions histogram.",
     id.breaks="Breaks in the identity histogram.",
     id.summary="Function summarizing the identity bins. By default: sum.",
-    peaks.col="Color of peaks, mandatory for peak-finding (e.g., darkred)."),
+    peaks.col="Color of peaks, mandatory for peak-finding (e.g., darkred).",
+    peaks.method="Method to detect peaks; one of emauto, em, or mower."),
   p_desc=paste("","Produce recruitment plot objects provided that",
     "BlastTab.catsbj.pl has been previously executed.", sep="\n\t"),
   ignore=c("plot"),
-  defaults=c(id.metric="identity", peaks.col=NA))
+  defaults=c(id.metric="identity", peaks.col=NA, peaks.method="emauto"))
 
 #= Run it!
 if(length(opt$args)>1){
@@ -35,6 +36,10 @@ if(length(opt$args)>1){
 }
 pc <- opt$options[["peaks.col"]]
 if(!is.na(pc) && pc=="NA") opt$options[["peaks.col"]] <- NA
+if(!is.null(opt$options[["peaks.method"]])){
+  opt$options[["peaks.opts"]] <- list(method=opt$options[["peaks.method"]])
+  opt$options[["peaks.method"]] <- NULL
+}
 rp <- do.call("enve.recplot2", opt$options)
 save(rp, file=opt$args[1])
 if(length(opt$args)>1) dev.off()

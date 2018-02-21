@@ -45,9 +45,13 @@ setClass("enve.RecPlot2.Peak",
    ### number of position bins with non-zero sequencing depth in the recruitment
    ### plot (regardless of peak count).
    err.res='numeric',
-   ### Error left after adding the peak.
-   merge.logdist='numeric'
+   ### Error left after adding the peak (mower) or log-likelihood (em or emauto).
+   merge.logdist='numeric',
    ### Attempted `merge.logdist` parameter.
+   seq.depth='numeric',
+   ### Best estimate available for the sequencing depth of the peak (centrality).
+   log='logical'
+   ### Indicates if the estimation was performed in natural logarithm space
    ));
 setMethod("$", "enve.RecPlot2", function(x, name) attr(x, name))
 setMethod("$", "enve.RecPlot2.Peak", function(x, name) attr(x, name))
@@ -276,18 +280,20 @@ plot.enve.RecPlot2 <- function
 	       cnt <- enve.recplot2.__peakHist(peaks[[i]], h.mids)
 	       lines(cnt, h.mids, col='red');
 	       pf <- pf+cnt;
-	       axis(4, at=peaks[[i]]$param.hat[[length(peaks[[i]]$param.hat)]],
-		  letters[i], las=1, hadj=1/2)
+	       axis(4, at=peaks[[i]]$seq.depth, letters[i], las=1, hadj=1/2)
 	    }
 	    lines(pf, h.mids, col='red',lwd=1.5);
-	    legend('bottomright', legend=paste(
-	       letters[1:length(peaks)],'. ',
-	       signif(as.numeric(lapply(peaks,
-		  function(x) tail(as.numeric(x$param.hat),n=1))),3),'X (',
-	       signif(100*as.numeric(lapply(peaks,
-		  function(x) (length(x$values)/x$n.total))), 3), '%, err: ',
-	       signif(as.numeric(lapply(peaks, function(x) x$err.res)), 3), ')',
-	       sep=''), bty='n');
+            dpt <- signif(as.numeric(lapply(peaks, function(x) x$seq.depth)),2)
+            frx <- signif(100*as.numeric(
+                  lapply(peaks,
+                    function(x) ifelse(length(x$values)==0, x$n.hat, length(x$values))/x$n.total)), 2)
+            if(peaks[[1]]$err.res < 0){
+              err <- paste(', LL:', signif(peaks[[1]]$err.res, 3))
+            }else{
+              err <- paste(', err:', signif(as.numeric(lapply(peaks, function(x) x$err.res)), 2))
+            }
+	    legend('topright', bty='n', cex=1/2,
+                  legend=paste(letters[1:length(peaks)],'. ', dpt,'X (', frx, '%', err, ')', sep=''))
 	 }
       }
    }
@@ -334,6 +340,10 @@ enve.recplot2 <- function(
       id.breaks=300,
       ### Breaks in the identity histogram. It can also be a vector of break
       ### points, and values outside the range are ignored.
+      id.free.range=FALSE,
+      ### Indicates that the range should be freely set from the observed
+      ### values. Otherwise, 70-100% is included in the identity histogram
+      ### (default).
       id.metric=c('identity', 'corrected identity', 'bit score'),
       ### Metric of identity to be used (Y-axis). Corrected identity is only
       ### supported if the original BLAST file included sequence lengths.
@@ -377,8 +387,10 @@ enve.recplot2 <- function(
       }
    }
    if(length(id.breaks)==1){
-      id.breaks <- seq(min(rec[,rec.idcol]), max(rec[,rec.idcol]),
-	 length.out=id.breaks+1);
+      id.range.v <- rec[,rec.idcol]
+      if(!id.free.range) id.range.v <- c(id.range.v,70,100)
+      id.range.v <- range(id.range.v)
+      id.breaks <- seq(id.range.v[1], id.range.v[2], length.out=id.breaks+1);
    }
    
    # Run in parallel
@@ -423,8 +435,152 @@ enve.recplot2 <- function(
 }
 
 enve.recplot2.findPeaks <- function(
+  ### Identifies peaks in the population histogram potentially indicating
+  ### sub-population mixtures
+    x,
+    ### An `enve.RecPlot2` object.
+    method="emauto",
+    ### Peak-finder method. This should be one of:
+    ### "emauto" (Expectation-Maximization with auto-selection of components),
+    ### "em" (Expectation-Maximization),
+    ### "mower" (Custom distribution-mowing method).
+    ...
+    ### Any additional parameters supported by `enve.recplot2.findPeaks.<method>`.
+    ){
+  if(method == "emauto"){
+    peaks <- enve.recplot2.findPeaks.emauto(x, ...)
+  }else if(method == "em"){
+    peaks <- enve.recplot2.findPeaks.em(x, ...)
+  }else if(method == "mower"){
+    peaks <- enve.recplot2.findPeaks.mower(x, ...)
+  }else{
+    stop("Invalid peak-finder method ", method)
+  }
+  return(peaks)
+  ### Returns a list of `enve.RecPlot2.Peak` objects.
+}
+
+enve.recplot2.findPeaks.emauto <- function(
+  ### Identifies peaks in the population histogram using a Gaussian Mixture Model
+  ### Expectation Maximization (GMM-EM) method with number of components automatically
+  ### detected.
+    x,
+    ### An `enve.RecPlot2` object.
+    components=seq(1,10),
+    ### A vector of number of components to evaluate.
+    criterion='aic',
+    ### Criterion to use for components selection. Must be one of:
+    ### 'aic' (Akaike Information Criterion),
+    ### 'bic' or 'sbc' (Bayesian Information Criterion or Schwarz Criterion).
+    merge.tol=2L,
+    ### When attempting to merge peaks with very similar sequencing depth, use
+    ### this number of significant digits (in log-scale).
+    verbose=FALSE,
+    ### Display (mostly debugging) information.
+    ...
+    ### Any additional parameters supported by `enve.recplot2.findPeaks.em`.
+    ){
+  best <- list(crit=0, pstore=list())
+  if(criterion == 'aic'){
+    do_crit <- function(ll, k, n) 2*k - 2*ll
+  }else if(criterion %in% c('bic', 'sbc')){
+    do_crit <- function(ll, k, n) log(n)*k - 2*ll
+  }else{
+    stop('Invalid criterion ', criterion)
+  }
+  for(comp in components){
+    best <- enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best, verbose, ...)
+  }
+
+  seqdepths.r <- signif(log(sapply(best[['peaks']], function(x) x$seq.depth)), merge.tol)
+  distinct <- length(unique(seqdepths.r))
+  if(distinct < length(best[['peaks']])){
+    if(verbose) cat('Attempting merge to', distinct, 'components\n')
+    init <- apply(sapply(best[['peaks']],
+          function(x) c(x$param.hat, alpha=x$n.hat/x$n.total)), 1, as.numeric)
+    init <- init[!duplicated(seqdepths.r),]
+    init <- list(mu=init[,'mean'], sd=init[,'sd'], alpha=init[,'alpha']/sum(init[,'alpha']))
+    best <- enve.recplot2.findPeaks.__emauto_one(x, distinct, do_crit, best, verbose, ...)
+  }
+  return(best[['peaks']])
+  ### Returns a list of `enve.RecPlot2.Peak` objects.
+}
+
+enve.recplot2.findPeaks.em <- function(
+  ### Identifies peaks in the population histogram using a Gaussian Mixture Model
+  ### Expectation Maximization (GMM-EM) method.
+    x,
+    ### An `enve.RecPlot2` object.
+    max.iter=1000,
+    ### Maximum number of EM iterations.
+    ll.diff.res=1e-8,
+    ### Maximum Log-Likelihood difference to be considered as convergent.
+    components=2,
+    ### Number of distributions assumed in the mixture.
+    rm.top=0.05,
+    ### Top-values to remove before finding peaks, as a quantile probability.
+    ### This step is useful to remove highly conserved regions, but can be
+    ### turned off by setting rm.top=0. The quantile is determined *after*
+    ### removing zero-coverage windows.
+    verbose=FALSE,
+    ### Display (mostly debugging) information.
+    init,
+    ### Initialization parameters. By default, these are derived from k-means clustering.
+    ### A named list with vectors for 'mu', 'sd', and 'alpha', each of length `components`.
+    log=TRUE
+    ### Logical value indicating if the estimations should be performed in natural
+    ### logarithm units. Do not change unless you know what you're doing.
+  ){
+  
+  # Essential vars
+  pos.binsize  <- x$pos.breaks[-1] - x$pos.breaks[-length(x$pos.breaks)]
+  lsd1  <- (x$pos.counts.in/pos.binsize)[ x$pos.counts.in > 0 ]
+  lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
+  if(log) lsd1 <- log(lsd1)
+
+  # 1. Initialize
+  if(missing(init)){
+    km.clust <- kmeans(lsd1, components)$cluster
+    init <- list(
+      mu = tapply(lsd1, km.clust, mean),
+      sd = tapply(lsd1, km.clust, sd),
+      alpha = table(km.clust)/length(km.clust)
+    )
+  }
+  m.step <- init
+  ll <- c()
+  cur.ll <- -Inf
+  
+  for(i in 1:max.iter){
+    # 2/3. EM
+    e.step <- enve.recplot2.findPeaks.__em_e(lsd1, m.step)
+    m.step <- enve.recplot2.findPeaks.__em_m(lsd1, e.step[['posterior']])
+    # 4. Convergence
+    ll <- c(ll, e.step[["ll"]])
+    ll.diff <- abs(cur.ll - e.step[["ll"]])
+    cur.ll <- e.step[["ll"]]
+    if(verbose) cat(i, '\t| LL =', cur.ll, '\t| LL.diff =', ll.diff, '\n')
+    if(ll.diff <= ll.diff.res) break
+  }
+
+  # Return
+  peaks <- list()
+  for(i in 1:components){
+    n.hat <- m.step[['alpha']][i]*length(lsd1)
+    peaks[[i]] <- new('enve.RecPlot2.Peak', dist='norm', values=as.numeric(),
+      values.res=0, mode=m.step[['mu']][i],
+      param.hat=list(sd=m.step[['sd']][i], mean=m.step[['mu']][i]),
+      n.hat=n.hat, n.total=length(lsd1), err.res=cur.ll,
+      merge.logdist=as.numeric(), log=log,
+      seq.depth=ifelse(log, exp(m.step[['mu']][i]), m.step[['mu']][i]))
+  }
+  return(peaks)
+  ### Returns a list of `enve.RecPlot2.Peak` objects.
+}
+
+enve.recplot2.findPeaks.mower <- function(
    ### Identifies peaks in the population histogram potentially indicating
-   ### sub-population mixtures.
+   ### sub-population mixtures, using a custom distribution-mowing method.
       x,
       ### An `enve.RecPlot2` object.
       min.points=10,
@@ -436,13 +592,12 @@ enve.recplot2.findPeaks <- function(
       mlv.opts=list(method='parzen'),
       ### Options passed to `mlv` to estimate the mode.
       fitdist.opts.sn=list(distr='sn', method='qme', probs=c(0.1,0.5,0.8),
-	 start=list(omega=1, alpha=-1), lower=c(1e-6, -Inf, 0),
-	 upper=c(Inf, 0, Inf)),
+	 start=list(omega=1, alpha=-1), lower=c(0, -Inf, -Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if
       ### with.skewness=TRUE. Note that the `start` parameter will be ammended
       ### with xi=estimated mode for each peak.
-      fitdist.opts.norm=list(distr='norm', method='qme', probs=c(.4,.6),
-	 start=list(sd=1), lower=c(1e-8, 0)),
+      fitdist.opts.norm=list(distr='norm', method='qme', probs=c(0.4,0.6),
+	 start=list(sd=1), lower=c(0, -Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if
       ### with.skewness=FALSE. Note that the `start` parameter will be ammended
       ### with mean=estimated mode for each peak.
@@ -460,7 +615,7 @@ enve.recplot2.findPeaks <- function(
       ### "tail distribution".
       optim.rounds=200,
       ### Maximum rounds of peak optimization.
-      optim.epsilon=1e-8,
+      optim.epsilon=1e-4,
       ### Trace change at which optimization stops (unless `optim.rounds` is
       ### reached first). The trace change is estimated as the sum of square
       ### differences between parameters in one round and those from two rounds
@@ -469,8 +624,11 @@ enve.recplot2.findPeaks <- function(
       ### Maximum value of |log-ratio| between centrality parameters in peaks to
       ### attempt merging. The default of ~0.22 corresponds to a maximum
       ### difference of 25%.
-      verbose=FALSE
+      verbose=FALSE,
       ### Display (mostly debugging) information.
+      log=TRUE
+      ### Logical value indicating if the estimations should be performed in natural
+      ### logarithm units. Do not change unless you know what you're doing.
    ){
    
    # Essential vars
@@ -478,6 +636,7 @@ enve.recplot2.findPeaks <- function(
    seqdepth.in	<- x$pos.counts.in/pos.binsize;
    lsd1 <- seqdepth.in[seqdepth.in>0];
    lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
+   if(log) lsd1 <- log(lsd1)
    if(with.skewness){
       fitdist.opts <- fitdist.opts.sn
    }else{
@@ -486,11 +645,11 @@ enve.recplot2.findPeaks <- function(
    peaks.opts <- list(lsd1=lsd1, min.points=min.points, quant.est=quant.est,
       mlv.opts=mlv.opts, fitdist.opts=fitdist.opts, with.skewness=with.skewness,
       optim.rounds=optim.rounds, optim.epsilon=optim.epsilon, verbose=verbose,
-      n.total=length(lsd1), merge.logdist=merge.logdist)
+      n.total=length(lsd1), merge.logdist=merge.logdist, log=log)
    
    # Find seed peaks
    if(verbose) cat('Mowing peaks for n =',length(lsd1),'\n')
-   peaks <- enve.recplot2.__findPeaks(peaks.opts);
+   peaks <- enve.recplot2.findPeaks.__mower(peaks.opts);
 
    # Merge overlapping peaks
    if(verbose) cat('Trying to merge',length(peaks),'peaks\n')
@@ -511,7 +670,7 @@ enve.recplot2.findPeaks <- function(
 		  p$param.hat[[ length(p$param.hat) ]],'&',
 		  p2$param.hat[[ length(p2$param.hat) ]],'X\n');
 	    peaks.opts$lsd1 <- c(p$values, p2$values)
-	    p.new <- enve.recplot2.__findPeaks(peaks.opts)
+	    p.new <- enve.recplot2.findPeaks.__mower(peaks.opts)
 	    if(length(p.new)==1){
 	       peaks2[[ length(peaks2)+1 ]] <- p.new[[ 1 ]]
 	       ignore <- c(ignore, j)
@@ -641,7 +800,7 @@ enve.recplot2.compareIdentities <- function
     ){
   METHODS <- c("hellinger","bhattacharyya","kullback-leibler","kl","euclidean")
   i.meth <- pmatch(method, METHODS)
-  if (is.na(i.meth)) stop("invalid clustering method", paste("", method))
+  if (is.na(i.meth)) stop("Invalid distance ", method)
   if(!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
   if(!inherits(y, "enve.RecPlot2"))
@@ -691,21 +850,65 @@ enve.recplot2.__counts <- function
    return(counts);
 }
 
+enve.recplot2.findPeaks.__emauto_one <- function
+  ### Internal ancilliary function (see `enve.recplot2.findPeaks.emauto).
+    (x, comp, do_crit, best, verbose, ...){
+  peaks <- enve.recplot2.findPeaks.em(x=x, components=comp, ...)
+  k <- comp*3 - 1 # mean & sd for each component, and n-1 free alpha parameters
+  crit <- do_crit(peaks[[1]]$err.res, k, peaks[[1]]$n.total)
+  if(verbose) cat(comp,'\t| LL =', peaks[[1]]$err.res, '\t| Estimate =', crit,
+        ifelse(crit > best[['crit']], '*', ''), '\n')
+  if(crit > best[['crit']]){
+    best[['crit']] <- crit
+    best[['peaks']] <- peaks
+  }
+  best[['pstore']][[comp]] <- peaks
+  return(best)
+}
+enve.recplot2.findPeaks.__em_e <- function
+  ### Internal ancilliary function (see `enve.recplot2.findPeaks.em`).
+    (x, theta){
+  components <- length(theta[['mu']])
+  product <- do.call(cbind,
+        lapply(1:components,
+          function(i) dnorm(x, theta[['mu']][i], theta[['sd']][i])*theta[['alpha']][i]))
+  sum.of.components <- rowSums(product)
+  posterior <- product / sum.of.components
+  
+  return(list(ll=sum(log(sum.of.components)), posterior=posterior))
+}
+
+enve.recplot2.findPeaks.__em_m <- function
+  ### Internal ancilliary function (see `enve.recplot2.findPeaks.em`
+    (x, posterior){
+  components <- ncol(posterior)
+  n <- colSums(posterior)
+  mu <- colSums(posterior * x) / n
+  sd <- sqrt( colSums(posterior * (matrix(rep(x,components), ncol=components) - mu)^2) / n )
+  alpha <- n/length(x)
+  return(list(mu=mu, sd=sd, alpha=alpha))
+}
+
 enve.recplot2.__peakHist <- function
    ### Internal ancilliary function (see `enve.RecPlot2.Peak`).
       (x, mids, counts=TRUE){
    d.o <- x$param.hat
-   d.o$x <- mids
+   if(length(x$log)==0) x$log <- FALSE
+   if(x$log){
+     d.o$x <- log(mids)
+   }else{
+     d.o$x <- mids
+   }
    prob  <- do.call(paste('d', x$dist, sep=''), d.o)
    if(!counts) return(prob)
    if(length(x$values)>0) return(prob*length(x$values)/sum(prob))
    return(prob*x$n.hat/sum(prob))
 }
 
-enve.recplot2.__findPeak <- function
-   ### Internall ancilliary function (see `enve.recplot2.findPeaks`).
+enve.recplot2.findPeaks.__mow_one <- function
+   ### Internall ancilliary function (see `enve.recplot2.findPeaks.mower`).
       (lsd1, min.points, quant.est, mlv.opts, fitdist.opts, with.skewness,
-      optim.rounds, optim.epsilon, n.total, merge.logdist, verbose
+      optim.rounds, optim.epsilon, n.total, merge.logdist, verbose, log
    ){
    dist	<- ifelse(with.skewness, 'sn', 'norm');
    
@@ -734,8 +937,14 @@ enve.recplot2.__findPeak <- function
 	 if(round>1) param.hat <- last.hat;
 	 break;
       }
-      epsilon <- sum((as.numeric(last.last.hat)-as.numeric(param.hat))^2)
-      if(round>2) if(epsilon < optim.epsilon) break;
+      if(round > 1){
+        epsilon1 <- sum((as.numeric(last.hat)-as.numeric(param.hat))^2)
+        if(epsilon1 < optim.epsilon) break;
+        if(round > 2){
+          epsilon2 <- sum((as.numeric(last.last.hat)-as.numeric(param.hat))^2)
+          if(epsilon2 < optim.epsilon) break;
+        }
+      }
    }
    if(verbose) cat('\n')
    if(is.na(param.hat[1]) | is.na(lim[1])) return(NULL);
@@ -746,14 +955,14 @@ enve.recplot2.__findPeak <- function
    n.hat <- length(lsd1.pop)/diff(quant.est)
    peak <- new('enve.RecPlot2.Peak', dist=dist, values=as.numeric(), mode=mode1,
       param.hat=param.hat, n.hat=n.hat, n.total=n.total,
-      merge.logdist=merge.logdist)
+      merge.logdist=merge.logdist, log=log)
    peak.breaks <- seq(min(lsd1), max(lsd1), length=20)
    peak.cnt <- enve.recplot2.__peakHist(peak,
       (peak.breaks[-length(peak.breaks)]+peak.breaks[-1])/2)
    for(i in 2:length(peak.breaks)){
       values <- lsd1[ (lsd1 >= peak.breaks[i-1]) & (lsd1 < peak.breaks[i]) ]
       n.exp <- peak.cnt[i-1]
-      if(n.exp==0) n.exp=0.1
+      if(is.na(n.exp) | n.exp==0) n.exp <- 0.1
       if(length(values)==0) next
       in.peak <- runif(length(values)) <= n.exp/length(values)
       lsd2 <- c(lsd2, values[!in.peak])
@@ -767,17 +976,19 @@ enve.recplot2.__findPeak <- function
    attr(peak, 'err.res') <- 1-(cor(hist(lsd.pop, breaks=peak.breaks,
       plot=FALSE)$counts, hist(lsd1, breaks=peak.breaks,
       plot=FALSE)$counts)+1)/2
+   mu <- tail(param.hat, n=1)
+   attr(peak, 'seq.depth') <- ifelse(log, exp(mu), mu)
    if(verbose) cat(' Extracted peak with n =',length(lsd.pop),
 	 'with expected n =',n.hat,'\n')
    return(peak)
 }
 
-enve.recplot2.__findPeaks <- function
-   ### Internal ancilliary function (see `enve.recplot2.findPeaks`).
+enve.recplot2.findPeaks.__mower <- function
+   ### Internal ancilliary function (see `enve.recplot2.findPeaks.mower`).
       (peaks.opts){
    peaks <- list()
    while(length(peaks.opts$lsd1) > peaks.opts$min.points){
-      peak <- do.call(enve.recplot2.__findPeak, peaks.opts)
+      peak <- do.call(enve.recplot2.findPeaks.__mow_one, peaks.opts)
       if(is.null(peak)) break
       peaks[[ length(peaks)+1 ]] <- peak
       peaks.opts$lsd1 <- peak$values.res

@@ -646,6 +646,12 @@
           "description": ["Breaks in the identity histogram."]
         },
         {
+          "opt": "--id-free-range",
+          "description": ["Indicates that the range should be freely set from",
+            "the observed values. Otherwise, 70-100% is included in the",
+            "identity histogram (default)."]
+        },
+        {
           "opt": "--id-metric",
           "arg": "select",
           "values": ["identity", "corrected identity", "bit score"],
@@ -684,6 +690,13 @@
           "default": "NA",
           "description": ["Color of peaks, mandatory for peak-finding (e.g.,",
             "darkred)."]
+        },
+        {
+          "opt": "--peaks-method",
+          "arg": "select",
+          "values": ["emauto","em","mower"],
+          "default": "emauto",
+          "description": "Method to detect peaks."
         },
         {
           "name": "R Object Output",

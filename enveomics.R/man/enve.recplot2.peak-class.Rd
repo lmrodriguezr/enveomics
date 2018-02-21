@@ -26,8 +26,10 @@ ideally be equal to the length of `values`, but it's not and integer.}
     \item{\code{n.total}:}{(\code{numeric}) Total number of bins from which the peak was extracted. I.e., total
 number of position bins with non-zero sequencing depth in the recruitment
 plot (regardless of peak count).}
-    \item{\code{err.res}:}{(\code{numeric}) Error left after adding the peak.}
+    \item{\code{err.res}:}{(\code{numeric}) Error left after adding the peak (mower) or log-likelihood (em or emauto).}
     \item{\code{merge.logdist}:}{(\code{numeric}) Attempted `merge.logdist` parameter.}
+    \item{\code{seq.depth}:}{(\code{numeric}) Best estimate available for the sequencing depth of the peak (centrality).}
+    \item{\code{log}:}{(\code{logical}) Indicates if the estimation was performed in natural logarithm space}
   }
 }
 \section{Methods}{
