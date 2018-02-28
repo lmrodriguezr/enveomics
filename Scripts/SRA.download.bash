@@ -2,14 +2,13 @@
 
 #
 # @author  Luis M. Rodriguez-R
-# @update  Nov-27-2015
 # @license artistic license 2.0
 #
 
-DATA_LINK="http://www.ebi.ac.uk/ena/data/warehouse/filereport"
+DATA_LINK="https://www.ebi.ac.uk/ena/data/warehouse/filereport"
 DATA_OPS="result=read_run&fields=run_accession,fastq_ftp,fastq_md5"
 SRX=$1
-DIR=${1:-$SRX}
+DIR=${2:-$SRX}
 
 if [[ "$SRX" == "" ]] ; then
 echo "
@@ -27,24 +26,32 @@ fi
 
 [[ -d "$DIR" ]] || mkdir "$DIR"
 
+function md5value {
+  local file=$1
+  o=$(md5 "$file" | perl -pe 's/.* //')
+  [[ -n $o ]] || o=$(md5sum-lite "$file" | awk '{print $1}')
+  [[ -n $o ]] || o=$(md5sum "$file" | awk '{print $1}')
+  echo "$o"
+}
+
 curl -s "$DATA_LINK?$DATA_OPS&accession=$SRX" -o "$DIR/srr_list.txt"
 tail -n +2 "$DIR/srr_list.txt" | while read ln ; do
-   srr=$(echo "$ln"|cut -f 1)
-   ftp=$(echo "$ln"|cut -f 2)
-   md5=$(echo "$ln"|cut -f 3)
-   dir="$DIR/$srr"
-   [[ -d "$dir" ]] || mkdir "$dir"
-   echo "o $srr" >&2
-   for uri in $(echo "$ftp" | tr ";" " ") ; do
-      file="$dir/$(basename $uri)"
-      curl "$uri" -o "$file"
-      md5obs=$(md5sum "$file" | awk '{print $1}')
-      if [[ "$md5" == "$md5obs"* ]] ; then
-	 md5=$(echo "$md5" | perl -pe 's/^[^;]+;//')
-      else
-	 echo "Corrupt file: $file" >&2
-	 echo "  MD5 mismatch: $md5obs not in $md5" >&2
-	 exit 1;
-      fi
-   done
+  srr=$(echo "$ln"|cut -f 1)
+  ftp=$(echo "$ln"|cut -f 2)
+  md5=$(echo "$ln"|cut -f 3)
+  dir="$DIR/$srr"
+  [[ -d "$dir" ]] || mkdir "$dir"
+  echo "o $srr" >&2
+  for uri in $(echo "$ftp" | tr ";" " ") ; do
+    file="$dir/$(basename $uri)"
+    curl "$uri" -o "$file"
+    md5obs=$(md5value "$file")
+    if [[ "$md5" == "$md5obs"* ]] ; then
+      md5=$(echo "$md5" | perl -pe 's/^[^;]+;//')
+    else
+      echo "Corrupt file: $file" >&2
+      echo "  MD5 mismatch: $md5obs not in $md5" >&2
+      exit 1;
+    fi
+  done
 done
