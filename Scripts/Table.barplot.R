@@ -10,7 +10,6 @@ args <- commandArgs(trailingOnly = F)
 enveomics_R <- file.path(dirname(
    sub("^--file=", "", args[grep("^--file=", args)])),
    "lib", "enveomics.R")
-so
 source(file.path(enveomics_R, "R", "cliopts.R"))
 source(file.path(enveomics_R, "R", "utils.R"))
 source(file.path(enveomics_R, "R", "barplot.R"))
