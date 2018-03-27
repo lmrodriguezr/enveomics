@@ -158,12 +158,19 @@
       "warn": ["Please note that this script will check for the consistency of",
         "the names (assuming a pair of related reads contains the same name",
         "varying only in a trailing slash (/) followed by a digit. If you want",
-        "to turn this feature off just set the $eval_T variable to zero. If",
+        "to turn this feature off just set the checking period to zero. If",
         "you want to decrease the sampling period (to speed the script up) or",
-        "increase it (to make it more sensitive to errors) just change $eval_T",
-        "accordingly."],
+        "increase it (to make it more sensitive to errors) just change the ",
+        "checking period accordingly."],
       "help_arg": "",
       "options": [
+        {
+          "name": "Checking period",
+          "opt": "-T",
+          "arg": "integer",
+          "default": 1000,
+          "description": "Sampling period for names evaluation."
+        },
         {
           "arg": "out_file",
           "mandatory": true,

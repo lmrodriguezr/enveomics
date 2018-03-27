@@ -1,11 +1,7 @@
 #!/usr/bin/env perl
-# 
+
 # @author Luis M. Rodriguez-R
-# @version 2.0
-# @update: Mar-23-2015
 # @license artistic license 2.0
-# 
-# Usage: FastQ.interpose.pl <output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]
 
 use strict;
 use warnings;
@@ -14,24 +10,27 @@ use Symbol;
 my $HELP = <<HELP
 
   Description:
-    Interposes sequences in FastQ format from two files into one output file.  If more than two files are
-    provided, the script will interpose all the input files.
-    Note that this script will check for the consistency of the names (assuming a pair of related reads
-    contains the same name varying only in a trailing slash (/) followed by a digit.  If you want to turn
-    this feature off just set the -T option to zero.  If you want to decrease the sampling period
-    (to speed the script up) or increase it (to make it more sensitive to errors) just change -T option
-    accordingly.
-     
+    Interposes sequences in FastQ format from two files into one output file.
+    If more than two files are provided, the script will interpose all the input
+    files.
+    Note that this script will check for the consistency of the names (assuming
+    a pair of related reads contains the same name varying only in a trailing
+    slash (/) followed by a digit.  If you want to turn this feature off just
+    set the -T option to zero.  If you want to decrease the sampling period (to
+    speed the script up) or increase it (to make it more sensitive to errors)
+    just change the -T option accordingly.
+
   Usage:
-     $0 [-T <int> ]<output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]
+    $0 [-T <int> ]<output_fastq> <input_fastq_1> <input_fastq_2> [additional input files...]
 
   Where,
-     -T <int>		: Optional.  Integer indicating the sampling period for names evaluation (see
-     			  Description above).  By default: 1000.
-     output_fastq	: Output file
-     input_fastq_1	: First FastQ file
-     input_fastq_2	: Second FastQ file
-     ...		: Any additional FastQ files (or none)
+    -T <int>		: Optional.  Integer indicating the sampling period for
+    			  names evaluation (see Description above).
+			  By default: 1000.
+    output_fastq	: Output file
+    input_fastq_1	: First FastQ file
+    input_fastq_2	: Second FastQ file
+    ... 		: Any additional FastQ files (or none)
 
 HELP
 ;
@@ -43,6 +42,7 @@ if(exists $ARGV[0] and exists $ARGV[1] and $ARGV[0] eq '-T'){
 }
 my $out = shift @ARGV;
 my @in = @ARGV;
+
 
 die $HELP unless $out and $#in >= 1;
 open OUT, ">", $out or die "Unable to write on $out: $!\n";
