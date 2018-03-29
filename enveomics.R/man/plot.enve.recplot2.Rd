@@ -45,7 +45,7 @@ base pairs).}
   \item{mar}{
 }
   \item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero
-(0) for no splines. If non-zero, requires the stats package.}
+(0) for no splines.}
   \item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero
 (0) for no splines. If non-zero, requires the stats package.}
   \item{in.lwd}{Line width for the sequencing depth of in-group matches.}

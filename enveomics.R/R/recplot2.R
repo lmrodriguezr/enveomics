@@ -102,7 +102,7 @@ plot.enve.RecPlot2 <- function
       ### the number of the panel as index (see `layout`).
       pos.splines=0,
       ### Smoothing parameter for the splines in the position histogram. Zero
-      ### (0) for no splines. If non-zero, requires the stats package.
+      ### (0) for no splines.
       id.splines=1/2,
       ### Smoothing parameter for the splines in the identity histogram. Zero
       ### (0) for no splines. If non-zero, requires the stats package.
@@ -701,16 +701,18 @@ enve.recplot2.corePeak <- function
 	    function(y) y$param.hat[[ length(y$param.hat) ]])))
       ]]
    # If a "larger" peak (a peak explaining more bins of the genome) is within
-   # the "merge.logdist" distance, take that one instead.
+   # the default "merge.logdist" distance, take that one instead.
    corePeak <- maxPeak
    for(p in x){
-      sz.d = log(length(p$values)/length(corePeak$values))
-      if(sz.d < 0)
-	 next;
-      sq.d.a <- p$param.hat[[ length(p$param.hat) ]]
-      sq.d.b <- maxPeak$param.hat[[ length(maxPeak$param.hat) ]]
-      if(abs(log(sq.d.a/sq.d.b )) < maxPeak$merge.logdist+sz.d/5)
-         corePeak <- p
+     p.len <- ifelse(length(p$values)==0, p$n.hat, length(p$values))
+     corePeak.len <- ifelse(length(corePeak$values)==0, corePeak$n.hat, length(corePeak$values))
+     sz.d <- log(p.len/corePeak.len)
+     if(is.nan(sz.d) || sz.d < 0) next
+     sq.d.a <- as.numeric(tail(p$param.hat, n=1))
+     sq.d.b <- as.numeric(tail(maxPeak$param.hat, n=1))
+     if(p$log) sq.d.a <- exp(sq.d.a)
+     if(corePeak$log) sq.d.b <- exp(sq.d.b)
+     if(abs(log(sq.d.a/sq.d.b)) < log(1.75)+sz.d/5) corePeak <- p
    }
    return(corePeak)
 }
