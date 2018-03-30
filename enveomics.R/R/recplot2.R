@@ -9,7 +9,7 @@ setClass("enve.RecPlot2",
    id.counts='numeric',		##<< Counts per ID bin.
    id.breaks='numeric',		##<< Breaks of identity bins.
    pos.breaks='numeric',	##<< Breaks of position bins.
-   seq.breaks='numeric',
+   seq.breaks='numeric',	##<< Breaks of input sequences.
    peaks='list',                ##<< Peaks identified in the recplot.
    ### Limits of the subject sequences after concatenation.
    seq.names='character',	##<< Names of the subject sequences.
@@ -383,7 +383,7 @@ enve.recplot2 <- function(
       if(pos.breaks>0){
          pos.breaks <- seq(min(lim[,2]), max(lim[,3]), length.out=pos.breaks+1);
       }else{
-         pos.breaks <- c(lim[,2], tail(lim[,3], n=1))
+         pos.breaks <- c(lim[1,2], lim[,3])
       }
    }
    if(length(id.breaks)==1){
@@ -743,17 +743,19 @@ enve.recplot2.extractWindows <- function
       (rp,
       ### Recruitment plot, a enve.RecPlot2 object.
       peak,
-      ### Peak, a enve.RecPlot2.Peak object. If list, it is assumed to be a list
+      ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a list
       ### of enve.RecPlot2.Peak objects, in which case the core peak is used
-      ### (see enve.recplot2.corePeak).
+      ### (see `enve.recplot2.corePeak`).
       lower.tail=TRUE,
       ### If FALSE, it returns windows significantly above the peak in
       ### sequencing depth.
       significance=0.05,
       ### Significance threshold (alpha) to select windows.
       seq.names=FALSE
-      ### Returns subject sequence names instead of a vector of Booleans. It
-      ### assumes that the recruitment plot was generated with pos.breaks=0.
+      ### Returns subject sequence names instead of a vector of Booleans. If
+      ### the recruitment plot was generated with pos.breaks=0 it returns a
+      ### vector of characters (the sequence identifiers), otherwise it returns
+      ### a data.frame with a name column and two columns of coordinates.
       ){
    # Determine the threshold
    if(is.list(peak)) peak <- enve.recplot2.corePeak(peak)
@@ -773,11 +775,17 @@ enve.recplot2.extractWindows <- function
    }else{
       sel <- seqdepth.in > thr
    }
+   # seq.names=FALSE
    if(!seq.names) return(sel)
-   if(length(seqdepth.in) != length(rp$seq.names))
-      stop(paste("Requesting subject sequence names, but the recruitment plot",
-         "was not generated with pos.breaks=0."))
-   return(rp$seq.names[sel])
+   # seq.names=TRUE and pos.breaks=0
+   if(length(rp$pos.breaks)==length(rp$seq.breaks) && rp$pos.breaks==rp$seq.breaks)
+     return(rp$seq.names[sel])
+   # seq.names=TRUE and pos.breaks!=0
+   return(enve.recplot2.coordinates(rp,sel))
+   ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
+   ### it returns a vector of characters if the object was built with
+   ### `pos.breaks=0` or a data.frame with four columns otherwise: name.from, name.to,
+   ### pos.from, and pos.to (see `enve.recplot2.coordinates`).
 }
 
 enve.recplot2.compareIdentities <- function
@@ -829,6 +837,44 @@ enve.recplot2.compareIdentities <- function
     d <- sqrt(sum((q-p)**2))
   }
   return(d)
+}
+
+enve.recplot2.coordinates <- function
+  ### Returns the sequence name and coordinates of the requested position bins.
+    (x,
+    ### `enve.RecPlot2` object.
+    bins
+    ### Vector of selected bins to return. It can be a vector of logical values with
+    ### the same length as `x$pos.breaks`-1 or a vector of integers.
+    ){
+  if(!inherits(x, "enve.RecPlot2"))
+    stop("'x' must inherit from class `enve.RecPlot2`")
+  if(!is.vector(bins)) stop("'bins' must be a vector")
+  if(inherits(bins, "logical")) bins <- which(bins)
+
+  y <- data.frame(stringsAsFactors=FALSE, row.names=bins)
+  
+  for(i in 1:length(bins)){
+    j <- bins[i]
+    # Concatenated coordinates
+    cc <- x$pos.breaks[c(j, j+1)]
+    # Find the corresponding `seq.breaks`
+    sb.from <- which(cc[1] >=x$seq.breaks[-length(x$seq.breaks)] & cc[1] < x$seq.breaks[-1])
+    sb.to   <- which(cc[2] > x$seq.breaks[-length(x$seq.breaks)] & cc[2] <=x$seq.breaks[-1])
+    # Translate coordinates
+    if(sum(sb.from)==1 & sum(sb.to)==1){
+      y[i, 'name.from'] <- x$seq.names[sb.from]
+      y[i, 'pos.from'] <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
+      y[i, 'name.to']   <- x$seq.names[sb.to]
+      y[i, 'pos.to']   <- ceiling(x$seq.breaks[sb.to] + cc[2] - 1)
+    }
+  }
+
+  return(y)
+  ### Returns a data.frame with four columns: name.from (character), pos.from (numeric)
+  ### name.to (character), and pos.to (numeric). The first two correspond to sequence and
+  ### position of the start point of the bin, the last two correspond to the sequence and
+  ### position of the end point of the bin.
 }
 
 #==============> Define internal functions
