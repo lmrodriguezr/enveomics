@@ -11,11 +11,12 @@
         1), 1, 4), 1, 2) + 0.1, `4` = c(ifelse(any(layout == 
         1), 1, 5), ifelse(any(layout == 2), 1, 4), 4, 2) + 0.1, 
         `5` = c(5, 3, 4, 1) + 0.1, `6` = c(5, 4, 4, 2) + 0.1), 
-    pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(pos.splines > 
-        0, 1/2, 2), out.lwd = ifelse(pos.splines > 0, 1/2, 2), 
-    id.lwd = ifelse(id.splines > 0, 1/2, 2), in.col = "darkblue", 
-    out.col = "lightblue", id.col = "black", breaks.col = "#AAAAAA40", 
-    peaks.opts = list(), ...)}
+    pos.splines = 0, id.splines = 1/2, in.lwd = ifelse(is.null(pos.splines) || 
+        pos.splines > 0, 1/2, 2), out.lwd = ifelse(is.null(pos.splines) || 
+        pos.splines > 0, 1/2, 2), id.lwd = ifelse(is.null(id.splines) || 
+        id.splines > 0, 1/2, 2), in.col = "darkblue", out.col = "lightblue", 
+    id.col = "black", breaks.col = "#AAAAAA40", peaks.opts = list(), 
+    ...)}
 \arguments{
   \item{x}{`enve.RecPlot2` object to plot.}
   \item{layout}{Matrix indicating the position of the different panels in the layout,
@@ -45,9 +46,11 @@ base pairs).}
   \item{mar}{
 }
   \item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero
-(0) for no splines.}
+(0) for no splines. Use NULL to automatically detect by leave-one-out
+cross-validation.}
   \item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero
-(0) for no splines. If non-zero, requires the stats package.}
+(0) for no splines. Use NULL to automatically detect by leave-one-out
+cross-validation.}
   \item{in.lwd}{Line width for the sequencing depth of in-group matches.}
   \item{out.lwd}{Line width for the sequencing depth of out-group matches.}
   \item{id.lwd}{Line width for the identity histogram.}

@@ -7,7 +7,7 @@ include globals.mk
 
 TEST=Tests
 enveomics_r=enveomics.R
-enveomics_r_v=enveomics.R_1.2.1
+enveomics_r_v=enveomics.R_1.2.2
 .PHONY: test install install-scripts install-r uninstall install-deps
 
 test: $(enveomics_r_v).tar.gz

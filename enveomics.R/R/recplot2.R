@@ -102,15 +102,17 @@ plot.enve.RecPlot2 <- function
       ### the number of the panel as index (see `layout`).
       pos.splines=0,
       ### Smoothing parameter for the splines in the position histogram. Zero
-      ### (0) for no splines.
+      ### (0) for no splines. Use NULL to automatically detect by leave-one-out
+      ### cross-validation.
       id.splines=1/2,
       ### Smoothing parameter for the splines in the identity histogram. Zero
-      ### (0) for no splines. If non-zero, requires the stats package.
-      in.lwd=ifelse(pos.splines>0, 1/2, 2),
+      ### (0) for no splines. Use NULL to automatically detect by leave-one-out
+      ### cross-validation.
+      in.lwd=ifelse(is.null(pos.splines) || pos.splines>0, 1/2, 2),
       ### Line width for the sequencing depth of in-group matches.
-      out.lwd=ifelse(pos.splines>0, 1/2, 2),
+      out.lwd=ifelse(is.null(pos.splines) || pos.splines>0, 1/2, 2),
       ### Line width for the sequencing depth of out-group matches.
-      id.lwd=ifelse(id.splines>0, 1/2, 2),
+      id.lwd=ifelse(is.null(id.splines) || id.splines>0, 1/2, 2),
       ### Line width for the identity histogram.
       in.col='darkblue',
       ### Color associated to in-group matches.
@@ -197,7 +199,7 @@ plot.enve.RecPlot2 <- function
       pos.f <- rep(seqdepth.in,each=2)
       lines(pos.x, rep(seqdepth.out,each=2), lwd=out.lwd, col=out.col);
       lines(pos.x, pos.f, lwd=in.lwd, col=in.col);
-      if(pos.splines > 0){
+      if(is.null(pos.splines) || pos.splines > 0){
 	 pos.spline <- smooth.spline(pos.x[pos.f>0], log(pos.f[pos.f>0]),
 	    spar=pos.splines)
 	 lines(pos.spline$x, exp(pos.spline$y), lwd=2, col=in.col)
@@ -234,7 +236,7 @@ plot.enve.RecPlot2 <- function
 	 id.f <- rep(id.counts,each=2)
 	 id.x <- rep(id.breaks,each=2)[-c(1,2*length(id.breaks))]
 	 lines(id.f, id.x, lwd=id.lwd, col=id.col);
-	 if(id.splines > 0){
+	 if(is.null(id.splines) || id.splines > 0){
 	    id.spline <- smooth.spline(id.x[id.f>0], log(id.f[id.f>0]),
 	       spar=id.splines)
 	    lines(exp(id.spline$y), id.spline$x, lwd=2, col=id.col)
@@ -286,14 +288,17 @@ plot.enve.RecPlot2 <- function
             dpt <- signif(as.numeric(lapply(peaks, function(x) x$seq.depth)),2)
             frx <- signif(100*as.numeric(
                   lapply(peaks,
-                    function(x) ifelse(length(x$values)==0, x$n.hat, length(x$values))/x$n.total)), 2)
+                    function(x) ifelse(length(x$values)==0, x$n.hat,
+                      length(x$values))/x$n.total)), 2)
             if(peaks[[1]]$err.res < 0){
               err <- paste(', LL:', signif(peaks[[1]]$err.res, 3))
             }else{
-              err <- paste(', err:', signif(as.numeric(lapply(peaks, function(x) x$err.res)), 2))
+              err <- paste(', err:',
+                    signif(as.numeric(lapply(peaks, function(x) x$err.res)), 2))
             }
 	    legend('topright', bty='n', cex=1/2,
-                  legend=paste(letters[1:length(peaks)],'. ', dpt,'X (', frx, '%', err, ')', sep=''))
+                  legend=paste(letters[1:length(peaks)],'. ',
+                    dpt,'X (', frx, '%', err, ')', sep=''))
 	 }
       }
    }
@@ -445,7 +450,8 @@ enve.recplot2.findPeaks <- function(
     ### "em" (Expectation-Maximization),
     ### "mower" (Custom distribution-mowing method).
     ...
-    ### Any additional parameters supported by `enve.recplot2.findPeaks.<method>`.
+    ### Any additional parameters supported by
+    ### `enve.recplot2.findPeaks.<method>`.
     ){
   if(method == "emauto"){
     peaks <- enve.recplot2.findPeaks.emauto(x, ...)
@@ -461,9 +467,9 @@ enve.recplot2.findPeaks <- function(
 }
 
 enve.recplot2.findPeaks.emauto <- function(
-  ### Identifies peaks in the population histogram using a Gaussian Mixture Model
-  ### Expectation Maximization (GMM-EM) method with number of components automatically
-  ### detected.
+  ### Identifies peaks in the population histogram using a Gaussian Mixture
+  ### Model Expectation Maximization (GMM-EM) method with number of components
+  ### automatically detected.
     x,
     ### An `enve.RecPlot2` object.
     components=seq(1,10),
@@ -489,26 +495,30 @@ enve.recplot2.findPeaks.emauto <- function(
     stop('Invalid criterion ', criterion)
   }
   for(comp in components){
-    best <- enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best, verbose, ...)
+    best <- enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best,
+          verbose, ...)
   }
 
-  seqdepths.r <- signif(log(sapply(best[['peaks']], function(x) x$seq.depth)), merge.tol)
+  seqdepths.r <- signif(log(sapply(best[['peaks']],
+        function(x) x$seq.depth)), merge.tol)
   distinct <- length(unique(seqdepths.r))
   if(distinct < length(best[['peaks']])){
     if(verbose) cat('Attempting merge to', distinct, 'components\n')
     init <- apply(sapply(best[['peaks']],
           function(x) c(x$param.hat, alpha=x$n.hat/x$n.total)), 1, as.numeric)
     init <- init[!duplicated(seqdepths.r),]
-    init <- list(mu=init[,'mean'], sd=init[,'sd'], alpha=init[,'alpha']/sum(init[,'alpha']))
-    best <- enve.recplot2.findPeaks.__emauto_one(x, distinct, do_crit, best, verbose, ...)
+    init <- list(mu=init[,'mean'], sd=init[,'sd'],
+          alpha=init[,'alpha']/sum(init[,'alpha']))
+    best <- enve.recplot2.findPeaks.__emauto_one(x, distinct, do_crit, best,
+          verbose, ...)
   }
   return(best[['peaks']])
   ### Returns a list of `enve.RecPlot2.Peak` objects.
 }
 
 enve.recplot2.findPeaks.em <- function(
-  ### Identifies peaks in the population histogram using a Gaussian Mixture Model
-  ### Expectation Maximization (GMM-EM) method.
+  ### Identifies peaks in the population histogram using a Gaussian Mixture
+  ### Model Expectation Maximization (GMM-EM) method.
     x,
     ### An `enve.RecPlot2` object.
     max.iter=1000,
@@ -525,11 +535,13 @@ enve.recplot2.findPeaks.em <- function(
     verbose=FALSE,
     ### Display (mostly debugging) information.
     init,
-    ### Initialization parameters. By default, these are derived from k-means clustering.
-    ### A named list with vectors for 'mu', 'sd', and 'alpha', each of length `components`.
+    ### Initialization parameters. By default, these are derived from k-means
+    ### clustering. A named list with vectors for 'mu', 'sd', and 'alpha', each
+    ### of length `components`.
     log=TRUE
-    ### Logical value indicating if the estimations should be performed in natural
-    ### logarithm units. Do not change unless you know what you're doing.
+    ### Logical value indicating if the estimations should be performed in
+    ### natural logarithm units. Do not change unless you know what you're
+    ### doing.
   ){
   
   # Essential vars
@@ -627,8 +639,9 @@ enve.recplot2.findPeaks.mower <- function(
       verbose=FALSE,
       ### Display (mostly debugging) information.
       log=TRUE
-      ### Logical value indicating if the estimations should be performed in natural
-      ### logarithm units. Do not change unless you know what you're doing.
+      ### Logical value indicating if the estimations should be performed in
+      ### natural logarithm units. Do not change unless you know what you're
+      ### doing.
    ){
    
    # Essential vars
@@ -705,7 +718,8 @@ enve.recplot2.corePeak <- function
    corePeak <- maxPeak
    for(p in x){
      p.len <- ifelse(length(p$values)==0, p$n.hat, length(p$values))
-     corePeak.len <- ifelse(length(corePeak$values)==0, corePeak$n.hat, length(corePeak$values))
+     corePeak.len <- ifelse(
+           length(corePeak$values)==0, corePeak$n.hat, length(corePeak$values))
      sz.d <- log(p.len/corePeak.len)
      if(is.nan(sz.d) || sz.d < 0) next
      sq.d.a <- as.numeric(tail(p$param.hat, n=1))
@@ -743,9 +757,9 @@ enve.recplot2.extractWindows <- function
       (rp,
       ### Recruitment plot, a enve.RecPlot2 object.
       peak,
-      ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a list
-      ### of enve.RecPlot2.Peak objects, in which case the core peak is used
-      ### (see `enve.recplot2.corePeak`).
+      ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
+      ### list of enve.RecPlot2.Peak objects, in which case the core peak is
+      ### used (see `enve.recplot2.corePeak`).
       lower.tail=TRUE,
       ### If FALSE, it returns windows significantly above the peak in
       ### sequencing depth.
@@ -778,14 +792,15 @@ enve.recplot2.extractWindows <- function
    # seq.names=FALSE
    if(!seq.names) return(sel)
    # seq.names=TRUE and pos.breaks=0
-   if(length(rp$pos.breaks)==length(rp$seq.breaks) && rp$pos.breaks==rp$seq.breaks)
-     return(rp$seq.names[sel])
+   if(length(rp$pos.breaks)==length(rp$seq.breaks) &&
+         rp$pos.breaks==rp$seq.breaks)
+           return(rp$seq.names[sel])
    # seq.names=TRUE and pos.breaks!=0
    return(enve.recplot2.coordinates(rp,sel))
    ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
    ### it returns a vector of characters if the object was built with
-   ### `pos.breaks=0` or a data.frame with four columns otherwise: name.from, name.to,
-   ### pos.from, and pos.to (see `enve.recplot2.coordinates`).
+   ### `pos.breaks=0` or a data.frame with four columns otherwise: name.from,
+   ### name.to, pos.from, and pos.to (see `enve.recplot2.coordinates`).
 }
 
 enve.recplot2.compareIdentities <- function
@@ -801,6 +816,10 @@ enve.recplot2.compareIdentities <- function
     ### "bhattacharyya" (Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35),
     ### "kl" or "kullback-leibler" (Kullback & Leibler, 1951,
     ### doi:10.1214/aoms/1177729694), or "euclidean".
+    smooth.par=NULL,
+    ### Smoothing parameter for cubic spline smoothing. Use 0 for no smoothing.
+    ### Use NULL to automatically determine this value using leave-one-out
+    ### cross-validation (see `smooth.spline` parameter `spar`).
     pseudocounts=0,
     ### Smoothing parameter for Laplace smoothing. Use 0 for no smoothing, or
     ### 1 for add-one smoothing.
@@ -821,9 +840,19 @@ enve.recplot2.compareIdentities <- function
   if(dev > max.deviation)
     stop("'x' and 'y' must have similar `id.breaks`; exceeding max.deviation: ",
           dev)
+  x.cnt <- x$id.counts
+  y.cnt <- y$id.counts
+  if(is.null(smooth.par) || smooth.par > 0){
+    x.mids <- (x$id.breaks[-1] + x$id.breaks[-length(x$id.breaks)])/2
+    y.mids <- (y$id.breaks[-1] + y$id.breaks[-length(y$id.breaks)])/2
+    p.spline <- smooth.spline(x.mids, x.cnt, spar=smooth.par)
+    q.spline <- smooth.spline(y.mids, y.cnt, spar=smooth.par)
+    x.cnt <- pmax(p.spline$y, 0)
+    y.cnt <- pmax(q.spline$y, 0)
+  }
   a <- as.numeric(pseudocounts)
-  p <- (x$id.counts + a) / sum(x$id.counts + a)
-  q <- (y$id.counts + a) / sum(y$id.counts + a)
+  p <- (x.cnt + a) / sum(x.cnt + a)
+  q <- (y.cnt + a) / sum(y.cnt + a)
   d <- NA
   if(i.meth %in% c(1L, 2L)){
     d <- sqrt(sum((sqrt(p) - sqrt(q))**2))/sqrt(2)
@@ -844,8 +873,8 @@ enve.recplot2.coordinates <- function
     (x,
     ### `enve.RecPlot2` object.
     bins
-    ### Vector of selected bins to return. It can be a vector of logical values with
-    ### the same length as `x$pos.breaks`-1 or a vector of integers.
+    ### Vector of selected bins to return. It can be a vector of logical values
+    ### with the same length as `x$pos.breaks`-1 or a vector of integers.
     ){
   if(!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
@@ -859,8 +888,12 @@ enve.recplot2.coordinates <- function
     # Concatenated coordinates
     cc <- x$pos.breaks[c(j, j+1)]
     # Find the corresponding `seq.breaks`
-    sb.from <- which(cc[1] >=x$seq.breaks[-length(x$seq.breaks)] & cc[1] < x$seq.breaks[-1])
-    sb.to   <- which(cc[2] > x$seq.breaks[-length(x$seq.breaks)] & cc[2] <=x$seq.breaks[-1])
+    sb.from <- which(
+          cc[1] >=x$seq.breaks[-length(x$seq.breaks)] &
+          cc[1] < x$seq.breaks[-1])
+    sb.to   <- which(
+          cc[2] > x$seq.breaks[-length(x$seq.breaks)] &
+          cc[2] <=x$seq.breaks[-1])
     # Translate coordinates
     if(sum(sb.from)==1 & sum(sb.to)==1){
       y[i, 'name.from'] <- x$seq.names[sb.from]
@@ -871,10 +904,11 @@ enve.recplot2.coordinates <- function
   }
 
   return(y)
-  ### Returns a data.frame with four columns: name.from (character), pos.from (numeric)
-  ### name.to (character), and pos.to (numeric). The first two correspond to sequence and
-  ### position of the start point of the bin, the last two correspond to the sequence and
-  ### position of the end point of the bin.
+  ### Returns a data.frame with four columns: name.from (character), pos.from
+  ### (numeric) name.to (character), and pos.to (numeric). The first two
+  ### correspond to sequence and position of the start point of the bin, the
+  ### last two correspond to the sequence and position of the end point of the
+  ### bin.
 }
 
 #==============> Define internal functions
@@ -919,7 +953,8 @@ enve.recplot2.findPeaks.__em_e <- function
   components <- length(theta[['mu']])
   product <- do.call(cbind,
         lapply(1:components,
-          function(i) dnorm(x, theta[['mu']][i], theta[['sd']][i])*theta[['alpha']][i]))
+          function(i) dnorm(x, theta[['mu']][i],
+             theta[['sd']][i])*theta[['alpha']][i]))
   sum.of.components <- rowSums(product)
   posterior <- product / sum.of.components
   
@@ -932,7 +967,8 @@ enve.recplot2.findPeaks.__em_m <- function
   components <- ncol(posterior)
   n <- colSums(posterior)
   mu <- colSums(posterior * x) / n
-  sd <- sqrt( colSums(posterior * (matrix(rep(x,components), ncol=components) - mu)^2) / n )
+  sd <- sqrt( colSums(
+        posterior * (matrix(rep(x,components), ncol=components) - mu)^2) / n )
   alpha <- n/length(x)
   return(list(mu=mu, sd=sd, alpha=alpha))
 }
@@ -1048,7 +1084,10 @@ enve.recplot2.findPeaks.__mower <- function
 enve.recplot2.__whichClosestPeak <- function
    ### Internal ancilliary function (see `enve.recplot2.findPeaks`).
       (peak, peaks){
-   dist <- as.numeric(lapply(peaks, function(x) abs(log(x$param.hat[[ length(x$param.hat) ]]/peak$param.hat[[ length(peak$param.hat) ]] ))))
+   dist <- as.numeric(lapply(peaks,
+         function(x)
+           abs(log(x$param.hat[[ length(x$param.hat) ]] /
+             peak$param.hat[[ length(peak$param.hat) ]] ))))
    dist[ dist==0 ] <- Inf
    return(which.min(dist))
 }

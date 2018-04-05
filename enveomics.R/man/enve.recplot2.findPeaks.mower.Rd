@@ -41,8 +41,9 @@ earlier (to avoid infinite loops from approximation).}
 attempt merging. The default of ~0.22 corresponds to a maximum
 difference of 25\%.}
   \item{verbose}{Display (mostly debugging) information.}
-  \item{log}{Logical value indicating if the estimations should be performed in natural
-logarithm units. Do not change unless you know what you're doing.}
+  \item{log}{Logical value indicating if the estimations should be performed in
+natural logarithm units. Do not change unless you know what you're
+doing.}
 }
 
 \value{Returns a list of `enve.RecPlot2.Peak` objects.}

@@ -1,9 +1,9 @@
 \name{enve.recplot2.findPeaks.emauto}
 \alias{enve.recplot2.findPeaks.emauto}
 \title{enve recplot2 findPeaks emauto}
-\description{Identifies peaks in the population histogram using a Gaussian Mixture Model
-Expectation Maximization (GMM-EM) method with number of components automatically
-detected.}
+\description{Identifies peaks in the population histogram using a Gaussian Mixture
+Model Expectation Maximization (GMM-EM) method with number of components
+automatically detected.}
 \usage{enve.recplot2.findPeaks.emauto(x, components = seq(1, 10), criterion = "aic", 
     merge.tol = 2L, verbose = FALSE, ...)}
 \arguments{

@@ -10,7 +10,8 @@ sub-population mixtures}
 "emauto" (Expectation-Maximization with auto-selection of components),
 "em" (Expectation-Maximization),
 "mower" (Custom distribution-mowing method).}
-  \item{\dots}{Any additional parameters supported by `enve.recplot2.findPeaks.<method>`.}
+  \item{\dots}{Any additional parameters supported by
+`enve.recplot2.findPeaks.<method>`.}
 }
 
 \value{Returns a list of `enve.RecPlot2.Peak` objects.}

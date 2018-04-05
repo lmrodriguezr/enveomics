@@ -2,8 +2,8 @@
 \alias{enve.recplot2.compareIdentities}
 \title{enve recplot2 compareIdentities}
 \description{Compare the distribution of identities between two enve.RecPlot2 objects.}
-\usage{enve.recplot2.compareIdentities(x, y, method = "hellinger", pseudocounts = 0, 
-    max.deviation = 0.75)}
+\usage{enve.recplot2.compareIdentities(x, y, method = "hellinger", smooth.par = NULL, 
+    pseudocounts = 0, max.deviation = 0.75)}
 \arguments{
   \item{x}{First enve.RecPlot2 object.}
   \item{y}{Second enve.RecPlot2 object.}
@@ -13,6 +13,9 @@ one of:
 "bhattacharyya" (Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35),
 "kl" or "kullback-leibler" (Kullback & Leibler, 1951,
 doi:10.1214/aoms/1177729694), or "euclidean".}
+  \item{smooth.par}{Smoothing parameter for cubic spline smoothing. Use 0 for no smoothing.
+Use NULL to automatically determine this value using leave-one-out
+cross-validation (see `smooth.spline` parameter `spar`).}
   \item{pseudocounts}{Smoothing parameter for Laplace smoothing. Use 0 for no smoothing, or
 1 for add-one smoothing.}
   \item{max.deviation}{Maximum mean deviation between identity breaks tolerated (as percent
