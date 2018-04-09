@@ -2,7 +2,7 @@
 
 **Working document: Technical details**
 
-## To do
+## :clipboard: To do
 
 - [x] Document structure
 - [x] Package: `enveomics.R`
@@ -12,12 +12,12 @@
 - [ ] Gene-content diversity: `enve.recplot2.extractWindows`
 - [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
 
-## Aims
+## :dart: Aims
 
 This document aims to cover the technical aspects of the recruitment plot functions in the
 `enveomics.R` package, focusing on the peak finder and gene-content diversity analyses.
 
-## Caveats
+## :x: Caveats
 
 This is a __*working document*__, describing  unstable and/or experimental code. The material
 here is susceptible of changes without warning, pay attention to the modification date and (if
@@ -39,7 +39,7 @@ updates (package HEAD), download (or update), and install this git repository.
 
 - [ ] Install the latest release in R
 - **R>** `install.packages(c('enveomics.R','optparse'))`
-- [ ] Get the HEAD code from :octocat:
+- [ ] Get the HEAD code :octocat:
 - **$>** `git clone https://github.com/lmrodriguezr/enveomics.git`
 - [ ] Install the HEAD code
 - **$>** `R CMD INSTALL ./enveomics/enveomics.R`
