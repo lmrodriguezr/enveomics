@@ -2,7 +2,7 @@
 
 **Working document: Technical details**
 
-## :clipboard: To do
+## To do
 
 - [x] Document structure
 - [x] Package: `enveomics.R`
@@ -12,12 +12,12 @@
 - [ ] Gene-content diversity: `enve.recplot2.extractWindows`
 - [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
 
-## :dart: Aims
+## Aims
 
 This document aims to cover the technical aspects of the recruitment plot functions in the
 `enveomics.R` package, focusing on the peak finder and gene-content diversity analyses.
 
-## :x: Caveats
+## Caveats
 
 This is a __*working document*__, describing  unstable and/or experimental code. The material
 here is susceptible of changes without warning, pay attention to the modification date and (if
