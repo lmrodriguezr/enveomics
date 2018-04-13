@@ -6,7 +6,7 @@
 
 - [x] Document structure
 - [x] Package: `enveomics.R`
-- [ ] Recruitment plots: `enve.recplot2`
+- [x] Recruitment plots: `enve.recplot2`
 - [ ] Peak-finder: `enve.recplot2.findPeaks`
 - [ ] Core-genome peak: `enve.recplot2.corePeak`
 - [ ] Gene-content diversity: `enve.recplot2.extractWindows`
@@ -45,5 +45,60 @@ updates (package HEAD), download (or update), and install this git repository.
 - **$>** `R CMD INSTALL ./enveomics/enveomics.R`
 - [ ] Load the library in R
 - **R>** `library(enveomics.R)`
+
+## Recruitment plots: `enve.recplot2`
+
+The first step in this analysis is the mapping of reads to the genome, processed with
+[BlastTab.catsbj.pl](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.catsbj.pl).
+We'll assume the mapping is saved in the file `my-mapping.tab` and this is also the
+prefix of the processed files.
+
+Once you have these input files (`.rec` and `.lim`), you can build the recruitment plot.
+For this, you'll have two options.
+
+### Option 1: Using the `BlastTab.recplot2.R` stand-alone script
+
+The stand-alone script
+[BlastTab.recplot2.R](http://enve-omics.ce.gatech.edu/enveomics/docs?t=BlastTab.recplot2.R)
+is the easiest option to run, and should be the preferred method if you're automating
+this analysis to process several mappings, but it doesn't offer access to advanced options.
+
+You can run it like this using two CPUs:
+```bash
+BlastTab.recplot2.R --prefix my-mapping.tab --threads 2 my-recplot.rdata my-recplot.pdf
+```
+
+> **NOTE 1**: It's NOT recommended to map reads against genes, the recommended strategy is to
+> map against contigs. However, if you did map reads against genes, you may want to use the
+> `--pos-breaks 0` option to use each gene as a recruitment window.
+> 
+> **NOTE 2**: If you want to plot the population peaks at this step, simply pass the
+> `--peaks-col darkred` option.
+
+Now you should have two output files: `my-recplot.rdata`, containing your `enve.RecPlot2` R
+object, and `my-recplot.pdf` with the graphical output of the recruitment plot.
+
+### Option 2: Using the `enve.recplot2` R function
+
+If you require access to advanced options, or for some other reason prefer to calculate the
+recruitment plot interactively, you can directly use the `enve.recplot2` R function. This is
+and example session in R:
+```R
+# Load the package
+library(enveomics.R)
+# Open the PDF
+pdf('my-recplot.pdf')
+# Build and plot the object using two threads
+rp <- enve.recplot2('my-mapping.tab', threads=2)
+# Close the PDF
+dev.off()
+# Save the object
+save(rp, file='my-recplot.rdata')
+```
+
+> **IMPORTANT**: Remember to save the `enve.RecPlot2` R object (that's the last line above).
+
+Naturally, you may want to see what other (advanced) options you have. You can access the
+documentation of the function in R using `?enve.recplot2`.
 
 
