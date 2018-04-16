@@ -7,7 +7,7 @@
 - [x] Document structure
 - [x] Package: `enveomics.R`
 - [x] Recruitment plots: `enve.recplot2`
-- [ ] Peak-finder: `enve.recplot2.findPeaks`
+- [x] Peak-finder: `enve.recplot2.findPeaks`
 - [ ] Core-genome peak: `enve.recplot2.corePeak`
 - [ ] Gene-content diversity: `enve.recplot2.extractWindows`
 - [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
@@ -28,6 +28,8 @@ implementations.
 Some of the functions described here may return unexpected results with your data. Carefully
 evaluate all of your results.
 
+---
+
 ## Package: `enveomics.R`
 
 The functionalities described here are provided by the `enveomics.R` package. Some features
@@ -45,6 +47,8 @@ updates (package HEAD), download (or update), and install this git repository.
 - **$>** `R CMD INSTALL ./enveomics/enveomics.R`
 - [ ] Load the library in R
 - **R>** `library(enveomics.R)`
+
+---
 
 ## Recruitment plots: `enve.recplot2`
 
@@ -100,5 +104,19 @@ save(rp, file='my-recplot.rdata')
 
 Naturally, you may want to see what other (advanced) options you have. You can access the
 documentation of the function in R using `?enve.recplot2`.
+
+---
+
+## Peak-finder: `enve.recplot2.findPeaks`
+
+In this step we will try to identify one or multiple population peaks corresponding to different
+sub-populations and/or composites of sub-populations.
+
+> **NOTE** This step can be performed together with the step above, but we separate here it for
+> two reasons: **1** This step is much more unstable but less computationally demanding than the
+> step before, so it makes sense to re-run only this part with different parameters and/or
+> package updates; and **2** We want to save the R objects independently, so the following steps
+> are more clear.
+
 
 
