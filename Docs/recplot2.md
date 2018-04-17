@@ -7,6 +7,7 @@
 - [x] Document structure
 - [x] Package: `enveomics.R`
 - [x] Recruitment plots: `enve.recplot2`
+- [x] Summary statistics
 - [x] Peak-finder: `enve.recplot2.findPeaks`
 - [x] Gene-content diversity: `enve.recplot2.extractWindows`
 - [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
@@ -22,10 +23,11 @@ This is a __*working document*__, describing  unstable and/or experimental code.
 here is susceptible of changes without warning, pay attention to the modification date and (if
 in doubt) the commit history. The definitions and default parameters of the functions described
 here may change in the near future as result of further experimentation or more stable
-implementations.
+implementations. The current document was generated and tested with the `enveomics.R` package
+version 1.3. To check your current version in R, use `packageVersion('enveomics.R')`.
 
-Some of the functions described here may return unexpected results with your data. Carefully
-evaluate all of your results.
+> **IMPORTANT**: Some of the functions described here may return unexpected results with your data.
+> Carefully evaluate all your results.
 
 ---
 
@@ -108,6 +110,51 @@ documentation of the function in R using `?enve.recplot2`.
 
 ---
 
+## Summary statistics
+
+Here we explore some frequently used summary statistics from recruitment plots. First, load the
+package and the `enve.RecPlot2` object you saved previously, in R:
+```R
+library(enveomics.R)
+load('my-recplot.rdata')
+```
+
+### Average and median sequencing depth
+```R
+mean(enve.recplot2.seqdepth(rp)) # <- Average
+median(enve.recplot2.seqdepth(rp)) # <- Median
+```
+
+### Average and median sequencing depth excluding zero-coverage windows
+```R
+seqdepth <- enve.recplot2.seqdepth(rp)
+mean(seqdepth[seqdepth>0]) # <- Average
+median(seqdepth[seqdepth>0]) # <- Median
+```
+
+### Average Nucleotide Identity from reads (ANIr)
+```R
+enve.recplot2.ANIr(rp)
+```
+
+### Coordinates of each sequence window with their respective sequencing depth
+```R
+d <- enve.recplot2.coordinates(rp)
+d$seqdepth <- enve.recplot2.seqdepth(rp)
+d
+```
+
+### Sequencing breadth (upper boundary)
+
+This estimate depends on the window size. The smaller the window size, the better the
+estimate. When the window size is 1bp, the estimate is exact, otherwise it's consistently
+biased (overestimate).
+```R
+mean(enve.recplot2.seqdepth(rp) > 0)
+```
+
+---
+
 ## Peak-finder: `enve.recplot2.findPeaks`
 
 In this step we will try to identify one or multiple population peaks corresponding to different
@@ -123,7 +170,7 @@ In R:
 ```R
 # Load the package
 library(enveomics.R)
-# Load the `enve.RecPlot2` object you saved in the previous step
+# Load the `enve.RecPlot2` object you saved previously
 load('my-recplot.rdata')
 # Find the peaks
 peaks <- enve.recplot2.findPeaks(rp)
@@ -157,10 +204,10 @@ cp <- enve.recplot2.corePeak(peaks)
 #-----
 # Find the coordinates of windows significantly below the average sequencing depth
 div <- enve.recplot2.extractWindows(rp, cp, seq.names=TRUE)
+# Add sequencing depth
+div$seqdepth <- enve.recplot2.seqdepth(rp, as.numeric(rownames(div)))
 # Save the coordinates as a tab-delimited table
 write.table(div, 'my-low-seqdepth.tsv', quote=FALSE, sep='\t', row.names=FALSE)
-# Find the windows with non-zero depth significantly below the average sequencing depth
-div.nz <- div[enve.recplot2.seqdepth(rp, as.numeric(rownames(div)))>0,]
-# Find windows with sequencing depth zero
+# Find all the windows with sequencing depth zero
 zero <- enve.recplot2.coordinates(rp, enve.recplot2.seqdepth(rp)==0)
 ```
