@@ -29,6 +29,8 @@ http://www.perlfoundation.org/artistic_license_2_0.
 Most scripts in this repository are self-documented.  However,
 more extensive documentation (and some discussion) can be found at the
 [documentation website](http://enve-omics.ce.gatech.edu/enveomics/docs).
+Additional documentation for recruitment plots can be found
+[here](Docs/recplot2.md).
 
 ## Citation
 
