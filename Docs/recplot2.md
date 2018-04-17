@@ -30,7 +30,7 @@ updates (package HEAD), download (or update), and install this git repository.
 
 ### Quick installation guide
 
-:globe_with_meridians: To install the latest stable package version available in CRAN, use in R:
+:globe_with_meridians: To install the latest stable version available in CRAN, use in R:
 
 ```R
 install.packages(c('enveomics.R','optparse'))
