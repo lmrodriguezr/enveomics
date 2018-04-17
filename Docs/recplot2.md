@@ -23,8 +23,10 @@ This is a __*working document*__, describing  unstable and/or experimental code.
 here is susceptible of changes without warning, pay attention to the modification date and (if
 in doubt) the commit history. The definitions and default parameters of the functions described
 here may change in the near future as result of further experimentation or more stable
-implementations. The current document was generated and tested with the `enveomics.R` package
-version 1.3. To check your current version in R, use `packageVersion('enveomics.R')`.
+implementations.
+
+The current document was generated and tested with the `enveomics.R` package version 1.3. To
+check your current version in R, use `packageVersion('enveomics.R')`.
 
 > **IMPORTANT**: Some of the functions described here may return unexpected results with your data.
 > Carefully evaluate all your results.
