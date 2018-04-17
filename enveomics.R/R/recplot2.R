@@ -883,7 +883,7 @@ enve.recplot2.coordinates <- function
     ){
   if(!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
-  if(missing(bins)) bins <- rep(TRUE,length(rp$pos.breaks)-1)
+  if(missing(bins)) bins <- rep(TRUE, length(x$pos.breaks)-1)
   if(!is.vector(bins)) stop("'bins' must be a vector")
   if(inherits(bins, "logical")) bins <- which(bins)
 
