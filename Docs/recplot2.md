@@ -166,9 +166,9 @@ In this step we will try to identify one or multiple population peaks correspond
 sub-populations and/or composites of sub-populations.
 
 > **NOTE** This step can be performed together with the step above, but we separate it here for
-> two reasons: **1** This step is much more unstable but less computationally demanding than the
+> two reasons: **(1)** This step is much more unstable but less computationally demanding than the
 > step before, so it makes sense to re-run only this part with different parameters and/or
-> package updates; and **2** We want to save the R objects independently, so the following steps
+> package updates; and **(2)** We want to save the R objects independently, so the following steps
 > are more clear.
 
 In R:
