@@ -87,6 +87,9 @@ plot.enve.RecPlot2 <- function
       peaks.col='darkred',
       ### If not NA, it attempts to represent peaks in the population histogram
       ### in the specified color. Set to NA to avoid peak-finding.
+      use.peaks,
+      ### A list of `enve.RecPlot2.Peak` objects, as returned by
+      ### `enve.recplot2.findPeaks`. If passed, `peaks.opts` is ignored.
       id.lim=range(x$id.breaks),
       ### Limits of identities to represent.
       pos.lim=range(x$pos.breaks),
@@ -273,8 +276,12 @@ plot.enve.RecPlot2 <- function
       polygon(c(0,rep(h.in$counts,each=2),0,0,rep(sum(pos.counts.in==0),2),0),
 	 y.tmp.in, border=NA, col=in.col)
       if(!is.na(peaks.col)){
-	 o	<- peaks.opts; o$x = x;
-	 peaks	<- do.call(enve.recplot2.findPeaks, o);
+	 o <- peaks.opts; o$x = x;
+         if(missing(use.peaks)){
+           peaks <- do.call(enve.recplot2.findPeaks, o)
+         }else{
+           peaks <- use.peaks
+         }
 	 h.mids <- (10^h.breaks[-1] + 10^h.breaks[-length(h.breaks)])/2
 	 if(!is.null(peaks) & length(peaks)>0){
 	    pf <- h.mids*0;
@@ -776,19 +783,16 @@ enve.recplot2.extractWindows <- function
    par <- peak$param.hat
    par[["p"]] <- ifelse(lower.tail, significance, 1-significance)
    thr <- do.call(ifelse(length(par)==4, qsn, qnorm), par)
+   if(peak$log) thr <- exp(thr)
    
-   # Estimate sequencing depths per window
-   pos.cnts.in <- rp$pos.counts.in
-   pos.breaks  <- rp$pos.breaks
-   pos.binsize <- (pos.breaks[-1] - pos.breaks[-length(pos.breaks)])
-   seqdepth.in <- pos.cnts.in/pos.binsize
-
    # Select windows past the threshold
+   seqdepth.in <- enve.recplot2.seqdepth(rp)
    if(lower.tail){
       sel <- seqdepth.in < thr
    }else{
       sel <- seqdepth.in > thr
    }
+   
    # seq.names=FALSE
    if(!seq.names) return(sel)
    # seq.names=TRUE and pos.breaks=0
@@ -874,10 +878,12 @@ enve.recplot2.coordinates <- function
     ### `enve.RecPlot2` object.
     bins
     ### Vector of selected bins to return. It can be a vector of logical values
-    ### with the same length as `x$pos.breaks`-1 or a vector of integers.
+    ### with the same length as `x$pos.breaks`-1 or a vector of integers. If
+    ### missing, returns the coordinates of all windows.
     ){
   if(!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
+  if(missing(bins)) bins <- rep(TRUE,length(rp$pos.breaks)-1)
   if(!is.vector(bins)) stop("'bins' must be a vector")
   if(inherits(bins, "logical")) bins <- which(bins)
 
@@ -895,7 +901,7 @@ enve.recplot2.coordinates <- function
           cc[2] > x$seq.breaks[-length(x$seq.breaks)] &
           cc[2] <=x$seq.breaks[-1])
     # Translate coordinates
-    if(sum(sb.from)==1 & sum(sb.to)==1){
+    if(length(sb.from)==1 & length(sb.to)==1){
       y[i, 'name.from'] <- x$seq.names[sb.from]
       y[i, 'pos.from'] <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
       y[i, 'name.to']   <- x$seq.names[sb.to]
@@ -909,6 +915,51 @@ enve.recplot2.coordinates <- function
   ### correspond to sequence and position of the start point of the bin, the
   ### last two correspond to the sequence and position of the end point of the
   ### bin.
+}
+
+enve.recplot2.seqdepth <- function
+  ### Calculate the sequencing depth of the given window(s)
+    (x,
+    ### `enve.RecPlot2` object.
+    sel,
+    ### Window(s) for which the sequencing depth is to be calculated. If not
+    ### passed, it returns the sequencing depth of all windows
+    low.identity=FALSE
+    ### A logical indicating if the sequencing depth is to be estimated only
+    ### with low-identity matches. By default, only high-identity matches are
+    ### used.
+    ){
+  if(!inherits(x, "enve.RecPlot2"))
+    stop("'x' must inherit from class `enve.RecPlot2`")
+  pos.cnts.in <- x$pos.counts.in
+  pos.breaks  <- x$pos.breaks
+  pos.binsize <- (pos.breaks[-1] - pos.breaks[-length(pos.breaks)])
+  seqdepth.in <- pos.cnts.in/pos.binsize
+  if(missing(sel)) return(seqdepth.in)
+  return(seqdepth.in[sel])
+  ### Returns a numeric vector of sequencing depths (in bp/bp). 
+}
+
+enve.recplot2.ANIr <- function
+  ### Estimate the Average Nucleotide Identity from reads (ANIr) from a
+  ### recruitment plot
+    (x,
+    ### `enve.RecPlot2` object.
+    range=c(0,Inf)
+    ### Range of identities to be considered. By default, the full range
+    ### is used (note that the upper boundary is `Inf` and not 100 because
+    ### recruitment plots can also be built with bit-scores). To use only
+    ### intra-population matches (with identities), use c(95,100). To use only
+    ### inter-population values, use c(0,95).
+    ){
+  if(!inherits(x, "enve.RecPlot2"))
+    stop("'x' must inherit from class `enve.RecPlot2`")
+  id.b <- x$id.breaks
+  id <- (id.b[-1]+id.b[-length(id.b)])/2
+  cnt <- x$id.counts
+  cnt[id < range[1]] <- 0
+  cnt[id > range[2]] <- 0
+  return(sum(id*cnt/sum(cnt)))
 }
 
 #==============> Define internal functions

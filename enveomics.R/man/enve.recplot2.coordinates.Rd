@@ -6,7 +6,8 @@
 \arguments{
   \item{x}{`enve.RecPlot2` object.}
   \item{bins}{Vector of selected bins to return. It can be a vector of logical values
-with the same length as `x$pos.breaks`-1 or a vector of integers.}
+with the same length as `x$pos.breaks`-1 or a vector of integers. If
+missing, returns the coordinates of all windows.}
 }
 
 \value{Returns a data.frame with four columns: name.from (character), pos.from
