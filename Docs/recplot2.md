@@ -40,14 +40,19 @@ updates (package HEAD), download (or update), and install this git repository.
 
 ### Quick installation guide
 
-- [ ] Install the latest release in R
-- **R>** `install.packages(c('enveomics.R','optparse'))`
-- [ ] Get the HEAD code :octocat:
-- **$>** `git clone https://github.com/lmrodriguezr/enveomics.git`
-- [ ] Install the HEAD code
-- **$>** `R CMD INSTALL ./enveomics/enveomics.R`
-- [ ] Load the library in R
-- **R>** `library(enveomics.R)`
+To install the latest stable package version available in CRAN, use in R:
+
+```R
+install.packages(c('enveomics.R','optparse'))
+```
+
+To install the latest HEAD version (potentially unstable) available in :octocat:, use in R:
+
+```R
+install.packages('devtools')
+library('devtools')
+install_github('lmrodriguezr/enveomics', subdir='enveomics.R')
+```
 
 ---
 
