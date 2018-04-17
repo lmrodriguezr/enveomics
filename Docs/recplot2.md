@@ -1,17 +1,5 @@
 # Recruitment plots
 
-**Working document: Technical details**
-
-## To do
-
-- [x] Document structure
-- [x] Package: `enveomics.R`
-- [x] Recruitment plots: `enve.recplot2`
-- [x] Summary statistics
-- [x] Peak-finder: `enve.recplot2.findPeaks`
-- [x] Gene-content diversity: `enve.recplot2.extractWindows`
-- [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
-
 ## Aims
 
 This document aims to cover the technical aspects of the recruitment plot functions in the
@@ -230,3 +218,15 @@ write.table(div, 'my-low-seqdepth.tsv', quote=FALSE, sep='\t', row.names=FALSE)
 # Find all the windows with sequencing depth zero
 zero <- enve.recplot2.coordinates(rp, enve.recplot2.seqdepth(rp)==0)
 ```
+
+---
+
+## To do
+
+- [x] Document structure
+- [x] Package: `enveomics.R`
+- [x] Recruitment plots: `enve.recplot2`
+- [x] Summary statistics
+- [x] Peak-finder: `enve.recplot2.findPeaks`
+- [x] Gene-content diversity: `enve.recplot2.extractWindows`
+- [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
