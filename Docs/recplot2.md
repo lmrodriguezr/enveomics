@@ -8,8 +8,7 @@
 - [x] Package: `enveomics.R`
 - [x] Recruitment plots: `enve.recplot2`
 - [x] Peak-finder: `enve.recplot2.findPeaks`
-- [ ] Core-genome peak: `enve.recplot2.corePeak`
-- [ ] Gene-content diversity: `enve.recplot2.extractWindows`
+- [x] Gene-content diversity: `enve.recplot2.extractWindows`
 - [ ] Compare identity profiles: `enve.recplot2.compareIdentities`
 
 ## Aims
@@ -92,15 +91,17 @@ and example session in R:
 library(enveomics.R)
 # Open the PDF
 pdf('my-recplot.pdf')
-# Build and plot the object using two threads
-rp <- enve.recplot2('my-mapping.tab', threads=2)
+# Build and plot the object using two threads and no peak detection
+# (to turn on peak detection, simply remove `peaks.col=NA`)
+rp <- enve.recplot2('my-mapping.tab', threads=2, peaks.col=NA)
 # Close the PDF
 dev.off()
 # Save the object
 save(rp, file='my-recplot.rdata')
 ```
 
-> **IMPORTANT**: Remember to save the `enve.RecPlot2` R object (that's the last line above).
+> **IMPORTANT**: Remember to save the `enve.RecPlot2` R object (that's the last line above)
+> before closing the R session.
 
 Naturally, you may want to see what other (advanced) options you have. You can access the
 documentation of the function in R using `?enve.recplot2`.
@@ -112,11 +113,54 @@ documentation of the function in R using `?enve.recplot2`.
 In this step we will try to identify one or multiple population peaks corresponding to different
 sub-populations and/or composites of sub-populations.
 
-> **NOTE** This step can be performed together with the step above, but we separate here it for
+> **NOTE** This step can be performed together with the step above, but we separate it here for
 > two reasons: **1** This step is much more unstable but less computationally demanding than the
 > step before, so it makes sense to re-run only this part with different parameters and/or
 > package updates; and **2** We want to save the R objects independently, so the following steps
 > are more clear.
 
+In R:
+```R
+# Load the package
+library(enveomics.R)
+# Load the `enve.RecPlot2` object you saved in the previous step
+load('my-recplot.rdata')
+# Find the peaks
+peaks <- enve.recplot2.findPeaks(rp)
+# Save the peaks R object (optional)
+save(peaks, file='my-recplot-peaks.rdata')
+# Plot the peaks in a PDF (optional)
+pdf('my-recplot-peaks.pdf')
+p <- plot(rp, use.peaks=peaks, layout=4) # <- Remove `layout=4` for the full plot
+dev.off()
+```
 
+The key function here is `enve.recplo2.findPeaks`. This function has several parameters, depending on
+the method used. To see all supported methods, use `?enve.recplot2.findPeaks`. To see all the options
+of the default method (`'emauto'`) use `?enve.recplot2.findPeaks.emauto`.
 
+---
+
+## Gene-content diversity: `enve.recplot2.extractWindows`
+
+In R:
+```R
+# Load the package and the objects (unless you're still in the same session from the last step)
+library(enveomics.R)
+load('my-recplot.rdata')
+load('my-recplot-peaks.rdata')
+# Find the peak representing the core genome
+cp <- enve.recplot2.corePeak(peaks)
+#-----
+# The following functions illustrate how to obtain different results. Please explore the resulting
+# objects and the associated documentation
+#-----
+# Find the coordinates of windows significantly below the average sequencing depth
+div <- enve.recplot2.extractWindows(rp, cp, seq.names=TRUE)
+# Save the coordinates as a tab-delimited table
+write.table(div, 'my-low-seqdepth.tsv', quote=FALSE, sep='\t', row.names=FALSE)
+# Find the windows with non-zero depth significantly below the average sequencing depth
+div.nz <- div[enve.recplot2.seqdepth(rp, as.numeric(rownames(div)))>0,]
+# Find windows with sequencing depth zero
+zero <- enve.recplot2.coordinates(rp, enve.recplot2.seqdepth(rp)==0)
+```
