@@ -69,6 +69,7 @@ is the easiest option to run, and should be the preferred method if you're autom
 this analysis to process several mappings, but it doesn't offer access to advanced options.
 
 You can run it like this using two CPUs:
+
 ```bash
 BlastTab.recplot2.R --prefix my-mapping.tab --threads 2 my-recplot.rdata my-recplot.pdf
 ```
@@ -88,6 +89,7 @@ object, and `my-recplot.pdf` with the graphical output of the recruitment plot.
 If you require access to advanced options, or for some other reason prefer to calculate the
 recruitment plot interactively, you can directly use the `enve.recplot2` R function. This is
 and example session in R:
+
 ```R
 # Load the package
 library(enveomics.R)
@@ -114,18 +116,21 @@ documentation of the function in R using `?enve.recplot2`.
 
 Here we explore some frequently used summary statistics from recruitment plots. First, load the
 package and the `enve.RecPlot2` object you saved previously, in R:
+
 ```R
 library(enveomics.R)
 load('my-recplot.rdata')
 ```
 
 ### Average and median sequencing depth
+
 ```R
 mean(enve.recplot2.seqdepth(rp)) # <- Average
 median(enve.recplot2.seqdepth(rp)) # <- Median
 ```
 
 ### Average and median sequencing depth excluding zero-coverage windows
+
 ```R
 seqdepth <- enve.recplot2.seqdepth(rp)
 mean(seqdepth[seqdepth>0]) # <- Average
@@ -133,11 +138,15 @@ median(seqdepth[seqdepth>0]) # <- Median
 ```
 
 ### Average Nucleotide Identity from reads (ANIr)
+
 ```R
-enve.recplot2.ANIr(rp)
+enve.recplot2.ANIr(rp) # <- Complete recruitment plot
+enve.recplot2.ANIr(rp, c(95,100)) # <- Intra-population (same species)
+enve.recplot2.ANIr(rp, c( 0, 95)) # <- Between populations (other species)
 ```
 
 ### Coordinates of each sequence window with their respective sequencing depth
+
 ```R
 d <- enve.recplot2.coordinates(rp)
 d$seqdepth <- enve.recplot2.seqdepth(rp)
@@ -149,6 +158,7 @@ d
 This estimate depends on the window size. The smaller the window size, the better the
 estimate. When the window size is 1bp, the estimate is exact, otherwise it's consistently
 biased (overestimate).
+
 ```R
 mean(enve.recplot2.seqdepth(rp) > 0)
 ```
@@ -167,6 +177,7 @@ sub-populations and/or composites of sub-populations.
 > are more clear.
 
 In R:
+
 ```R
 # Load the package
 library(enveomics.R)
@@ -191,6 +202,7 @@ of the default method (`'emauto'`) use `?enve.recplot2.findPeaks.emauto`.
 ## Gene-content diversity: `enve.recplot2.extractWindows`
 
 In R:
+
 ```R
 # Load the package and the objects (unless you're still in the same session from the last step)
 library(enveomics.R)
