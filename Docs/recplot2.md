@@ -136,8 +136,9 @@ median(seqdepth[seqdepth>0]) # <- Median
 
 ```R
 enve.recplot2.ANIr(rp) # <- Complete recruitment plot
-enve.recplot2.ANIr(rp, c(95,100)) # <- Intra-population (same species)
-enve.recplot2.ANIr(rp, c( 0, 95)) # <- Between populations (other species)
+enve.recplot2.ANIr(rp, c(90,100)) # <- All reads above 90% (recommended for intra-population)
+enve.recplot2.ANIr(rp, c(95,100)) # <- Reads above 95%
+enve.recplot2.ANIr(rp, c( 0, 90)) # <- Between populations (other species)
 ```
 
 ### Coordinates of each sequence window with their respective sequencing depth
