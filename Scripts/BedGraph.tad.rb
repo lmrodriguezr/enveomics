@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 
-require "optparse"
+require 'optparse'
 
-o = {range:0.5}
-ARGV << "-h" if ARGV.empty?
+o = {range: 0.5, perseq: false}
+ARGV << '-h' if ARGV.empty?
 OptionParser.new do |opt|
   opt.banner = "
   Estimates the truncated average sequencing depth (TAD) from a BedGraph file.
@@ -13,20 +13,24 @@ OptionParser.new do |opt|
   want to consider zero-coverage position, be sure to use -bga (not -bg).
 
   Usage: #{$0} [options]"
-  opt.separator ""
-  opt.on("-i", "--input PATH",
-    "Input BedGraph file (mandatory)."){ |v| o[:i]=v }
-  opt.on("-r", "--range FLOAT",
-    "Central range to consider, between 0 and 1.",
+  opt.separator ''
+  opt.on('-i', '--input PATH',
+    'Input BedGraph file (mandatory).'){ |v| o[:i]=v }
+  opt.on('-r', '--range FLOAT',
+    'Central range to consider, between 0 and 1.',
     "By default: #{o[:range]} (inter-quartile range)."
     ){ |v| o[:range]=v.to_f }
-  opt.on("-h", "--help", "Display this screen.") do
+  opt.on('-s', '--per-seq',
+    'Calculate averages per reference sequence, not total.',
+    'Assumes a sorted BedGraph file.'
+    ){ |v| o[:perseq] = v }
+  opt.on('-h', '--help', 'Display this screen.') do
     puts opt
     exit
   end
-  opt.separator ""
+  opt.separator ''
 end.parse!
-abort "-i is mandatory." if o[:i].nil?
+abort '-i is mandatory.' if o[:i].nil?
 
 def pad(d, idx, r)
   idx.each do |i|
@@ -39,33 +43,51 @@ def pad(d, idx, r)
   d
 end
 
-# Read BedGraph
-d = []
-ln = 0
-File.open(o[:i], "r") do |ifh|
-  ifh.each_line do |i|
-    next if i =~ /^#/
-    r = i.chomp.split("\t")[1 .. -1].map{ |j| j.to_i }
-    l = r[1]-r[0]
-    d[ r[2] ] ||= 0
-    d[ r[2] ] += l
-    ln += l
+def report(sq, d, ln, o)
+  # Estimate padding ranges
+  pad = (1.0-o[:range])/2.0
+  r = (pad*ln).round
+
+  # Pad
+  d = pad(d, d.each_index.to_a, r+0)
+  d = pad(d, d.each_index.to_a.reverse, r+0)
+
+  # Average
+  y = 0.0
+  unless d.compact.empty?
+    s = d.each_with_index.to_a.map{ |v,i| v.nil? ? 0 : i*v }.inject(0,:+)
+    y = s.to_f/d.compact.inject(:+)
+  end
+
+  # Report
+  if o[:perseq]
+    puts [sq, y].join("\t")
+  else
+    puts y
   end
 end
 
-# Estimate padding ranges
-pad = (1.0-o[:range])/2.0
-r = (pad*ln).round
-
-# Pad
-d = pad(d, d.each_index.to_a, r+0)
-d = pad(d, d.each_index.to_a.reverse, r+0)
-
-# Average
-if d.compact.empty?
-  p 0.0
-else
-  s = d.each_with_index.to_a.map{ |v,i| v.nil? ? 0 : i*v }.inject(0,:+)
-  p s.to_f/d.compact.inject(:+)
+# Read BedGraph
+d  = []
+ln = 0
+pre_sq = nil
+File.open(o[:i], "r") do |ifh|
+  ifh.each_line do |i|
+    next if i =~ /^#/
+    r  = i.chomp.split("\t")
+    sq = r.shift
+    if o[:perseq] and !pre_sq.nil? and pre_sq!=sq
+      report(pre_sq, d, ln, o)
+      d  = []
+      ln = 0
+    end
+    r.map! { |j| j.to_i }
+    l = r[1]-r[0]
+    d[ r[2] ] ||= 0
+    d[ r[2] ]  += l
+    ln += l
+    pre_sq = sq
+  end
 end
+report(pre_sq, d, ln, o)
 

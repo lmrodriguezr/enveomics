@@ -23,6 +23,11 @@
           "default": 0.5,
           "description": ["Central range to consider, between 0 and 1. By",
             "default: inter-quartile range (0.5)."]
+        },
+        {
+          "opt": "--per-seq",
+          "description": ["Calculate averages per reference sequence, not",
+            "total. Assumes a sorted BedGraph file."]
         }
       ]
     }
