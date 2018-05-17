@@ -28,6 +28,10 @@
           "opt": "--per-seq",
           "description": ["Calculate averages per reference sequence, not",
             "total. Assumes a sorted BedGraph file."]
+        },
+        {
+          "opt": "--length",
+          "description": "Add sequence length to the output."
         }
       ]
     }

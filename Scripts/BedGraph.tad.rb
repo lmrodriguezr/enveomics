@@ -2,7 +2,7 @@
 
 require 'optparse'
 
-o = {range: 0.5, perseq: false}
+o = {range: 0.5, perseq: false, length: false}
 ARGV << '-h' if ARGV.empty?
 OptionParser.new do |opt|
   opt.banner = "
@@ -24,6 +24,8 @@ OptionParser.new do |opt|
     'Calculate averages per reference sequence, not total.',
     'Assumes a sorted BedGraph file.'
     ){ |v| o[:perseq] = v }
+  opt.on('-l', '--length',
+    'Add sequence length to the output.'){ |v| o[:length] = v }
   opt.on('-h', '--help', 'Display this screen.') do
     puts opt
     exit
@@ -53,18 +55,16 @@ def report(sq, d, ln, o)
   d = pad(d, d.each_index.to_a.reverse, r+0)
 
   # Average
-  y = 0.0
+  y = [0.0]
   unless d.compact.empty?
     s = d.each_with_index.to_a.map{ |v,i| v.nil? ? 0 : i*v }.inject(0,:+)
-    y = s.to_f/d.compact.inject(:+)
+    y[0] = s.to_f/d.compact.inject(:+)
   end
 
   # Report
-  if o[:perseq]
-    puts [sq, y].join("\t")
-  else
-    puts y
-  end
+  y.unshift(sq) if o[:perseq]
+  y << ln if o[:length]
+  puts y.join("\t")
 end
 
 # Read BedGraph
