@@ -3,6 +3,7 @@
     "Sequence similarity search": {
       "Statistics": [
         "BedGraph.tad.rb",
+        "BedGraph.window.rb",
         "BlastPairwise.AAsubs.pl",
         "BlastTab.advance.bash",
         "BlastTab.recplot2.R",
@@ -138,6 +139,7 @@
       ],
       "Read recruitments": [
         "BedGraph.tad.rb",
+        "BedGraph.window.rb",
         "BlastTab.catsbj.pl",
         "BlastTab.pairedHits.rb",
         "BlastTab.recplot2.R",
