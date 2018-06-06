@@ -296,8 +296,10 @@ Dir.mktmpdir do |dir|
       "#{dir}/#{i}.tab.uns"`
       `sort -k 1 "#{dir}/#{i}.tab.uns" > "#{dir}/#{i}.tab"`
     when "diamond"
-      `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" --outfmt 6 \
-      --db "#{s}.dmnd" --query "#{q}" --out "#{dir}/#{i}.tab" --sensitive`
+      `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" --db "#{s}.dmnd" \
+      --query "#{q}" --sensitive --daa "#{dir}/#{i}.daa" \
+      && "#{o[:bin]}diamond" view --daa "#{dir}/#{i}.daa" --outfmt 6 \
+      --out "#{dir}/#{i}.tab"`
     else
       abort "Unsupported program: #{o[:program]}."
     end
