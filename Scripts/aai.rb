@@ -297,7 +297,7 @@ Dir.mktmpdir do |dir|
       `sort -k 1 "#{dir}/#{i}.tab.uns" > "#{dir}/#{i}.tab"`
     when "diamond"
       `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" --outfmt 6 \
-      --db "#{s}.dmnd" --query "#{q}" --out "#{dir}/#{i}.tab" --more-sensitive`
+      --db "#{s}.dmnd" --query "#{q}" --out "#{dir}/#{i}.tab" --sensitive`
     else
       abort "Unsupported program: #{o[:program]}."
     end
