@@ -124,6 +124,15 @@ mean(enve.recplot2.seqdepth(rp)) # <- Average
 median(enve.recplot2.seqdepth(rp)) # <- Median
 ```
 
+The functions above only use hits with identity above the identity cutoff for "in-group" (by default: 95% identity).
+In order to estimate the sequencing depth with a different identity cutoff, modify the cutoff first:
+
+```R
+rp98 <- enve.recplot2.changeCutoff(rp, 98) # <- Change to ≥98%
+mean(enve.recplot2.seqdepth(rp98)) # <- Average (for the new object)
+median(enve.recplot2.seqdepth(rp98)) # <- Median (for the new object)
+```
+
 ### Average and median sequencing depth excluding zero-coverage windows
 
 ```R
