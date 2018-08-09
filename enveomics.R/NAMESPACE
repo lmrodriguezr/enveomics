@@ -36,4 +36,4 @@ export(
   enve.recplot2.extractWindows, enve.recplot2.compareIdentities,
   enve.recplot2.coordinates, enve.recplot2.seqdepth, enve.recplot2.ANIr,
   enve.growthcurve, plot.enve.GrowthCurve, summary.enve.GrowthCurve,
-  enve.col2alpha)
+  enve.col2alpha, enve.truncate)

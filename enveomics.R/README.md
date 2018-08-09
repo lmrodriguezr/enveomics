@@ -41,6 +41,7 @@ And open help messages using any of the following commands:
 ?enve.tribs.test
 ?enve.growthcurve
 ?enve.col.alpha
+?enve.truncate
 ```
 
 You can run some examples using these libraries in the
@@ -50,6 +51,8 @@ For additional information on recruitment plots, see the
 [Recruitment plots working document](https://github.com/lmrodriguezr/enveomics/blob/master/Docs/recplot2.md).
 
 ## Changelog
+* 1.3.2: New option `panel.fun` for `plot.enve.RecPlot2`.
+* 1.3.1: New function enve.truncate.
 * 1.3: Several bug fixes and new utilities for recruitment plots (recplot2).
 * 1.1.0: New function enve.growthcurve and related class enve.GrowthCurve
   with S3 methods plot and summary.

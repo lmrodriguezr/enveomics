@@ -7,7 +7,7 @@ include globals.mk
 
 TEST=Tests
 enveomics_r=enveomics.R
-enveomics_r_v=enveomics.R_1.3
+enveomics_r_v=enveomics.R_1.3.2
 .PHONY: test install install-scripts install-r uninstall install-deps
 
 test: $(enveomics_r_v).tar.gz
@@ -41,7 +41,7 @@ uninstall:
 	-$(R) CMD REMOVE $(enveomics_r)
 
 $(enveomics_r_v).tar.gz: install-deps
-	-rm -r $(enveomics_r).tar.gz
+	rm -f $(enveomics_r_v).tar.gz
 	./build_enveomics_r.bash
 	$(R) CMD build $(enveomics_r)/
 	$(MAKE) install-r

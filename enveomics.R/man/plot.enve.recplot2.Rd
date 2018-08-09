@@ -3,9 +3,9 @@
 \title{plot enve RecPlot2}
 \description{Plots an `enve.RecPlot2` object.}
 \usage{\method{plot}{enve.RecPlot2}(x, layout = matrix(c(5, 5, 2, 1, 4, 3), nrow = 2), 
-    widths = c(1, 7, 2), heights = c(1, 2), palette = grey((100:0)/100), 
-    underlay.group = TRUE, peaks.col = "darkred", use.peaks, 
-    id.lim = range(x$id.breaks), pos.lim = range(x$pos.breaks), 
+    panel.fun = list(), widths = c(1, 7, 2), heights = c(1, 2), 
+    palette = grey((100:0)/100), underlay.group = TRUE, peaks.col = "darkred", 
+    use.peaks, id.lim = range(x$id.breaks), pos.lim = range(x$pos.breaks), 
     pos.units = c("Mbp", "Kbp", "bp"), mar = list(`1` = c(5, 
         4, 1, 1) + 0.1, `2` = c(ifelse(any(layout == 1), 1, 5), 
         4, 4, 1) + 0.1, `3` = c(5, ifelse(any(layout == 1), 1, 
@@ -28,10 +28,16 @@ where:
 3: identity histogram,
 4: Populations histogram (histogram of sequencing depths),
 5: Color scale for the counts matrix (vertical),
-6: Color scale of the counts
-matrix (horizontal). Only panels indicated here will be plotted. To
-plot only one panel simply set this to the number of the panel you
-want to plot.}
+6: Color scale of the counts matrix (horizontal)
+Only panels indicated here will be plotted. To plot only one panel
+simply set this to the number of the panel you want to plot.}
+  \item{panel.fun}{List of functions to be executed after drawing each panel. Use the
+indices in `layout` (as characters) as keys. Functions for indices
+missing in `layout` are ignored. For example, to add a vertical line
+at the 3Mbp mark in both the position histogram and the counts matrix:
+`list('1'=function() abline(v=3), '2'=function() abline(v=3))`.
+Note that the X-axis in both panels is in Mbp by default. To change
+this behavior, set `pos.units` accordingly.}
   \item{widths}{Relative widths of the columns of `layout`.}
   \item{heights}{Relative heights of the rows of `layout`.}
   \item{palette}{Colors to be used to represent the counts matrix, sorted from no hits

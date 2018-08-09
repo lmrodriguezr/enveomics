@@ -70,10 +70,17 @@ plot.enve.RecPlot2 <- function
       ###   3: identity histogram,
       ###   4: Populations histogram (histogram of sequencing depths),
       ###   5: Color scale for the counts matrix (vertical),
-      ###   6: Color scale of the counts
-      ### matrix (horizontal). Only panels indicated here will be plotted. To
-      ### plot only one panel simply set this to the number of the panel you
-      ### want to plot.
+      ###   6: Color scale of the counts matrix (horizontal)
+      ### Only panels indicated here will be plotted. To plot only one panel
+      ### simply set this to the number of the panel you want to plot.
+      panel.fun=list(),
+      ### List of functions to be executed after drawing each panel. Use the
+      ### indices in `layout` (as characters) as keys. Functions for indices
+      ### missing in `layout` are ignored. For example, to add a vertical line
+      ### at the 3Mbp mark in both the position histogram and the counts matrix:
+      ### `list('1'=function() abline(v=3), '2'=function() abline(v=3))`.
+      ### Note that the X-axis in both panels is in Mbp by default. To change
+      ### this behavior, set `pos.units` accordingly.
       widths=c(1,7,2),
       ### Relative widths of the columns of `layout`.
       heights=c(1,2),
@@ -166,7 +173,7 @@ plot.enve.RecPlot2 <- function
 		  list(maxColorValue=256, alpha=52)));
    }
 
-   # Counts matrix
+   # [1] Counts matrix
    if(any(layout==1)){
       par(mar=mar[['1']]);
       plot(1, t='n', bty='l',
@@ -182,9 +189,10 @@ plot.enve.RecPlot2 <- function
       image(x=pos.breaks, y=id.breaks, z=log10(counts),col=palette,
 	 bg=grey(1,0), breaks=seq(-.1,log10(max(counts)),
 	 length.out=1+length(palette)), add=TRUE);
+      if(exists('1',panel.fun)) panel.fun[['1']]();
    }
 
-   # Position histogram
+   # [2] Position histogram
    if(any(layout==2)){
       par(mar=mar[['2']]);
       if(any(layout==1)){
@@ -213,9 +221,10 @@ plot.enve.RecPlot2 <- function
       if(any(pos.counts.in==0))  rect(pos.breaks[c(pos.counts.in==0,FALSE)],
 	       seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.in==0)],
 	       seqdepth.lim[1]*3/2, col=in.col,  border=NA);
+      if(exists('2',panel.fun)) panel.fun[['2']]();
    }
 
-   # Identity histogram
+   # [3] Identity histogram
    if(any(layout==3)){
       par(mar=mar[['3']]);
       if(any(layout==1)){
@@ -248,9 +257,10 @@ plot.enve.RecPlot2 <- function
 	 plot(1,t='n',bty='l',xlab='', xaxt='n', ylab='', yaxt='n')
 	 text(1,1,labels='Insufficient data', srt=90)
       }
+      if(exists('3',panel.fun)) panel.fun[['3']]();
    }
 
-   # Populations histogram
+   # [4] Populations histogram
    peaks <- NA;
    if(any(layout==4)){
       par(mar=mar[['4']]);
@@ -308,9 +318,10 @@ plot.enve.RecPlot2 <- function
                     dpt,'X (', frx, '%', err, ')', sep=''))
 	 }
       }
+      if(exists('4',panel.fun)) panel.fun[['4']]();
    }
 
-   # Color scale
+   # [5] Color scale of the counts matrix (vertical)
    count.bins <- 10^seq(log10(min(counts[counts>0])), log10(max(counts)),
       length.out=1+length(palette))
    if(any(layout==5)){
@@ -319,13 +330,17 @@ plot.enve.RecPlot2 <- function
 	 ylim=range(count.bins), yaxs='i', ylab='')
       rect(0,count.bins[-length(count.bins)],1,count.bins[-1],col=palette,
 	 border=NA)
+      if(exists('5',panel.fun)) panel.fun[['5']]();
    }
+
+   # [6] Color scale of the coutnts matrix (horizontal)
    if(any(layout==6)){
       par(mar=mar[['6']]);
       plot(1,t='n',log='x',ylim=0:1,yaxt='n',ylab='',yaxs='i',
 	 xlim=range(count.bins), xaxs='i',xlab='');
       rect(count.bins[-length(count.bins)],0,count.bins[-1],1,col=palette,
 	 border=NA);
+      if(exists('6',panel.fun)) panel.fun[['6']]();
    }
    
    par(mar=ori.mar);
@@ -931,7 +946,11 @@ enve.recplot2.seqdepth <- function
     ){
   if(!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
-  pos.cnts.in <- x$pos.counts.in
+  if(low.identity){
+    pos.cnts.in <- x$pos.counts.out
+  }else{
+    pos.cnts.in <- x$pos.counts.in
+  }
   pos.breaks  <- x$pos.breaks
   pos.binsize <- (pos.breaks[-1] - pos.breaks[-length(pos.breaks)])
   seqdepth.in <- pos.cnts.in/pos.binsize
