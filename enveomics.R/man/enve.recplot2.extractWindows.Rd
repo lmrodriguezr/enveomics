@@ -6,9 +6,9 @@ depth.}
 \usage{enve.recplot2.extractWindows(rp, peak, lower.tail = TRUE, significance = 0.05, 
     seq.names = FALSE)}
 \arguments{
-  \item{rp}{Recruitment plot, a enve.RecPlot2 object.}
+  \item{rp}{Recruitment plot, a `enve.RecPlot2` object.}
   \item{peak}{Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
-list of enve.RecPlot2.Peak objects, in which case the core peak is
+list of `enve.RecPlot2.Peak` objects, in which case the core peak is
 used (see `enve.recplot2.corePeak`).}
   \item{lower.tail}{If FALSE, it returns windows significantly above the peak in
 sequencing depth.}

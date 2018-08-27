@@ -33,7 +33,8 @@ export(
   enve.recplot2.findPeaks.emauto, enve.recplot2.findPeaks.em,
   enve.recplot2.findPeaks.mower,
   enve.recplot2.corePeak, enve.recplot2.changeCutoff,
-  enve.recplot2.extractWindows, enve.recplot2.compareIdentities,
+  enve.recplot2.windowDepthThreshold, enve.recplot2.extractWindows,
+  enve.recplot2.compareIdentities,
   enve.recplot2.coordinates, enve.recplot2.seqdepth, enve.recplot2.ANIr,
   enve.growthcurve, plot.enve.GrowthCurve, summary.enve.GrowthCurve,
   enve.col2alpha, enve.truncate)

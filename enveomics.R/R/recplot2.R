@@ -773,14 +773,40 @@ enve.recplot2.changeCutoff <- function
    return(rp)
 }
 
+enve.recplot2.windowDepthThreshold <- function
+  ### Identifies the threshold below which windows should be identified as
+  ### variable or absent.
+    (rp,
+    ### Recruitment plot, an `enve.RecPlot2` object.
+    peak,
+    ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
+    ### list of `enve.RecPlot2.Peak` objects, in which case the core peak is
+    ### used (see `enve.recplot2.corePeak`).
+    lower.tail=TRUE,
+    ### If FALSE, it returns windows significantly above the peak in
+    ### sequencing depth.
+    significance=0.05
+    ### Significance threshold (alpha) to select windows.
+    ){
+   if(is.list(peak)) peak <- enve.recplot2.corePeak(peak)
+   par <- peak$param.hat
+   par[["p"]] <- ifelse(lower.tail, significance, 1-significance)
+   thr <- do.call(ifelse(length(par)==4, qsn, qnorm), par)
+   if(peak$log) thr <- exp(thr)
+
+   return(thr)
+   ### Returns a float. The units are depth if the peaks were estimated in
+   ### linear scale, or log-depth otherwise (`peak$log`).
+}
+
 enve.recplot2.extractWindows <- function
    ### Extract windows significantly below (or above) the peak in sequencing
    ### depth.
       (rp,
-      ### Recruitment plot, a enve.RecPlot2 object.
+      ### Recruitment plot, a `enve.RecPlot2` object.
       peak,
       ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
-      ### list of enve.RecPlot2.Peak objects, in which case the core peak is
+      ### list of `enve.RecPlot2.Peak` objects, in which case the core peak is
       ### used (see `enve.recplot2.corePeak`).
       lower.tail=TRUE,
       ### If FALSE, it returns windows significantly above the peak in
@@ -794,11 +820,7 @@ enve.recplot2.extractWindows <- function
       ### a data.frame with a name column and two columns of coordinates.
       ){
    # Determine the threshold
-   if(is.list(peak)) peak <- enve.recplot2.corePeak(peak)
-   par <- peak$param.hat
-   par[["p"]] <- ifelse(lower.tail, significance, 1-significance)
-   thr <- do.call(ifelse(length(par)==4, qsn, qnorm), par)
-   if(peak$log) thr <- exp(thr)
+   thr <- enve.recplot2.windowDepthThreshold(rp, peak, lower.tail, significance)
    
    # Select windows past the threshold
    seqdepth.in <- enve.recplot2.seqdepth(rp)
