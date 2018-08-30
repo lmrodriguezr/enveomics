@@ -117,11 +117,13 @@ library(enveomics.R)
 load('my-recplot.rdata')
 ```
 
-### Average and median sequencing depth
+### Centrality measures of sequencing depth
 
 ```R
 mean(enve.recplot2.seqdepth(rp)) # <- Average
 median(enve.recplot2.seqdepth(rp)) # <- Median
+enve.truncate(enve.recplot2.seqdepth(rp)) # <- 95% Central Truncated Mean
+enve.truncate(enve.recplot2.seqdepth(rp), 0.9) # <- 90% Central Truncated Mean
 ```
 
 The functions above only use hits with identity above the cutoff for "in-group" (by default: 95%).
