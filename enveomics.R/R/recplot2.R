@@ -520,6 +520,7 @@ enve.recplot2.findPeaks.emauto <- function(
     best <- enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best,
           verbose, ...)
   }
+  if(length(best[['peaks']])==0) return(list())
 
   seqdepths.r <- signif(log(sapply(best[['peaks']],
         function(x) x$seq.depth)), merge.tol)
@@ -571,6 +572,7 @@ enve.recplot2.findPeaks.em <- function(
   lsd1  <- (x$pos.counts.in/pos.binsize)[ x$pos.counts.in > 0 ]
   lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
   if(log) lsd1 <- log(lsd1)
+  return(list())
 
   # 1. Initialize
   if(missing(init)){
@@ -1028,6 +1030,7 @@ enve.recplot2.findPeaks.__emauto_one <- function
   ### Internal ancilliary function (see `enve.recplot2.findPeaks.emauto).
     (x, comp, do_crit, best, verbose, ...){
   peaks <- enve.recplot2.findPeaks.em(x=x, components=comp, ...)
+  if(length(peaks)==0) return(best)
   k <- comp*3 - 1 # mean & sd for each component, and n-1 free alpha parameters
   crit <- do_crit(peaks[[1]]$err.res, k, peaks[[1]]$n.total)
   if(verbose) cat(comp,'\t| LL =', peaks[[1]]$err.res, '\t| Estimate =', crit,
