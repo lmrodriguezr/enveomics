@@ -639,7 +639,13 @@
           "opt": "--pos-breaks",
           "arg": "integer",
           "default": 1000,
-          "description": ["Breaks in the positions histogram."]
+          "description": "Breaks in the positions histogram."
+        },
+        {
+          "opt": "--pos-breaks-tsv",
+          "arg": "in_file",
+          "description": ["File with (absolute) coordinates of breaks in the",
+            "position histogram."]
         },
         {
           "opt": "--id-breaks",

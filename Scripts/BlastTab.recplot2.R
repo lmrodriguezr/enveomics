@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
 # @author  Luis M. Rodriguez-R
-# @license artistic license 2.0
+# @license Artistic-2.0
 
 #= Load stuff
 suppressPackageStartupMessages(library(enveomics.R))
@@ -17,6 +17,7 @@ opt <- enve.cliopts(enve.recplot2,
   usage="usage: %prog [options] output.Rdata [output.pdf [width height]]",
   mandatory=c("prefix"),
   o_desc=list(pos.breaks="Breaks in the positions histogram.",
+    pos.breaks.tsv="File with (absolute) coordinates of breaks in the position histogram",
     id.breaks="Breaks in the identity histogram.",
     id.summary="Function summarizing the identity bins. By default: sum.",
     peaks.col="Color of peaks, mandatory for peak-finding (e.g., darkred).",
@@ -24,7 +25,8 @@ opt <- enve.cliopts(enve.recplot2,
   p_desc=paste("","Produce recruitment plot objects provided that",
     "BlastTab.catsbj.pl has been previously executed.", sep="\n\t"),
   ignore=c("plot"),
-  defaults=c(id.metric="identity", peaks.col=NA, peaks.method="emauto"))
+  defaults=c(pos.breaks.tsv=NA, id.metric="identity", peaks.col=NA,
+    peaks.method="emauto"))
 
 #= Run it!
 if(length(opt$args)>1){

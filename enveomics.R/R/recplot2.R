@@ -9,6 +9,7 @@ setClass("enve.RecPlot2",
    id.counts='numeric',		##<< Counts per ID bin.
    id.breaks='numeric',		##<< Breaks of identity bins.
    pos.breaks='numeric',	##<< Breaks of position bins.
+   pos.names='character',       ##<< Names of the position bins.
    seq.breaks='numeric',	##<< Breaks of input sequences.
    peaks='list',                ##<< Peaks identified in the recplot.
    ### Limits of the subject sequences after concatenation.
@@ -352,113 +353,129 @@ plot.enve.RecPlot2 <- function
 
 #==============> Define core functions
 enve.recplot2 <- function(
-   ### Produces recruitment plots provided that BlastTab.catsbj.pl has
-   ### been previously executed.
-      prefix,
-      ### Path to the prefix of the BlastTab.catsbj.pl output files. At
-      ### least the files .rec and .lim must exist with this prefix.
-      plot=TRUE,
-      ### Should the object be plotted?
-      pos.breaks=1e3,
-      ### Breaks in the positions histogram. It can also be a vector of break
-      ### points, and values outside the range are ignored. If zero (0), it
-      ### uses the sequence breaks as defined in the .lim file, which means
-      ### one bin per contig (or gene, if the mapping is agains genes).
-      id.breaks=300,
-      ### Breaks in the identity histogram. It can also be a vector of break
-      ### points, and values outside the range are ignored.
-      id.free.range=FALSE,
-      ### Indicates that the range should be freely set from the observed
-      ### values. Otherwise, 70-100% is included in the identity histogram
-      ### (default).
-      id.metric=c('identity', 'corrected identity', 'bit score'),
-      ### Metric of identity to be used (Y-axis). Corrected identity is only
-      ### supported if the original BLAST file included sequence lengths.
-      id.summary=sum,
-      ### Function summarizing the identity bins. Other recommended options
-      ### include: `median` to estimate the median instead of total bins, and
-      ### `function(x) mlv(x,method='parzen')$M` to estimate the mode.
-      id.cutoff=95,
-      ### Cutoff of identity metric above which the hits are considered
-      ### 'in-group'. The 95% identity corresponds to the expectation of
-      ### ANI<95% within species.
-      threads=2,
-      ### Number of threads to use.
-      verbose=TRUE,
-      ### Indicates if the function should report the advance.
-      ...
-      ### Any additional parameters supported by `plot.enve.RecPlot2`.
-   ){
-   # Settings
-   id.metric <- match.arg(id.metric);
-   
-   #Read files
-   if(verbose) cat("Reading files.\n")
-   rec <- read.table(paste(prefix, ".rec", sep=""), sep="\t", comment.char="",
-      quote="");
-   lim <- read.table(paste(prefix, ".lim", sep=""), sep="\t", comment.char="",
-      quote="", as.is=TRUE);
-   
-   # Build matrix
-   if(verbose) cat("Building counts matrix.\n")
-   if(id.metric=="corrected identity" & ncol(rec)<6){
-      stop("Requesting corr. identity, but .rec file doesn't have 6th column")
-   }
-   rec.idcol <- ifelse(id.metric=="identity", 3,
-      ifelse(id.metric=="corrected identity", 6, 4));
-   if(length(pos.breaks)==1){
-      if(pos.breaks>0){
-         pos.breaks <- seq(min(lim[,2]), max(lim[,3]), length.out=pos.breaks+1);
-      }else{
-         pos.breaks <- c(lim[1,2], lim[,3])
-      }
-   }
-   if(length(id.breaks)==1){
-      id.range.v <- rec[,rec.idcol]
-      if(!id.free.range) id.range.v <- c(id.range.v,70,100)
-      id.range.v <- range(id.range.v)
-      id.breaks <- seq(id.range.v[1], id.range.v[2], length.out=id.breaks+1);
-   }
-   
-   # Run in parallel
-   if(nrow(rec) < 200) threads <- 1 # It doesn't worth the overhead
-   cl		<- makeCluster(threads)
-   rec.l	<- list()
-   thl		<- ceiling(nrow(rec)/threads)
-   for(i in 0:(threads-1)){
-      rec.l[[i+1]] <- list(rec=rec[ (i*thl+1):min(((i+1)*thl),nrow(rec)), ],
-			verbose=ifelse(i==0, verbose, FALSE))
-   }
-   counts.l	<- clusterApply(cl, rec.l, enve.recplot2.__counts,
-			pos.breaks=pos.breaks, id.breaks=id.breaks,
-			rec.idcol=rec.idcol)
-   counts	<- counts.l[[1]]
-   if(threads>1) for(i in 2:threads) counts <- counts + counts.l[[i]]
-   stopCluster(cl)
-   
-   # Estimate 1D histograms
-   if(verbose) cat("Building histograms.\n")
-   id.mids	<- (id.breaks[-length(id.breaks)]+id.breaks[-1])/2;
-   id.ingroup	<- (id.mids > id.cutoff);
-   id.counts	<- apply(counts, 2, id.summary);
-   pos.counts.in   <- apply(counts[,id.ingroup], 1, sum);
-   pos.counts.out  <- apply(counts[,!id.ingroup], 1, sum);
+  ### Produces recruitment plots provided that BlastTab.catsbj.pl has
+  ### been previously executed.
+    prefix,
+    ### Path to the prefix of the BlastTab.catsbj.pl output files. At
+    ### least the files .rec and .lim must exist with this prefix.
+    plot=TRUE,
+    ### Should the object be plotted?
+    pos.breaks=1e3,
+    ### Breaks in the positions histogram. It can also be a vector of break
+    ### points, and values outside the range are ignored. If zero (0), it
+    ### uses the sequence breaks as defined in the .lim file, which means
+    ### one bin per contig (or gene, if the mapping is agains genes). Ignored
+    ### if `pos.breaks.tsv` is passed.
+    pos.breaks.tsv=NA,
+    ### Path to a list of (absolute) coordinates to use as position breaks.
+    ### This tab-delimited file can be produced by `GFF.catsbj.pl`, and it
+    ### must contain at least one column: coordinates of the break positions of
+    ### each position bin. If it has a second column, this is used as the name
+    ### of the position bin that ends at the given coordinate (the first row is
+    ### ignored). Any additional columns are currently ignored. If NA,
+    ### position bins are determined by `pos.breaks`.
+    id.breaks=300,
+    ### Breaks in the identity histogram. It can also be a vector of break
+    ### points, and values outside the range are ignored.
+    id.free.range=FALSE,
+    ### Indicates that the range should be freely set from the observed
+    ### values. Otherwise, 70-100% is included in the identity histogram
+    ### (default).
+    id.metric=c('identity', 'corrected identity', 'bit score'),
+    ### Metric of identity to be used (Y-axis). Corrected identity is only
+    ### supported if the original BLAST file included sequence lengths.
+    id.summary=sum,
+    ### Function summarizing the identity bins. Other recommended options
+    ### include: `median` to estimate the median instead of total bins, and
+    ### `function(x) mlv(x,method='parzen')$M` to estimate the mode.
+    id.cutoff=95,
+    ### Cutoff of identity metric above which the hits are considered
+    ### 'in-group'. The 95% identity corresponds to the expectation of
+    ### ANI<95% within species.
+    threads=2,
+    ### Number of threads to use.
+    verbose=TRUE,
+    ### Indicates if the function should report the advance.
+    ...
+    ### Any additional parameters supported by `plot.enve.RecPlot2`.
+  ){
+  # Settings
+  id.metric <- match.arg(id.metric);
 
-   # Plot and return
-   recplot <- new('enve.RecPlot2',
-      counts=counts, id.counts=id.counts, pos.counts.in=pos.counts.in,
-      pos.counts.out=pos.counts.out,
-      id.breaks=id.breaks, pos.breaks=pos.breaks,
-      seq.breaks=c(lim[1,2], lim[,3]), seq.names=lim[,1],
-      id.ingroup=id.ingroup,id.metric=id.metric,
-      call=match.call());
-   if(plot){
-      if(verbose) cat("Plotting.\n")
-      peaks <- plot(recplot, ...);
-      attr(recplot, "peaks") <- peaks
-   }
-   return(recplot);
-   ### Returns an object of class `enve.RecPlot2`.
+  #Read files
+  if(verbose) cat("Reading files.\n")
+  rec <- read.table(paste(prefix, ".rec", sep=""), sep="\t", comment.char="",
+        quote="");
+  lim <- read.table(paste(prefix, ".lim", sep=""), sep="\t", comment.char="",
+        quote="", as.is=TRUE);
+
+  # Build matrix
+  if(verbose) cat("Building counts matrix.\n")
+  if(id.metric=="corrected identity" & ncol(rec)<6){
+    stop("Requesting corr. identity, but .rec file doesn't have 6th column")
+  }
+  rec.idcol <- ifelse(id.metric=="identity", 3,
+        ifelse(id.metric=="corrected identity", 6, 4))
+  pos.names <- NULL
+  if(!is.na(pos.breaks.tsv)){
+    tmp <- read.table(pos.breaks.tsv, sep='\t', header=FALSE, as.is=TRUE)
+    pos.breaks <- as.numeric(tmp[,1])
+    if(ncol(tmp)>1) pos.names <- as.character(tmp[-1,2])
+  }else if(length(pos.breaks)==1){
+    if(pos.breaks>0){
+      pos.breaks <- seq(min(lim[,2]), max(lim[,3]), length.out=pos.breaks+1);
+    }else{
+      pos.breaks <- c(lim[1,2], lim[,3])
+      pos.names  <- lim[,1]
+    }
+  }
+  if(length(id.breaks)==1){
+    id.range.v <- rec[,rec.idcol]
+    if(!id.free.range) id.range.v <- c(id.range.v,70,100)
+    id.range.v <- range(id.range.v)
+    id.breaks <- seq(id.range.v[1], id.range.v[2], length.out=id.breaks+1);
+  }
+
+  # Run in parallel
+  if(nrow(rec) < 200) threads <- 1 # It doesn't worth the overhead
+  cl    <- makeCluster(threads)
+  rec.l <- list()
+  thl   <- ceiling(nrow(rec)/threads)
+  for(i in 0:(threads-1)){
+    rec.l[[i+1]] <- list(
+          rec=rec[ (i*thl+1):min(((i+1)*thl),nrow(rec)), ],
+          verbose=ifelse(i==0, verbose, FALSE))
+  }
+  counts.l <- clusterApply(cl, rec.l, enve.recplot2.__counts,
+                pos.breaks=pos.breaks, id.breaks=id.breaks,
+                rec.idcol=rec.idcol)
+  counts   <- counts.l[[1]]
+  if(threads>1) for(i in 2:threads) counts <- counts + counts.l[[i]]
+  stopCluster(cl)
+
+  # Estimate 1D histograms
+  if(verbose) cat("Building histograms.\n")
+  id.mids	<- (id.breaks[-length(id.breaks)]+id.breaks[-1])/2;
+  id.ingroup	<- (id.mids > id.cutoff);
+  id.counts	<- apply(counts, 2, id.summary);
+  pos.counts.in   <- apply(counts[,id.ingroup], 1, sum);
+  pos.counts.out  <- apply(counts[,!id.ingroup], 1, sum);
+
+  # Plot and return
+  recplot <- new('enve.RecPlot2',
+    counts=counts, id.counts=id.counts, pos.counts.in=pos.counts.in,
+    pos.counts.out=pos.counts.out,
+    id.breaks=id.breaks, pos.breaks=pos.breaks, pos.names=pos.names,
+    seq.breaks=c(lim[1,2], lim[,3]), seq.names=lim[,1],
+    id.ingroup=id.ingroup,id.metric=id.metric,
+    call=match.call());
+  if(plot){
+    if(verbose) cat("Plotting.\n")
+    peaks <- plot(recplot, ...);
+    attr(recplot, "peaks") <- peaks
+  }
+  return(recplot);
+  ### Returns an object of class `enve.RecPlot2`.
 }
 
 enve.recplot2.findPeaks <- function(
@@ -517,6 +534,7 @@ enve.recplot2.findPeaks.emauto <- function(
     stop('Invalid criterion ', criterion)
   }
   for(comp in components){
+    if(verbose) cat('Testing:',comp,'\n')
     best <- enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best,
           verbose, ...)
   }
@@ -572,7 +590,6 @@ enve.recplot2.findPeaks.em <- function(
   lsd1  <- (x$pos.counts.in/pos.binsize)[ x$pos.counts.in > 0 ]
   lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
   if(log) lsd1 <- log(lsd1)
-  return(list())
 
   # 1. Initialize
   if(missing(init)){
@@ -802,48 +819,48 @@ enve.recplot2.windowDepthThreshold <- function
 }
 
 enve.recplot2.extractWindows <- function
-   ### Extract windows significantly below (or above) the peak in sequencing
-   ### depth.
-      (rp,
-      ### Recruitment plot, a `enve.RecPlot2` object.
-      peak,
-      ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
-      ### list of `enve.RecPlot2.Peak` objects, in which case the core peak is
-      ### used (see `enve.recplot2.corePeak`).
-      lower.tail=TRUE,
-      ### If FALSE, it returns windows significantly above the peak in
-      ### sequencing depth.
-      significance=0.05,
-      ### Significance threshold (alpha) to select windows.
-      seq.names=FALSE
-      ### Returns subject sequence names instead of a vector of Booleans. If
-      ### the recruitment plot was generated with pos.breaks=0 it returns a
-      ### vector of characters (the sequence identifiers), otherwise it returns
-      ### a data.frame with a name column and two columns of coordinates.
-      ){
-   # Determine the threshold
-   thr <- enve.recplot2.windowDepthThreshold(rp, peak, lower.tail, significance)
-   
-   # Select windows past the threshold
-   seqdepth.in <- enve.recplot2.seqdepth(rp)
-   if(lower.tail){
-      sel <- seqdepth.in < thr
-   }else{
-      sel <- seqdepth.in > thr
-   }
-   
-   # seq.names=FALSE
-   if(!seq.names) return(sel)
-   # seq.names=TRUE and pos.breaks=0
-   if(length(rp$pos.breaks)==length(rp$seq.breaks) &&
-         rp$pos.breaks==rp$seq.breaks)
-           return(rp$seq.names[sel])
-   # seq.names=TRUE and pos.breaks!=0
-   return(enve.recplot2.coordinates(rp,sel))
-   ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
-   ### it returns a vector of characters if the object was built with
-   ### `pos.breaks=0` or a data.frame with four columns otherwise: name.from,
-   ### name.to, pos.from, and pos.to (see `enve.recplot2.coordinates`).
+  ### Extract windows significantly below (or above) the peak in sequencing
+  ### depth.
+    (rp,
+    ### Recruitment plot, a `enve.RecPlot2` object.
+    peak,
+    ### Peak, an `enve.RecPlot2.Peak` object. If list, it is assumed to be a
+    ### list of `enve.RecPlot2.Peak` objects, in which case the core peak is
+    ### used (see `enve.recplot2.corePeak`).
+    lower.tail=TRUE,
+    ### If FALSE, it returns windows significantly above the peak in
+    ### sequencing depth.
+    significance=0.05,
+    ### Significance threshold (alpha) to select windows.
+    seq.names=FALSE
+    ### Returns subject sequence names instead of a vector of Booleans. If
+    ### the recruitment plot was generated with named position bins (e.g, using
+    ### `pos.breaks`=0 or a two-column `pos.breaks.tsv`), it returns a vector of
+    ### characters (the sequence identifiers), otherwise it returns a data.frame
+    ### with a name column and two columns of coordinates.
+  ){
+  # Determine the threshold
+  thr <- enve.recplot2.windowDepthThreshold(rp, peak, lower.tail, significance)
+
+  # Select windows past the threshold
+  seqdepth.in <- enve.recplot2.seqdepth(rp)
+  if(lower.tail){
+    sel <- seqdepth.in < thr
+  }else{
+    sel <- seqdepth.in > thr
+  }
+
+  # seq.names=FALSE
+  if(!seq.names) return(sel)
+  # seq.names=TRUE and pos.names defined
+  if(!is.null(rp$pos.names)) return(rp$seq.names[sel])
+  # seq.names=TRUE and pos.names undefined
+  return(enve.recplot2.coordinates(rp,sel))
+  ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
+  ### it returns a vector of characters if the object has `pos.names` defined,
+  ### or a data.frame with four columns otherwise:
+  ### name.from, name.to, pos.from, and pos.to
+  ### (see `enve.recplot2.coordinates`).
 }
 
 enve.recplot2.compareIdentities <- function

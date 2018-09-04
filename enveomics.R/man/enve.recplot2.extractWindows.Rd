@@ -14,15 +14,17 @@ used (see `enve.recplot2.corePeak`).}
 sequencing depth.}
   \item{significance}{Significance threshold (alpha) to select windows.}
   \item{seq.names}{Returns subject sequence names instead of a vector of Booleans. If
-the recruitment plot was generated with pos.breaks=0 it returns a
-vector of characters (the sequence identifiers), otherwise it returns
-a data.frame with a name column and two columns of coordinates.}
+the recruitment plot was generated with named position bins (e.g, using
+`pos.breaks`=0 or a two-column `pos.breaks.tsv`), it returns a vector of
+characters (the sequence identifiers), otherwise it returns a data.frame
+with a name column and two columns of coordinates.}
 }
 
 \value{Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
-it returns a vector of characters if the object was built with
-`pos.breaks=0` or a data.frame with four columns otherwise: name.from,
-name.to, pos.from, and pos.to (see `enve.recplot2.coordinates`).}
+it returns a vector of characters if the object has `pos.names` defined,
+or a data.frame with four columns otherwise:
+name.from, name.to, pos.from, and pos.to
+(see `enve.recplot2.coordinates`).}
 
 \author{Luis M. Rodriguez-R [aut, cre]}
 

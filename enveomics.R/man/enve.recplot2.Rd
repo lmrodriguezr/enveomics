@@ -3,10 +3,10 @@
 \title{enve recplot2}
 \description{Produces recruitment plots provided that BlastTab.catsbj.pl has
 been previously executed.}
-\usage{enve.recplot2(prefix, plot = TRUE, pos.breaks = 1000, id.breaks = 300, 
-    id.free.range = FALSE, id.metric = c("identity", "corrected identity", 
-        "bit score"), id.summary = sum, id.cutoff = 95, threads = 2, 
-    verbose = TRUE, ...)}
+\usage{enve.recplot2(prefix, plot = TRUE, pos.breaks = 1000, pos.breaks.tsv = NA, 
+    id.breaks = 300, id.free.range = FALSE, id.metric = c("identity", 
+        "corrected identity", "bit score"), id.summary = sum, 
+    id.cutoff = 95, threads = 2, verbose = TRUE, ...)}
 \arguments{
   \item{prefix}{Path to the prefix of the BlastTab.catsbj.pl output files. At
 least the files .rec and .lim must exist with this prefix.}
@@ -14,7 +14,15 @@ least the files .rec and .lim must exist with this prefix.}
   \item{pos.breaks}{Breaks in the positions histogram. It can also be a vector of break
 points, and values outside the range are ignored. If zero (0), it
 uses the sequence breaks as defined in the .lim file, which means
-one bin per contig (or gene, if the mapping is agains genes).}
+one bin per contig (or gene, if the mapping is agains genes). Ignored
+if `pos.breaks.tsv` is passed.}
+  \item{pos.breaks.tsv}{Path to a list of (absolute) coordinates to use as position breaks.
+This tab-delimited file can be produced by `GFF.catsbj.pl`, and it
+must contain at least one column: coordinates of the break positions of
+each position bin. If it has a second column, this is used as the name
+of the position bin that ends at the given coordinate (the first row is
+ignored). Any additional columns are currently ignored. If NA,
+position bins are determined by `pos.breaks`.}
   \item{id.breaks}{Breaks in the identity histogram. It can also be a vector of break
 points, and values outside the range are ignored.}
   \item{id.free.range}{Indicates that the range should be freely set from the observed
