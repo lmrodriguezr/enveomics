@@ -119,8 +119,8 @@
            "opt": "-s",
            "name": "Subset",
            "description": ["The FastA provided is to be treated as a subset of",
-             "the subject. By default, it expects all the subjects to be",
-             "present in the BLAST."]
+             "the subject. By default, it expects all the BLAST subjects to be",
+             "present in the FastA."]
          },
          {
            "opt": "-q",
