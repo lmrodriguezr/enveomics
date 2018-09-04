@@ -99,6 +99,7 @@
         "files using <map.bls> as prefix with extensions .rec (for the",
         "recruitment plot) and .lim (for the limits of the different sequences",
         "in <seq.fa>)."],
+      "see_also": ["BlastTab.recplot2.R", "GFF.catsbj.pl"],
       "help_arg": "-h",
       "options": [
          {
@@ -623,7 +624,8 @@
         { "r_package": "optparse" },
         { "r_package": "enveomics.R" }
       ],
-      "see_also": [ "RecPlot2.compareIdentities.R" ],
+      "see_also": ["BlastTab.catsbj.pl", "GFF.catsbj.pl",
+        "RecPlot2.compareIdentities.R"],
       "options": [
         {
           "opt": "--prefix",
