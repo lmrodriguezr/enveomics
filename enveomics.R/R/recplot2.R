@@ -853,7 +853,7 @@ enve.recplot2.extractWindows <- function
   # seq.names=FALSE
   if(!seq.names) return(sel)
   # seq.names=TRUE and pos.names defined
-  if(!is.null(rp$pos.names)) return(rp$seq.names[sel])
+  if(!is.null(rp$pos.names)) return(rp$pos.names[sel])
   # seq.names=TRUE and pos.names undefined
   return(enve.recplot2.coordinates(rp,sel))
   ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
