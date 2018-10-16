@@ -57,9 +57,16 @@ File.open(o[:in], 'r') do |ifh|
 end
 
 # Parse coordinates and mask regions
+last_id = nil
 o[:reg].each do |i|
-  m = i.match(/^(.+):(\d+)\.\.(\d+)$/) or abort "Unexpected region format: #{i}"
+  m = i.match(/^(?:(.+):)?(\d+)\.\.(\d+)$/) or
+    abort "Unexpected region format: #{i}"
   r = [m[1], m[2].to_i-1, m[3].to_i-1]
+  if r[0].nil?
+    abort "Region missing sequence ID: #{i}" if last_id.nil?
+    r[0] = last_id
+  end
+  last_id = r[0]
   sq[r[0]] or abort "Cannot find sequence #{r[0]}"
   r[1] <= r[2] or abort "Malformed range: #{i}"
   if r[1] < 0 or r[2] > sq[r[0]][1].size
