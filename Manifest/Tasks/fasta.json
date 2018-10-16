@@ -217,6 +217,50 @@
       ]
     },
     {
+      "task": "FastA.mask.rb",
+      "description": "Mask sequence region(s) in a FastA file.",
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file."
+        },
+        {
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output FastA file."
+        },
+        {
+          "opt": "--regions",
+          "arg": "string",
+          "mandatory": true,
+          "description": ["Regions to mask separated by commas.",
+            "Each region must be in the format \"sequence_id:from..to\"."]
+        },
+        {
+          "opt": "--symbol",
+          "arg": "string",
+          "default": "N",
+          "description": "Character used to mask the region(s)."
+        },
+        {
+          "opt": "--trim",
+          "description": ["Trim masked regions extending to the edge of a",
+            "sequence."]
+        },
+        {
+          "opt": "--wrap",
+          "arg": "integer",
+          "default": 70,
+          "description": ["Line length to wrap sequences. Use 0 to generate",
+            "1-line sequences."]
+        }
+      ]
+    },
+    {
       "task": "FastA.qlen.pl",
       "description": ["Calculates the quartiles of the length in a set of",
         "sequences. The Q2 is also known as the median. Q0 is the minimum",

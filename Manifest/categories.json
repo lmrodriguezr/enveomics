@@ -46,6 +46,7 @@
         "FastA.filterN.pl",
         "FastA.fragment.rb",
         "FastA.interpose.pl",
+        "FastA.mask.rb",
         "FastA.per_file.pl",
         "FastA.rename.pl",
         "FastA.revcom.pl",
