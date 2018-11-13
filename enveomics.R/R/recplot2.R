@@ -416,7 +416,7 @@ enve.recplot2 <- function(
   }
   rec.idcol <- ifelse(id.metric=="identity", 3,
         ifelse(id.metric=="corrected identity", 6, 4))
-  pos.names <- NULL
+  pos.names <- as.character(NULL)
   if(!is.na(pos.breaks.tsv)){
     tmp <- read.table(pos.breaks.tsv, sep='\t', header=FALSE, as.is=TRUE)
     pos.breaks <- as.numeric(tmp[,1])
@@ -853,7 +853,7 @@ enve.recplot2.extractWindows <- function
   # seq.names=FALSE
   if(!seq.names) return(sel)
   # seq.names=TRUE and pos.names defined
-  if(!is.null(rp$pos.names)) return(rp$pos.names[sel])
+  if(length(rp$pos.names) != 0) return(rp$pos.names[sel])
   # seq.names=TRUE and pos.names undefined
   return(enve.recplot2.coordinates(rp,sel))
   ### Returns a vector of logicals if `seq.names=FALSE`. If `seq.names=TRUE`,
