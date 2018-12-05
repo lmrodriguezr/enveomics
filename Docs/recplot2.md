@@ -200,7 +200,7 @@ p <- plot(rp, use.peaks=peaks, layout=4) # <- Remove `layout=4` for the full plo
 dev.off()
 ```
 
-The key function here is `enve.recplo2.findPeaks`. This function has several parameters, depending on
+The key function here is `enve.recplot2.findPeaks`. This function has several parameters, depending on
 the method used. To see all supported methods, use `?enve.recplot2.findPeaks`. To see all the options
 of the default method (`'emauto'`) use `?enve.recplot2.findPeaks.emauto`.
 
