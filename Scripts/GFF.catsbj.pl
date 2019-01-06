@@ -98,8 +98,8 @@ MAP: {
     my $name  = "feat_$i";
     if($ln[8] =~ /^gene_id=(\d+)/){ # <- GeneMark style
       $name = "gene_id_$1";
-    }elsif($ln[8] =~ /^ID=(\d+)_(\d+)/){ # <- Prodigal style
-      $name = $ln[0]."-".($1-1)."_$2";
+    }elsif($ln[8] =~ /^ID=\d+_(\d+)/){ # <- Prodigal style
+      $name = $ln[0]."_".$1;
     }elsif($ln[8] =~ /^ID=([^;]+)/){
       $name = $1;
     }
