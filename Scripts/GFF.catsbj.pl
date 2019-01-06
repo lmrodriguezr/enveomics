@@ -96,8 +96,12 @@ MAP: {
     my $start = $seq{$ln[0]}+$ln[3];
     my $end   = $seq{$ln[0]}+$ln[4];
     my $name  = "feat_$i";
-    if($ln[8] =~ /^gene_id=(\d+)/){
+    if($ln[8] =~ /^gene_id=(\d+)/){ # <- GeneMark style
       $name = "gene_id_$1";
+    }elsif($ln[8] =~ /^ID=(\d+)_(\d+)/){ # <- Prodigal style
+      $name = $ln[0]."-".($1-1)."_$2";
+    }elsif($ln[8] =~ /^ID=([^;]+)/){
+      $name = $1;
     }
     if($o{i}){
       $start = $last_end if $start < $last_end;
