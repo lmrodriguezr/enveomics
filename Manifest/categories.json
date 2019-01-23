@@ -41,6 +41,7 @@
         "FastQ.test-error.rb"
       ],
       "Manipulation": [
+        "FastA.extract.rb",
         "FastA.filter.pl",
         "FastA.filterLen.pl",
         "FastA.filterN.pl",
