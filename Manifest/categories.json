@@ -51,6 +51,7 @@
         "FastA.per_file.pl",
         "FastA.rename.pl",
         "FastA.revcom.pl",
+        "FastA.sample.rb",
         "FastA.slider.pl",
         "FastA.split.pl",
         "FastA.split.rb",

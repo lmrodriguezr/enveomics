@@ -343,6 +343,49 @@
       ]
     },
     {
+      "task": "FastA.sample.rb",
+      "description": ["Samples a random set of sequences from a multi-FastA",
+        "file."],
+      "help_arg": "--help",
+      "see_also": "FastA.subsample.pl",
+      "options": [
+        {
+          "name": "Input File",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file."
+        },
+        {
+          "name": "Output file",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output FastA file."
+        },
+        {
+          "opt": "--fraction",
+          "arg": "float",
+          "description": ["Fraction of sequences to sample [0-1].",
+            "Mandatory unless Number is provided."]
+        },
+        {
+          "opt": "--number",
+          "arg": "integer",
+          "description": ["Number of sequences to sample.",
+            "Mandatory unless -f is provided."]
+        },
+        {
+          "opt": "--replacement",
+          "description": "Sample with replacement."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
+    },
+    {
       "task": "FastA.slider.pl",
       "description": "Slices sequences in fixed- or variable-length windows.",
       "help_arg": "-help",
@@ -476,6 +519,7 @@
       "task": "FastA.subsample.pl",
       "description": "Subsamples a set of sequences.",
       "help_arg": "-h",
+      "see_also": "FastA.sample.rb",
       "options": [
         {
           "name": "Fraction",
