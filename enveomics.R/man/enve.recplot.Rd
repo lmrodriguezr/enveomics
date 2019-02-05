@@ -37,7 +37,7 @@ If non-zero, requires the stats package.}
   \item{main}{Title of the plot.}
   \item{contig.col}{Color of the Contig boundaries. Set to NA to ignore Contig boundaries.}
   \item{ret.recplot}{Indicates if the matrix of the recruitment plot is to be returned.}
-  \item{ret.hist}{Indicates if the vectors of the identity and position histograms are to be returned.}
+  \item{ret.hist}{Ignored, for backwards compatibility.}
   \item{ret.mode}{Indicates if the mode of the identity is to be computed. It requires the modeest
 package.}
   \item{id.cutoff}{Minimum identity to consider an alignment as "top". By default, it is 0.95 for the
@@ -59,7 +59,7 @@ id.mean: Mean identity.
 
 id.median: Median identity.
 
-id.mode (if ret.mode=TRUE): Mode of the identity.
+id.mode (if ret.mode=TRUE): Mode of the identity. Deprecated.
 
 id.hist (if ret.hist=TRUE): Values of the identity histogram.
 

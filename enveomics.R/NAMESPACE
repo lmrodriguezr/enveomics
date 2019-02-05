@@ -1,5 +1,4 @@
 import(methods)
-import(modeest)
 import(parallel)
 import(fitdistrplus)
 import(sn)

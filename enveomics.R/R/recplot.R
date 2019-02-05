@@ -55,7 +55,7 @@ enve.recplot <- structure(function(
 	ret.recplot=FALSE,
 	### Indicates if the matrix of the recruitment plot is to be returned.
 	ret.hist=FALSE,
-	### Indicates if the vectors of the identity and position histograms are to be returned.
+	### Ignored, for backwards compatibility.
 	ret.mode=FALSE,
 	### Indicates if the mode of the identity is to be computed. It requires the modeest
 	### package.
@@ -205,7 +205,6 @@ enve.recplot <- structure(function(
    legend('bottomright', paste(id.shortname, 'histogram'), bg=rgb(1,1,1,2/3));
    out <- c(out, list(id.mean=mean(rec[, id.reccol])));
    out <- c(out, list(id.median=median(rec[, id.reccol])));
-   if(ret.mode)   out <- c(out, list(id.mode=modeest::mlv(rec[, id.reccol], method='mfv')$M));
    if(ret.hist)  out <- c(out, list(id.hist=id.hist));
 
    # Position histogram
@@ -287,7 +286,7 @@ enve.recplot <- structure(function(
    ### 
    ### id.median: Median identity.
    ### 
-   ### id.mode (if ret.mode=TRUE): Mode of the identity.
+   ### id.mode (if ret.mode=TRUE): Mode of the identity. Deprecated.
    ### 
    ### id.hist (if ret.hist=TRUE): Values of the identity histogram.
    ### 
