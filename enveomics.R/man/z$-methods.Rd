@@ -12,16 +12,15 @@
 \describe{
 
 \item{\code{signature(x = "enve.GrowthCurve")}}{
-%%  ~~describe this method here~~
+enve.GrowthCurve, a growth curve
 }
 
 \item{\code{signature(x = "enve.RecPlot2")}}{
-%%  ~~describe this method here~~
+enve.RecPlot2, a recruitment plot
 }
 
 \item{\code{signature(x = "enve.RecPlot2.Peak")}}{
-%%  ~~describe this method here~~
+enve.RecPlot2.Peak, a peak from a recruitment plot
 }
 }}
 \keyword{methods}
-\keyword{ ~~ other possible keyword(s) ~~ }

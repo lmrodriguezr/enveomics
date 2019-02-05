@@ -17,7 +17,7 @@ sub-population mixtures, using a custom distribution-mowing method.}
 (`quant.est`) to estimate a peak.}
   \item{quant.est}{Range of quantiles to be used in the estimation of a peak's
 parameters.}
-  \item{mlv.opts}{Options passed to `mlv` to estimate the mode.}
+  \item{mlv.opts}{Ignored. For backwards compatibility.}
   \item{fitdist.opts.sn}{
 }
   \item{fitdist.opts.norm}{

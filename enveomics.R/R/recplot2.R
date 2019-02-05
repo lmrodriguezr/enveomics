@@ -643,7 +643,7 @@ enve.recplot2.findPeaks.mower <- function(
       ### Range of quantiles to be used in the estimation of a peak's
       ### parameters.
       mlv.opts=list(method='parzen'),
-      ### Options passed to `mlv` to estimate the mode.
+      ### Ignored. For backwards compatibility.
       fitdist.opts.sn=list(distr='sn', method='qme', probs=c(0.1,0.5,0.8),
 	 start=list(omega=1, alpha=-1), lower=c(0, -Inf, -Inf)),
       ### Options passed to `fitdist` to estimate the standard deviation if
@@ -1110,7 +1110,7 @@ enve.recplot2.findPeaks.__mow_one <- function
    
    # Find peak
    o <- mlv.opts; o$x = lsd1;
-   mode1 <- do.call(mlv, o)$M;
+   mode1 <- median(lsd1); # mode1 <- do.call(mlv, o)$M;
    if(verbose) cat('Anchoring at mode =',mode1,'\n')
    param.hat <- fitdist.opts$start; last.hat <- param.hat;
    lim <- NA;
