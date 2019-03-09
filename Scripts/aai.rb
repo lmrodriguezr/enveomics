@@ -261,7 +261,8 @@ Dir.mktmpdir do |dir|
       # Nothing to do
     when "diamond"
       `"#{o[:bin]}diamond" makedb --in "#{dir}/#{seq}.fa" \
-      --db "#{dir}/#{seq}.fa.dmnd" --threads "#{o[:thr]}"`
+      --db "#{dir}/#{seq}.fa.dmnd" --threads "#{o[:thr]}" \
+      --quiet`
     else
       abort "Unsupported program: #{o[:program]}."
     end
@@ -297,9 +298,9 @@ Dir.mktmpdir do |dir|
       `sort -k 1 "#{dir}/#{i}.tab.uns" > "#{dir}/#{i}.tab"`
     when "diamond"
       `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" --db "#{s}.dmnd" \
-      --query "#{q}" --sensitive --daa "#{dir}/#{i}.daa" \
+      --query "#{q}" --sensitive --daa "#{dir}/#{i}.daa" --quiet \
       && "#{o[:bin]}diamond" view --daa "#{dir}/#{i}.daa" --outfmt 6 \
-      --out "#{dir}/#{i}.tab"`
+      --out "#{dir}/#{i}.tab" --quiet`
     else
       abort "Unsupported program: #{o[:program]}."
     end
