@@ -29,6 +29,7 @@
       "Execution": [
         "aai.rb",
         "ani.rb",
+        "HMM.haai.rb",
         "rbm.rb"
       ]
     },
@@ -101,6 +102,7 @@
       ],
       "Search": [
         "HMM.essential.rb",
+        "HMM.haai.rb",
         "HMMsearch.extractIds.rb",
         "ogs.annotate.rb",
         "ogs.core-pan.rb",

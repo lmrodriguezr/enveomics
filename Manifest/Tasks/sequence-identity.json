@@ -189,7 +189,7 @@
       "description": ["Calculates the Average Nucleotide Identity between two",
         "genomes."],
       "help_arg": "--help",
-      "see_also": ["aai.rb","rbm.rb"],
+      "see_also": ["aai.rb","rbm.rb","HMM.essential.rb"],
       "cite": [
         ["Konstantinidis & Tiedje, 2005, PNAS",
           "http://dx.doi.org/10.1073%2Fpnas.0409727102"],
@@ -355,6 +355,38 @@
           "opt": "--auto",
           "description": ["ONLY outputs the ANI value in STDOUT (or nothing,",
             "if calculation fails)."]
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly (no STDERR output)."
+        }
+      ]
+    },
+    {
+      "task": "HMM.haai.rb",
+      "description": ["Estimates Average Amino Acid Identity (AAI) from the",
+        "essential genes extracted and aligned by HMM.essential.rb (see",
+        "Alignments)."],
+      "help_arg": "--help",
+      "see_also": ["HMM.essential.rb","aai.rb"],
+      "options": [
+        {
+          "name": "Alignments 1",
+          "opt": "-1",
+          "arg": "in_file",
+          "description": "Input alignments file for genome 1."
+        },
+        {
+          "name": "Alignments 2",
+          "opt": "-2",
+          "arg": "in_file",
+          "description": "Input alignments file for genome 2."
+        },
+        {
+          "name": "Alignment output",
+          "opt": "--aln-out",
+          "arg": "out_file",
+          "description": "Output file containing the aligned proteins."
         },
         {
           "opt": "--quiet",
