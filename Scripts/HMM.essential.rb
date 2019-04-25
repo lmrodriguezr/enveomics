@@ -41,6 +41,12 @@ Usage: #{$0} [options]"
   opts.on('-R', '--report FILE',
     'Path to the report file. By default, the report is sent to the STDOUT.'
     ){ |v| o[:report] = v }
+  opts.on('--hmm-out FILE',
+    'Save HMMsearch output in this file. By default, not saved.'
+    ){ |v| o[:hmmout] = v }
+  opts.on('--alignments FILE',
+    'Save the aligned proteins in this file. By default, not saved'
+    ){ |v| o[:alignments] = v }
   opts.on('-B', '--bacteria',
     'If set, ignores models typically missing in Bacteria.'
     ){ |v| o[:bacteria] = v }
@@ -137,15 +143,16 @@ begin
       raise 'You have provided an unsupported version of HMMER. ' +
         'This script requires HMMER 3.0+.'
     end
-    `"#{o[:bin]}hmmsearch" --cpu #{o[:thr]} --tblout "#{dir}/hmmsearch" \
-      --cut_tc --notextw "#{dir}/essential.hmm" "#{o[:in]}" \
+    o[:hmmout] ||= "#{dir}/hmmsearch"
+    `"#{o[:bin]}hmmsearch" --cpu #{o[:thr]} --tblout "#{o[:hmmout]}" \
+      -A "#{dir}/a.sto" --cut_tc --notextw "#{dir}/essential.hmm" "#{o[:in]}" \
       > #{dir}/hmmsearch.log`
 
     # Parse output
     $stderr.puts 'Parsing results.' unless o[:q]
     trash = []
     genes = {}
-    File.open("#{dir}/hmmsearch", 'r') do |resh|
+    File.open(o[:hmmout], 'r') do |resh|
       while ln = resh.gets
          next if ln =~ /^#/
          r = ln.split /\s+/
@@ -235,6 +242,37 @@ begin
       geneh.close unless geneh.nil?
       outh.close unless outh.nil?
       faah.close
+    end
+
+    unless o[:alignments].nil?
+      aln = {}
+      File.open("#{dir}/a.sto", 'r') do |fh|
+        cur_model = nil
+        mask = []
+        fh.each_line do |ln|
+          case ln.chomp
+          when /^# STOCKHOLM/
+            cur_model = nil
+            mask = []
+          when /^#=GS (\S+)\/([\d\-]+)\s+DE/
+            cur_model ||= genes.rassoc($1).first
+            aln[ cur_model ] ||= [ "# #{cur_model} : #{$1} : #{$2}" ]
+          when /^#=GC RF\s+(\S+)/
+            aln[ cur_model ][ 1 ] ||= $1.upcase.tap do |i|
+              mask.each{ |d| i[d] = '' }
+            end
+          when /^[^#]\S*\s+(\S+)/
+            next if aln[ cur_model ][ 2 ]
+            aln[ cur_model ][ 2 ] = $1.upcase
+            mask = aln[ cur_model ][ 2 ].split('').each_with_index.
+                map{ |v, k| v == '.' ? k : nil }.compact.reverse
+            aln[ cur_model ][ 2 ].delete!('.') unless mask.empty?
+          end
+        end
+      end
+      File.open(o[:alignments], 'w') do |fh|
+        aln.each { |k, v| v.each{ |i| fh.puts i } }
+      end
     end
 
     $stderr.puts 'Done.' unless o[:q]

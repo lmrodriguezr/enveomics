@@ -64,15 +64,15 @@
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy bacterial genes present in",
         "Mycoplasma genitalium."],
-      "values": ["Mgen_M2288.faa",null,null,null,true,null,null,null,null,null,
-        null,null,null,null,null,null]
+      "values": ["Mgen_M2288.faa",null,null,null,null,null,true,null,null,null,
+        null,null,null,null,null,null,null,null]
     },
     {
       "task": "HMM.essential.rb",
       "description": ["Typical single-copy archaeal genes present in",
         "Nanoarchaeum equitans."],
-      "values": ["Mgen_M2288.faa",null,null,null,null,true,null,null,null,null,
-        null,null,null,null,null,null]
+      "values": ["Mgen_M2288.faa",null,null,null,null,null,null,true,null,null,
+        null,null,null,null,null,null,null,null]
     },
     {
       "task": "Newick.autoprune.R",

@@ -402,6 +402,19 @@
             "sent to the STDOUT."]
         },
         {
+          "name": "HMMsearch output",
+          "opt": "--hmm-out",
+          "arg": "out_file",
+          "description": ["Save HMMsearch output in this file. By default,",
+            "not saved."]
+        },
+        {
+          "opt": "--alignments",
+          "opt": "out_file",
+          "description": ["Save the aligned proteins in this file. By default,",
+            "not saved."]
+        },
+        {
           "opt": "--bacteria",
           "description": "If set, ignores models typically missing in Bacteria."
         },
