@@ -102,7 +102,7 @@ class HAln
   attr :protein_1, :protein_2, :model_id, :protein_1_id, :protein_2_id
   def initialize(a, b)
     a_masked = a.dup
-    a_masked.mask! b.mask
+    a_masked.mask! b.mask.reverse
     b_masked = b.dup
     b_masked.mask! b_masked.mask
     @protein_1 = a_masked.protein_aln
