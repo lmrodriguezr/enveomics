@@ -255,7 +255,7 @@ begin
             cur_model = nil
             mask = []
           when /^#=GS (\S+)\/([\d\-]+)\s+DE/
-            cur_model ||= genes.rassoc($1).first
+            cur_model ||= ( genes.rassoc($1) || [] ).first
             aln[ cur_model ] ||= [ "# #{cur_model} : #{$1} : #{$2}" ]
           when /^#=GC RF\s+(\S+)/
             aln[ cur_model ][ 1 ] ||= $1.upcase.tap do |i|
