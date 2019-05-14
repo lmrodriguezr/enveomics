@@ -85,6 +85,7 @@ class HElement
   ##
   # Returns an HAln object
   def align(other)
+    return nil unless model_width == other.model_width
     HAln.new(self, other)
   end
 
@@ -99,6 +100,10 @@ class HElement
       @model_aln[d]   = '-' + @model_aln[d]
       @protein_aln[d] = '-' + @protein_aln[d]
     end
+  end
+
+  def model_width
+    @model_width ||= model_aln.delete('.').size
   end
 end
 
