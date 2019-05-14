@@ -388,6 +388,13 @@
           "arg": "out_file",
           "description": "Output file containing the aligned proteins."
         },
+	{
+	  "opt": "--components",
+	  "arg": "out_file",
+	  "description": ["Output file containing the components of the",
+	    "estimation. Tab-delimited file with model name, matches, and",
+	    "columns."]
+	},
         {
           "opt": "--quiet",
           "description": "Run quietly (no STDERR output)."

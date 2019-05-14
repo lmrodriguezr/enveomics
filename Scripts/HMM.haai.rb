@@ -22,6 +22,10 @@ Usage: #{$0} [options]"
   opt.separator 'Options'
   opt.on('-a', '--aln-out FILE',
     'Output file containing the aligned proteins'){ |v| o[:alnout] = v }
+  opt.on('-c', '--components FILE',
+    'Output file containing the components of the estimation.',
+    'Tab-delimited file with model name, matches, and columns.'
+    ){ |v| o[:compout] = v }
   opt.on('-q', '--quiet', 'Run quietly (no STDERR output).'){ o[:q] = true }
   opt.on('-h', '--help', 'Display this screen.') do
     puts opt
@@ -151,8 +155,14 @@ puts "SD identity: #{sd_identity.round(2)}"
 
 if o[:alnout]
   File.open(o[:alnout], 'w') do |fh|
+    haln_arr.each { |i| fh.puts i }
+  end
+end
+
+if o[:compout]
+  File.open(o[:compout], 'w') do |fh|
     haln_arr.each do |i|
-      fh.puts i
+      fh.puts "#{i.model_id}\t#{i.stats[:matches]}\t#{i.stats[:len]}"
     end
   end
 end
