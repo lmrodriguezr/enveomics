@@ -38,6 +38,7 @@ abort '-2 is mandatory.' if o[:b].nil?
 
 class HList
   attr_accessor :list
+  
   def initialize(file)
     @list = {}
     r = File.readlines(file)
@@ -67,6 +68,7 @@ end
 class HElement
   attr_accessor :defline, :model_id, :protein_id, :protein_coords
   attr_accessor :model_aln, :protein_aln
+  
   def initialize(defline, model_aln, protein_aln)
     @defline = defline.chomp
     @model_aln = model_aln.chomp
@@ -108,7 +110,9 @@ class HElement
 end
 
 class HAln
-  attr :protein_1, :protein_2, :model_id, :protein_1_id, :protein_2_id
+  attr :protein_1, :protein_2, :model_aln, :model_id,
+    :protein_1_id, :protein_2_id
+  
   def initialize(a, b)
     a_masked = a.dup
     a_masked.mask! b.mask.reverse
@@ -116,6 +120,7 @@ class HAln
     b_masked.mask! b_masked.mask
     @protein_1 = a_masked.protein_aln
     @protein_2 = b_masked.protein_aln
+    @model_aln = b_masked.model_aln
     @model_id = a.model_id
     @protein_1_id = a.protein_id + '/' + a.protein_coords
     @protein_2_id = b.protein_id + '/' + b.protein_coords
@@ -125,7 +130,11 @@ class HAln
     @stats = { len: 0, gaps: 0, matches: 0 }
     return @stats unless @stats[:id].nil?
     protein_1.chars.each_with_index do |v, k|
+      # Maks model gaps
+      next if model_aln[k] == '-'
+      # Ignore gaps in both proteins
       next if v == '-' and protein_2[k] == '-'
+      # Count matches
       @stats[:len] += 1
       if v == protein_2[k]
         @stats[:matches] += 1
@@ -133,7 +142,7 @@ class HAln
         @stats[:gaps] += 1
       end
     end
-    @stats.tap { |i| i[:id] = 100.0 * @stats[:matches] / @stats[:len] }
+    @stats.tap { |i| i[:id] = 100.0 * i[:matches] / i[:len] }
   end
 
   def stats_to_s
