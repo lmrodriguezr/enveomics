@@ -1,15 +1,15 @@
-#' Color Alpha
+#' Enveomics: Color Alpha
 #' 
 #' Modify alpha in a color (or vector of colors).
 #'
-#' @param col Color or vector of colors. 
-#' It can be any value supported by \code{col2rgb}, 
-#' such as \code{darkred} or \code{#009988}. 
+#' @param col Color or vector of colors. It can be any value supported by 
+#' \code{\link[grDevices]{col2rgb}}, such as \code{darkred} or \code{#009988}.
 #' @param alpha Alpha value to add to the color, from 0 to 1.
 #'
-#' @return Returns a color or a vector of colors in hex notation including alpha.
+#' @return Returns a color or a vector of colors in \emph{hex} notation, 
+#' including \code{alpha}.
 #'
-#' @examples
+#' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
@@ -22,7 +22,7 @@ enve.col.alpha <- function
       function(x) do.call(rgb, as.list(c(x[1:3]/256, alpha))) ) )
 }
 
-#' Truncate
+#' Enveomics: Truncate
 #' 
 #' Removes the \code{n} highest and lowest values from a vector, and applies
 #' summary function. The value of \code{n} is determined such that the central
@@ -30,12 +30,12 @@ enve.col.alpha <- function
 #'
 #' @param x A vector of numbers.
 #' @param f The fraction of values to retain.
-#' @param FUN Summary function to apply to the vectors. 
-#' To obtain the truncated vector itself, use \code{c}.
+#' @param FUN Summary function to apply to the vectors. To obtain the 
+#' truncated vector itself, use \code{c}.
 #' 
-#' @return Returns the summary (\code{FUN}) of the truncated vector.
-#'
-#' @examples
+#' @return Returns the summary \code{(FUN)} of the truncated vector.
+#' 
+#' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
