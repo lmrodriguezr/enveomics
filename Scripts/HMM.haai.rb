@@ -150,8 +150,8 @@ class HAln
   end
 
   def to_s
-    "# #{model_id} | #{protein_1_id} | #{protein_2_id} | #{stats_to_s}\n" +
-      protein_1 + "\n" + protein_2 + "\n"
+    ["# #{model_id} | #{protein_1_id} | #{protein_2_id} | #{stats_to_s}",
+      protein_1, protein_2, model_aln, ''].join("\n")
   end
 end
 
