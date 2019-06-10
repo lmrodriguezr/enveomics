@@ -28,9 +28,9 @@ fi
 
 function md5value {
   local file=$1
-  o=$(md5 "$file" | perl -pe 's/.* //')
-  [[ -n $o ]] || o=$(md5sum-lite "$file" | awk '{print $1}')
-  [[ -n $o ]] || o=$(md5sum "$file" | awk '{print $1}')
+  o=$(md5 "$file" | perl -pe 's/.* //' 2>/dev/null)
+  [[ -n $o ]] || o=$(md5sum-lite "$file" | awk '{print $1}' 2>/dev/null)
+  [[ -n $o ]] || o=$(md5sum "$file" | awk '{print $1}' 2>/dev/null)
   echo "$o"
 }
 
