@@ -28,9 +28,9 @@ fi
 
 function md5value {
   local file=$1
-  o=$(md5 "$file" | perl -pe 's/.* //' 2>/dev/null)
-  [[ -n $o ]] || o=$(md5sum-lite "$file" | awk '{print $1}' 2>/dev/null)
-  [[ -n $o ]] || o=$(md5sum "$file" | awk '{print $1}' 2>/dev/null)
+  o=$(md5 "$file" | perl -pe 's/.* //')
+  [[ -n $o ]] || o=$(md5sum-lite "$file" | awk '{print $1}')
+  [[ -n $o ]] || o=$(md5sum "$file" | awk '{print $1}')
   echo "$o"
 }
 
@@ -45,7 +45,7 @@ tail -n +2 "$DIR/srr_list.txt" | while read ln ; do
   for uri in $(echo "$ftp" | tr ";" " ") ; do
     file="$dir/$(basename $uri)"
     curl "$uri" -o "$file"
-    md5obs=$(md5value "$file")
+    md5obs=$(md5value "$file" 2> /dev/null)
     if [[ "$md5" == "$md5obs"* ]] ; then
       md5=$(echo "$md5" | perl -pe 's/^[^;]+;//')
     else
