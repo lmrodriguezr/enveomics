@@ -69,7 +69,7 @@ enve.prune.dist <- function
   return(t);
 }
 
-#' Enveomics: Prune Reduce
+#' Enveomics: Prune Reduce (Internal Function)
 #' 
 #' Internal function for \code{\link{enve.prune.dist}}.
 #'
@@ -111,7 +111,7 @@ enve.__prune.reduce <- function
   return(t);
 }
 
-#' Enveomics: Prune Iter
+#' Enveomics: Prune Iter (Internal Function)
 #' 
 #' Internal function for \code{\link{enve.prune.dist}}.
 #'

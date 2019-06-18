@@ -3,10 +3,6 @@
 #' Enveomics: Growth Curve S4 Class
 #' 
 #' Enve-omics representation of fitted growth curves.
-#' 
-#' @section Objects from the Class:
-#' Objects can be created by calls of the form 
-#' \code{new(enve.GrowthCurve ...)}
 #'
 #' @slot design \code{(array)} Experimental design of the experiment.
 #' @slot models \code{(list)} Fitted growth curve models.
@@ -25,16 +21,15 @@ enve.GrowthCurve <- setClass("enve.GrowthCurve",
                                call='call')
                              ,package='enveomics.R');
 
-
-#' @describeIn enve.GrowthCurve \code{signature(x = "enve.GrowthCurve"): ...}
-#' @export
+#' Attribute accessor
+#' 
 setMethod("$", "enve.GrowthCurve", function(x, name) attr(x, name))
 
 #' Enveomics: Plot of Growth Curve
 #' 
-#' Plots an \code{enve.GrowthCurve} object.
+#' Plots an \code{\link{enve.GrowthCurve}} object.
 #' 
-#' @param x An \code{enve.GrowthCurve} object to plot.
+#' @param x An \code{\link{enve.GrowthCurve}} object to plot.
 #' @param col Base colors to use for the different samples. Can be recycled.
 #' By default, grey for one sample or rainbow colors for more than one.
 #' @param pt.alpha Color alpha for the observed data points, using \code{col}
@@ -155,9 +150,9 @@ plot.enve.GrowthCurve <- function
 
 #' Enveomics: Summary of Growth Curve
 #' 
-#' Summary of an \code{enve.GrowthCurve} object.
+#' Summary of an \code{\link{enve.GrowthCurve}} object.
 #' 
-#' @param object An \code{enve.GrowthCurve} object.
+#' @param object An \code{\link{enve.GrowthCurve}} object.
 #' @param ... No additional parameters are currently supported.
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
@@ -220,7 +215,7 @@ summary.enve.GrowthCurve <- function(
 #' @param ... Any additional parameters to be passed to 
 #' \code{plot.enve.GrowthCurve}.
 #' 
-#' @return Returns an \code{enve.GrowthCurve} object.
+#' @return Returns an \code{\link{enve.GrowthCurve}} object.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
