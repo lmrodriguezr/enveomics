@@ -23,6 +23,8 @@ enve.GrowthCurve <- setClass("enve.GrowthCurve",
 
 #' Attribute accessor
 #' 
+#' @param x Object
+#' @param name Attribute name
 setMethod("$", "enve.GrowthCurve", function(x, name) attr(x, name))
 
 #' Enveomics: Plot of Growth Curve
@@ -60,6 +62,7 @@ setMethod("$", "enve.GrowthCurve", function(x, name) attr(x, name))
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method plot enve.GrowthCurve
 #' @export
 
 #==============> Define S4 methods
@@ -157,6 +160,7 @@ plot.enve.GrowthCurve <- function
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
+#' @method summary enve.GrowthCurve
 #' @export
 
 summary.enve.GrowthCurve <- function(

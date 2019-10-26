@@ -73,7 +73,7 @@ enve.RecPlot2 <- setClass("enve.RecPlot2",
 #' @slot err.res \code{(numeric)}
 #' Error left after adding the peak (mower) or log-likelihood (em or emauto).
 #' @slot merge.logdist \code{(numeric)}
-#' Attempted  \code{merge.logdist} parameter.
+#' Attempted \code{merge.logdist} parameter.
 #' @slot seq.depth \code{(numeric)}
 #' Best estimate available for the sequencing depth of the peak (centrality).
 #' @slot log \code{(logical)}
@@ -101,10 +101,16 @@ enve.RecPlot2.Peak <- setClass("enve.RecPlot2.Peak",
 
 #' Attribute accessor
 #' 
+#' 
+#' @param x Object
+#' @param name Attribute name
 setMethod("$", "enve.RecPlot2", function(x, name) attr(x, name))
 
 #' Attribute accessor
 #' 
+#' 
+#' @param x Object
+#' @param name Attribute name
 setMethod("$", "enve.RecPlot2.Peak", function(x, name) attr(x, name))
 
 #==============> Define S4 methods
@@ -198,6 +204,7 @@ setMethod("$", "enve.RecPlot2.Peak", function(x, name) attr(x, name))
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method plot enve.RecPlot2
 #' @export
 
 plot.enve.RecPlot2 <- function
@@ -1311,10 +1318,10 @@ enve.recplot2.ANIr <- function
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2}}).
 #' 
-#' @param x 
-#' @param pos.breaks 
-#' @param id.breaks 
-#' @param rec.idcol 
+#' @param x \code{\link{enve.RecPlot2}} object
+#' @param pos.breaks Position breaks
+#' @param id.breaks Identity breaks
+#' @param rec.idcol Identity column to use
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1339,16 +1346,16 @@ enve.recplot2.__counts <- function
   return(counts);
 }
 
-#' Enveomics: Recruitment Plot (2) Emauto Peak Finder - Internal Ancillary Function
+#' Enveomics: Recruitment Plot (2) EMauto Peak Finder - Internal Ancillary Function
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.emauto}}).
 #' 
-#' @param x 
-#' @param comp 
-#' @param do_crit 
-#' @param best 
-#' @param verbose 
-#' @param ... 
+#' @param x \code{\link{enve.RecPlot2}} object
+#' @param comp Components
+#' @param do_crit Function estimating the criterion
+#' @param best Best solution thus far
+#' @param verbose If verbose
+#' @param ... Additional parameters for \code{\link{enve.recplot2.findPeaks.em}}
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1370,12 +1377,12 @@ enve.recplot2.findPeaks.__emauto_one <- function
   return(best)
 }
 
-#' Enveomics: Recruitment Plot (2) Em Peak Finder - Internal Ancillary Function 1
+#' Enveomics: Recruitment Plot (2) EM Peak Finder - Internal Ancillary Function Expectation
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.em}}).
 #' 
-#' @param x 
-#' @param theta 
+#' @param x Vector of log-transformed sequencing depths
+#' @param theta Parameters list
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1394,12 +1401,12 @@ enve.recplot2.findPeaks.__em_e <- function
   return(list(ll=sum(log(sum.of.components)), posterior=posterior))
 }
 
-#' Enveomics: Recruitment Plot (2) Em Peak Finder - Internal Ancillary Function 2
+#' Enveomics: Recruitment Plot (2) Em Peak Finder - Internal Ancillary Function Maximization
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.em}}).
 #' 
-#' @param x 
-#' @param posterior 
+#' @param x Vector of log-transformed sequencing depths
+#' @param posterior Posterior probability
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1420,9 +1427,9 @@ enve.recplot2.findPeaks.__em_m <- function
 #' 
 #' Internal ancillary function (see \code{\link{enve.RecPlot2.Peak}}).
 #' 
-#' @param x 
-#' @param mids 
-#' @param counts 
+#' @param x \code{\link{enve.RecPlot2.Peak}} object
+#' @param mids Midpoints
+#' @param counts Counts
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1447,18 +1454,18 @@ enve.recplot2.__peakHist <- function
 #' 
 #' Internall ancillary function (see \code{\link{enve.recplot2.findPeaks.mower}}).
 #' 
-#' @param lsd1 
-#' @param min.points 
-#' @param quant.est 
-#' @param mlv.opts 
-#' @param fitdist.opts 
-#' @param with.skewness 
-#' @param optim.rounds 
-#' @param optim.epsilon 
-#' @param n.total 
-#' @param merge.logdist 
-#' @param verbose 
-#' @param log 
+#' @param lsd1 Vector of log-transformed sequencing depths
+#' @param min.points Minimum number of points
+#' @param quant.est Quantile estimate
+#' @param mlv.opts List of options for \code{mlv}
+#' @param fitdist.opts List of options for \code{fitdist}
+#' @param with.skewness If skewed-normal should be used
+#' @param optim.rounds Maximum number of optimization rounds
+#' @param optim.epsilon Minimum difference considered negligible
+#' @param n.total Global number of windows
+#' @param merge.logdist Attempted \code{merge.logdist} parameter
+#' @param verbose If verbose
+#' @param log If log-transformed depths
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1545,7 +1552,7 @@ enve.recplot2.findPeaks.__mow_one <- function
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.mower}}).
 #' 
-#' @param peaks.opts
+#' @param peaks.opts List of options for \code{\link{enve.recplot2.findPeaks.__mow_one}}
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
@@ -1567,8 +1574,8 @@ enve.recplot2.findPeaks.__mower <- function
 #' 
 #' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks}}).
 #' 
-#' @param peak 
-#' @param peaks 
+#' @param peak Query \code{\link{enve.RecPlot2.Peak}} object
+#' @param peaks list of \code{\link{enve.RecPlot2.Peak}} objects
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 

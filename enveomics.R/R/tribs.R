@@ -127,6 +127,7 @@ enve.TRIBStest <- setClass("enve.TRIBStest",
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method summary enve.TRIBS
 #' @export 
 
 summary.enve.TRIBS <- function
@@ -172,6 +173,7 @@ summary.enve.TRIBS <- function
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method plot enve.TRIBS
 #' @export 
 
 plot.enve.TRIBS <- function
@@ -223,6 +225,7 @@ plot.enve.TRIBS <- function
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method summary enve.TRIBStest
 #' @export 
 
 summary.enve.TRIBStest <- function
@@ -280,6 +283,7 @@ summary.enve.TRIBStest <- function
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 
+#' @method plot enve.TRIBStest
 #' @export 
 
 plot.enve.TRIBStest <- function
@@ -542,14 +546,14 @@ enve.tribs <- function
 #' 
 #' Internal ancillary function (see \code{\link{enve.tribs}}).
 #' 
-#' @param rep 
-#' @param frx 
-#' @param selection 
-#' @param dimensions 
-#' @param dots 
-#' @param dist.method 
-#' @param summary.fx 
-#' @param dist 
+#' @param rep Replicates
+#' @param frx Fraction
+#' @param selection Selection
+#' @param dimensions Dimensions
+#' @param dots Sampling points
+#' @param dist.method Distance method
+#' @param summary.fx Summary function
+#' @param dist Distance
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' 

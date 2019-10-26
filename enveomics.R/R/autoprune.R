@@ -73,10 +73,10 @@ enve.prune.dist <- function
 #' 
 #' Internal function for \code{\link{enve.prune.dist}}.
 #'
-#' @param t 
-#' @param nodes 
-#' @param min_dist 
-#' @param quiet 
+#' @param t A \strong{phylo} object
+#' @param nodes Vector of nodes
+#' @param min_dist Minimum distance
+#' @param quiet If running quietly
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
@@ -115,10 +115,10 @@ enve.__prune.reduce <- function
 #' 
 #' Internal function for \code{\link{enve.prune.dist}}.
 #'
-#' @param t 
-#' @param dist 
-#' @param min_dist 
-#' @param quiet 
+#' @param t A \strong{phylo} object
+#' @param dist Cophenetic distance matrix
+#' @param min_dist Minimum distance
+#' @param quiet If running quietly
 #' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'

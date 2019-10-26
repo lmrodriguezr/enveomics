@@ -8,9 +8,9 @@
 #' the function.
 #' @param positional_arguments (Optional) Number of \strong{positional} 
 #' arguments passed to \code{\link[optparse]{parse_args}} 
-#' (package: \code{\pkg{optparse}}).
+#' (package: \pkg{optparse}).
 #' @param usage (Optional) Usage passed to \code{\link[optparse]{OptionParser}} 
-#' (package: \code{\pkg{optparse}}).
+#' (package: \pkg{optparse}).
 #' @param mandatory Mandatory arguments.
 #' @param vectorize Arguments of the function to vectorize (comma-delimited).
 #' If numeric, use also \code{number}.
@@ -21,8 +21,8 @@
 #' formals.
 #' @param o_desc Descriptions of the options. Help from \code{rd} is ignored
 #' for arguments present in this list.
-#' @param Description Description of the function. Help from \code{rd} is 
-#' ignored for the function description unless this value is an empty string.
+#' @param p_desc Description Description of the function. Help from \code{rd} 
+#' is ignored for the function description unless this value is an empty string.
 #' 
 #' @return Returns a list with keys: 
 #' \itemize{
