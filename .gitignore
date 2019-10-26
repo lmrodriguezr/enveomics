@@ -2,5 +2,5 @@
 */*.swp
 CONFIG.*.bash
 !CONFIG.mock.bash
-enveomics.R_*.tar.gz
+# enveomics.R_*.tar.gz
 enveomics.R.Rcheck/*
