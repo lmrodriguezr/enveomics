@@ -26,6 +26,6 @@ Suggests:
    gplots,
    optparse
 License: Artistic-2.0
-LazyLoad: yes
+LazyData: yes
 Encoding: UTF-8
 RoxygenNote: 6.1.1
