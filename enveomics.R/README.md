@@ -52,6 +52,10 @@ For additional information on recruitment plots, see the
 [Recruitment plots working document](https://github.com/lmrodriguezr/enveomics/blob/master/Docs/recplot2.md).
 
 ## Changelog
+* 1.6.0: Speed up in recplot2 with proper structure manipulation
+  (by: Kenji Gerhardt). Also, default value for `id.breaks` was changed from
+  300 to 60.
+* 1.5.0: Modernized documentation, now in ROxygen2 (by: Tatyana Kiryutina)
 * 1.4.4: Removes modeest library as requirement, and replaces mower peak-finder
   initialization to median (instead of mode).
 * 1.4.2: Solved bug #36.

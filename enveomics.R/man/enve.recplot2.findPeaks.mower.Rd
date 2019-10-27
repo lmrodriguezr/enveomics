@@ -26,16 +26,16 @@ parameters.}
 \item{mlv.opts}{Ignored. For backwards compatibility.}
 
 \item{fitdist.opts.sn}{Options passed to \code{fitdist} to estimate the standard deviation if
-\code{with.skewness=TRUE}. Note that the \code{start} parameter will be 
+\code{with.skewness=TRUE}. Note that the \code{start} parameter will be
 ammended with \code{xi=estimated} mode for each peak.}
 
 \item{fitdist.opts.norm}{Options passed to \code{fitdist} to estimate the standard deviation if
-\code{with.skewness=FALSE}. Note that the \code{start} parameter will be 
+\code{with.skewness=FALSE}. Note that the \code{start} parameter will be
 ammended with \code{mean=estimated} mode for each peak.}
 
 \item{rm.top}{Top-values to remove before finding peaks, as a quantile probability.
 This step is useful to remove highly conserved regions, but can be
-turned off by setting \code{rm.top=0}. The quantile is determined 
+turned off by setting \code{rm.top=0}. The quantile is determined
 \strong{after} removing zero-coverage windows.}
 
 \item{with.skewness}{Allow skewness correction of the peaks. Typically, the
@@ -52,7 +52,7 @@ reached first). The trace change is estimated as the sum of square
 differences between parameters in one round and those from two rounds
 earlier (to avoid infinite loops from approximation).}
 
-\item{merge.logdist}{Maximum value of \code{|log-ratio|} between centrality parameters in peaks 
+\item{merge.logdist}{Maximum value of \code{|log-ratio|} between centrality parameters in peaks
 to attempt merging. The default of ~0.22 corresponds to a maximum
 difference of 25\%.}
 

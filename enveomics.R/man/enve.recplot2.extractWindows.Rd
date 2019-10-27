@@ -21,13 +21,13 @@ sequencing depth.}
 
 \item{seq.names}{Returns subject sequence names instead of a vector of Booleans. If
 the recruitment plot was generated with named position bins (e.g, using
-\code{pos.breaks=0} or a two-column \code{pos.breaks.tsv}), it returns a 
-vector of characters (the sequence identifiers), otherwise it returns a 
+\code{pos.breaks=0} or a two-column \code{pos.breaks.tsv}), it returns a
+vector of characters (the sequence identifiers), otherwise it returns a
 data.frame with a name column and two columns of coordinates.}
 }
 \value{
-Returns a vector of logicals if \code{seq.names=FALSE}. If 
-\code{seq.names=TRUE}, it returns a vector of characters if the object has 
+Returns a vector of logicals if \code{seq.names=FALSE}. If
+\code{seq.names=TRUE}, it returns a vector of characters if the object has
 \code{pos.names} defined, or a data.frame with four columns otherwise:
 \code{name.from}, \code{name.to}, \code{pos.from}, and \code{pos.to}
 (see \code{\link{enve.recplot2.coordinates}}).

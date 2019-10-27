@@ -20,4 +20,6 @@ Internal ancillary function (see \code{\link{enve.recplot2}}).
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]
+
+Kenji Gerhardt [aut]
 }

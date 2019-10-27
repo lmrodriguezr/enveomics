@@ -18,13 +18,13 @@ enve.recplot2.findPeaks.em(x, max.iter = 1000, ll.diff.res = 1e-08,
 
 \item{rm.top}{Top-values to remove before finding peaks, as a quantile probability.
 This step is useful to remove highly conserved regions, but can be
-turned off by setting \code{rm.top=0}. The quantile is determined 
+turned off by setting \code{rm.top=0}. The quantile is determined
 \strong{after} removing zero-coverage windows.}
 
 \item{verbose}{Display (mostly debugging) information.}
 
 \item{init}{Initialization parameters. By default, these are derived from k-means
-clustering. A named list with vectors for \code{mu}, \code{sd}, and 
+clustering. A named list with vectors for \code{mu}, \code{sd}, and
 \code{alpha}, each of length \code{components}.}
 
 \item{log}{Logical value indicating if the estimations should be performed in

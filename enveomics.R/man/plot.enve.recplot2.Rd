@@ -93,14 +93,14 @@ cross-validation.}
 
 \item{breaks.col}{Color of the vertical lines indicating sequence breaks.}
 
-\item{peaks.opts}{Options passed to \code{\link{enve.recplot2.findPeaks}}, 
+\item{peaks.opts}{Options passed to \code{\link{enve.recplot2.findPeaks}},
 if \code{peaks.col} is not \code{NA}.}
 
 \item{...}{Any other graphic parameters (currently ignored).}
 }
 \value{
 Returns a list of \code{\link{enve.RecPlot2.Peak}} objects (see
-\code{\link{enve.recplot2.findPeaks}}). If \code{peaks.col=NA} or 
+\code{\link{enve.recplot2.findPeaks}}). If \code{peaks.col=NA} or
 \code{layout} doesn't include 4, returns \code{NA}.
 }
 \description{

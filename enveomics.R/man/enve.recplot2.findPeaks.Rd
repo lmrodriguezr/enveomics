@@ -13,7 +13,7 @@ enve.recplot2.findPeaks(x, method = "emauto", ...)
 \itemize{
    \item \strong{emauto}
    (Expectation-Maximization with auto-selection of components)
-   \item \strong{em} 
+   \item \strong{em}
    (Expectation-Maximization)
    \item \strong{mower}
    (Custom distribution-mowing method)
