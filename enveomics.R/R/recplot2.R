@@ -1078,11 +1078,10 @@ enve.recplot2.windowDepthThreshold <- function
 #' data.frame with a name column and two columns of coordinates.
 #'
 #' @return
-#' Returns a vector of logicals if \code{seq.names=FALSE}. If
-#' \code{seq.names=TRUE}, it returns a vector of characters if the object has
-#' \code{pos.names} defined, or a data.frame with four columns otherwise:
-#' \code{name.from}, \code{name.to}, \code{pos.from}, and \code{pos.to}
-#' (see \code{\link{enve.recplot2.coordinates}}).
+#' Returns a vector of logicals if \code{seq.names = FALSE}.
+#' If \code{seq.names = TRUE}, it returns a data.frame with five columns:
+#' \code{name.from}, \code{name.to}, \code{pos.from}, \code{pos.to}, and
+#' \code{seq.name} (see \code{\link{enve.recplot2.coordinates}}).
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
@@ -1091,9 +1090,9 @@ enve.recplot2.windowDepthThreshold <- function
 enve.recplot2.extractWindows <- function
 (rp,
  peak,
- lower.tail=TRUE,
- significance=0.05,
- seq.names=FALSE
+ lower.tail = TRUE,
+ significance = 0.05,
+ seq.names = FALSE
 ){
   # Determine the threshold
   thr <- enve.recplot2.windowDepthThreshold(rp, peak, lower.tail, significance)
@@ -1106,18 +1105,16 @@ enve.recplot2.extractWindows <- function
     sel <- seqdepth.in > thr
   }
 
-  # seq.names=FALSE
+  # seq.names = FALSE
   if(!seq.names) return(sel)
-  # seq.names=TRUE and pos.names defined
-  if(length(rp$pos.names) != 0) return(rp$pos.names[sel])
-  # seq.names=TRUE and pos.names undefined
-  return(enve.recplot2.coordinates(rp,sel))
+  # seq.names = TRUE
+  return(enve.recplot2.coordinates(rp, sel))
 }
 
 #' Enveomics: Recruitment Plot (2) Compare Identities
 #'
-#' Compare the distribution of identities between two \code{\link{enve.RecPlot2}}
-#' objects.
+#' Compare the distribution of identities between two
+#' \code{\link{enve.RecPlot2}} objects.
 #'
 #' @param x
 #' First \code{\link{enve.RecPlot2}} object.
@@ -1209,11 +1206,12 @@ enve.recplot2.compareIdentities <- function
 #' missing, returns the coordinates of all windows.
 #'
 #' @return
-#' Returns a data.frame with four columns: \code{name.from (character), pos.from
-#' (numeric) name.to (character), and pos.to (numeric)}. The first two
-#' correspond to sequence and position of the start point of the bin, the
-#' last two correspond to the sequence and position of the end point of the
-#' bin.
+#' Returns a data.frame with five columns: \code{name.from} (character),
+#' \code{pos.from} (numeric), \code{name.to} (character), \code{pos.to}
+#' (numeric), and \code{seq.name} (character).
+#' The first two correspond to sequence and position of the start point of the
+#' bin. The next two correspond to the sequence and position of the end point of
+#' the bin. The last one indicates the name of the sequence (if defined).
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
@@ -1229,7 +1227,7 @@ enve.recplot2.coordinates <- function
   if(!is.vector(bins)) stop("'bins' must be a vector")
   if(inherits(bins, "logical")) bins <- which(bins)
 
-  y <- data.frame(stringsAsFactors=FALSE, row.names=bins)
+  y <- data.frame(stringsAsFactors = FALSE, row.names = bins)
 
   for(i in 1:length(bins)){
     j <- bins[i]
@@ -1237,17 +1235,18 @@ enve.recplot2.coordinates <- function
     cc <- x$pos.breaks[c(j, j+1)]
     # Find the corresponding `seq.breaks`
     sb.from <- which(
-      cc[1] >=x$seq.breaks[-length(x$seq.breaks)] &
-        cc[1] < x$seq.breaks[-1])
+      cc[1] >= x$seq.breaks[-length(x$seq.breaks)] &
+        cc[1] <  x$seq.breaks[-1])
     sb.to   <- which(
-      cc[2] > x$seq.breaks[-length(x$seq.breaks)] &
-        cc[2] <=x$seq.breaks[-1])
+      cc[2] >  x$seq.breaks[-length(x$seq.breaks)] &
+        cc[2] <= x$seq.breaks[-1])
     # Translate coordinates
     if(length(sb.from)==1 & length(sb.to)==1){
       y[i, 'name.from'] <- x$seq.names[sb.from]
-      y[i, 'pos.from'] <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
+      y[i, 'pos.from']  <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
       y[i, 'name.to']   <- x$seq.names[sb.to]
-      y[i, 'pos.to']   <- ceiling(x$seq.breaks[sb.to] + cc[2] - 1)
+      y[i, 'pos.to']    <- ceiling(x$seq.breaks[sb.to] + cc[2] - 1)
+      y[i, 'seq.name']  <- rp$pos.names[i]
     }
   }
 

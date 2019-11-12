@@ -26,11 +26,10 @@ vector of characters (the sequence identifiers), otherwise it returns a
 data.frame with a name column and two columns of coordinates.}
 }
 \value{
-Returns a vector of logicals if \code{seq.names=FALSE}. If
-\code{seq.names=TRUE}, it returns a vector of characters if the object has
-\code{pos.names} defined, or a data.frame with four columns otherwise:
-\code{name.from}, \code{name.to}, \code{pos.from}, and \code{pos.to}
-(see \code{\link{enve.recplot2.coordinates}}).
+Returns a vector of logicals if \code{seq.names = FALSE}.
+If \code{seq.names = TRUE}, it returns a data.frame with five columns:
+\code{name.from}, \code{name.to}, \code{pos.from}, \code{pos.to}, and
+\code{seq.name} (see \code{\link{enve.recplot2.coordinates}}).
 }
 \description{
 Extract windows significantly below (or above) the peak in sequencing

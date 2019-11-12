@@ -33,8 +33,8 @@ cross-validation (see \code{smooth.spline} parameter \code{spar}).}
 identity). Difference in number of \code{id.breaks} is never tolerated.}
 }
 \description{
-Compare the distribution of identities between two \code{\link{enve.RecPlot2}}
-objects.
+Compare the distribution of identities between two
+\code{\link{enve.RecPlot2}} objects.
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

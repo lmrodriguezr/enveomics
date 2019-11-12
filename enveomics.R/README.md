@@ -52,6 +52,9 @@ For additional information on recruitment plots, see the
 [Recruitment plots working document](https://github.com/lmrodriguezr/enveomics/blob/master/Docs/recplot2.md).
 
 ## Changelog
+* 1.7.0: Uniformized output for `enve.recplot2.extractWindows` and
+  `enve.recplot2.coordinates` to ease automation. Thanks to Tomeu Viver and
+  Roth Conrad for troubleshooting.
 * 1.6.0: Speed up in recplot2 with proper structure manipulation
   (by: Kenji Gerhardt). Also, default value for `id.breaks` was changed from
   300 to 60.

@@ -14,11 +14,12 @@ with the same length as \code{x$pos.breaks-1} or a vector of integers. If
 missing, returns the coordinates of all windows.}
 }
 \value{
-Returns a data.frame with four columns: \code{name.from (character), pos.from
-(numeric) name.to (character), and pos.to (numeric)}. The first two
-correspond to sequence and position of the start point of the bin, the
-last two correspond to the sequence and position of the end point of the
-bin.
+Returns a data.frame with five columns: \code{name.from} (character),
+\code{pos.from} (numeric), \code{name.to} (character), \code{pos.to}
+(numeric), and \code{seq.name} (character).
+The first two correspond to sequence and position of the start point of the
+bin. The next two correspond to the sequence and position of the end point of
+the bin. The last one indicates the name of the sequence (if defined).
 }
 \description{
 Returns the sequence name and coordinates of the requested position bins.
