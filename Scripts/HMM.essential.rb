@@ -8,8 +8,10 @@ require 'enveomics_rb/enveomics'
 use 'tmpdir'
 use 'zlib'
 
-o = {bin: '', thr: 2, q: false, stats: true, genes: true, bacteria: false,
-  archaea: false, genomeeq: false, metagenome: false, list: false}
+o = {
+  bin: '', thr: 2, q: false, stats: true, genes: true, bacteria: false,
+  archaea: false, genomeeq: false, metagenome: false, list: false
+}
 OptionParser.new do |opts|
   opts.banner = "
 Finds and extracts a collection of essential proteins suitable for genome
@@ -26,65 +28,86 @@ Requires HMMer 3.0+ (http://hmmer.janelia.org/software).
 Usage: #{$0} [options]"
   opts.separator ''
   opts.separator 'Mandatory'
-  opts.on('-i', '--in FILE',
-    'Path to the FastA file containing all the proteins in a genome.'
-    ){ |v| o[:in] = v }
+  opts.on(
+    '-i', '--in FILE',
+    'Path to the FastA file (.gz allowed) with all the proteins in a genome'
+  ) { |v| o[:in] = v }
   opts.separator ''
   opts.separator 'Report Options'
-  opts.on('-o', '--out FILE',
-    'Path to the output FastA file with the translated essential genes.',
-    'By default the file is not produced.'){ |v| o[:out] = v }
-  opts.on('-m', '--per-model STR',
+  opts.on(
+    '-o', '--out FILE',
+    'Path to the output FastA file with the translated essential genes',
+    'By default the file is not produced'
+  ) { |v| o[:out] = v }
+  opts.on(
+    '-m', '--per-model STR',
     'Prefix of translated genes in independent files with the name of the',
-    'model appended. By default files are not produced.'
-    ){ |v| o[:permodel] = v }
-  opts.on('-R', '--report FILE',
-    'Path to the report file. By default, the report is sent to the STDOUT.'
-    ){ |v| o[:report] = v }
-  opts.on('--hmm-out FILE',
-    'Save HMMsearch output in this file. By default, not saved.'
-    ){ |v| o[:hmmout] = v }
-  opts.on('--alignments FILE',
+    'model appended. By default files are not produced'
+  ) { |v| o[:permodel] = v }
+  opts.on(
+    '-R', '--report FILE',
+    'Path to the report file. By default, the report is sent to the STDOUT'
+  ) { |v| o[:report] = v }
+  opts.on(
+    '--hmm-out FILE',
+    'Save HMMsearch output in this file. By default, not saved'
+  ) { |v| o[:hmmout] = v }
+  opts.on(
+    '--alignments FILE',
     'Save the aligned proteins in this file. By default, not saved'
-    ){ |v| o[:alignments] = v }
-  opts.on('-B', '--bacteria',
-    'If set, ignores models typically missing in Bacteria.'
-    ){ |v| o[:bacteria] = v }
-  opts.on('-A', '--archaea',
-    'If set, ignores models typically missing in Archaea.'
-    ){ |v| o[:archaea] = v }
-  opts.on('-G', '--genome-eq',
-    'If set, ignores models not suitable for genome-equivalents estimations.',
-    'See Rodriguez-R et al, 2015, ISME J 9(9):1928-1940.'
-    ){ |v| o[:genomeeq] = v }
-  opts.on('-r', '--rename STR',
+  ) { |v| o[:alignments] = v }
+  opts.on(
+    '-B', '--bacteria',
+    'If set, ignores models typically missing in Bacteria'
+  ) { |v| o[:bacteria] = v }
+  opts.on(
+    '-A', '--archaea',
+    'If set, ignores models typically missing in Archaea'
+  ) { |v| o[:archaea] = v }
+  opts.on(
+    '-G', '--genome-eq',
+    'If set, ignores models not suitable for genome-equivalents estimations',
+    'See Rodriguez-R et al, 2015, ISME J 9(9):1928-1940'
+  ) { |v| o[:genomeeq] = v }
+  opts.on(
+    '-r', '--rename STR',
     'If set, renames the sequences with the string provided and appends it',
-    'with pipe and the gene name (except in --per-model files).'
-    ){ |v| o[:rename]=v }
-  opts.on('-n', '--no-stats',
-    'If set, no statistics are reported on genome evaluation.'
-    ){ |v| o[:stats] = v }
-  opts.on('-s', '--no-genes',
-    'If set, statistics won\'t include the lists of missing/multi-copy genes.'
-    ){ |v| o[:genes] = v }
-  opts.on('-M', '--metagenome',
+    'with pipe and the gene name (except in --per-model files)'
+  ) { |v| o[:rename] = v }
+  opts.on(
+    '-n', '--no-stats',
+    'If set, no statistics are reported on genome evaluation'
+  ) { |v| o[:stats] = v }
+  opts.on(
+    '-s', '--no-genes',
+    'If set, statistics won\'t include the lists of missing/multi-copy genes'
+  ) { |v| o[:genes] = v }
+  opts.on(
+    '-M', '--metagenome',
     'If set, it allows for multiple copies of each gene and turns on',
-    'metagenomic report mode.'){ |v| o[:metagenome] = v }
+    'metagenomic report mode'
+  ) { |v| o[:metagenome] = v }
   opts.separator ''
   opts.separator 'Other Options'
-  opts.on('-L', '--list-models',
+  opts.on(
+    '-L', '--list-models',
     'If set, it only lists the models and exits. Compatible with -A, -B, -G,',
-    'and -q; ignores all other parameters.'){ |v| o[:list] = v }
-  opts.on('-b', '--bin DIR',
-    'Path to the directory containing the binaries of HMMer 3.0+.'
-    ){ |v| o[:bin] = v }
-  opts.on('--model-file',
-    'External file containing models to search.'){ |v| o[:model_file] = v }
-  opts.on('-t', '--threads INT',
-    "Number of parallel threads to be used.  By default: #{o[:thr]}."
-    ){ |v| o[:thr] = v.to_i }
-  opts.on('-q', '--quiet', 'Run quietly (no STDERR output).'){ o[:q] = true }
-  opts.on('-h', '--help', 'Display this screen.') do
+    'and -q; ignores all other parameters'
+  ) { |v| o[:list] = v }
+  opts.on(
+    '-b', '--bin DIR',
+    'Path to the directory containing the binaries of HMMer 3.0+'
+  ) { |v| o[:bin] = v }
+  opts.on(
+    '--model-file',
+    'External file containing models to search'
+  ) { |v| o[:model_file] = v }
+  opts.on(
+    '-t', '--threads INT', Integer,
+    "Number of parallel threads to be used.  By default: #{o[:thr]}"
+  ) { |v| o[:thr] = v }
+  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)'){ o[:q] = true }
+  opts.on('-h', '--help', 'Display this screen') do
     puts opts
     exit
   end
@@ -112,6 +135,13 @@ TIGR00389 TIGR00436 tRNA-synth_1d}
 begin
   Dir.mktmpdir do |dir|
     $stderr.puts "Temporal directory: #{dir}." unless o[:q]
+    if o[:in] =~ /\.gz/
+      tmp_in = File.expand_path('sequences.fa', dir)
+      Zlib::GzipReader.open(o[:in]) do |ifh|
+        File.open(tmp_in, 'w') { |ofh| ofh.print ifh.read }
+      end
+      o[:in] = tmp_in
+    end
 
     # Create database.
     $stderr.puts 'Searching models.' unless o[:q]
@@ -144,9 +174,9 @@ begin
         'This script requires HMMER 3.0+.'
     end
     o[:hmmout] ||= "#{dir}/hmmsearch"
-    `"#{o[:bin]}hmmsearch" --cpu #{o[:thr]} --tblout "#{o[:hmmout]}" \
-      -A "#{dir}/a.sto" --cut_tc --notextw "#{dir}/essential.hmm" "#{o[:in]}" \
-      > #{dir}/hmmsearch.log`
+    `'#{o[:bin]}hmmsearch' --cpu #{o[:thr]} --tblout '#{o[:hmmout]}' \
+      -A '#{dir}/a.sto' --cut_tc --notextw '#{dir}/essential.hmm' '#{o[:in]}' \
+      > '#{dir}/hmmsearch.log'`
 
     # Parse output
     $stderr.puts 'Parsing results.' unless o[:q]
