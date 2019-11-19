@@ -171,7 +171,7 @@ if o[:lookupfirst]
   abort '--lookup-first requires --name2' if o[:seq2name].nil?
   abort '--lookup-first needs --sqlite3' if o[:sqlite3].nil?
   abort '--lookup-first requires --auto' unless o[:auto]
-  %w[auto res tab out rbm].each do |k|
+  %w[res tab out rbm].each do |k|
     abort "--lookup-first conflicts with --#{k}" unless o[k.to_sym].nil?
   end
 end
