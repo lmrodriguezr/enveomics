@@ -1246,7 +1246,7 @@ enve.recplot2.coordinates <- function
       y[i, 'pos.from']  <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
       y[i, 'name.to']   <- x$seq.names[sb.to]
       y[i, 'pos.to']    <- ceiling(x$seq.breaks[sb.to] + cc[2] - 1)
-      y[i, 'seq.name']  <- rp$pos.names[i]
+      y[i, 'seq.name']  <- x$pos.names[i]
     }
   }
 
