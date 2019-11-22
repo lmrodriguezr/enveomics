@@ -666,15 +666,16 @@ enve.recplot2.findPeaks <- function(
 #' A vector of number of components to evaluate.
 #' @param criterion
 #' Criterion to use for components selection. Must be one of:
-#' \code{aic} (Akaike Information Criterion),
-#' \code{bic} or \code{sbc} (Bayesian Information Criterion or Schwarz Criterion).
+#' \code{aic} (Akaike Information Criterion), \code{bic} or \code{sbc}
+#' (Bayesian Information Criterion or Schwarz Criterion).
 #' @param merge.tol
 #' When attempting to merge peaks with very similar sequencing depth, use
 #' this number of significant digits (in log-scale).
 #' @param verbose
 #' Display (mostly debugging) information.
 #' @param ...
-#' Any additional parameters supported by \code{\link{enve.recplot2.findPeaks.em}}.
+#' Any additional parameters supported by
+#' \code{\link{enve.recplot2.findPeaks.em}}.
 #'
 #' @return Returns a list of \code{\link{enve.RecPlot2.Peak}} objects.
 #'
@@ -684,10 +685,10 @@ enve.recplot2.findPeaks <- function(
 
 enve.recplot2.findPeaks.emauto <- function(
   x,
-  components=seq(1,10),
-  criterion='aic',
-  merge.tol=2L,
-  verbose=FALSE,
+  components = seq(1, 5),
+  criterion = 'aic',
+  merge.tol = 2L,
+  verbose = FALSE,
   ...
 ){
   best <- list(crit=0, pstore=list())
@@ -758,19 +759,19 @@ enve.recplot2.findPeaks.emauto <- function(
 
 enve.recplot2.findPeaks.em <- function(
   x,
-  max.iter=1000,
-  ll.diff.res=1e-8,
-  components=2,
-  rm.top=0.05,
-  verbose=FALSE,
+  max.iter = 1000,
+  ll.diff.res = 1e-8,
+  components = 2,
+  rm.top = 0.05,
+  verbose = FALSE,
   init,
-  log=TRUE
+  log = TRUE
 ){
 
   # Essential vars
   pos.binsize  <- x$pos.breaks[-1] - x$pos.breaks[-length(x$pos.breaks)]
   lsd1  <- (x$pos.counts.in/pos.binsize)[ x$pos.counts.in > 0 ]
-  lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names=FALSE) ]
+  lsd1 <- lsd1[ lsd1 < quantile(lsd1, 1-rm.top, names = FALSE) ]
   if(log) lsd1 <- log(lsd1)
 
   # 1. Initialize
@@ -779,7 +780,7 @@ enve.recplot2.findPeaks.em <- function(
     init <- list(
       mu = tapply(lsd1, km.clust, mean),
       sd = tapply(lsd1, km.clust, sd),
-      alpha = table(km.clust)/length(km.clust)
+      alpha = table(km.clust) / length(km.clust)
     )
   }
   m.step <- init
@@ -795,6 +796,7 @@ enve.recplot2.findPeaks.em <- function(
     ll.diff <- abs(cur.ll - e.step[["ll"]])
     cur.ll <- e.step[["ll"]]
     if(verbose) cat(i, '\t| LL =', cur.ll, '\t| LL.diff =', ll.diff, '\n')
+    if(is.na(ll.diff) || ll.diff == Inf) break
     if(ll.diff <= ll.diff.res) break
   }
 
@@ -1431,6 +1433,9 @@ enve.recplot2.findPeaks.__em_e <- function
                                               theta[['sd']][i])*theta[['alpha']][i]))
   sum.of.components <- rowSums(product)
   posterior <- product / sum.of.components
+  for(i in which(sum.of.components == Inf)) {
+    cat(i,'/',nrow(product), ':', product[i,], '\n')
+  }
 
   return(list(ll=sum(log(sum.of.components)), posterior=posterior))
 }
