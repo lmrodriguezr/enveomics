@@ -371,8 +371,18 @@
           "source_url": "http://hmmer.janelia.org/software"
         }
       ],
-      "cite": [["Eddy, 2011, PLoS CB",
-        "http://dx.doi.org/10.1371/journal.pcbi.1002195"]],
+      "cite": [
+        ["Eddy, 2011, PLoS CB",
+          "http://dx.doi.org/10.1371/journal.pcbi.1002195"],
+        ["Dupont et al, 2012, ISME J",
+          "https://doi.org/10.1038/ismej.2011.189"],
+        ["Rodriguez-R et al, 2014, ISME J",
+          "https://doi.org/10.1038/ismej.2015.5"],
+        ["Lee, 2019, Bioinf",
+          "https://doi.org/10.1093/bioinformatics/btz188"],
+        ["Eren et al, 2015, PeerJ",
+          "https://doi.org/10.7717/peerj.1319"]
+      ],
       "options": [
         {
           "name": "Input file",
@@ -380,6 +390,15 @@
           "arg": "in_file",
           "mandatory": true,
           "description": "FastA file containing all the proteins in the genome."
+        },
+        {
+          "opt": "--collection",
+          "arg": "string",
+          "default": "dupont_2012",
+          "description": ["Reference collection of essential proteins to use.",
+            "One of: dupont_2012 (default, Dupont et al 2012 modified by",
+            "Rodriguez-R et al 2015), or lee_2019 (Lee 2019 modified by Eren",
+            "et al 2015)."]
         },
         {
           "name": "Output file",
