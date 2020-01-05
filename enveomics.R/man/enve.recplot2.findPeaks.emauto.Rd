@@ -4,7 +4,7 @@
 \alias{enve.recplot2.findPeaks.emauto}
 \title{Enveomics: Recruitment Plot (2) Emauto Peak Finder}
 \usage{
-enve.recplot2.findPeaks.emauto(x, components = seq(1, 10),
+enve.recplot2.findPeaks.emauto(x, components = seq(1, 5),
   criterion = "aic", merge.tol = 2L, verbose = FALSE, ...)
 }
 \arguments{
@@ -13,15 +13,16 @@ enve.recplot2.findPeaks.emauto(x, components = seq(1, 10),
 \item{components}{A vector of number of components to evaluate.}
 
 \item{criterion}{Criterion to use for components selection. Must be one of:
-\code{aic} (Akaike Information Criterion),
-\code{bic} or \code{sbc} (Bayesian Information Criterion or Schwarz Criterion).}
+\code{aic} (Akaike Information Criterion), \code{bic} or \code{sbc}
+(Bayesian Information Criterion or Schwarz Criterion).}
 
 \item{merge.tol}{When attempting to merge peaks with very similar sequencing depth, use
 this number of significant digits (in log-scale).}
 
 \item{verbose}{Display (mostly debugging) information.}
 
-\item{...}{Any additional parameters supported by \code{\link{enve.recplot2.findPeaks.em}}.}
+\item{...}{Any additional parameters supported by
+\code{\link{enve.recplot2.findPeaks.em}}.}
 }
 \value{
 Returns a list of \code{\link{enve.RecPlot2.Peak}} objects.

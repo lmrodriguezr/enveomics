@@ -25,25 +25,24 @@
 
 enve.df2dist <- function(
   x,
-  obj1.index=1,
-  obj2.index=2,
-  dist.index=3,
-  default.d=NA,
-  max.sim=0
+  obj1.index = 1,
+  obj2.index = 2,
+  dist.index = 3,
+  default.d = NA,
+  max.sim = 0
 ){
-  x <- as.data.frame(x);
-  a <- as.character(x[, obj1.index]);
-  b <- as.character(x[, obj2.index]);
-  d <- as.double(x[, dist.index]);
-  if(max.sim!=0) d <- (max.sim - d)/max.sim
-  ids <- unique(c(a,b));
-  m <- matrix(default.d, nrow=length(ids), ncol=length(ids), dimnames=list(ids, ids));
+  x <- as.data.frame(x)
+  a <- as.character(x[, obj1.index])
+  b <- as.character(x[, obj2.index])
+  d <- as.double(x[, dist.index])
+  if(max.sim != 0) d <- (max.sim - d) / max.sim
+  ids <- unique(c(a,b))
+  m <- matrix(default.d,
+    nrow = length(ids), ncol = length(ids), dimnames = list(ids, ids))
   diag(m) <- 0.0
-  for(i in 1:nrow(x)){
-    m[a[i], b[i]] <- d[i];
-  }
-  m <- pmin(m, t(m), na.rm=TRUE)
-  return(as.dist(m));
+  m[cbind(a,b)] <- d
+  m <- pmin(m, t(m), na.rm = TRUE)
+  return(as.dist(m))
 }
 
 #' Enveomics: Data Frame to Dist (Group)
