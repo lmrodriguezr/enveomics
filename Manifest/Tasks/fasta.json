@@ -734,6 +734,41 @@
       ]
     },
     {
+      "task": "FastA.toFastQ.rb",
+      "description": "Creates a FastQ-compliant file from a FastA file.",
+      "see_also": "FastQ.toFastA.awk",
+      "help_arg": "--help",
+      "options": [
+        {
+          "name": "Input FastA",
+          "opt": "--in",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Input FastA file (supports .gz compression)."
+        },
+        {
+          "name": "Output FastQ",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output FastQ file (supports .gz compression)."
+        },
+        {
+          "opt": "--quality",
+          "arg": "integer",
+          "default": 31,
+          "description": ["PHRED quality score to use (fixed), in the range",
+            "[-5, 41]."]
+        },
+        {
+          "opt": "--encoding",
+          "arg": "integer",
+          "default": 33,
+          "description": "Base encoding (33 or 64)."
+        }
+      ]
+    },
+    {
       "task": "FastA.wrap.rb",
       "description": "Wraps sequences in a FastA to a given line length.",
       "help_arg": "--help",

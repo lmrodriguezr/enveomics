@@ -58,6 +58,7 @@
         "FastA.split.rb",
         "FastA.subsample.pl",
         "FastA.tag.rb",
+        "FastA.toFastQ.rb",
         "FastA.wrap.rb",
         "FastQ.filter.pl",
         "FastQ.interpose.pl",

@@ -188,6 +188,7 @@
     {
       "task": "FastQ.toFastA.awk",
       "description": "Translates FastQ files into FastA.",
+      "see_also": "FastA.toFastQ.rb",
       "help_arg": "'' --help",
       "options": [
         "<",
