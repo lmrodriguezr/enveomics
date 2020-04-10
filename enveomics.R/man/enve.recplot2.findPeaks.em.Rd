@@ -4,8 +4,16 @@
 \alias{enve.recplot2.findPeaks.em}
 \title{Enveomics: Recruitment Plot (2) Em Peak Finder}
 \usage{
-enve.recplot2.findPeaks.em(x, max.iter = 1000, ll.diff.res = 1e-08,
-  components = 2, rm.top = 0.05, verbose = FALSE, init, log = TRUE)
+enve.recplot2.findPeaks.em(
+  x,
+  max.iter = 1000,
+  ll.diff.res = 1e-08,
+  components = 2,
+  rm.top = 0.05,
+  verbose = FALSE,
+  init,
+  log = TRUE
+)
 }
 \arguments{
 \item{x}{An \code{\link{enve.RecPlot2}} object.}

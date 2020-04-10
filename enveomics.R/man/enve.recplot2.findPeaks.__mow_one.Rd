@@ -4,9 +4,20 @@
 \alias{enve.recplot2.findPeaks.__mow_one}
 \title{Enveomics: Recruitment Plot (2) Mowing Peak Finder - Internal Ancillary Function 1}
 \usage{
-enve.recplot2.findPeaks.__mow_one(lsd1, min.points, quant.est, mlv.opts,
-  fitdist.opts, with.skewness, optim.rounds, optim.epsilon, n.total,
-  merge.logdist, verbose, log)
+enve.recplot2.findPeaks.__mow_one(
+  lsd1,
+  min.points,
+  quant.est,
+  mlv.opts,
+  fitdist.opts,
+  with.skewness,
+  optim.rounds,
+  optim.epsilon,
+  n.total,
+  merge.logdist,
+  verbose,
+  log
+)
 }
 \arguments{
 \item{lsd1}{Vector of log-transformed sequencing depths}

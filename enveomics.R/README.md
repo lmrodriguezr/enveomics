@@ -52,6 +52,7 @@ For additional information on recruitment plots, see the
 [Recruitment plots working document](https://github.com/lmrodriguezr/enveomics/blob/master/Docs/recplot2.md).
 
 ## Changelog
+* 1.8.0: New functions `enve.selvector` and `enve.prefscore`.
 * 1.7.1: Improved efficiency of `enve.df2dist` about five-fold.
 * 1.7.0: Uniformized output for `enve.recplot2.extractWindows` and
   `enve.recplot2.coordinates` to ease automation. Thanks to Tomeu Viver and

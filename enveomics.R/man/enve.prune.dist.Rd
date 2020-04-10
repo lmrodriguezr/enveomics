@@ -4,8 +4,15 @@
 \alias{enve.prune.dist}
 \title{Enveomics: Prune Dist}
 \usage{
-enve.prune.dist(t, dist.quantile = 0.25, min_dist, quiet = FALSE,
-  max_iters = 100, min_nodes_random = 40000, random_nodes_frx = 1)
+enve.prune.dist(
+  t,
+  dist.quantile = 0.25,
+  min_dist,
+  quiet = FALSE,
+  max_iters = 100,
+  min_nodes_random = 40000,
+  random_nodes_frx = 1
+)
 }
 \arguments{
 \item{t}{A \strong{phylo} object or a path to the Newick file.}

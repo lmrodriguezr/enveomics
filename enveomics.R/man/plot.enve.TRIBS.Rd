@@ -4,9 +4,17 @@
 \alias{plot.enve.TRIBS}
 \title{Enveomics: TRIBS Plot}
 \usage{
-\method{plot}{enve.TRIBS}(x, new = TRUE, type = c("boxplot", "points"),
-  col = "#00000044", pt.cex = 1/2, pt.pch = 19, pt.col = col,
-  ln.col = col, ...)
+\method{plot}{enve.TRIBS}(
+  x,
+  new = TRUE,
+  type = c("boxplot", "points"),
+  col = "#00000044",
+  pt.cex = 1/2,
+  pt.pch = 19,
+  pt.col = col,
+  ln.col = col,
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{enve.TRIBS}} object to plot.}

@@ -4,8 +4,14 @@
 \alias{enve.recplot2.compareIdentities}
 \title{Enveomics: Recruitment Plot (2) Compare Identities}
 \usage{
-enve.recplot2.compareIdentities(x, y, method = "hellinger",
-  smooth.par = NULL, pseudocounts = 0, max.deviation = 0.75)
+enve.recplot2.compareIdentities(
+  x,
+  y,
+  method = "hellinger",
+  smooth.par = NULL,
+  pseudocounts = 0,
+  max.deviation = 0.75
+)
 }
 \arguments{
 \item{x}{First \code{\link{enve.RecPlot2}} object.}

@@ -4,11 +4,19 @@
 \alias{enve.growthcurve}
 \title{Enveomics: Growth Curve}
 \usage{
-enve.growthcurve(x, times = 1:nrow(x), triplicates = FALSE, design,
-  new.times = seq(min(times), max(times), length.out = length(times) *
-  10), level = 0.95, interval = c("confidence", "prediction"),
-  plot = TRUE, FUN = function(t, K, r, P0) K * P0 * exp(r * t)/(K + P0
-  * (exp(r * t) - 1)), nls.opt = list(), ...)
+enve.growthcurve(
+  x,
+  times = 1:nrow(x),
+  triplicates = FALSE,
+  design,
+  new.times = seq(min(times), max(times), length.out = length(times) * 10),
+  level = 0.95,
+  interval = c("confidence", "prediction"),
+  plot = TRUE,
+  FUN = function(t, K, r, P0) K * P0 * exp(r * t)/(K + P0 * (exp(r * t) - 1)),
+  nls.opt = list(),
+  ...
+)
 }
 \arguments{
 \item{x}{Data frame (or coercible) containing the observed growth data

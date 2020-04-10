@@ -4,8 +4,16 @@
 \alias{enve.__tribs}
 \title{Enveomics: TRIBS - Internal Ancillary Function}
 \usage{
-enve.__tribs(rep, frx, selection, dimensions, dots, dist.method,
-  summary.fx, dist)
+enve.__tribs(
+  rep,
+  frx,
+  selection,
+  dimensions,
+  dots,
+  dist.method,
+  summary.fx,
+  dist
+)
 }
 \arguments{
 \item{rep}{Replicates}

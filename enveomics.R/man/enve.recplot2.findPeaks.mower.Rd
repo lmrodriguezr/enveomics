@@ -4,15 +4,23 @@
 \alias{enve.recplot2.findPeaks.mower}
 \title{Enveomics: Recruitment Plot (2) Mowing Peak Finder}
 \usage{
-enve.recplot2.findPeaks.mower(x, min.points = 10, quant.est = c(0.002,
-  0.998), mlv.opts = list(method = "parzen"),
-  fitdist.opts.sn = list(distr = "sn", method = "qme", probs = c(0.1,
-  0.5, 0.8), start = list(omega = 1, alpha = -1), lower = c(0, -Inf,
-  -Inf)), fitdist.opts.norm = list(distr = "norm", method = "qme", probs
-  = c(0.4, 0.6), start = list(sd = 1), lower = c(0, -Inf)),
-  rm.top = 0.05, with.skewness = TRUE, optim.rounds = 200,
-  optim.epsilon = 1e-04, merge.logdist = log(1.75), verbose = FALSE,
-  log = TRUE)
+enve.recplot2.findPeaks.mower(
+  x,
+  min.points = 10,
+  quant.est = c(0.002, 0.998),
+  mlv.opts = list(method = "parzen"),
+  fitdist.opts.sn = list(distr = "sn", method = "qme", probs = c(0.1, 0.5, 0.8), start =
+    list(omega = 1, alpha = -1), lower = c(0, -Inf, -Inf)),
+  fitdist.opts.norm = list(distr = "norm", method = "qme", probs = c(0.4, 0.6), start =
+    list(sd = 1), lower = c(0, -Inf)),
+  rm.top = 0.05,
+  with.skewness = TRUE,
+  optim.rounds = 200,
+  optim.epsilon = 1e-04,
+  merge.logdist = log(1.75),
+  verbose = FALSE,
+  log = TRUE
+)
 }
 \arguments{
 \item{x}{An \code{\link{enve.RecPlot2}} object.}

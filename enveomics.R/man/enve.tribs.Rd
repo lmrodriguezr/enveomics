@@ -4,11 +4,20 @@
 \alias{enve.tribs}
 \title{Enveomics: TRIBS}
 \usage{
-enve.tribs(dist, selection = labels(dist), replicates = 1000,
-  summary.fx = median, dist.method = "euclidean", subsamples = seq(0,
-  1, by = 0.01), dimensions = ceiling(length(selection) * 0.05),
-  metaMDS.opts = list(), threads = 2, verbosity = 1, points,
-  pre.tribs)
+enve.tribs(
+  dist,
+  selection = labels(dist),
+  replicates = 1000,
+  summary.fx = median,
+  dist.method = "euclidean",
+  subsamples = seq(0, 1, by = 0.01),
+  dimensions = ceiling(length(selection) * 0.05),
+  metaMDS.opts = list(),
+  threads = 2,
+  verbosity = 1,
+  points,
+  pre.tribs
+)
 }
 \arguments{
 \item{dist}{Distances as a \code{dist} object.}

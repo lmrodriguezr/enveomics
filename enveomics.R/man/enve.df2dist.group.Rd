@@ -4,8 +4,14 @@
 \alias{enve.df2dist.group}
 \title{Enveomics: Data Frame to Dist (Group)}
 \usage{
-enve.df2dist.group(x, obj1.index = 1, obj2.index = 2, dist.index = 3,
-  summary = median, empty.rm = TRUE)
+enve.df2dist.group(
+  x,
+  obj1.index = 1,
+  obj2.index = 2,
+  dist.index = 3,
+  summary = median,
+  empty.rm = TRUE
+)
 }
 \arguments{
 \item{x}{A dataframe (or coercible object) with at least three columns:

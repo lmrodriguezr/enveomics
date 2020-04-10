@@ -4,10 +4,17 @@
 \alias{plot.enve.TRIBStest}
 \title{Enveomics: TRIBS Plot Test}
 \usage{
-\method{plot}{enve.TRIBStest}(x, type = c("overlap", "difference"),
-  col = "#00000044", col1 = col, col2 = "#44001144",
-  ylab = "Probability", xlim = range(attr(x, "dist.mids")),
-  ylim = c(0, max(c(attr(x, "all.dist"), attr(x, "sel.dist")))), ...)
+\method{plot}{enve.TRIBStest}(
+  x,
+  type = c("overlap", "difference"),
+  col = "#00000044",
+  col1 = col,
+  col2 = "#44001144",
+  ylab = "Probability",
+  xlim = range(attr(x, "dist.mids")),
+  ylim = c(0, max(c(attr(x, "all.dist"), attr(x, "sel.dist")))),
+  ...
+)
 }
 \arguments{
 \item{x}{\code{\link{enve.TRIBStest}} object to plot.}

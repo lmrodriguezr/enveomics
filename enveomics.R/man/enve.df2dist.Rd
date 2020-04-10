@@ -4,8 +4,14 @@
 \alias{enve.df2dist}
 \title{Enveomics: Data Frame to Dist}
 \usage{
-enve.df2dist(x, obj1.index = 1, obj2.index = 2, dist.index = 3,
-  default.d = NA, max.sim = 0)
+enve.df2dist(
+  x,
+  obj1.index = 1,
+  obj2.index = 2,
+  dist.index = 3,
+  default.d = NA,
+  max.sim = 0
+)
 }
 \arguments{
 \item{x}{A dataframe (or coercible object) with at least three columns:

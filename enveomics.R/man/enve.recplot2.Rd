@@ -4,11 +4,20 @@
 \alias{enve.recplot2}
 \title{Enveomics: Recruitment Plot (2)}
 \usage{
-enve.recplot2(prefix, plot = TRUE, pos.breaks = 1000,
-  pos.breaks.tsv = NA, id.breaks = 60, id.free.range = FALSE,
+enve.recplot2(
+  prefix,
+  plot = TRUE,
+  pos.breaks = 1000,
+  pos.breaks.tsv = NA,
+  id.breaks = 60,
+  id.free.range = FALSE,
   id.metric = c("identity", "corrected identity", "bit score"),
-  id.summary = sum, id.cutoff = 95, threads = 2, verbose = TRUE,
-  ...)
+  id.summary = sum,
+  id.cutoff = 95,
+  threads = 2,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{prefix}{Path to the prefix of the \code{BlastTab.catsbj.pl} output files. At

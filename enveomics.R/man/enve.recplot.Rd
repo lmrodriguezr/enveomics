@@ -4,12 +4,29 @@
 \alias{enve.recplot}
 \title{Enveomics: Recruitment Plots}
 \usage{
-enve.recplot(prefix, id.min = NULL, id.max = NULL, id.binsize = NULL,
-  id.splines = 0, id.metric = "id", id.summary = "sum",
-  pos.min = 1, pos.max = NULL, pos.binsize = 1000, pos.splines = 0,
-  rec.col1 = "white", rec.col2 = "black", main = NULL,
-  contig.col = grey(0.85), ret.recplot = FALSE, ret.hist = FALSE,
-  ret.mode = FALSE, id.cutoff = NULL, verbose = TRUE, ...)
+enve.recplot(
+  prefix,
+  id.min = NULL,
+  id.max = NULL,
+  id.binsize = NULL,
+  id.splines = 0,
+  id.metric = "id",
+  id.summary = "sum",
+  pos.min = 1,
+  pos.max = NULL,
+  pos.binsize = 1000,
+  pos.splines = 0,
+  rec.col1 = "white",
+  rec.col2 = "black",
+  main = NULL,
+  contig.col = grey(0.85),
+  ret.recplot = FALSE,
+  ret.hist = FALSE,
+  ret.mode = FALSE,
+  id.cutoff = NULL,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{prefix}{Path to the prefix of the BlastTab.catsbj.pl output files. At

@@ -4,8 +4,12 @@
 \alias{enve.recplot2.windowDepthThreshold}
 \title{Enveomics: Recruitment Plot (2) Window Depth Threshold}
 \usage{
-enve.recplot2.windowDepthThreshold(rp, peak, lower.tail = TRUE,
-  significance = 0.05)
+enve.recplot2.windowDepthThreshold(
+  rp,
+  peak,
+  lower.tail = TRUE,
+  significance = 0.05
+)
 }
 \arguments{
 \item{rp}{Recruitment plot, an \code{\link{enve.RecPlot2}} object.}

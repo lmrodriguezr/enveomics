@@ -4,10 +4,22 @@
 \alias{enve.barplot}
 \title{Enveomics: Barplot}
 \usage{
-enve.barplot(x, sizes, top = 25, colors.per.group = 9,
-  bars.width = 4, legend.ncol = 1, other.col = "#000000",
-  add.trend = FALSE, organic.trend = FALSE, sort.by = median,
-  min.report = 101, order = NULL, col, ...)
+enve.barplot(
+  x,
+  sizes,
+  top = 25,
+  colors.per.group = 9,
+  bars.width = 4,
+  legend.ncol = 1,
+  other.col = "#000000",
+  add.trend = FALSE,
+  organic.trend = FALSE,
+  sort.by = median,
+  min.report = 101,
+  order = NULL,
+  col,
+  ...
+)
 }
 \arguments{
 \item{x}{Can be either the input data or the path to the file containing 

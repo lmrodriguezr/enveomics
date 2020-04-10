@@ -4,8 +4,15 @@
 \alias{enve.df2dist.list}
 \title{Enveomics: Data Frame to Dist (List)}
 \usage{
-enve.df2dist.list(x, groups, obj1.index = 1, obj2.index = 2,
-  dist.index = 3, empty.rm = TRUE, ...)
+enve.df2dist.list(
+  x,
+  groups,
+  obj1.index = 1,
+  obj2.index = 2,
+  dist.index = 3,
+  empty.rm = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{A dataframe (or coercible object) with at least three columns:

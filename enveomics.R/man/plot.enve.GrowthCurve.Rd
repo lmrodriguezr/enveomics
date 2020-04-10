@@ -4,10 +4,25 @@
 \alias{plot.enve.GrowthCurve}
 \title{Enveomics: Plot of Growth Curve}
 \usage{
-\method{plot}{enve.GrowthCurve}(x, col, pt.alpha = 0.9, ln.alpha = 1,
-  ln.lwd = 1, ln.lty = 1, band.alpha = 0.4, band.density = NULL,
-  band.angle = 45, xp.alpha = 0.5, xp.lwd = 1, xp.lty = 1,
-  pch = 19, new = TRUE, legend = new, add.params = FALSE, ...)
+\method{plot}{enve.GrowthCurve}(
+  x,
+  col,
+  pt.alpha = 0.9,
+  ln.alpha = 1,
+  ln.lwd = 1,
+  ln.lty = 1,
+  band.alpha = 0.4,
+  band.density = NULL,
+  band.angle = 45,
+  xp.alpha = 0.5,
+  xp.lwd = 1,
+  xp.lty = 1,
+  pch = 19,
+  new = TRUE,
+  legend = new,
+  add.params = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{\link{enve.GrowthCurve}} object to plot.}

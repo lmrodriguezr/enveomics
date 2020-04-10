@@ -4,9 +4,19 @@
 \alias{enve.cliopts}
 \title{Enveomics: Cliopts}
 \usage{
-enve.cliopts(fx, rd_file, positional_arguments, usage, mandatory = c(),
-  vectorize = c(), ignore = c(), number = c(), defaults = list(),
-  o_desc = list(), p_desc = "")
+enve.cliopts(
+  fx,
+  rd_file,
+  positional_arguments,
+  usage,
+  mandatory = c(),
+  vectorize = c(),
+  ignore = c(),
+  number = c(),
+  defaults = list(),
+  o_desc = list(),
+  p_desc = ""
+)
 }
 \arguments{
 \item{fx}{Function for which the interface should be generated.}

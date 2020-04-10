@@ -4,8 +4,13 @@
 \alias{enve.recplot2.extractWindows}
 \title{Enveomics: Recruitment Plot (2) Extract Windows}
 \usage{
-enve.recplot2.extractWindows(rp, peak, lower.tail = TRUE,
-  significance = 0.05, seq.names = FALSE)
+enve.recplot2.extractWindows(
+  rp,
+  peak,
+  lower.tail = TRUE,
+  significance = 0.05,
+  seq.names = FALSE
+)
 }
 \arguments{
 \item{rp}{Recruitment plot, a \code{\link{enve.RecPlot2}} object.}

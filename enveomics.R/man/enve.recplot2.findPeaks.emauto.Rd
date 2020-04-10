@@ -4,8 +4,14 @@
 \alias{enve.recplot2.findPeaks.emauto}
 \title{Enveomics: Recruitment Plot (2) Emauto Peak Finder}
 \usage{
-enve.recplot2.findPeaks.emauto(x, components = seq(1, 5),
-  criterion = "aic", merge.tol = 2L, verbose = FALSE, ...)
+enve.recplot2.findPeaks.emauto(
+  x,
+  components = seq(1, 5),
+  criterion = "aic",
+  merge.tol = 2L,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{An \code{\link{enve.RecPlot2}} object.}
