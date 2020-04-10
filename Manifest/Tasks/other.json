@@ -824,6 +824,83 @@
           "description": "Features to map in GFF."
         }
       ]
+    },
+    {
+      "task": "Table.prefScore.R",
+      "description": ["Estimate preference score of species based on occupancy",
+        "in biased sample sets."],
+      "help_arg": "--help",
+      "requires": [ { "r_package": "optparse" } ],
+      "options": [
+        {
+          "name": "Occupancy matrix",
+          "opt": "--x",
+          "arg": "in_file",
+          "description": ["A tab-delimited table of presence/absence (1/0)",
+            "with species as rows and samples as columns."],
+          "mandatory": true
+        },
+        {
+          "name": "Sample set",
+          "opt": "--set",
+          "arg": "in_file",
+          "description": ["A list of sample names that constitute the test",
+            "set, one per line."],
+          "mandatory": true
+        },
+        {
+          "opt": "--ignore",
+          "arg": "in_file",
+          "description": ["A list of species to exclude from the analysis,",
+            "one per line."]
+        },
+        {
+          "name": "Significance threshold",
+          "opt": "--signif-thr",
+          "arg": "float",
+          "description": "Absolute value of the significance threshold."
+        },
+        {
+          "opt": "--col-above",
+          "arg": "string",
+          "description": "Color for points significantly above zero.",
+          "default": "#941100"
+        },
+        {
+          "opt": "--col-equal",
+          "arg": "string",
+          "description": ["Color for points not significantly different from",
+            "zero."],
+          "default": "#BDBDBD"
+        },
+        {
+          "opt": "--col-below",
+          "arg": "string",
+          "description": "Color for points significantly below zero.",
+          "default": "#2F5496"
+        },
+        {
+          "name": "Output preference scores",
+          "arg": "out_file",
+          "description": "Output raw-text file with preference scores.",
+          "mandatory": true
+        },
+        {
+          "name": "Graphical utput",
+          "arg": "out_file",
+          "description": "Output PDF file with preference scores plot."
+        },
+        {
+          "name": "Width",
+          "arg": "float",
+          "description": "Width of the plot in inches (7 by default)."
+        },
+        {
+          "name": "Height",
+          "arg": "float",
+          "description": "Height of the plot in inches (7 by default)."
+        }
+      ]
     }
   ]
 }

@@ -72,11 +72,13 @@
       "Community": [
         "AlphaDiversity.pl",
         "Chao1.pl",
-        "Table.barplot.R"
+        "Table.barplot.R",
+        "Table.prefScore.R"
       ],
       "Population": [
         "VCF.SNPs.rb",
-        "VCF.KaKs.rb"
+        "VCF.KaKs.rb",
+        "Table.prefScore.R"
       ]
     },
     "Annotation": {
