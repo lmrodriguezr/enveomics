@@ -21,7 +21,7 @@ Usage: #{$0} [options]"
   opt.on('-o', '--out PATH', 'Output FastA file.'){ |v| o[:o] = v }
   opt.on('-f', '--fraction FLOAT',
     'Fraction of sequences to sample [0-1].',
-    'Mandatory unless -n is provided.'){ |v| o[:f] = v.to_f }
+    'Mandatory unless -c is provided.'){ |v| o[:f] = v.to_f }
   opt.separator ''
   opt.separator 'Options'
   opt.on('-c', '--number INT',
