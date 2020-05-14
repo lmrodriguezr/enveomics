@@ -1,17 +1,15 @@
 
-#
 # @author: Luis M. Rodriguez-R
 # @license: artistic license 2.0
-#
 
-require "optparse"
-ARGV << "-h" if ARGV.size==0
+require 'optparse'
+ARGV << '-h' if ARGV.empty?
 
-def use(gems, mandatory=true)
+def use(gems, mandatory = true)
   gems = [gems] unless gems.is_a? Array
   begin
-    require "rubygems"
-    while ! gems.empty?
+    require 'rubygems'
+    while !gems.empty?
       require gems.shift
     end
     return true
