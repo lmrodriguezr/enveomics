@@ -1,5 +1,5 @@
 
-module Enve
+module Enveomics
   module Stats
     class << self
       # Generates a random number from the +dist+ distribution with +params+

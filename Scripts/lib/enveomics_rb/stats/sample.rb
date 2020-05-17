@@ -1,12 +1,12 @@
 
-module Enve
+module Enveomics
   module Stats
     # Descriptive statistics for a given sample
     class Sample
       attr :x
       attr :opts
 
-      # Initialize Enve::Stats::Sample with numeric vector +x+ and options
+      # Initialize Enveomics::Stats::Sample with numeric vector +x+ and options
       # Hash +opts+ supporting the keys:
       # - +effective_range+: Range where values fall (by default: range of +x+)
       # - +histo_bin_size+: Width of histogram widths

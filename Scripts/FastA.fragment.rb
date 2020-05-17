@@ -65,8 +65,8 @@ begin
     seq = g_seq.shift
     gL  = seq.length
     while not seq.empty?
-      fL = [0, ((Enve::Stats.r_geom(p).to_f +
-                  Enve::Stats.r_unif(-0.5,0.5))*binlen).round].max
+      fL = [0, ((Enveomics::Stats.r_geom(p).to_f +
+                  Enveomics::Stats.r_unif(-0.5,0.5))*binlen).round].max
       f["#{f.size+1}_#{id}"] = seq[0,fL] if fL >= o[:minlen]
       seq = seq[(fL+1) .. -1]
       seq = '' if seq.nil?
