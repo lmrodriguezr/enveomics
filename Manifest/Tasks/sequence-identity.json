@@ -363,6 +363,134 @@
       ]
     },
     {
+      "task": "anir.rb",
+      "description": ["Estimates ANIr: the Average Nucleotide Identity of",
+        "reads against a genome."],
+      "help_arg": "--help",
+      "see_also": ["ani.rb"],
+      "options": [
+        {
+          "opt": "--reads",
+          "arg": "in_file",
+          "description": "Metagenomic reads."
+        },
+        {
+          "opt": "--genome",
+          "arg": "in_file",
+          "description": "Genome assembly."
+        },
+        {
+          "opt": "--mapping",
+          "arg": "in_file",
+          "description": "Mapping file."
+        },
+        {
+          "opt": "--list",
+          "arg": "in_file",
+          "description": "Output file with identities."
+        },
+        {
+          "opt": "--hist",
+          "arg": "in_file",
+          "description": "Output file with histogram."
+        },
+        {
+          "name": "Reads format",
+          "opt": "--r-format",
+          "arg": "select",
+          "description": ["Metagenomic reads format: fastq or fasta.",
+            "Both options support compression with .gz file extension."],
+          "values": ["fastq", "fasta"],
+          "default": "fastq"
+        },
+        {
+          "name": "Reads type",
+          "opt": "--r-type",
+          "arg": "select",
+          "description": ["Type of metagenomic reads: Single reads (single),",
+            "coupled reads in separate files (-m must be comma-delimited;",
+            "coupled), or coupled reads in a single interposed file",
+            "(interleaved)."],
+          "values": ["single", "coupled", "interleaved"],
+          "default": "single"
+        },
+        {
+          "name": "Genome format",
+          "opt": "--g-format",
+          "arg": "select",
+          "description": ["Genome assembly format: fasta or list.",
+            "Both options support compression with .gz file extension.",
+            "If passed in mapping-read mode, filters only matches to these",
+            "contigs."],
+          "values": ["fasta", "list"],
+          "default": "fasta"
+        },
+        {
+          "name": "Mapping format",
+          "opt": "--m-format",
+          "arg": "select",
+          "description": ["Mapping file format: sam, bam, tab, or list.",
+            "All except bam support compression with .gz file extension."],
+          "values": ["sam", "bam", "tab", "list"],
+          "default": "sam"
+        },
+        {
+          "opt": "--identity",
+          "arg": "float",
+          "description": "Set a fixed threshold of percent identity",
+          "default": 95.0
+        },
+        {
+          "opt": "--algorithm",
+          "arg": "select",
+          "description": ["Set an algorithm to automatically detect identity",
+            "threshold: Valley detection by E-M of Gaussian Mixture Model",
+            "(gmm), fixed threshold (see Identity; fix),",
+            "Pick gmm or fix depending on bimodality (see Bimodality; auto)."],
+          "values": ["gmm", "fix", "auto"],
+          "default": "auto"
+        },
+        {
+          "opt": "--bimodality",
+          "arg": "float",
+          "description": ["Threshold of bimodality below which the algorithm",
+            "is set to fix. The coefficient used is the de Michele & Accantino",
+            "(2014) B index."],
+          "default": 0.5
+        },
+        {
+          "opt": "--coefficient",
+          "arg": "select",
+          "description": ["Coefficient of bimodality for Algorithm auto: ",
+            "Sarle's bimodality coefficient b (sarle), or",
+            "de Michele and Accatino (2014 PLoS ONE) B index",
+            "(use with Bimodality 0.1, dma)."],
+          "values": ["sarle", "dma"],
+          "default": "sarle"
+        },
+        {
+          "opt": "--bin-size",
+          "arg": "float",
+          "description": "Width of histogram bins (in percent identity).",
+          "default": 1.0
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "description": "Threads to use."
+        },
+        {
+          "opt": "--log",
+          "arg": "out_file",
+          "description": "Log file to save output."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        }
+      ]
+    },
+    {
       "task": "HMM.haai.rb",
       "description": ["Estimates Average Amino Acid Identity (AAI) from the",
         "essential genes extracted and aligned by HMM.essential.rb (see",
