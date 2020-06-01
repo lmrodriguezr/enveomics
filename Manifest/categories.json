@@ -29,6 +29,7 @@
       "Execution": [
         "aai.rb",
         "ani.rb",
+        "anir.rb",
         "HMM.haai.rb",
         "rbm.rb"
       ]
@@ -146,6 +147,7 @@
         "clust.rand.rb"
       ],
       "Read recruitments": [
+        "anir.rb",
         "BedGraph.tad.rb",
         "BedGraph.window.rb",
         "BlastTab.catsbj.pl",

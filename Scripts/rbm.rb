@@ -1,146 +1,100 @@
 #!/usr/bin/env ruby
 
-#
-# @author: Luis M. Rodriguez-R
-# @update: Aug-25-2015
-# @license: artistic license 2.0
-#
+# frozen_string_literal: true
 
-require 'optparse'
+$VERSION = 1.0
+$:.push File.expand_path('../lib', __FILE__)
+require 'enveomics_rb/rbm'
 require 'tmpdir'
 
-o = {len:0, id:0, fract:0, score:0, q:false, bin:"", program:"blast+", thr:1,
-   nucl:false}
-ARGV << "-h" if ARGV.size==0
+bms_dummy = Enveomics::RBM.new('1', '2').bms1
+o = { q: false }
+%i[thr len id fract score bin program nucl].each do |k|
+  o[k] = bms_dummy.opt(k)
+end
+
 OptionParser.new do |opts|
-   opts.banner = "
-Finds the reciprocal best matches between two sets of sequences.
+  cmd = File.basename($0)
+  opts.banner = <<~BANNER
 
-Usage: #{$0} [options]"
-   opts.separator ""
-   opts.separator "Mandatory"
-   opts.on("-1", "--seq1 FILE",
-      "Path to the FastA file containing the set 1."){ |v| o[:seq1] = v }
-   opts.on("-2", "--seq2 FILE",
-      "Path to the FastA file containing the set 2."){ |v| o[:seq2] = v }
-   opts.separator ""
-   opts.separator "Search Options"
-   opts.on("-n", "--nucl",
-      "Sequences are assumed to be nucleotides (proteins by default)."
-      ){ |v| o[:nucl] = true }
-   opts.on("-l", "--len INT",
-      "Minimum alignment length (in residues).  By default: #{o[:len]}."
-      ){ |v| o[:len] = v.to_i }
-   opts.on("-f", "--fract FLOAT",
-      "Minimum alignment length (as a fraction of the query).",
-      "If set, requires BLAST+ or Diamond (see -p).  By default: #{o[:fract]}."
-      ){ |v| o[:fract] = v.to_i }
-   opts.on("-i", "--id NUM",
-      "Minimum alignment identity (in %).  By default: #{o[:id].to_s}."
-      ){ |v| o[:id] = v.to_f }
-   opts.on("-s", "--score NUM",
-      "Minimum alignment score (in bits).  By default: #{o[:score]}."
-      ){ |v| o[:score] = v.to_f }
-   opts.separator ""
-   opts.separator "Software Options"
-   opts.on("-b", "--bin DIR",
-      "Path to the directory containing the binaries of the search program."
-      ){ |v| o[:bin] = v }
-   opts.on("-p", "--program STR",
-      "Search program to be used.  One of: blast+ (default), blast, diamond."
-      ){ |v| o[:program] = v }
-   opts.on("-t", "--threads INT",
-      "Number of parallel threads to be used.  By default: #{o[:thr]}."
-      ){ |v| o[:thr] = v.to_i }
-   opts.separator ""
-   opts.separator "Other Options"
-   opts.on("-q", "--quiet", "Run quietly (no STDERR output)"){ o[:q] = true }
-   opts.on("-h", "--help", "Display this screen") do
-      puts opts
-      exit
-   end
-   opts.separator ""
+    [Enveomics Collection: #{cmd} v#{$VERSION}]
+
+    Finds the reciprocal best matches between two sets of sequences
+
+    Usage: #{cmd} [options]
+
+  BANNER
+
+  opts.separator 'Mandatory'
+  opts.on(
+    '-1', '--seq1 FILE',
+    'Path to the FastA file containing the set 1'
+  ) { |v| o[:seq1] = v }
+  opts.on(
+    '-2', '--seq2 FILE',
+    'Path to the FastA file containing the set 2'
+  ) { |v| o[:seq2] = v }
+  opts.separator ''
+  opts.separator 'Search Options'
+  opts.on(
+    '-n', '--nucl',
+    'Sequences are assumed to be nucleotides (proteins by default)',
+    'Incompatible with -p diamond'
+  ) { |v| o[:nucl] = true }
+  opts.on(
+    '-l', '--len INT', Integer,
+    'Minimum alignment length (in residues)',
+    "By default: #{o[:len]}"
+  ) { |v| o[:len] = v }
+  opts.on(
+    '-f', '--fract FLOAT', Float,
+    'Minimum alignment length (as a fraction of the query)',
+    'If set, requires BLAST+ or Diamond (see -p)',
+    "By default: #{o[:fract]}"
+  ) { |v| o[:fract] = v }
+  opts.on(
+    '-i', '--id NUM', Float,
+    'Minimum alignment identity (in %)',
+    "By default: #{o[:id]}"
+  ){ |v| o[:id] = v }
+  opts.on(
+    '-s', '--score NUM', Float,
+    'Minimum alignment score (in bits)',
+    "By default: #{o[:score]}"
+  ) { |v| o[:score] = v }
+  opts.separator ''
+  opts.separator 'Software Options'
+  opts.on(
+    '-b', '--bin DIR',
+    'Path to the directory containing the binaries of the search program'
+  ) { |v| o[:bin] = v }
+  opts.on(
+    '-p', '--program STR',
+    'Search program to be used',
+    'One of: blast+ (default), blast, diamond, blat'
+  ) { |v| o[:program] = v.downcase.to_sym }
+  opts.on(
+    '-t', '--threads INT', Integer,
+    'Number of parallel threads to be used',
+    "By default: #{o[:thr]}"
+  ) { |v| o[:thr] = v }
+  opts.separator ''
+  opts.separator 'Other Options'
+  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)') { o[:q] = true }
+  opts.on('-h', '--help', 'Display this screen') { puts opts ; exit }
+  opts.separator ''
 end.parse!
-abort "-1 is mandatory" if o[:seq1].nil?
-abort "-2 is mandatory" if o[:seq2].nil?
-abort '-p diamond is incompatible with -n' if o[:program]=='diamond' && o[:nucl]
-abort 'Argument -f/--fract requires -p blast+ or -p diamond' if
-   o[:fract]>0 and o[:program]!='blast+' and o[:program]!='diamond'
-o[:bin] = o[:bin]+"/" if o[:bin].size > 0
 
-Dir.mktmpdir do |dir|
-   $stderr.puts "Temporal directory: #{dir}." unless o[:q]
+abort '-1 is mandatory' if o[:seq1].nil?
+abort '-2 is mandatory' if o[:seq2].nil?
+if o[:fract] > 0.0 && !%i[blast+ diamond].include?(o[:program])
+  abort 'Argument -f/--fract requires -p blast+ or -p diamond'
+end
+$QUIET = o[:q]
 
-   # Create databases.
-   $stderr.puts "Creating databases." unless o[:q]
-   [:seq1, :seq2].each do |seq|
-      case o[:program].downcase
-      when 'blast'
-         `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq}" \
-	 -p #{(o[:nucl]?"F":"T")}`
-      when 'blast+'
-         `"#{o[:bin]}makeblastdb" -in "#{o[seq]}" -out "#{dir}/#{seq}" \
-	 -dbtype #{(o[:nucl]?"nucl":"prot")}`
-      when 'diamond'
-         `"#{o[:bin]}diamond" makedb --in "#{dir}/#{seq}.fa" \
-         --db "#{dir}/#{seq}.fa.dmnd" --threads "#{o[:thr]}"`
-      else
-         abort "Unsupported program: #{o[:program]}."
-      end
-   end # |seq|
-
-   # Best-hits.
-   rbh = {}
-   n2 = 0
-   $stderr.puts " Running comparisons." unless o[:q]
-   [2,1].each do |i|
-      qry_seen = {}
-      q = o[:"seq#{i}"]
-      s = "#{dir}/seq#{i==1?2:1}"
-      $stderr.puts "  Query: #{q}." unless o[:q]
-      case o[:program].downcase
-      when 'blast'
-	 `"#{o[:bin]}blastall" -p #{o[:nucl]?"blastn":"blastp"} -d "#{s}" \
-	 -i "#{q}" -v 1 -b 1 -a #{o[:thr]} -m 8 -o "#{dir}/#{i}.tab"`
-      when 'blast+'
-	 `"#{o[:bin]}#{o[:nucl]?"blastn":"blastp"}" -db "#{s}" -query "#{q}" \
-	 -max_target_seqs 1 -num_threads #{o[:thr]} -out "#{dir}/#{i}.tab" \
-	 -outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend \
-	 sstart send evalue bitscore qlen slen"`
-      when 'diamond'
-         `"#{o[:bin]}diamond" blastp --threads "#{o[:thr]}" \
-         --outfmt "6 qseqid sseqid pident length mismatch gapopen qstart qend \
-         sstart send evalue bitscore qlen slen" --db "#{s}.dmnd" \
-         --query "#{q}" --out "#{dir}/#{i}.tab" --more-sensitive`
-      else
-	 abort "Unsupported program: #{o[:program]}."
-      end
-      fh = File.open("#{dir}/#{i}.tab", "r")
-      n = 0
-      fh.each_line do |ln|
-	 ln.chomp!
-	 row = ln.split(/\t/)
-	 row[12] = "1" unless %w[blast+ diamond].include? o[:program]
-	 if qry_seen[ row[0] ].nil? and row[3].to_i >= o[:len] and
-	       row[2].to_f >= o[:id] and row[11].to_f >= o[:score] and
-	       row[3].to_f/row[12].to_i >= o[:fract]
-	    qry_seen[ row[0] ] = 1
-	    n += 1
-	    if i==2
-	       rbh[ row[0] ] = row[1]
-	    else
-	       if !rbh[ row[1] ].nil? and rbh[ row[1] ]==row[0]
-		  puts ln
-		  n2 += 1
-	       end
-	    end
-	 end
-      end # |ln|
-      fh.close()
-      $stderr.puts "    #{n} sequences with hit." unless o[:q]
-   end # |i|
-   $stderr.puts "  #{n2} RBMs." unless o[:q]
-end # |dir|
-
-
+rbm = Enveomics::RBM.new(o[:seq1], o[:seq2], o)
+rbm.each { |bm| puts bm.to_s }
+say('Forward Best Matches: ', rbm.bms1.count)
+say('Reverse Best Matches: ', rbm.bms2.count)
+say('Reciprocal Best Matches: ', rbm.count)
 

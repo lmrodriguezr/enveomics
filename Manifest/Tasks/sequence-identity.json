@@ -437,7 +437,7 @@
         {
           "opt": "--identity",
           "arg": "float",
-          "description": "Set a fixed threshold of percent identity",
+          "description": "Set a fixed threshold of percent identity.",
           "default": 95.0
         },
         {
@@ -535,10 +535,14 @@
         "sequences."],
       "help_arg": "--help",
       "cite":[
+        ["Camacho et al, 2009, BMC Bioinf (BLAST+)",
+          "https://doi.org/10.1186/1471-2105-10-421"],
         ["Altschul et al, 2000, JMB (BLAST)",
           "http://dx.doi.org/10.1016/S0022-2836(05)80360-2"],
         ["Buchfink B, Xie C, Huson D, 2015, Nat Meth (Diamond)",
-          "https://dx.doi.org/10.1038/nmeth.3176"]
+          "https://dx.doi.org/10.1038/nmeth.3176"],
+        ["Kent, 2002, Genome Res (BLAT)",
+          "https://doi.org/10.1101/gr.229202"]
       ],
       "options": [
         {

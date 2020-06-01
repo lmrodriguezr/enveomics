@@ -3,9 +3,9 @@
 # @author  Luis M. Rodriguez-R
 # @license artistic license 2.0
 
+$VERSION = 1.0
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
-$VERSION = 1.0
 
 o = {
   q: false, missing: '-', model: 'AUTO', removeinvar: false, undefined: '-.Xx?'
