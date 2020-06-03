@@ -51,6 +51,9 @@ OptionParser.new do |opt|
   opt.on('-m', '--mapping PATH', 'Mapping file') { |v| o[:m] = v }
   opt.on('-L', '--list PATH', 'Output file with identities') { |v| o[:L] = v }
   opt.on('-H', '--hist PATH', 'Output file with histogram') { |v| o[:H] = v }
+  opt.on(
+    '-T', '--tab PATH', 'Output file with results in tabular format'
+  ) { |v| o[:T] = v }
   opt.separator ''
 
   opt.separator 'Formats'
@@ -121,4 +124,14 @@ OptionParser.new do |opt|
   opt.separator ''
 end.parse!
 
-Enveomics::ANIr.new(o).go!
+anir = Enveomics::ANIr.new(o)
+anir.go!
+if o[:T]
+  File.open(o[:T], 'w') do |fh|
+    fh.puts "anir\tsd\treads\tid_threshold"
+    fh.puts [
+      anir.sample.mean, anir.sample.sd, anir.sample.n, anir.opts[:identity]
+    ].join("\t")
+  end
+end
+

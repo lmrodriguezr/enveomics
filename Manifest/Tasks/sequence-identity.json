@@ -395,6 +395,11 @@
           "description": "Output file with histogram."
         },
         {
+          "opt": "--tab",
+          "arg": "out_file",
+          "description": "Output file with results in tabular format."
+        },
+        {
           "name": "Reads format",
           "opt": "--r-format",
           "arg": "select",
