@@ -102,7 +102,7 @@ Dir.mktmpdir do |dir|
 
   # Create databases
   say 'Creating databases'
-  %i[seq1 seq2].each do |seq|
+  [:seq1, :seq2].each do |seq|
     case o[:program]
     when :blast
       `"#{o[:bin]}formatdb" -i "#{o[seq]}" -n "#{dir}/#{seq}" \
@@ -151,7 +151,7 @@ Dir.mktmpdir do |dir|
       fh.each do |ln|
         ln.chomp!
         row = ln.split(/\t/)
-        row[12] = '1' unless %i[blast+ diamond].include? o[:program]
+        row[12] = '1' unless [:'blast+', :diamond].include? o[:program]
         next unless qry_seen[row[0]].nil? &&
           row[3].to_i >= o[:len] && row[2].to_f >= o[:id] &&
           row[11].to_f >= o[:score] && row[3].to_f / row[12].to_i >= o[:fract]
