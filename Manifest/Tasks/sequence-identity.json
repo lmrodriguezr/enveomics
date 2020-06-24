@@ -367,7 +367,7 @@
       "description": ["Estimates ANIr: the Average Nucleotide Identity of",
         "reads against a genome."],
       "help_arg": "--help",
-      "see_also": ["ani.rb"],
+      "see_also": ["ani.rb", "sam.filter.rb"],
       "options": [
         {
           "opt": "--reads",

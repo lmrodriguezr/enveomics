@@ -62,6 +62,74 @@
           "description": "Window size, in base pairs."
         }
       ]
+    },
+    {
+      "task": "sam.filter.rb",
+      "description": ["Filters a SAM or BAM file by target sequences and/or",
+        "identity."],
+      "see_also": ["anir.rb"],
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--genome",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Genome assembly."
+        },
+        {
+          "opt": "--mapping",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": "Mapping file."
+        },
+        {
+          "opt": "--out-sam",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": "Output filtered file in SAM format."
+        },
+        {
+          "opt": "--g-format",
+          "arg": "select",
+          "values": ["fasta", "list"],
+          "default": "fasta",
+          "description": ["Genome assembly format. Both options support",
+            "compression with .gz file extension."]
+        },
+        {
+          "opt": "--m-format",
+          "arg": "select",
+          "values": ["sam", "bam"],
+          "default": "sam",
+          "description": ["Mapping file format. SAM supports compression with",
+            ".gz file extension."]
+        },
+        {
+          "opt": "--identity",
+          "arg": "float",
+          "description": "Set a fixed threshold of percent identity.",
+          "default": 95.0
+        },
+        {
+          "opt": "--no-header",
+          "description": "Do not include the headers."
+        },
+        {
+          "opt": "--threads",
+          "arg": "integer",
+          "description": "Threads to use.",
+          "default": 2
+        },
+        {
+          "opt": "--log",
+          "arg": "out_file",
+          "description": "Log file to save output."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        }
+      ]
     }
   ]
 }
