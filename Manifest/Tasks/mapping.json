@@ -74,27 +74,29 @@
           "opt": "--genome",
           "arg": "in_file",
           "mandatory": true,
-          "description": "Genome assembly."
+          "description": ["Genome assembly.",
+            "Supports compression with .gz extension."]
         },
         {
           "opt": "--mapping",
           "arg": "in_file",
           "mandatory": true,
-          "description": "Mapping file."
+          "description": ["Mapping file.",
+            "Supports compression with .gz extension."]
         },
         {
           "opt": "--out-sam",
           "arg": "out_file",
           "mandatory": true,
-          "description": "Output filtered file in SAM format."
+          "description": ["Output filtered file in SAM format.",
+            "Supports compression with .gz extension."]
         },
         {
           "opt": "--g-format",
           "arg": "select",
           "values": ["fasta", "list"],
           "default": "fasta",
-          "description": ["Genome assembly format. Both options support",
-            "compression with .gz file extension."]
+          "description": ["Genome assembly format."]
         },
         {
           "opt": "--m-format",

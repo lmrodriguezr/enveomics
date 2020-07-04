@@ -27,19 +27,27 @@ OptionParser.new do |opt|
   BANNER
 
   opt.separator 'Input/Output'
-  opt.on('-g', '--genome PATH', 'Genome assembly') { |v| o[:g] = v }
-  opt.on('-m', '--mapping PATH', 'Mapping file') { |v| o[:m] = v }
+  opt.on(
+    '-g', '--genome PATH',
+    'Genome assembly',
+    'Supports compression with .gz extension, use - for STDIN'
+  ) { |v| o[:g] = v }
+  opt.on(
+    '-m', '--mapping PATH',
+    'Mapping file',
+    'Supports compression with .gz extension, use - for STDIN'
+  ) { |v| o[:m] = v }
   opt.on(
     '-o', '--out-sam PATH',
-    'Output filtered file in SAM format, use - for STDOUT (default)'
+    'Output filtered file in SAM format',
+    'Supports compression with .gz extension, use - for STDOUT (default)'
   ) { |v| o[:o] = v }
   opt.separator ''
 
   opt.separator 'Formats'
   opt.on(
     '--g-format STRING',
-    'Genome assembly format: fasta (default) or list',
-    'Both options support compression with .gz file extension'
+    'Genome assembly format: fasta (default) or list'
   ) { |v| o[:g_format] = v.downcase.to_sym }
   opt.on(
     '--m-format STRING',
@@ -68,12 +76,6 @@ OptionParser.new do |opt|
 end.parse!
 
 # Functions
-
-##
-# Returns an open file handler for the file, supporting .gz
-def reader(file)
-  file =~ /\.gz$/ ? Zlib::GzipReader.open(file) : File.open(file, 'r')
-end
 
 ##
 # Parses one line +ln+ in SAM format and outputs filtered lines to +ofh+
@@ -131,7 +133,7 @@ end
 
 # Reading and filtering mapping
 say 'Reading mapping file'
-ofh = o[:o] == '-' ? $stdout : File.open(o[:o], 'w')
+ofh = writer(o[:o])
 case o[:m_format]
 when :sam
   reader = reader(o[:m])

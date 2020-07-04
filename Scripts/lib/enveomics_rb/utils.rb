@@ -24,6 +24,24 @@ def say(*msg)
 end
 
 ##
+# Returns an open reading file handler for the file,
+# supporting .gz and '-' for STDIN
+def reader(file)
+  file == '-' ? $stdin :
+    file =~ /\.gz$/ ? Zlib::GzipReader.open(file) :
+    File.open(file, 'r')
+end
+
+##
+# Returns an open writing file handler for the file,
+# supporting .gz and '-' for STDOUT
+def writer(file)
+  file == '-' ? $stdout :
+    file =~ /\.gz$/ ? Zlib::GzipWriter.open(file) :
+    File.open(file, 'w')
+end
+
+##
 # Run a command +cmd+ that can be a ready-to-go string or an Array to escape
 # 
 # Supported symbol key options in Hash +opts+:
