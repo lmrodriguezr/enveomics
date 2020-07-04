@@ -82,6 +82,43 @@
       ]
     },
     {
+      "task": "FastQ.maskQual.rb",
+      "description": "Masks low-quality bases in a FastQ file.",
+      "help_arg": "--help",
+      "options": [
+        {
+          "opt": "--input",
+          "arg": "in_file",
+          "mandatory": true,
+          "description": ["Path to the FastQ file containing the sequences.",
+            "Supports compression with .gz extension."]
+        },
+        {
+          "opt": "--output",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": ["Path to the output FastQ file.",
+            "Supports compression with .gz extension."]
+        },
+        {
+          "opt": "--qual",
+          "arg": "integer",
+          "default": 15,
+          "description": "Minimum quality score to allow a base."
+        },
+        {
+          "opt": "--offset",
+          "arg": "integer",
+          "default": 33,
+          "description": "Q-score offset."
+        },
+        {
+          "opt": "--quiet",
+          "description": "Run quietly."
+        }
+      ]
+    },
+    {
       "task": "FastQ.offset.pl",
       "description": ["There are several FastQ formats. This script takes a",
         "FastQ in any of them, identifies the type of FastQ (this is, the",
