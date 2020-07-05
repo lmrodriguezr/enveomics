@@ -14,17 +14,10 @@ o = {
 }
 
 OptionParser.new do |opt|
-  cmd = File.basename($0)
-  opt.banner = <<~BANNER
-
-    [Enveomics Collection: #{cmd} v#{$VERSION}]
-
-    Filters a SAM or BAM file by target sequences and/or identity
-
-    Usage
-        #{cmd} -m map.sam -o filtered_map.sam [options]
-
-  BANNER
+  Enveomics.opt_banner(
+    opt, 'Filters a SAM or BAM file by target sequences and/or identity',
+    "#{File.basename($0)} -m map.sam -o filtered_map.sam [options]"
+  )
 
   opt.separator 'Input/Output'
   opt.on(
