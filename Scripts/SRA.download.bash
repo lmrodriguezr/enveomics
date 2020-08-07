@@ -5,7 +5,7 @@
 # @license artistic license 2.0
 #
 
-DATA_LINK="https://www.ebi.ac.uk/ena/data/warehouse/filereport"
+DATA_LINK="https://www.ebi.ac.uk/ena/portal/api/filereport"
 DATA_OPS="result=read_run&fields=run_accession,fastq_ftp,fastq_md5"
 SRX=$1
 DIR=${2:-$SRX}
@@ -34,7 +34,7 @@ function md5value {
   echo "$o"
 }
 
-curl -s "$DATA_LINK?$DATA_OPS&accession=$SRX" -o "$DIR/srr_list.txt"
+curl -Ls "$DATA_LINK?$DATA_OPS&accession=$SRX" -o "$DIR/srr_list.txt"
 tail -n +2 "$DIR/srr_list.txt" | while read ln ; do
   srr=$(echo "$ln"|cut -f 1)
   ftp=$(echo "$ln"|cut -f 2)
