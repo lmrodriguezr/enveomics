@@ -78,12 +78,7 @@ OptionParser.new do |opt|
 end.parse!
 files = ARGV
 abort 'Alignment files are mandatory' if files.nil? || files.empty?
-$quiet = o[:q]
-
-# Send +msg+ to +$stderr+ if +@opts[:q]+ is true
-def say(*msg)
-  $stderr.puts(*msg) unless $quiet
-end
+$QUIET = o[:q]
 
 # Read individual gene alignments and return them as a single hash with genome
 # IDs as keys and arrays of single-line strings as values

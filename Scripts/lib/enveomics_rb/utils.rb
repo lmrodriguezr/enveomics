@@ -1,5 +1,6 @@
 
 require 'enveomics_rb/errors'
+require 'zlib'
 
 def use(gems, mandatory = true)
   gems = [gems] unless gems.is_a? Array

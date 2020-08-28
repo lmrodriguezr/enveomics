@@ -2,11 +2,10 @@
 
 # frozen_string_literal: true
 
+$VERSION = 1.0
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
-require 'zlib'
-require 'shellwords'
-$VERSION = 1.0
+use 'shellwords'
 
 o = {
   q: false, threads: 2, m_format: :sam, g_format: :fasta, identity: 95.0,
@@ -67,6 +66,8 @@ OptionParser.new do |opt|
   end
   opt.separator ''
 end.parse!
+
+$QUIET = o[:q]
 
 # Functions
 

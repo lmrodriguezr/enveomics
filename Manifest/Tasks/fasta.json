@@ -355,14 +355,14 @@
           "opt": "--in",
           "arg": "in_file",
           "mandatory": true,
-          "description": "Input FastA file."
+          "description": "Input FastA file (supports .gz compression)."
         },
         {
           "name": "Output file",
           "opt": "--out",
           "arg": "out_file",
           "mandatory": true,
-          "description": "Output FastA file."
+          "description": "Output FastA file (supports .gz compression)."
         },
         {
           "opt": "--fraction",

@@ -51,8 +51,8 @@ OptionParser.new do |opts|
   opts.separator ''
 end.parse!
 
-abort '-i is mandatory' if o[:in].nil?
-abort '-o is mandatory' if o[:out].nil?
+raise Enveomics::OptionError.new('-i is mandatory') if o[:in].nil?
+raise Enveomics::OptionError.new('-o is mandatory') if o[:out].nil?
 $QUIET = o[:q]
 
 # Open in/out files
@@ -67,7 +67,8 @@ ifh.each_line do |ln|
   lno += 1 # <- Gzip doesn't support $.
   case lno % 4
   when 1
-    ln =~ /^@(\S+)/ or raise "Unexpected defline format: #{ln}"
+    ln =~ /^@(\S+)/ or
+      raise Enveomics::ParseError.new("Unexpected defline format: #{ln}")
     entry << ln
   when 2, 3
     entry << ln

@@ -85,11 +85,11 @@ OptionParser.new do |opts|
   opts.separator ''
 end.parse!
 
-abort '-1 is mandatory' if o[:seq1].nil?
-abort '-2 is mandatory' if o[:seq2].nil?
-if o[:fract] > 0.0 && !%i[blast+ diamond].include?(o[:program])
-  abort 'Argument -f/--fract requires -p blast+ or -p diamond'
-end
+raise Enveomics::OptionError.new('-1 is mandatory') if o[:seq1].nil?
+raise Enveomics::OptionError.new('-2 is mandatory') if o[:seq2].nil?
+raise Enveomics::OptionError.new(
+  'Argument -f/--fract requires -p blast+ or -p diamond'
+) if o[:fract] > 0.0 && !%i[blast+ diamond].include?(o[:program])
 $QUIET = o[:q]
 
 rbm = Enveomics::RBM.new(o[:seq1], o[:seq2], o)
