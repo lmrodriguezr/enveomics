@@ -236,8 +236,9 @@ Dir.mktmpdir do |dir|
         end
       end
       response = RestClient.post(
-        "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi",
-        db:"nuccore",rettype:"fasta",id:protIds.join(","),idtype:"acc")
+        'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi',
+        db: 'protein', rettype: 'fasta', id: protIds.join(','), idtype: 'acc'
+      )
       abort "Unable to reach NCBI EUtils, error code " +
         response.code.to_s + "." unless response.code == 200
       fo.puts response.to_str
