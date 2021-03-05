@@ -38,7 +38,8 @@ OptionParser.new do |opts|
   ) { |v| o[:minlen] = v.to_i }
   opts.on(
     '-s', '--sorted', 'Keep fragments sorted as in the input file',
-    'By default, fragments are shuffled') { |v| o[:shuffle] = !v }
+    'By default, fragments are shuffled'
+  ) { |v| o[:shuffle] = !v }
   opts.on('-q', '--quiet', 'Run quietly (no STDERR output)') { o[:q] = true }
   opts.on('-h', '--help', 'Display this screen') { puts opts ; exit }
   opts.separator ''
