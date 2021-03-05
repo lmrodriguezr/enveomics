@@ -1,21 +1,19 @@
 #!/bin/bash
 
-#
-# @author  Luis M. Rodriguez-R
-# @license artistic license 2.0
-#
-
 DATA_LINK="https://www.ebi.ac.uk/ena/portal/api/filereport"
 DATA_OPS="result=read_run&fields=run_accession,fastq_ftp,fastq_md5"
 SRX=$1
 DIR=${2:-$SRX}
+VERSION=1.0
 
 if [[ "$SRX" == "" ]] ; then
 echo "
+[Enveomics Collection: $(basename "$0" .bash) $VERSION]
+
 Downloads the set of runs from a project, sample, or experiment in SRA.
 
 Usage:
-$0 <SRA-ID>[ <dir>]
+$(basename "$0") <SRA-ID>[ <dir>]
 
 <SRA-ID>	ID of the SRA Project, Sample, or Experiment.
 <dir>		Directory where the files are to be downladed. By default,
