@@ -113,6 +113,10 @@
           "description": "Q-score offset."
         },
         {
+          "opt": "--fasta",
+          "description": "Output sequences in FastA format."
+        },
+        {
           "opt": "--quiet",
           "description": "Run quietly."
         }
@@ -197,14 +201,20 @@
           "opt": "--in",
           "arg": "in_file",
           "mandatory": true,
-          "description": "FastQ file containing the sequences."
+          "description": [
+            "FastQ file containing the sequences.",
+            "Supports compression with .gz extension."
+          ]
         },
         {
           "name": "Output file",
           "opt": "--out",
           "arg": "out_file",
           "mandatory": true,
-          "description": "FastQ to create."
+          "description": [
+            "FastQ to create.",
+            "Supports compression with .gz extension."
+          ]
         },
         {
           "opt": "--prefix",

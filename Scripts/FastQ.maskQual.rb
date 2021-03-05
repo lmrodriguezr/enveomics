@@ -1,22 +1,16 @@
 #!/usr/bin/env ruby
 
-$VERSION = 1.0
+$VERSION = 1.1
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
 
-o = { q: false, offset: 33, qual: 15 }
+o = { q: false, offset: 33, qual: 15, fasta: false }
 OptionParser.new do |opts|
-  cmd = File.basename($0)
-  opts.banner = <<~BANNER
-
-    [Enveomics Collection: #{cmd} v#{$VERSION}]
-
-    Masks low-quality bases in a FastQ file
-
-    Usage
-      #{cmd} -i input.fastq -o output.fastq [options]
-
-  BANNER
+  opts.version = $VERSION
+  Enveomics.opt_banner(
+    opts, 'Masks low-quality bases in a FastQ file',
+    "#{File.basename($0)} -i in.fastq -o out.fastq [options]"
+  )
 
   opts.separator 'Mandatory'
   opts.on(
@@ -43,7 +37,10 @@ OptionParser.new do |opts|
 
   opts.separator ''
   opts.separator 'Other Options'
-  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)'){ o[:q] = true }
+  opts.on(
+    '-a', '--fasta', 'Output sequences in FastA format'
+  ) { |v| o[:fasta] = v }
+  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)') { o[:q] = true }
   opts.on('-h', '--help', 'Display this screen') do
     puts opts
     exit
@@ -76,7 +73,7 @@ ifh.each_line do |ln|
     entry << ln
     q = entry[3].chomp.split('').map { |i| (i.ord - o[:offset]) }
     q.map { |i| i < o[:qual] }.each_with_index { |i, k| entry[1][k] = 'N' if i }
-    ofh.puts entry
+    ofh.puts(o[:fasta] ? [entry[0].gsub(/^@/, '>'), entry[1]] : entry)
     entry = []
   end
 end
