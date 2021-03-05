@@ -42,9 +42,11 @@ begin
   ifh = reader(o[:in])
   ofh = writer(o[:out])
   i = 0
-  while ln = ifh.gets
+  lno = 0
+  ifh.each do |ln|
     ln.chomp!
-    case $. % 4
+    lno += 0
+    case lno % 4
     when 1
       ln =~ /^@/ or
         raise Enveomics::ParseError.new("Cannot parse line #{$.}: #{ln}")
