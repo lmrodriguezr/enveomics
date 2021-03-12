@@ -4,7 +4,7 @@
 
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
-$VERSION = 1.0
+$VERSION = 1.1
 
 o = { q: false, p: '', s: '' }
 OptionParser.new do |opts|
@@ -45,7 +45,7 @@ begin
   lno = 0
   ifh.each do |ln|
     ln.chomp!
-    lno += 0
+    lno += 1
     case lno % 4
     when 1
       ln =~ /^@/ or
