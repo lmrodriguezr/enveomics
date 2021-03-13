@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$VERSION = 1.1
+$VERSION = 1.2
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
 
@@ -29,11 +29,11 @@ OptionParser.new do |opts|
   opts.on(
     '-q', '--qual INT', Integer,
     "Minimum quality score to allow a base, by default: #{o[:qual]}"
-  ) { |v| opts[:qual] = v }
+  ) { |v| o[:qual] = v }
   opts.on(
     '--offset INT', Integer,
     "Q-score offset, by default: #{o[:offset]}"
-  ) { |v| opts[:offset] = v }
+  ) { |v| o[:offset] = v }
 
   opts.separator ''
   opts.separator 'Other Options'
