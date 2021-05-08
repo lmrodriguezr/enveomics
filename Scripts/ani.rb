@@ -251,6 +251,8 @@ Dir.mktmpdir do |dir|
       `"#{o[:bin]}formatdb" -i "#{dir}/#{seq.to_s}.fa" -p F`
     when "blast+"
       `"#{o[:bin]}makeblastdb" -in "#{dir}/#{seq.to_s}.fa" -dbtype nucl`
+    when "usearch"
+      `"#{o[:bin]}usearch" -makeudb_ublast "#{dir}/#{seq.to_s}.fa" -output "#{dir}/#{seq.to_s}.udb"`
     when "blat"
       # Nothing to do
     else
@@ -285,6 +287,11 @@ Dir.mktmpdir do |dir|
       `"#{o[:bin]}blastn" -db "#{s}" -query "#{q}" \
       -dust no -max_target_seqs 1 \
       -num_threads #{o[:thr]} -outfmt 6 -out "#{dir}/#{i}.tab"`
+    when "usearch"
+      s = "#{dir}/seq#{i==1?2:1}.udb"
+      `"#{o[:bin]}usearch" -ublast "#{q}" -db "#{s}" \
+      -strand both -top_hits_only -maxhits 3 -maxaccepts 1 -id 0.75 \
+      -threads #{o[:thr]} -evalue 1e-6 -blast6out "#{dir}/#{i}.tab"`
     when "blat"
       `#{o[:bin]}blat "#{s}" "#{q}" -out=blast8 "#{dir}/#{i}.tab"`
     else
