@@ -536,8 +536,10 @@
     },
     {
       "task": "rbm.rb",
-      "description": ["Finds the reciprocal best matches between two sets of",
-        "sequences."],
+      "description": [
+        "Finds the reciprocal best matches between two sets of",
+        "sequences."
+      ],
       "help_arg": "--help",
       "cite":[
         ["Camacho et al, 2009, BMC Bioinf (BLAST+)",
@@ -565,10 +567,21 @@
           "description": "FastA file containing the genome 2."
         },
         {
+          "name": "Output",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": [
+            "Reciprocal Best Matches in BLAST tabular format.",
+            "Supports compression with .gz extension."
+          ]
+        },
+        {
           "name": "Nucleotides",
           "opt": "--nucl",
-          "description": ["Sequences are assumed to be nucleotides (proteins",
-            "by default)."]
+          "description": [
+            "Sequences are assumed to be nucleotides (proteins by default)."
+          ]
         },
         {
           "name": "Length",
@@ -582,8 +595,10 @@
           "opt": "--fract",
           "arg": "float",
           "default": 0.0,
-          "description": ["Minimum alignment length (as a fraction of the",
-            "query). If set, requires BLAST+ or Diamond (see Program)."]
+          "description": [
+            "Minimum alignment length (as a fraction of the query).",
+            "If set, requires BLAST+ or Diamond (see Program)."
+          ]
         },
         {
           "name": "Identity",
@@ -603,8 +618,9 @@
           "name": "Executables",
           "opt": "--bin",
           "arg": "in_dir",
-          "description": ["Directory containing the binaries of the search",
-            "program."]
+          "description": [
+            "Directory containing the binaries of the search program."
+          ]
         },
         {
           "opt": "--program",
@@ -612,9 +628,11 @@
           "values": ["blast+", "blast", "blat", "diamond"],
           "default": "blast+",
           "description": "Search program to be used. Default: blast+.",
-          "note": ["Make sure that you have installed the search program you",
+          "note": [
+            "Make sure that you have installed the search program you",
             "want to use. If you have downloaded the program, but it's not",
-            "installed, please use the Executables option above."]
+            "installed, please use the Executables option above."
+          ]
         },
         {
           "opt": "--threads",
@@ -625,12 +643,6 @@
         {
           "opt": "--quiet",
           "description": "Run quietly (no STDERR output)."
-        },
-        ">",
-        {
-          "arg": "out_file",
-          "mandatory": true,
-          "description": "Reciprocal Best Matches in BLAST tabular format."
         }
       ]
     }

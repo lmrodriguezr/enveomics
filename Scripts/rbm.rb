@@ -2,13 +2,13 @@
 
 # frozen_string_literal: true
 
-$VERSION = 1.0
+$VERSION = 1.01
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/rbm'
 require 'tmpdir'
 
 bms_dummy = Enveomics::RBM.new('1', '2').bms1
-o = { q: false }
+o = { q: false, out: '-' }
 %i[thr len id fract score bin program nucl].each do |k|
   o[k] = bms_dummy.opt(k)
 end
@@ -34,6 +34,11 @@ OptionParser.new do |opts|
     '-2', '--seq2 FILE',
     'Path to the FastA file containing the set 2'
   ) { |v| o[:seq2] = v }
+  opts.on(
+    '-o', '--out FILE',
+    'Reciprocal Best Matches in BLAST tabular format.',
+    'Supports compression with .gz extension, use - for STDOUT (default)'
+  ) { |v| o[:out] = v }
   opts.separator ''
   opts.separator 'Search Options'
   opts.on(
@@ -80,7 +85,7 @@ OptionParser.new do |opts|
   ) { |v| o[:thr] = v }
   opts.separator ''
   opts.separator 'Other Options'
-  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)') { o[:q] = true }
+  opts.on('-q', '--quiet', 'Run quietly (no STDERR output)') { $QUIET = true }
   opts.on('-h', '--help', 'Display this screen') { puts opts ; exit }
   opts.separator ''
 end.parse!
@@ -90,10 +95,12 @@ raise Enveomics::OptionError.new('-2 is mandatory') if o[:seq2].nil?
 raise Enveomics::OptionError.new(
   'Argument -f/--fract requires -p blast+ or -p diamond'
 ) if o[:fract] > 0.0 && !%i[blast+ diamond].include?(o[:program])
-$QUIET = o[:q]
 
 rbm = Enveomics::RBM.new(o[:seq1], o[:seq2], o)
-rbm.each { |bm| puts bm.to_s }
+ofh = writer(o[:out])
+rbm.each { |bm| ofh.puts bm.to_s }
+ofh.close
+
 say('Forward Best Matches: ', rbm.bms1.count)
 say('Reverse Best Matches: ', rbm.bms2.count)
 say('Reciprocal Best Matches: ', rbm.count)
