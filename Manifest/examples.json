@@ -83,10 +83,14 @@
     {
       "_": "== Examples of BLAST statistics and manipulation",
       "task": "BlastTab.topHits_sorted.rb",
-      "description": ["Extract the best match of metagenome-derived proteins",
-        "(from the 'A metagenome') against a Gene Ontology collection."],
-      "values": ["sort","a_mg.cds-go.blast.tsv",null,null,null,null,1,null,null,
-        null,"a_mg.cds-go.blast-bm.tsv"]
+      "description": [
+        "Extract the best match of metagenome-derived proteins",
+        "(from the 'A metagenome') against a Gene Ontology collection."
+      ],
+      "values": [
+        "sort","a_mg.cds-go.blast.tsv", null, null, null, null,
+        "a_mg.cds-go.blast-bm.tsv", 1, null, null
+      ]
     },
     {
       "task": "BlastTab.sumPerHit.pl",

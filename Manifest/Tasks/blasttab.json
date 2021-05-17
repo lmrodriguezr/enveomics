@@ -589,7 +589,17 @@
         "|",
         { "arg": "task" },
         "--blast",
-        "/dev/stdin",
+        "-",
+        {
+          "name": "Output",
+          "opt": "--out",
+          "arg": "out_file",
+          "mandatory": true,
+          "description": [
+            "Output filtered BLAST file.",
+            "Supports compression with .gz extension."
+          ]
+        },
         {
           "opt": "--top",
           "arg": "integer",
@@ -599,19 +609,13 @@
         {
           "opt": "--sort-by",
           "arg": "select",
-          "values": ["bitscore", "evalue", "identity", "length"],
+          "values": ["bitscore", "evalue", "identity", "length", "no"],
           "default": "bitscore",
           "description": "Parameter used to detect the 'best' hits."
         },
         {
           "opt": "--quiet",
           "description": "Run quietly."
-        },
-        ">",
-        {
-          "arg": "out_file",
-          "mandatory": true,
-          "description": "Output (filtered) Tabular BLAST."
         }
       ]
     },

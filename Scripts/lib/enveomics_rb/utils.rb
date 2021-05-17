@@ -18,10 +18,11 @@ def use(gems, mandatory = true)
 end
 
 def say(*msg)
-  return if $QUIET ||= false
+  $stderr.puts('[%s] %s' % [Time.now, msg.join('')]) unless $QUIET ||= false
+end
 
-  o = '[%s] %s' % [Time.now, msg.join('')]
-  $stderr.puts(o)
+def say_inline(*msg)
+  $stderr.print('[%s] %s' % [Time.now, msg.join('')]) unless $QUIET ||= false
 end
 
 ##
