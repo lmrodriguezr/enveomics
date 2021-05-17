@@ -14,6 +14,7 @@ o = { q: false, out: '-' }
 end
 
 OptionParser.new do |opts|
+  opts.version = $VERSION
   cmd = File.basename($0)
   opts.banner = <<~BANNER
 
