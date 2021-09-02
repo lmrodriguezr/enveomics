@@ -316,6 +316,7 @@ Dir.mktmpdir do |dir|
   end
   res = File.open(o[:res], "w") unless o[:res].nil?
   rbm = File.open(o[:rbm], "w") unless o[:rbm].nil?
+  sqlite_db.execute('BEGIN TRANSACTION') unless o[:sqlite3].nil?
   [1,2].each do |i|
     qry_seen = []
     q = "#{dir}/seq#{i}.fa"
@@ -413,6 +414,7 @@ Dir.mktmpdir do |dir|
       o[:sqlite3].nil?
     puts id2/n2 if o[:auto]
   end
+  sqlite_db.execute('COMMIT') unless o[:sqlite3].nil?
   res.close unless o[:res].nil?
   fo.close unless o[:out].nil?
 end
