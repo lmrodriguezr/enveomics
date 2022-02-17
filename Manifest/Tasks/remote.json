@@ -184,7 +184,8 @@
     {
       "task": "SRA.download.bash",
       "description": ["Downloads the set of runs from a project, sample, or",
-        "experiment in SRA."],
+        "experiment in SRA. If the expected file already exists, skips the",
+        "file if the MD5 hash matches."],
       "help_arg": "",
       "requires": [
         {
