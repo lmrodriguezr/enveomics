@@ -80,7 +80,7 @@ def report(sq, d, ln, o)
   # Report
   y.unshift(sq) if o[:perseq]
   y << ln if o[:length]
-  y << (ln - zeroes) / ln if o[:breadth]
+  y << (ln - zeroes).to_f / ln if o[:breadth]
   puts y.join("\t")
 end
 
