@@ -17,8 +17,8 @@
   id.lim = range(x$id.breaks),
   pos.lim = range(x$pos.breaks),
   pos.units = c("Mbp", "Kbp", "bp"),
-  mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(ifelse(any(layout == 1), 1, 5), 4, 4, 1)
-    + 0.1, `3` = c(5, ifelse(any(layout == 1), 1, 4), 1, 2) + 0.1, `4` =
+  mar = list(`1` = c(5, 4, 1, 1) + 0.1, `2` = c(ifelse(any(layout == 1), 1, 5), 4, 4,
+    1) + 0.1, `3` = c(5, ifelse(any(layout == 1), 1, 4), 1, 2) + 0.1, `4` =
     c(ifelse(any(layout == 1), 1, 5), ifelse(any(layout == 2), 1, 4), 4, 2) + 0.1, `5` =
     c(5, 3, 4, 1) + 0.1, `6` = c(5, 4, 4, 2) + 0.1),
   pos.splines = 0,
