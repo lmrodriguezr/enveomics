@@ -50,8 +50,8 @@ It must be a matrix or matrix-coercible object, with samples as rows and
 dimensions as columns.}
 
 \item{pre.tribs}{Optional. If passed, the points are recovered from this object (except if
-\code{points} is also passed. This should be an \code{\link{enve.TRIBS}} object 
-estimated on the same objects (the selection is unimportant).}
+\code{points} is also passed. This should be an \code{\link{enve.TRIBS}}
+object estimated on the same objects (the selection is unimportant).}
 }
 \value{
 Returns an \code{\link{enve.TRIBS}} object.

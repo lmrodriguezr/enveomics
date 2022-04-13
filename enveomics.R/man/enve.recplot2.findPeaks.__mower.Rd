@@ -9,6 +9,9 @@ enve.recplot2.findPeaks.__mower(peaks.opts)
 \arguments{
 \item{peaks.opts}{List of options for \code{\link{enve.recplot2.findPeaks.__mow_one}}}
 }
+\value{
+A list of \code{enve.RecPlot2.Peak} objects.
+}
 \description{
 Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.mower}}).
 }

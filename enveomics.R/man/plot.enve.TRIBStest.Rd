@@ -19,9 +19,9 @@
 \arguments{
 \item{x}{\code{\link{enve.TRIBStest}} object to plot.}
 
-\item{type}{What to plot. \code{overlap} generates a plot of the two contrasting empirical
-PDFs (to compare against each other), \code{difference} produces a plot of the
-differences between the empirical PDFs (to compare against zero).}
+\item{type}{What to plot. \code{overlap} generates a plot of the two contrasting
+empirical PDFs (to compare against each other), \code{difference} produces a
+plot of the differences between the empirical PDFs (to compare against zero).}
 
 \item{col}{Main color of the plot if type=\code{difference}.}
 
@@ -36,6 +36,9 @@ differences between the empirical PDFs (to compare against zero).}
 \item{ylim}{Y-axis limits.}
 
 \item{...}{Any other graphical arguments.}
+}
+\value{
+No return value.
 }
 \description{
 Plots an \code{\link{enve.TRIBStest}} object.

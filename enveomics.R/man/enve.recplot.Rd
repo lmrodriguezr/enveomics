@@ -40,29 +40,31 @@ identity. This value is a percentage.}
 \item{id.binsize}{Size of the identity bins (vertical histograms). By default, 0.1 for
 identity metrics and 5 for bit score.}
 
-\item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero (0) for no
-splines. A generally good value is 1/2. If non-zero, requires the \pkg{stats} package.}
+\item{id.splines}{Smoothing parameter for the splines in the identity histogram. Zero (0) for
+no splines. A generally good value is 1/2. If non-zero, requires the
+\pkg{stats} package.}
 
-\item{id.metric}{Metric of identity to be used (Y-axis). 
-It can be any unambiguous prefix of:
+\item{id.metric}{Metric of identity to be used (Y-axis). It can be any unambiguous prefix of:
 \itemize{
-\item "identity"
-\item "corrected identity" 
-\item "bit score"}}
+  \item "identity"
+  \item "corrected identity" 
+  \item "bit score"
+}}
 
-\item{id.summary}{Method used to build the identity histogram (Horizontal axis of the right panel).
-It can be any unambiguous prefix of: 
+\item{id.summary}{Method used to build the identity histogram (Horizontal axis of the right
+panel). It can be any unambiguous prefix of: 
 \itemize{
-\item "sum"
-\item "average" 
-\item "median"
-\item "90\% lower bound"
-\item "90\% upper bound"
-\item "95\% lower bound"
-\item "95\% upper bound" }
+  \item "sum"
+  \item "average" 
+  \item "median"
+  \item "90\% lower bound"
+  \item "90\% upper bound"
+  \item "95\% lower bound"
+  \item "95\% upper bound"
+}
 The last four options
-correspond to the upper and lower boundaries of the 90\% and 95\% empirical confidence
-intervals.}
+correspond to the upper and lower boundaries of the 90\% and 95\% empirical
+confidence intervals.}
 
 \item{pos.min}{Minimum (leftmost) position in the reference (concatenated) genome (in bp).}
 
@@ -71,8 +73,8 @@ By default: Length of the genome.}
 
 \item{pos.binsize}{Size of the position bins (horizontal histograms) in bp.}
 
-\item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero (0) for no splines.
-If non-zero, requires the stats package.}
+\item{pos.splines}{Smoothing parameter for the splines in the position histogram. Zero (0) for
+no splines. If non-zero, requires the stats package.}
 
 \item{rec.col1}{Lightest color in the recruitment plot.}
 
@@ -89,13 +91,14 @@ If non-zero, requires the stats package.}
 \item{ret.mode}{Indicates if the mode of the identity is to be computed. It requires the 
 \pkg{modeest} package.}
 
-\item{id.cutoff}{Minimum identity to consider an alignment as "top". By default, it is 0.95 for the
-identity metrics and 95\% of the best scoring alignment for bit score.}
+\item{id.cutoff}{Minimum identity to consider an alignment as "top". By default, it is 0.95
+for the identity metrics and 95\% of the best scoring alignment for bit
+score.}
 
 \item{verbose}{Indicates if the function should report the advance.}
 
-\item{...}{Any additional graphic parameters to be passed to plot for all panels except the
-recruitment plot (lower-left).}
+\item{...}{Any additional graphic parameters to be passed to plot for all panels except
+the recruitment plot (lower-left).}
 }
 \value{
 Returns a list with the following elements:
@@ -104,31 +107,36 @@ Returns a list with the following elements:
 \item{\code{pos.marks}}{Midpoints of the position histogram.}
 \item{\code{id.matrix}}{Midpoints of the identity histogram.}
 \item{\code{recplot}}{Matrix containing the recruitment plot values 
-     (if \code{ret.recplot=TRUE}).}
+      (if \code{ret.recplot=TRUE}).}
 \item{\code{id.mean}}{Mean identity.}
 \item{\code{id.median}}{Median identity.}
-\item{\code{id.mode}}{Mode of the identity (if \code{ret.mode=TRUE}). Deprecated.}
-\item{\code{id.hist}}{Values of the identity histogram (if \code{ret.hist=TRUE}).}
-\item{\code{pos.hist.low}}{Values of the position histogram (depth) with "low"
-     identity (i.e., below id.cutoff) (if \code{ret.hist=TRUE}).}
-\item{\code{pos.hist.top}}{Values of the position histogram (depth) with "top"
-     identity (i.e., above id.cutoff) (if \code{ret.hist=TRUE}).}
+\item{\code{id.mode}}{Mode of the identity (if \code{ret.mode=TRUE}).
+      Deprecated.}
+\item{\code{id.hist}}{Values of the identity histogram
+      (if \code{ret.hist=TRUE}).}
+\item{\code{pos.hist.low}}{Values of the position histogram (depth) with
+      "low" identity (i.e., below id.cutoff) (if \code{ret.hist=TRUE}).}
+\item{\code{pos.hist.top}}{Values of the position histogram (depth) with
+      "top" identity (i.e., above id.cutoff) (if \code{ret.hist=TRUE}).}
 \item{\code{id.max}}{Value of \code{id.max}. This is returned because 
-     \code{id.max=NULL} may vary.}
+      \code{id.max=NULL} may vary.}
 \item{\code{id.cutoff}}{Value of \code{id.cutoff}. 
-     This is returned because \code{id.cutoff=NULL} may vary.}
+      This is returned because \code{id.cutoff=NULL} may vary.}
 \item{\code{seqdepth.mean.top}}{Average sequencing depth with identity above 
-     \code{id.cutoff}.}
+      \code{id.cutoff}.}
 \item{\code{seqdepth.mean.low}}{Average sequencing depth with identity below 
-     \code{id.cutoff}.} 
-\item{\code{seqdepth.mean.all}}{Average sequencing depth without identity filtering.}
-\item{\code{seqdepth.median.top}}{Median sequencing depth with identity above 
-     \code{id.cutoff}.}
-\item{\code{seqdepth.median.low}}{Median sequencing depth with identity below 
-     \code{id.cutoff}.}
-\item{\code{seqdepth.median.all}}{Median sequencing depth without identity filtering.}
+      \code{id.cutoff}.} 
+\item{\code{seqdepth.mean.all}}{Average sequencing depth without identity
+      filtering.}
+\item{\code{seqdepth.median.top}}{Median sequencing depth with identity above
+      \code{id.cutoff}.}
+\item{\code{seqdepth.median.low}}{Median sequencing depth with identity below
+      \code{id.cutoff}.}
+\item{\code{seqdepth.median.all}}{Median sequencing depth without identity
+      filtering.}
 \item{\code{id.metric}}{Full name of the used identity metric.}
-\item{\code{id.summary}}{Full name of the summary method used to build the identity plot.}}
+\item{\code{id.summary}}{Full name of the summary method used to build the
+      identity plot.}}
 }
 \description{
 Produces recruitment plots provided that BlastTab.catsbj.pl has

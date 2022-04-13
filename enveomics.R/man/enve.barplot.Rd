@@ -66,36 +66,44 @@ Any value above 100 indicates that no values are to be reported.}
 
 \item{order}{Controls how the rows should be ordered. 
 \itemize{
-   \item{If \code{NULL} 
-   (default), \code{sort.by} is applied per row and the results are 
-   sorted decreasingly.}
-   \item{If \code{NA}, no sorting is performed, i.e., the original
-   order is respected.}
-   \item{If a vector is provided, it is assumed to be the 
-   custom order to be used (either by numeric index or by row names).}
-   }}
+  \item{
+    If \code{NULL} (default), \code{sort.by} is applied per row and the
+    results are sorted decreasingly.
+  }
+  \item{
+    If \code{NA}, no sorting is performed, i.e., the original order is
+    respected.
+  }
+  \item{
+    If a vector is provided, it is assumed to be the custom order to be used
+    (either by numeric index or by row names).
+  }
+}}
 
 \item{col}{Colors to use. If provided, overrides the variables \code{top}
 and \code{colors.per.group}, but \code{other.col} is still used if the 
-vector is insufficient for all the rows. An additional palette is available with
-\code{col='coto'} (contributed by Luis (Coto) Orellana).}
+vector is insufficient for all the rows. An additional palette is available
+with \code{col='coto'} (contributed by Luis (Coto) Orellana).}
 
 \item{...}{Any additional parameters to be passed to barplot.}
+}
+\value{
+No return value
 }
 \description{
 Creates nice barplots from tab-delimited tables.
 }
 \examples{
 # Load data
-data("phyla.counts", package="enveomics.R", envir=environment())
+data("phyla.counts", package = "enveomics.R", envir = environment())
 # Create a barplot sorted by variance with organic trends
 enve.barplot(
-    phyla.counts, # Counts of phyla in four sites
-    sizes=c(250,100,75,200), # Total sizes of the datasets of each site
-    bars.width=2, # Decrease from default, so the names are fully displayed
-    organic.trend=TRUE, # Nice curvy background
-    sort.by=var # Sort by variance across sites
-    )
+  phyla.counts, # Counts of phyla in four sites
+  sizes = c(250,100,75,200), # Total sizes of the datasets of each site
+  bars.width = 2, # Decrease from default, so the names are fully displayed
+  organic.trend = TRUE, # Nice curvy background
+  sort.by = var # Sort by variance across sites
+)
 
 }
 \author{

@@ -15,6 +15,9 @@ enve.recplot2.__counts(x, pos.breaks, id.breaks, rec.idcol)
 
 \item{rec.idcol}{Identity column to use}
 }
+\value{
+2-dimensional matrix of counts per identity and position bins.
+}
 \description{
 Internal ancillary function (see \code{\link{enve.recplot2}}).
 }

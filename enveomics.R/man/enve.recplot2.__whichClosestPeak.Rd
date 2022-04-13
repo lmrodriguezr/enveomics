@@ -11,6 +11,9 @@ enve.recplot2.__whichClosestPeak(peak, peaks)
 
 \item{peaks}{list of \code{\link{enve.RecPlot2.Peak}} objects}
 }
+\value{
+A numeric index out of \code{peaks}.
+}
 \description{
 Internal ancillary function (see \code{\link{enve.recplot2.findPeaks}}).
 }

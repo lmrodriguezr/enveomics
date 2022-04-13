@@ -7,13 +7,16 @@
 enve.__prune.reduce(t, nodes, min_dist, quiet)
 }
 \arguments{
-\item{t}{A \strong{phylo} object}
+\item{t}{A \strong{phylo} object.}
 
-\item{nodes}{Vector of nodes}
+\item{nodes}{Vector of nodes.}
 
-\item{min_dist}{Minimum distance}
+\item{min_dist}{Minimum distance.}
 
-\item{quiet}{If running quietly}
+\item{quiet}{If running quietly.}
+}
+\value{
+A \strong{phylo} object.
 }
 \description{
 Internal function for \code{\link{enve.prune.dist}}.

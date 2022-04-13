@@ -11,15 +11,28 @@
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
+#' @examples
+#' # Hexcode for a color by hexcode
+#' enve.col.alpha("#009988", 3/4) # "#009988BF"
+#' 
+#' # Hexcode for a color by name
+#' enve.col.alpha("white", 1/4) # "#FFFFFF3F"
+#'
+#' # Hexcode for a color from other functions
+#' enve.col.alpha(rainbow(3)) # "#FF00007F" "#00FF007F" "#0000FF7F"
 #' @export
 
-enve.col.alpha <- function
-    (col,
-    alpha=1/2
-    ){
+enve.col.alpha <- function(col, alpha = 1/2) {
   return(
-    apply(col2rgb(col), 2,
-      function(x) do.call(rgb, as.list(c(x[1:3]/256, alpha))) ) )
+    apply(
+      col2rgb(col), 2,
+      function(x)
+        do.call(
+          rgb,
+          list(x[1], x[2], x[3], alpha * 255, maxColorValue = 255)
+        )
+    )
+  )
 }
 
 #' Enveomics: Truncate
@@ -39,13 +52,9 @@ enve.col.alpha <- function
 #'
 #' @export
 
-enve.truncate <- function
-    (x,
-    f=0.95,
-    FUN=mean
-    ){
-  n <- round(length(x)*(1-f)/2)
-  y <- sort(x)[ -c(seq(1, n), seq(length(x)+1-n, length(x))) ]
+enve.truncate <- function(x, f = 0.95, FUN = mean) {
+  n <- round(length(x) * (1 - f) / 2)
+  y <- sort(x)[-c(seq(1, n), seq(length(x) + 1 - n, length(x)))]
   return(FUN(y))
 }
 
@@ -65,16 +74,17 @@ enve.truncate <- function
 
 enve.selvector <- function(sel, dim.names) {
   if(is.logical(sel)) {
-    if(length(sel) != length(dim.names))
-      stop('sel is logical but differs in length from dim.names')
+    if (length(sel) != length(dim.names))
+      stop("sel is logical but differs in length from dim.names")
     sel
-  } else if(is.numeric(sel)) {
-    if(max(sel) > length(dim.names))
-      stop('sel includes numeric index beyond the length of dim.names')
+  } else if (is.numeric(sel)) {
+    if (max(sel) > length(dim.names))
+      stop("sel includes numeric index beyond the length of dim.names")
     1:length(dim.names) %in% sel
   } else {
-    if(any(!sel %in% dim.names))
-      stop('sel includes character index missing from dim.names')
+    if (any(!sel %in% dim.names))
+      stop("sel includes character index missing from dim.names")
     dim.names %in% sel
   }
 }
+

@@ -15,8 +15,8 @@ enve.TRIBS.merge(x, y)
 Returns an \code{\link{enve.TRIBS}} object.
 }
 \description{
-Merges two \code{\link{enve.TRIBS}} objects generated from the same objects at
-different subsampling levels.
+Merges two \code{\link{enve.TRIBS}} objects generated from the same objects
+at different subsampling levels.
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

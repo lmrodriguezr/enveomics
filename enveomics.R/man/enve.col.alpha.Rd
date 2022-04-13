@@ -19,6 +19,16 @@ including \code{alpha}.
 \description{
 Modify alpha in a color (or vector of colors).
 }
+\examples{
+# Hexcode for a color by hexcode
+enve.col.alpha("#009988", 3/4) # "#009988BF"
+
+# Hexcode for a color by name
+enve.col.alpha("white", 1/4) # "#FFFFFF3F"
+
+# Hexcode for a color from other functions
+enve.col.alpha(rainbow(3)) # "#FF00007F" "#00FF007F" "#0000FF7F"
+}
 \author{
 Luis M. Rodriguez-R [aut, cre]
 }

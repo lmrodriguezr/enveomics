@@ -32,6 +32,10 @@ enve.__tribs(
 
 \item{dist}{Distance}
 }
+\value{
+A numeric indicating the \code{summary.fx} value applied to the
+distance matrix subset
+}
 \description{
 Internal ancillary function (see \code{\link{enve.tribs}}).
 }

@@ -21,10 +21,12 @@ enve.recplot2.compareIdentities(
 \item{method}{Distance method to use. This should be (an unambiguous abbreviation of)
 one of:
 \itemize{
-   \item{"hellinger" (\emph{Hellinger, 1090, doi:10.1515/crll.1909.136.210}),}
-   \item{"bhattacharyya" (\emph{Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35}),}
-   \item{"kl" or "kullback-leibler" (\emph{Kullback & Leibler, 1951,
-   doi:10.1214/aoms/1177729694}), or}
+   \item{"hellinger"
+         (\emph{Hellinger, 1090, doi:10.1515/crll.1909.136.210}),}
+   \item{"bhattacharyya"
+         (\emph{Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35}),}
+   \item{"kl" or "kullback-leibler"
+         (\emph{Kullback & Leibler, 1951, doi:10.1214/aoms/1177729694}), or}
    \item{"euclidean"}
 }}
 
@@ -37,6 +39,9 @@ cross-validation (see \code{smooth.spline} parameter \code{spar}).}
 
 \item{max.deviation}{Maximum mean deviation between identity breaks tolerated (as percent
 identity). Difference in number of \code{id.breaks} is never tolerated.}
+}
+\value{
+A \strong{numeric} indicating the distance between the objects.
 }
 \description{
 Compare the distribution of identities between two

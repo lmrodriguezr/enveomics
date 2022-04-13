@@ -11,6 +11,9 @@ enve.recplot2.changeCutoff(rp, new.cutoff = 98)
 
 \item{new.cutoff}{New cutoff to use.}
 }
+\value{
+The modified \code{\link{enve.RecPlot2}} object.
+}
 \description{
 Change the intra-species cutoff of an existing recruitment plot.
 }

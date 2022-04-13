@@ -32,15 +32,14 @@ and the values correspond to the group.}
 
 \item{empty.rm}{Remove incomplete matrices.}
 
-\item{...}{Any other parameters supported by
-\code{\link{enve.df2dist.group}}.}
+\item{...}{Any other parameters supported by \code{\link{enve.df2dist}}.}
 }
 \value{
 Returns a \strong{list} of \strong{dist} objects.
 }
 \description{
 Transform a dataframe (or coercible object, like a table)
-into a \strong{dist} object.
+into a \strong{list} of \strong{dist} objects, one per group.
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

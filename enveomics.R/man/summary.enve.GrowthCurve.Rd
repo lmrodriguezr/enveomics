@@ -11,6 +11,9 @@
 
 \item{...}{No additional parameters are currently supported.}
 }
+\value{
+No return value.
+}
 \description{
 Summary of an \code{\link{enve.GrowthCurve}} object.
 }

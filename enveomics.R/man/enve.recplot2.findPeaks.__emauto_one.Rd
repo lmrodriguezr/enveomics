@@ -7,20 +7,24 @@
 enve.recplot2.findPeaks.__emauto_one(x, comp, do_crit, best, verbose, ...)
 }
 \arguments{
-\item{x}{\code{\link{enve.RecPlot2}} object}
+\item{x}{\code{\link{enve.RecPlot2}} object.}
 
-\item{comp}{Components}
+\item{comp}{Components.}
 
-\item{do_crit}{Function estimating the criterion}
+\item{do_crit}{Function estimating the criterion.}
 
-\item{best}{Best solution thus far}
+\item{best}{Best solution thus far.}
 
-\item{verbose}{If verbose}
+\item{verbose}{If verbose.}
 
-\item{...}{Additional parameters for \code{\link{enve.recplot2.findPeaks.em}}}
+\item{...}{Additional parameters for \code{\link{enve.recplot2.findPeaks.em}}.}
+}
+\value{
+Updated solution with the same structure as \code{best}.
 }
 \description{
-Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.emauto}}).
+Internal ancillary function (see
+\code{\link{enve.recplot2.findPeaks.emauto}}).
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

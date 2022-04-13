@@ -6,8 +6,10 @@
 #' be produced by \code{\link{enve.recplot2}} and supports S4 method plot.
 #'
 #' @slot counts \code{(matrix)} Counts as a two-dimensional histogram.
-#' @slot pos.counts.in \code{(numeric)} Counts of in-group hits per position bin.
-#' @slot pos.counts.out \code{(numeric)} Counts of out-group hits per position bin.
+#' @slot pos.counts.in
+#' \code{(numeric)} Counts of in-group hits per position bin.
+#' @slot pos.counts.out
+#' \code{(numeric)} Counts of out-group hits per position bin.
 #' @slot id.counts \code{(numeric)} Counts per ID bin.
 #' @slot id.breaks \code{(numeric)} Breaks of identity bins.
 #' @slot pos.breaks \code{(numeric)} Breaks of position bins.
@@ -208,42 +210,50 @@ setMethod("$", "enve.RecPlot2.Peak", function(x, name) attr(x, name))
 #' @export
 
 plot.enve.RecPlot2 <- function
-(x,
- layout=matrix(c(5,5,2,1,4,3), nrow=2),
- panel.fun=list(),
- widths=c(1,7,2),
- heights=c(1,2),
- palette=grey((100:0)/100),
- underlay.group=TRUE,
- peaks.col='darkred',
- use.peaks,
- id.lim=range(x$id.breaks),
- pos.lim=range(x$pos.breaks),
- pos.units=c('Mbp','Kbp','bp'),
- mar=list('1'=c(5,4,1,1)+.1, '2'=c(ifelse(any(layout==1),1,5),4,4,1)+.1,
-          '3'=c(5,ifelse(any(layout==1),1,4),1,2)+0.1,
-          '4'=c(ifelse(any(layout==1),1,5),ifelse(any(layout==2),1,4),4,2)+0.1,
-          '5'=c(5,3,4,1)+0.1, '6'=c(5,4,4,2)+0.1),
- pos.splines=0,
- id.splines=1/2,
- in.lwd=ifelse(is.null(pos.splines) || pos.splines>0, 1/2, 2),
- out.lwd=ifelse(is.null(pos.splines) || pos.splines>0, 1/2, 2),
- id.lwd=ifelse(is.null(id.splines) || id.splines>0, 1/2, 2),
- in.col='darkblue',
- out.col='lightblue',
- id.col='black',
- breaks.col='#AAAAAA40',
- peaks.opts=list(),
- ...
-){
-  pos.units	<- match.arg(pos.units);
-  pos.factor	<- ifelse(pos.units=='bp',1,ifelse(pos.units=='Kbp',1e3,1e6));
-  pos.lim	<- pos.lim/pos.factor;
-  lmat <- layout;
-  for(i in 1:6) if(!any(layout==i)) lmat[layout>i] <- lmat[layout>i]-1;
+(
+  x,
+  layout     = matrix(c(5, 5, 2, 1, 4, 3), nrow = 2),
+  panel.fun  = list(),
+  widths     = c(1, 7, 2),
+  heights    = c(1, 2),
+  palette    = grey((100:0) / 100),
+  underlay.group = TRUE,
+  peaks.col  = "darkred",
+  use.peaks,
+  id.lim     = range(x$id.breaks),
+  pos.lim    = range(x$pos.breaks),
+  pos.units  = c("Mbp", "Kbp", "bp"),
+  mar = list(
+    "1" = c(5, 4, 1, 1) + 0.1,
+    "2" = c(ifelse(any(layout == 1), 1, 5), 4, 4, 1) + 0.1,
+    "3" = c(5, ifelse(any(layout == 1), 1, 4), 1, 2) + 0.1,
+    "4" = c(ifelse(any(layout == 1), 1, 5),
+            ifelse(any(layout == 2), 1, 4), 4, 2) + 0.1,
+    "5" = c(5, 3, 4, 1) + 0.1,
+    "6" = c(5, 4, 4, 2) + 0.1
+  ),
+  pos.splines = 0,
+  id.splines = 1/2,
+  in.lwd     = ifelse(is.null(pos.splines) || pos.splines > 0, 1/2, 2),
+  out.lwd    = ifelse(is.null(pos.splines) || pos.splines > 0, 1/2, 2),
+  id.lwd     = ifelse(is.null(id.splines) || id.splines > 0, 1/2, 2),
+  in.col     = "darkblue",
+  out.col    = "lightblue",
+  id.col     = "black",
+  breaks.col = "#AAAAAA40",
+  peaks.opts = list(),
+  ...
+) {
+  pos.units	<- match.arg(pos.units)
+  pos.factor	<- ifelse(pos.units == "bp", 1,
+                          ifelse(pos.units == "Kbp", 1e3, 1e6))
+  pos.lim	<- pos.lim / pos.factor
+  lmat <- layout
+  for (i in 1:6) if (!any(layout == i)) lmat[layout > i] <- lmat[layout > i] - 1
 
-  layout(lmat, widths=widths, heights=heights);
-  ori.mar <- par('mar');
+  layout(lmat, widths = widths, heights = heights)
+  ori.mar <- par("mar")
+  on.exit(par(ori.mar))
 
   # Essential vars
   counts	<- x$counts
@@ -273,8 +283,8 @@ plot.enve.RecPlot2 <- function
   }
 
   # [1] Counts matrix
-  if(any(layout==1)){
-    par(mar=mar[['1']]);
+  if (any(layout==1)) {
+    par(mar = mar[["1"]]) # par(mar) already being watched by on.exit
     plot(1, t='n', bty='l',
          xlim=pos.lim, xlab=paste('Position in genome (',pos.units,')',sep=''),
          xaxs='i', ylim=id.lim,  ylab=x$id.metric, yaxs='i');
@@ -288,18 +298,18 @@ plot.enve.RecPlot2 <- function
     image(x=pos.breaks, y=id.breaks, z=log10(counts),col=palette,
           bg=grey(1,0), breaks=seq(-.1,log10(max(counts)),
                                    length.out=1+length(palette)), add=TRUE);
-    if(exists('1',panel.fun)) panel.fun[['1']]();
+    if(exists("1", panel.fun)) panel.fun[["1"]]()
   }
 
   # [2] Position histogram
-  if(any(layout==2)){
-    par(mar=mar[['2']]);
-    if(any(layout==1)){
-      xlab=''
-      xaxt='n'
-    }else{
-      xlab=paste('Position in genome (',pos.units,')',sep='')
-      xaxt='s'
+  if (any(layout == 2)) {
+    par(mar = mar[["2"]]) # par(mar) already being watched by on.exit
+    if (any(layout == 1)) {
+      xlab <- ""
+      xaxt <- "n"
+    } else {
+      xlab <- paste("Position in genome (", pos.units, ")", sep = "")
+      xaxt <- "s"
     }
     plot(1,t='n', bty='l', log='y',
          xlim=pos.lim, xlab=xlab, xaxt=xaxt, xaxs='i',
@@ -309,31 +319,33 @@ plot.enve.RecPlot2 <- function
     pos.f <- rep(seqdepth.in,each=2)
     lines(pos.x, rep(seqdepth.out,each=2), lwd=out.lwd, col=out.col);
     lines(pos.x, pos.f, lwd=in.lwd, col=in.col);
-    if(is.null(pos.splines) || pos.splines > 0){
+    if (is.null(pos.splines) || pos.splines > 0) {
       pos.spline <- smooth.spline(pos.x[pos.f>0], log(pos.f[pos.f>0]),
                                   spar=pos.splines)
       lines(pos.spline$x, exp(pos.spline$y), lwd=2, col=in.col)
     }
-    if(any(pos.counts.out==0)) rect(pos.breaks[c(pos.counts.out==0,FALSE)],
-                                    seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.out==0)],
-                                    seqdepth.lim[1]*3/2, col=out.col, border=NA);
-    if(any(pos.counts.in==0))  rect(pos.breaks[c(pos.counts.in==0,FALSE)],
-                                    seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.in==0)],
-                                    seqdepth.lim[1]*3/2, col=in.col,  border=NA);
-    if(exists('2',panel.fun)) panel.fun[['2']]();
+    if (any(pos.counts.out==0))
+      rect(pos.breaks[c(pos.counts.out==0,FALSE)],
+           seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.out==0)],
+           seqdepth.lim[1]*3/2, col=out.col, border=NA);
+    if (any(pos.counts.in==0))
+      rect(pos.breaks[c(pos.counts.in==0,FALSE)],
+           seqdepth.lim[1], pos.breaks[c(FALSE,pos.counts.in==0)],
+           seqdepth.lim[1]*3/2, col=in.col,  border=NA);
+    if (exists("2", panel.fun)) panel.fun[["2"]]()
   }
 
   # [3] Identity histogram
-  if(any(layout==3)){
-    par(mar=mar[['3']]);
-    if(any(layout==1)){
-      ylab=''
-      yaxt='n'
-    }else{
-      ylab=x$id.metric
-      yaxt='s'
+  if (any(layout == 3)) {
+    par(mar = mar[["3"]]) # par(mar) already being watched by on.exit
+    if (any(layout == 1)) {
+      ylab <- ""
+      yaxt <- "n"
+    } else {
+      ylab <- x$id.metric
+      yaxt <- "s"
     }
-    if(sum(id.counts>0) >= 4){
+    if (sum(id.counts > 0) >= 4) {
       id.counts.range <- range(id.counts[id.counts>0])*c(1/2,2);
       plot(1,t='n', bty='l', log='x',
            xlim=id.counts.range, xlab='bps per bin', xaxs='i',
@@ -352,23 +364,23 @@ plot.enve.RecPlot2 <- function
                                    spar=id.splines)
         lines(exp(id.spline$y), id.spline$x, lwd=2, col=id.col)
       }
-    }else{
+    } else {
       plot(1,t='n',bty='l',xlab='', xaxt='n', ylab='', yaxt='n')
       text(1,1,labels='Insufficient data', srt=90)
     }
-    if(exists('3',panel.fun)) panel.fun[['3']]();
+    if (exists("3", panel.fun)) panel.fun[["3"]]()
   }
 
   # [4] Populations histogram
   peaks <- NA;
-  if(any(layout==4)){
-    par(mar=mar[['4']]);
-    if(any(layout==2)){
-      ylab=''
-      yaxt='n'
-    }else{
-      ylab='Sequencing depth (X)'
-      yaxt='s'
+  if (any(layout == 4)) {
+    par(mar = mar[["4"]]) # par(mar) already being watched by on.exit
+    if (any(layout == 2)) {
+      ylab <- ""
+      yaxt <- "n"
+    } else {
+      ylab <- "Sequencing depth (X)"
+      yaxt <- "s"
     }
     h.breaks <- seq(log10(seqdepth.lim[1]*2), log10(seqdepth.lim[2]/2),
                     length.out=200);
@@ -406,44 +418,47 @@ plot.enve.RecPlot2 <- function
           lapply(peaks,
                  function(x) ifelse(length(x$values)==0, x$n.hat,
                                     length(x$values))/x$n.total)), 2)
-        if(peaks[[1]]$err.res < 0){
-          err <- paste(', LL:', signif(peaks[[1]]$err.res, 3))
-        }else{
-          err <- paste(', err:',
-                       signif(as.numeric(lapply(peaks, function(x) x$err.res)), 2))
+        if (peaks[[1]]$err.res < 0) {
+          err <- paste(", LL:", signif(peaks[[1]]$err.res, 3))
+        } else {
+          err <- paste(
+            ", err:",
+            signif(as.numeric(lapply(peaks, function(x) x$err.res)), 2)
+          )
         }
         legend('topright', bty='n', cex=1/2,
                legend=paste(letters[1:length(peaks)],'. ',
                             dpt,'X (', frx, '%', err, ')', sep=''))
       }
     }
-    if(exists('4',panel.fun)) panel.fun[['4']]();
+    if (exists("4", panel.fun)) panel.fun[["4"]]()
   }
 
   # [5] Color scale of the counts matrix (vertical)
-  count.bins <- 10^seq(log10(min(counts[counts>0])), log10(max(counts)),
-                       length.out=1+length(palette))
-  if(any(layout==5)){
-    par(mar=mar[['5']]);
+  count.bins <- 10^seq(
+    log10(min(counts[counts>0])), log10(max(counts)),
+    length.out = 1 + length(palette)
+  )
+  if (any(layout == 5)) {
+    par(mar = mar[["5"]]) # par(mar) already being watched by on.exit
     plot(1,t='n',log='y',xlim=0:1,xaxt='n',xlab='',xaxs='i',
          ylim=range(count.bins), yaxs='i', ylab='')
     rect(0,count.bins[-length(count.bins)],1,count.bins[-1],col=palette,
          border=NA)
-    if(exists('5',panel.fun)) panel.fun[['5']]();
+    if (exists("5", panel.fun)) panel.fun[["5"]]()
   }
 
   # [6] Color scale of the coutnts matrix (horizontal)
-  if(any(layout==6)){
-    par(mar=mar[['6']]);
+  if (any(layout == 6)) {
+    par(mar = mar[["6"]]) # par(mar) already being watched by on.exit
     plot(1,t='n',log='x',ylim=0:1,yaxt='n',ylab='',yaxs='i',
          xlim=range(count.bins), xaxs='i',xlab='');
     rect(count.bins[-length(count.bins)],0,count.bins[-1],1,col=palette,
          border=NA);
-    if(exists('6',panel.fun)) panel.fun[['6']]();
+    if (exists("6", panel.fun)) panel.fun[["6"]]()
   }
 
-  par(mar=ori.mar);
-  return(peaks);
+  return(peaks)
 }
 
 #==============> Define core functions
@@ -635,7 +650,7 @@ enve.recplot2 <- function(
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
-#' export
+#' @export
 
 enve.recplot2.findPeaks <- function(
   x,
@@ -955,33 +970,39 @@ enve.recplot2.findPeaks.mower <- function(
 #' "core genome" of a population.
 #'
 #' @param x \code{list} of \code{\link{enve.RecPlot2.Peak}} objects.
+#' 
+#' @return A \code{\link{enve.RecPlot2.Peak}} object.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.corePeak <- function
-(x
-){
+enve.recplot2.corePeak <- function(x) {
   # Find the peak with maximum depth (centrality)
   maxPeak <- x[[
-    which.max(as.numeric(lapply(x,
-                                function(y) y$param.hat[[ length(y$param.hat) ]])))
-    ]]
+    which.max(
+      as.numeric(
+        lapply(x, function(y) y$param.hat[[length(y$param.hat)]])
+      )
+    )
+  ]]
   # If a "larger" peak (a peak explaining more bins of the genome) is within
   # the default "merge.logdist" distance, take that one instead.
   corePeak <- maxPeak
-  for(p in x){
-    p.len <- ifelse(length(p$values)==0, p$n.hat, length(p$values))
+  for (p in x) {
+    p.len <- ifelse(length(p$values) == 0, p$n.hat, length(p$values))
     corePeak.len <- ifelse(
-      length(corePeak$values)==0, corePeak$n.hat, length(corePeak$values))
-    sz.d <- log(p.len/corePeak.len)
-    if(is.nan(sz.d) || sz.d < 0) next
-    sq.d.a <- as.numeric(tail(p$param.hat, n=1))
-    sq.d.b <- as.numeric(tail(maxPeak$param.hat, n=1))
-    if(p$log) sq.d.a <- exp(sq.d.a)
-    if(corePeak$log) sq.d.b <- exp(sq.d.b)
-    if(abs(log(sq.d.a/sq.d.b)) < log(1.75)+sz.d/5) corePeak <- p
+      length(corePeak$values) == 0,
+      corePeak$n.hat,
+      length(corePeak$values)
+    )
+    sz.d <- log(p.len / corePeak.len)
+    if (is.nan(sz.d) || sz.d < 0) next
+    sq.d.a <- as.numeric(tail(p$param.hat, n = 1))
+    sq.d.b <- as.numeric(tail(maxPeak$param.hat, n = 1))
+    if (p$log) sq.d.a <- exp(sq.d.a)
+    if (corePeak$log) sq.d.b <- exp(sq.d.b)
+    if (abs(log(sq.d.a / sq.d.b)) < log(1.75) + sz.d / 5) corePeak <- p
   }
   return(corePeak)
 }
@@ -994,20 +1015,20 @@ enve.recplot2.corePeak <- function
 #' \code{\link{enve.RecPlot2}} object.
 #' @param new.cutoff
 #' New cutoff to use.
+#' 
+#' @return The modified \code{\link{enve.RecPlot2}} object.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.changeCutoff <- function
-(rp,
- new.cutoff=98
-){
+enve.recplot2.changeCutoff <- function(rp, new.cutoff = 98) {
   # Re-calculate vectors
-  id.mids	<- (rp$id.breaks[-length(rp$id.breaks)]+rp$id.breaks[-1])/2
-  id.ingroup	<- (id.mids > new.cutoff)
-  pos.counts.in  <- apply(rp$counts[,id.ingroup], 1, sum)
-  pos.counts.out <- apply(rp$counts[,!id.ingroup], 1, sum)
+  id.mids	 <- (rp$id.breaks[-length(rp$id.breaks)] + rp$id.breaks[-1]) / 2
+  id.ingroup	 <- (id.mids > new.cutoff)
+  pos.counts.in  <- apply(rp$counts[, id.ingroup], 1, sum)
+  pos.counts.out <- apply(rp$counts[, !id.ingroup], 1, sum)
+
   # Update object
   attr(rp, "id.ingroup")     <- id.ingroup
   attr(rp, "pos.counts.in")  <- pos.counts.in
@@ -1024,9 +1045,9 @@ enve.recplot2.changeCutoff <- function
 #' @param rp
 #' Recruitment plot, an \code{\link{enve.RecPlot2}} object.
 #' @param peak
-#' Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to be a
-#' list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core peak is
-#' used (see \code{\link{enve.recplot2.corePeak}}).
+#' Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to
+#' be a list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core
+#' peak is used (see \code{\link{enve.recplot2.corePeak}}).
 #' @param lower.tail
 #' If \code{FALSE}, it returns windows significantly above the peak in
 #' sequencing depth.
@@ -1041,16 +1062,16 @@ enve.recplot2.changeCutoff <- function
 #'
 #' @export
 
-enve.recplot2.windowDepthThreshold <- function
-(rp,
- peak,
- lower.tail=TRUE,
- significance=0.05
-){
-  if(is.list(peak)) peak <- enve.recplot2.corePeak(peak)
+enve.recplot2.windowDepthThreshold <- function(
+  rp,
+  peak,
+  lower.tail   = TRUE,
+  significance = 0.05
+) {
+  if (is.list(peak)) peak <- enve.recplot2.corePeak(peak)
   par <- peak$param.hat
-  par[["p"]] <- ifelse(lower.tail, significance, 1-significance)
-  thr <- do.call(ifelse(length(par)==4, qsn, qnorm), par)
+  par[["p"]] <- ifelse(lower.tail, significance, 1 - significance)
+  thr <- do.call(ifelse(length(par) == 4, qsn, qnorm), par)
   if(peak$log) thr <- exp(thr)
 
   return(thr)
@@ -1064,9 +1085,9 @@ enve.recplot2.windowDepthThreshold <- function
 #' @param rp
 #' Recruitment plot, a \code{\link{enve.RecPlot2}} object.
 #' @param peak
-#' Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to be a
-#' list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core peak is
-#' used (see \code{\link{enve.recplot2.corePeak}}).
+#' Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to
+#' be a list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core
+#' peak is used (see \code{\link{enve.recplot2.corePeak}}).
 #' @param lower.tail
 #' If \code{FALSE}, it returns windows significantly above the peak in
 #' sequencing depth.
@@ -1089,21 +1110,21 @@ enve.recplot2.windowDepthThreshold <- function
 #'
 #' @export
 
-enve.recplot2.extractWindows <- function
-(rp,
- peak,
- lower.tail = TRUE,
- significance = 0.05,
- seq.names = FALSE
-){
+enve.recplot2.extractWindows <- function(
+  rp,
+  peak,
+  lower.tail   = TRUE,
+  significance = 0.05,
+  seq.names    = FALSE
+) {
   # Determine the threshold
   thr <- enve.recplot2.windowDepthThreshold(rp, peak, lower.tail, significance)
 
   # Select windows past the threshold
   seqdepth.in <- enve.recplot2.seqdepth(rp)
-  if(lower.tail){
+  if (lower.tail) {
     sel <- seqdepth.in < thr
-  }else{
+  } else {
     sel <- seqdepth.in > thr
   }
 
@@ -1117,7 +1138,7 @@ enve.recplot2.extractWindows <- function
 #'
 #' Compare the distribution of identities between two
 #' \code{\link{enve.RecPlot2}} objects.
-#'
+#' 
 #' @param x
 #' First \code{\link{enve.RecPlot2}} object.
 #' @param y
@@ -1126,10 +1147,12 @@ enve.recplot2.extractWindows <- function
 #' Distance method to use. This should be (an unambiguous abbreviation of)
 #' one of:
 #' \itemize{
-#'    \item{"hellinger" (\emph{Hellinger, 1090, doi:10.1515/crll.1909.136.210}),}
-#'    \item{"bhattacharyya" (\emph{Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35}),}
-#'    \item{"kl" or "kullback-leibler" (\emph{Kullback & Leibler, 1951,
-#'    doi:10.1214/aoms/1177729694}), or}
+#'    \item{"hellinger"
+#'          (\emph{Hellinger, 1090, doi:10.1515/crll.1909.136.210}),}
+#'    \item{"bhattacharyya"
+#'          (\emph{Bhattacharyya, 1943, Bull. Calcutta Math. Soc. 35}),}
+#'    \item{"kl" or "kullback-leibler"
+#'          (\emph{Kullback & Leibler, 1951, doi:10.1214/aoms/1177729694}), or}
 #'    \item{"euclidean"}
 #' }
 #' @param smooth.par
@@ -1142,56 +1165,66 @@ enve.recplot2.extractWindows <- function
 #' @param max.deviation
 #' Maximum mean deviation between identity breaks tolerated (as percent
 #' identity). Difference in number of \code{id.breaks} is never tolerated.
-#'
+#' 
+#' @return A \strong{numeric} indicating the distance between the objects.
+#' 
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
 enve.recplot2.compareIdentities <- function
-(x,
- y,
- method="hellinger",
- smooth.par=NULL,
- pseudocounts=0,
- max.deviation=0.75
-){
-  METHODS <- c("hellinger","bhattacharyya","kullback-leibler","kl","euclidean")
+(
+  x,
+  y,
+  method        = "hellinger",
+  smooth.par    = NULL,
+  pseudocounts  = 0,
+  max.deviation = 0.75
+) {
+  # Sanity checks
+  METHODS <- c(
+    "hellinger", "bhattacharyya", "kullback-leibler", "kl", "euclidean"
+  )
   i.meth <- pmatch(method, METHODS)
   if (is.na(i.meth)) stop("Invalid distance ", method)
-  if(!inherits(x, "enve.RecPlot2"))
+  if (!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
-  if(!inherits(y, "enve.RecPlot2"))
+  if (!inherits(y, "enve.RecPlot2"))
     stop("'y' must inherit from class `enve.RecPlot2`")
-  if(length(x$id.breaks) != length(y$id.breaks))
+  if (length(x$id.breaks) != length(y$id.breaks))
     stop("'x' and 'y' must have the same number of `id.breaks`")
   dev <- mean(abs(x$id.breaks - y$id.breaks))
-  if(dev > max.deviation)
+  if (dev > max.deviation)
     stop("'x' and 'y' must have similar `id.breaks`; exceeding max.deviation: ",
          dev)
+
+  # Initialize
   x.cnt <- x$id.counts
   y.cnt <- y$id.counts
-  if(is.null(smooth.par) || smooth.par > 0){
-    x.mids <- (x$id.breaks[-1] + x$id.breaks[-length(x$id.breaks)])/2
-    y.mids <- (y$id.breaks[-1] + y$id.breaks[-length(y$id.breaks)])/2
-    p.spline <- smooth.spline(x.mids, x.cnt, spar=smooth.par)
-    q.spline <- smooth.spline(y.mids, y.cnt, spar=smooth.par)
+  if (is.null(smooth.par) || smooth.par > 0){
+    x.mids <- (x$id.breaks[-1] + x$id.breaks[-length(x$id.breaks)]) / 2
+    y.mids <- (y$id.breaks[-1] + y$id.breaks[-length(y$id.breaks)]) / 2
+    p.spline <- smooth.spline(x.mids, x.cnt, spar = smooth.par)
+    q.spline <- smooth.spline(y.mids, y.cnt, spar = smooth.par)
     x.cnt <- pmax(p.spline$y, 0)
     y.cnt <- pmax(q.spline$y, 0)
   }
+
   a <- as.numeric(pseudocounts)
   p <- (x.cnt + a) / sum(x.cnt + a)
   q <- (y.cnt + a) / sum(y.cnt + a)
   d <- NA
-  if(i.meth %in% c(1L, 2L)){
-    d <- sqrt(sum((sqrt(p) - sqrt(q))**2))/sqrt(2)
-    if(i.meth==2L) d <- 1 - d**2
-  }else if(i.meth %in% c(3L, 4L)){
-    sel <- p>0
-    if(any(q[sel]==0))
+
+  if (i.meth %in% c(1L, 2L)) {
+    d <- sqrt(sum((sqrt(p) - sqrt(q))**2)) / sqrt(2)
+    if(i.meth == 2L) d <- 1 - d**2
+  } else if (i.meth %in% c(3L, 4L)) {
+    sel <- p > 0
+    if (any(q[sel] == 0))
       stop("Undefined distance without absolute continuity, use pseudocounts")
-    d <- -sum(p[sel]*log(q[sel]/p[sel]))
-  }else if(i.meth == 5L){
-    d <- sqrt(sum((q-p)**2))
+    d <- -sum(p[sel] * log(q[sel] / p[sel]))
+  } else if (i.meth == 5L) {
+    d <- sqrt(sum((q - p)**2))
   }
   return(d)
 }
@@ -1219,19 +1252,16 @@ enve.recplot2.compareIdentities <- function
 #'
 #' @export
 
-enve.recplot2.coordinates <- function
-(x,
- bins
-){
-  if(!inherits(x, "enve.RecPlot2"))
+enve.recplot2.coordinates <- function(x, bins) {
+  if (!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
-  if(missing(bins)) bins <- rep(TRUE, length(x$pos.breaks)-1)
-  if(!is.vector(bins)) stop("'bins' must be a vector")
-  if(inherits(bins, "logical")) bins <- which(bins)
+  if (missing(bins)) bins <- rep(TRUE, length(x$pos.breaks)-1)
+  if (!is.vector(bins)) stop("'bins' must be a vector")
+  if (inherits(bins, "logical")) bins <- which(bins)
 
   y <- data.frame(stringsAsFactors = FALSE, row.names = bins)
 
-  for(i in 1:length(bins)){
+  for (i in 1:length(bins)) {
     j <- bins[i]
     # Concatenated coordinates
     cc <- x$pos.breaks[c(j, j+1)]
@@ -1243,7 +1273,7 @@ enve.recplot2.coordinates <- function
       cc[2] >  x$seq.breaks[-length(x$seq.breaks)] &
         cc[2] <= x$seq.breaks[-1])
     # Translate coordinates
-    if(length(sb.from)==1 & length(sb.to)==1){
+    if (length(sb.from) == 1 & length(sb.to) == 1) {
       y[i, 'name.from'] <- x$seq.names[sb.from]
       y[i, 'pos.from']  <- floor(x$seq.breaks[sb.from] + cc[1] - 1)
       y[i, 'name.to']   <- x$seq.names[sb.to]
@@ -1276,23 +1306,18 @@ enve.recplot2.coordinates <- function
 #'
 #' @export
 
-enve.recplot2.seqdepth <- function
-
-(x,
- sel,
- low.identity=FALSE
-){
-  if(!inherits(x, "enve.RecPlot2"))
+enve.recplot2.seqdepth <- function(x, sel, low.identity = FALSE) {
+  if (!inherits(x, "enve.RecPlot2"))
     stop("'x' must inherit from class `enve.RecPlot2`")
-  if(low.identity){
+  if (low.identity) {
     pos.cnts.in <- x$pos.counts.out
-  }else{
+  } else {
     pos.cnts.in <- x$pos.counts.in
   }
   pos.breaks  <- x$pos.breaks
   pos.binsize <- (pos.breaks[-1] - pos.breaks[-length(pos.breaks)])
   seqdepth.in <- pos.cnts.in/pos.binsize
-  if(missing(sel)) return(seqdepth.in)
+  if (missing(sel)) return(seqdepth.in)
   return(seqdepth.in[sel])
 }
 
@@ -1307,8 +1332,10 @@ enve.recplot2.seqdepth <- function
 #' Range of identities to be considered. By default, the full range
 #' is used (note that the upper boundary is \code{Inf} and not 100 because
 #' recruitment plots can also be built with bit-scores). To use only
-#' intra-population matches (with identities), use c(95,100). To use only
-#' inter-population values, use c(0,95).
+#' intra-population matches (with identities), use \code{c(95, 100)}. To use
+#' only inter-population values, use \code{c(0, 95)}.
+#' 
+#' @return A numeric value indicating the ANIr (as percentage).
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
@@ -1338,43 +1365,49 @@ enve.recplot2.ANIr <- function
 #' @param pos.breaks Position breaks
 #' @param id.breaks Identity breaks
 #' @param rec.idcol Identity column to use
+#' 
+#' @return 2-dimensional matrix of counts per identity and position bins.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #' @author Kenji Gerhardt [aut]
 #'
 #' @export
 
-enve.recplot2.__counts <- function
-(x, pos.breaks, id.breaks, rec.idcol) {
+enve.recplot2.__counts <- function(x, pos.breaks, id.breaks, rec.idcol) {
   rec2 <- x$rec
   verbose <- x$verbose
 
   # get counts of how many occurrences of each genome pos.bin there are per read
   x.bins <- mapply(
     function(start, end) {
-      list(rle(findInterval(start:end, pos.breaks, left.open = T)))
-    }, rec2[, 1], rec2[, 2])
+      list(rle(findInterval(start:end, pos.breaks, left.open = TRUE)))
+    },
+    rec2[, 1], rec2[, 2]
+  )
 
   # find the single y bin for each row, replicates it at the correct places to
   # the number of distinct bins found in its row
-  y.bins <- rep(findInterval(rec2[, rec.idcol], id.breaks, left.open = T),
+  y.bins <- rep(findInterval(rec2[, rec.idcol], id.breaks, left.open = TRUE),
                 times = unlist(lapply(x.bins, function(a) length(a$lengths))))
 
   # x.bins_counts is the number of occurrences of each bin a row contains,
   # per row, then unlisted
   x.bins_counts <- unlist(lapply(x.bins, function(a) a$lengths))
 
-  # these are the pos. in. genome bins that each count in x.bins_counts falls into
+  # these are the pos. in. genome bins that each count in x.bins_counts falls
+  # into
   x.bins <- unlist(lapply(x.bins, function(a) a$values))
 
-  # much more efficient counts implementation in R using lists instead of a matrix:
+  # much more efficient counts implementation in R using lists instead of a
+  # matrix:
   counts <- lapply(
     1:(length(pos.breaks) - 1),
-    function(col_len) rep(0, length(id.breaks) - 1))
+    function(col_len) rep(0, length(id.breaks) - 1)
+  )
 
   # accesses the correct list in counts by x.bin, then
   # accesses the position in that row by y.bins and adds the new count
-  for(i in 1:length(x.bins)){
+  for (i in 1:length(x.bins)) {
     counts[[x.bins[i]]][y.bins[i]] <- counts[[x.bins[i]]][y.bins[i]] + x.bins_counts[i]
   }
 
@@ -1384,32 +1417,38 @@ enve.recplot2.__counts <- function
 
 #' Enveomics: Recruitment Plot (2) EMauto Peak Finder - Internal Ancillary Function
 #'
-#' Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.emauto}}).
+#' Internal ancillary function (see
+#' \code{\link{enve.recplot2.findPeaks.emauto}}).
 #'
-#' @param x \code{\link{enve.RecPlot2}} object
-#' @param comp Components
-#' @param do_crit Function estimating the criterion
-#' @param best Best solution thus far
-#' @param verbose If verbose
-#' @param ... Additional parameters for \code{\link{enve.recplot2.findPeaks.em}}
+#' @param x \code{\link{enve.RecPlot2}} object.
+#' @param comp Components.
+#' @param do_crit Function estimating the criterion.
+#' @param best Best solution thus far.
+#' @param verbose If verbose.
+#' @param ...
+#' Additional parameters for \code{\link{enve.recplot2.findPeaks.em}}.
+#'
+#' @return Updated solution with the same structure as \code{best}.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.findPeaks.__emauto_one <- function
-(x, comp, do_crit, best, verbose, ...){
-  peaks <- enve.recplot2.findPeaks.em(x=x, components=comp, ...)
-  if(length(peaks)==0) return(best)
-  k <- comp*3 - 1 # mean & sd for each component, and n-1 free alpha parameters
+enve.recplot2.findPeaks.__emauto_one <- function(
+  x, comp, do_crit, best, verbose, ...
+) {
+  peaks <- enve.recplot2.findPeaks.em(x = x, components = comp, ...)
+  if (length(peaks) == 0) return(best)
+  k <- comp * 3 - 1 # mean & sd for each component, and n-1 free alpha params
   crit <- do_crit(peaks[[1]]$err.res, k, peaks[[1]]$n.total)
-  if(verbose) cat(comp,'\t| LL =', peaks[[1]]$err.res, '\t| Estimate =', crit,
-                  ifelse(crit > best[['crit']], '*', ''), '\n')
-  if(crit > best[['crit']]){
-    best[['crit']] <- crit
-    best[['peaks']] <- peaks
+  if(verbose)
+    cat(comp, "\t| LL =", peaks[[1]]$err.res, "\t| Estimate =", crit,
+        ifelse(crit > best[["crit"]], "*", ""), "\n")
+  if(crit > best[["crit"]]){
+    best[["crit"]]  <- crit
+    best[["peaks"]] <- peaks
   }
-  best[['pstore']][[comp]] <- peaks
+  best[["pstore"]][[comp]] <- peaks
   return(best)
 }
 
@@ -1419,13 +1458,15 @@ enve.recplot2.findPeaks.__emauto_one <- function
 #'
 #' @param x Vector of log-transformed sequencing depths
 #' @param theta Parameters list
+#' 
+#' @return A list with components \code{ll} (numeric) the log-likelihood, and
+#' \code{posterior} (numeric) the posterior probability.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.findPeaks.__em_e <- function
-(x, theta){
+enve.recplot2.findPeaks.__em_e <- function(x, theta) {
   components <- length(theta[['mu']])
   product <- do.call(cbind,
                      lapply(1:components,
@@ -1437,7 +1478,7 @@ enve.recplot2.findPeaks.__em_e <- function
     cat(i,'/',nrow(product), ':', product[i,], '\n')
   }
 
-  return(list(ll=sum(log(sum.of.components)), posterior=posterior))
+  return(list(ll = sum(log(sum.of.components)), posterior = posterior))
 }
 
 #' Enveomics: Recruitment Plot (2) Em Peak Finder - Internal Ancillary Function Maximization
@@ -1446,20 +1487,23 @@ enve.recplot2.findPeaks.__em_e <- function
 #'
 #' @param x Vector of log-transformed sequencing depths
 #' @param posterior Posterior probability
+#' 
+#' @return A list with components \code{mu} (numeric) the estimated mean,
+#' \code{sd} (numeric) the estimated standard deviation, and \code{alpha}
+#' (numeric) the estimated alpha parameter.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.findPeaks.__em_m <- function
-(x, posterior){
+enve.recplot2.findPeaks.__em_m <- function(x, posterior) {
   components <- ncol(posterior)
   n <- colSums(posterior)
   mu <- colSums(posterior * x) / n
   sd <- sqrt( colSums(
     posterior * (matrix(rep(x,components), ncol=components) - mu)^2) / n )
   alpha <- n/length(x)
-  return(list(mu=mu, sd=sd, alpha=alpha))
+  return(list(mu = mu, sd = sd, alpha = alpha))
 }
 
 #' Enveomics: Recruitment Plot (2) Peak S4 Class - Internal Ancillary Function
@@ -1469,29 +1513,31 @@ enve.recplot2.findPeaks.__em_m <- function
 #' @param x \code{\link{enve.RecPlot2.Peak}} object
 #' @param mids Midpoints
 #' @param counts Counts
+#' 
+#' @return A numeric vector of counts (histogram)
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.__peakHist <- function
-(x, mids, counts=TRUE){
+enve.recplot2.__peakHist <- function(x, mids, counts = TRUE){
   d.o <- x$param.hat
-  if(length(x$log)==0) x$log <- FALSE
-  if(x$log){
+  if (length(x$log) == 0) x$log <- FALSE
+  if (x$log) {
     d.o$x <- log(mids)
-  }else{
+  } else {
     d.o$x <- mids
   }
-  prob  <- do.call(paste('d', x$dist, sep=''), d.o)
+  prob  <- do.call(paste('d', x$dist, sep = ""), d.o)
   if(!counts) return(prob)
   if(length(x$values)>0) return(prob*length(x$values)/sum(prob))
-  return(prob*x$n.hat/sum(prob))
+  return(prob * x$n.hat / sum(prob))
 }
 
 #' Enveomics: Recruitment Plot (2) Mowing Peak Finder - Internal Ancillary Function 1
 #'
-#' Internall ancillary function (see \code{\link{enve.recplot2.findPeaks.mower}}).
+#' Internal ancillary function (see
+#' \code{\link{enve.recplot2.findPeaks.mower}}).
 #'
 #' @param lsd1 Vector of log-transformed sequencing depths
 #' @param min.points Minimum number of points
@@ -1505,85 +1551,100 @@ enve.recplot2.__peakHist <- function
 #' @param merge.logdist Attempted \code{merge.logdist} parameter
 #' @param verbose If verbose
 #' @param log If log-transformed depths
+#' 
+#' @return Return an \code{enve.RecPlot2.Peak} object.
 #'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.findPeaks.__mow_one <- function
-(lsd1, min.points, quant.est, mlv.opts, fitdist.opts, with.skewness,
- optim.rounds, optim.epsilon, n.total, merge.logdist, verbose, log
-){
-  dist	<- ifelse(with.skewness, 'sn', 'norm');
+enve.recplot2.findPeaks.__mow_one <- function(
+  lsd1, min.points, quant.est, mlv.opts, fitdist.opts, with.skewness,
+  optim.rounds, optim.epsilon, n.total, merge.logdist, verbose, log
+) {
+  dist	<- ifelse(with.skewness, "sn", "norm")
 
   # Find peak
-  o <- mlv.opts; o$x = lsd1;
-  mode1 <- median(lsd1); # mode1 <- do.call(mlv, o)$M;
-  if(verbose) cat('Anchoring at mode =',mode1,'\n')
-  param.hat <- fitdist.opts$start; last.hat <- param.hat;
-  lim <- NA;
-  if(with.skewness){ param.hat$xi <- mode1 }else{ param.hat$mean <- mode1 }
+  o <- mlv.opts
+  o$x <- lsd1
+  mode1 <- median(lsd1) # mode1 <- do.call(mlv, o)$M;
+  if (verbose) cat("Anchoring at mode =", mode1, "\n")
+  param.hat <- fitdist.opts$start
+  last.hat <- param.hat
+  lim <- NA
+  if (with.skewness) { param.hat$xi <- mode1 } else { param.hat$mean <- mode1 }
 
   # Refine peak parameters
-  for(round in 1:optim.rounds){
-    param.hat[[ 1 ]] <- param.hat[[ 1 ]]/diff(quant.est)# <- expand dispersion
+  for (round in 1:optim.rounds) {
+    param.hat[[ 1 ]] <- param.hat[[1]] / diff(quant.est) # <- expand dispersion
     lim.o <- param.hat
-    lim.o$p <- quant.est; lim <- do.call(paste('q',dist,sep=''), lim.o)
-    lsd1.pop <- lsd1[(lsd1>lim[1]) & (lsd1<lim[2])];
-    if(verbose) cat(' Round', round, 'with n =',length(lsd1.pop),
-                    'and params =',as.numeric(param.hat),' \r')
-    if(length(lsd1.pop) < min.points) break;
-    o <- fitdist.opts; o$data = lsd1.pop; o$start = param.hat;
+    lim.o$p <- quant.est
+    lim <- do.call(paste("q", dist, sep = ""), lim.o)
+    lsd1.pop <- lsd1[(lsd1 > lim[1]) & (lsd1 < lim[2])]
+    if (verbose)
+      cat(" Round", round, "with n =", length(lsd1.pop),
+          "and params =", as.numeric(param.hat), " \r")
+    if (length(lsd1.pop) < min.points) break
+    o <- fitdist.opts
+    o$data <- lsd1.pop
+    o$start <- param.hat
     last.last.hat <- last.hat
     last.hat <- param.hat
-    param.hat <- as.list(do.call(fitdist, o)$estimate);
-    if(any(is.na(param.hat))){
-      if(round>1) param.hat <- last.hat;
-      break;
+    param.hat <- as.list(do.call(fitdist, o)$estimate)
+    if (any(is.na(param.hat))) {
+      if (round > 1) param.hat <- last.hat
+      break
     }
-    if(round > 1){
-      epsilon1 <- sum((as.numeric(last.hat)-as.numeric(param.hat))^2)
-      if(epsilon1 < optim.epsilon) break;
-      if(round > 2){
-        epsilon2 <- sum((as.numeric(last.last.hat)-as.numeric(param.hat))^2)
-        if(epsilon2 < optim.epsilon) break;
+    if (round > 1) {
+      epsilon1 <- sum((as.numeric(last.hat) - as.numeric(param.hat))^2)
+      if (epsilon1 < optim.epsilon) break
+      if (round > 2) {
+        epsilon2 <- sum((as.numeric(last.last.hat) - as.numeric(param.hat))^2)
+        if (epsilon2 < optim.epsilon) break
       }
     }
   }
-  if(verbose) cat('\n')
-  if(is.na(param.hat[1]) | is.na(lim[1])) return(NULL);
+  if (verbose) cat("\n")
+  if (is.na(param.hat[1]) | is.na(lim[1])) return(NULL)
 
   # Mow distribution
-  lsd2 <- c();
-  lsd.pop <- c();
-  n.hat <- length(lsd1.pop)/diff(quant.est)
-  peak <- new('enve.RecPlot2.Peak', dist=dist, values=as.numeric(), mode=mode1,
-              param.hat=param.hat, n.hat=n.hat, n.total=n.total,
-              merge.logdist=merge.logdist, log=log)
-  peak.breaks <- seq(min(lsd1), max(lsd1), length=20)
-  peak.cnt <- enve.recplot2.__peakHist(peak,
-                                       (peak.breaks[-length(peak.breaks)]+peak.breaks[-1])/2)
-  for(i in 2:length(peak.breaks)){
-    values <- lsd1[ (lsd1 >= peak.breaks[i-1]) & (lsd1 < peak.breaks[i]) ]
-    n.exp <- peak.cnt[i-1]
-    if(is.na(n.exp) | n.exp==0) n.exp <- 0.1
-    if(length(values)==0) next
-    in.peak <- runif(length(values)) <= n.exp/length(values)
+  lsd2 <- c()
+  lsd.pop <- c()
+  n.hat <- length(lsd1.pop) / diff(quant.est)
+  peak <- new(
+    "enve.RecPlot2.Peak", dist = dist, values = as.numeric(), mode = mode1,
+    param.hat = param.hat, n.hat = n.hat, n.total = n.total,
+    merge.logdist = merge.logdist, log = log
+  )
+  peak.breaks <- seq(min(lsd1), max(lsd1), length = 20)
+  peak.cnt <- enve.recplot2.__peakHist(
+    peak, (peak.breaks[-length(peak.breaks)] + peak.breaks[-1]) / 2
+  )
+  for (i in 2:length(peak.breaks)) {
+    values <- lsd1[(lsd1 >= peak.breaks[i-1]) & (lsd1 < peak.breaks[i])]
+    n.exp <- peak.cnt[i - 1]
+    if (is.na(n.exp) | n.exp == 0) n.exp <- 0.1
+    if (length(values) == 0) next
+    in.peak <- runif(length(values)) <= n.exp / length(values)
     lsd2 <- c(lsd2, values[!in.peak])
     lsd.pop <- c(lsd.pop, values[in.peak])
   }
-  if(length(lsd.pop) < min.points) return(NULL)
+  if (length(lsd.pop) < min.points) return(NULL)
 
   # Return peak
-  attr(peak, 'values') <- lsd.pop
-  attr(peak, 'values.res') <- lsd2
-  attr(peak, 'err.res') <- 1-(cor(hist(lsd.pop, breaks=peak.breaks,
-                                       plot=FALSE)$counts, hist(lsd1, breaks=peak.breaks,
-                                                                plot=FALSE)$counts)+1)/2
-  mu <- tail(param.hat, n=1)
-  attr(peak, 'seq.depth') <- ifelse(log, exp(mu), mu)
-  if(verbose) cat(' Extracted peak with n =',length(lsd.pop),
-                  'with expected n =',n.hat,'\n')
+  attr(peak, "values") <- lsd.pop
+  attr(peak, "values.res") <- lsd2
+  attr(peak, "err.res") <- 1 - 0.5 * (
+    cor(
+      hist(lsd.pop, breaks = peak.breaks, plot = FALSE)$counts,
+      hist(lsd1, breaks = peak.breaks, plot = FALSE)$counts
+    ) + 1
+  )
+  mu <- tail(param.hat, n = 1)
+  attr(peak, "seq.depth") <- ifelse(log, exp(mu), mu)
+  if(verbose)
+    cat(" Extracted peak with n =", length(lsd.pop),
+        "with expected n =", n.hat, "\n")
   return(peak)
 }
 
@@ -1593,17 +1654,18 @@ enve.recplot2.findPeaks.__mow_one <- function
 #'
 #' @param peaks.opts List of options for \code{\link{enve.recplot2.findPeaks.__mow_one}}
 #'
+#' @return A list of \code{enve.RecPlot2.Peak} objects.
+#'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.findPeaks.__mower <- function
-(peaks.opts){
+enve.recplot2.findPeaks.__mower <- function(peaks.opts) {
   peaks <- list()
-  while(length(peaks.opts$lsd1) > peaks.opts$min.points){
+  while (length(peaks.opts$lsd1) > peaks.opts$min.points) {
     peak <- do.call(enve.recplot2.findPeaks.__mow_one, peaks.opts)
-    if(is.null(peak)) break
-    peaks[[ length(peaks)+1 ]] <- peak
+    if (is.null(peak)) break
+    peaks[[length(peaks) + 1]] <- peak
     peaks.opts$lsd1 <- peak$values.res
   }
   return(peaks)
@@ -1616,16 +1678,21 @@ enve.recplot2.findPeaks.__mower <- function
 #' @param peak Query \code{\link{enve.RecPlot2.Peak}} object
 #' @param peaks list of \code{\link{enve.RecPlot2.Peak}} objects
 #'
+#' @return A numeric index out of \code{peaks}.
+#'
 #' @author Luis M. Rodriguez-R [aut, cre]
 #'
 #' @export
 
-enve.recplot2.__whichClosestPeak <- function
-(peak, peaks){
-  dist <- as.numeric(lapply(peaks,
-                            function(x)
-                              abs(log(x$param.hat[[ length(x$param.hat) ]] /
-                                        peak$param.hat[[ length(peak$param.hat) ]] ))))
-  dist[ dist==0 ] <- Inf
+enve.recplot2.__whichClosestPeak <- function(peak, peaks){
+  dist <- as.numeric(
+    lapply(
+      peaks,
+      function(x)
+        abs(log(x$param.hat[[length(x$param.hat)]] /
+          peak$param.hat[[length(peak$param.hat)]]))
+    )
+  )
+  dist[dist == 0] <- Inf
   return(which.min(dist))
 }

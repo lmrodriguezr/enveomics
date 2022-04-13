@@ -70,6 +70,9 @@ model?}
 
 \item{...}{Any other graphic parameters.}
 }
+\value{
+No return value.
+}
 \description{
 Plots an \code{\link{enve.GrowthCurve}} object.
 }

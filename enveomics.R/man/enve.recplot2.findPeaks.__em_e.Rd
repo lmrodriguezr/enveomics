@@ -11,6 +11,10 @@ enve.recplot2.findPeaks.__em_e(x, theta)
 
 \item{theta}{Parameters list}
 }
+\value{
+A list with components \code{ll} (numeric) the log-likelihood, and
+\code{posterior} (numeric) the posterior probability.
+}
 \description{
 Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.em}}).
 }

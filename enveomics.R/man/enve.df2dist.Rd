@@ -40,6 +40,20 @@ Returns a \strong{dist} object.
 Transform a dataframe (or coercible object, like a table) into a
 \strong{dist} object.
 }
+\examples{
+# A sparse matrix representation of similarities as data frame.
+# The column "extra_data" is meaningless, only included to illustrate
+# the use of the obj*.index parameters
+sim <- data.frame(
+  extra_data = c(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.5),
+  query      = c("A", "A", "A", "B", "C", "C", "D"),
+  subject    = c("A", "B", "C", "B", "C", "B", "A"),
+  similarity = c(100,  90,  60, 100, 100,  70,  10)
+)
+dist <- enve.df2dist(sim, "query", "subject", "similarity", max.sim = 100)
+print(dist)
+
+}
 \author{
 Luis M. Rodriguez-R [aut, cre]
 }

@@ -31,6 +31,4 @@ sub-population mixtures.
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]
-
-export
 }

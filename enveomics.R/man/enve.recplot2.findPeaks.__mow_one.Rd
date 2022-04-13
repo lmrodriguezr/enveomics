@@ -44,8 +44,12 @@ enve.recplot2.findPeaks.__mow_one(
 
 \item{log}{If log-transformed depths}
 }
+\value{
+Return an \code{enve.RecPlot2.Peak} object.
+}
 \description{
-Internall ancillary function (see \code{\link{enve.recplot2.findPeaks.mower}}).
+Internal ancillary function (see
+\code{\link{enve.recplot2.findPeaks.mower}}).
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

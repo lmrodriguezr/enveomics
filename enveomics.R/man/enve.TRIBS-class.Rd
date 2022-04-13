@@ -13,9 +13,10 @@ without selection is trivial, since both the distances space and the
 selection occur in the same transformed space. However, it's useful to
 compare randomly subsampled sets against a selected set of objects. This
 is intended to identify overdispersion or overclustering (see
-\code{\link{enve.TRIBStest}}) of a subset against the entire collection of objects
-with minimum impact of sampling biases. This object can be produced by
-\code{\link{enve.tribs}} and supports S4 methods \code{plot} and \code{summary}.
+\code{\link{enve.TRIBStest}}) of a subset against the entire collection of
+objects with minimum impact of sampling biases. This object can be produced
+by \code{\link{enve.tribs}} and supports S4 methods \code{plot} and
+\code{summary}.
 }
 \section{Slots}{
 

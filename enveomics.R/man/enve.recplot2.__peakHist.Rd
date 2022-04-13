@@ -13,6 +13,9 @@ enve.recplot2.__peakHist(x, mids, counts = TRUE)
 
 \item{counts}{Counts}
 }
+\value{
+A numeric vector of counts (histogram)
+}
 \description{
 Internal ancillary function (see \code{\link{enve.RecPlot2.Peak}}).
 }

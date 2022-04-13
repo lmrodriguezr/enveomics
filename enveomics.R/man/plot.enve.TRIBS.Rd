@@ -38,6 +38,9 @@ as areas, and plots the outliers as points.}
 
 \item{...}{Any additional parameters supported by \code{plot}.}
 }
+\value{
+No return value.
+}
 \description{
 Plot an \code{\link{enve.TRIBS}} object.
 }

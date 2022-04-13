@@ -2,17 +2,23 @@
 % Please edit documentation in R/growthcurve.R
 \name{enve.col2alpha}
 \alias{enve.col2alpha}
-\title{Enveomics: Color to Alpha}
+\title{Enveomics: Color to Alpha (deprecated)}
 \usage{
 enve.col2alpha(x, alpha)
 }
 \arguments{
 \item{x}{A vector of any value base colors.}
 
-\item{alpha}{Alpha level to set (in the 0-1 range).}
+\item{alpha}{Alpha level to set, in the [0, 1] range.}
+}
+\value{
+A vector of colors with alpha set.
 }
 \description{
 Takes a vector of colors and sets the alpha.
+}
+\details{
+DEPRECATED: Use instead \code{\link{enve.col.alpha}}.
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

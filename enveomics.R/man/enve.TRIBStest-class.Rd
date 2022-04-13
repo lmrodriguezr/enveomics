@@ -7,9 +7,9 @@
 \title{Enveomics: TRIBS Test S4 Class}
 \description{
 Test of significance of overclustering or overdispersion in a selected
-set of objects with respect to the entire set (see \code{\link{enve.TRIBS}}). This
-object can be produced by \code{\link{enve.tribs.test}} and supports S4 methods
-\code{plot} and \code{summary}.
+set of objects with respect to the entire set (see \code{\link{enve.TRIBS}}).
+This object can be produced by \code{\link{enve.tribs.test}} and supports S4
+methods \code{plot} and \code{summary}.
 }
 \section{Slots}{
 

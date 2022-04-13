@@ -11,6 +11,11 @@ enve.recplot2.findPeaks.__em_m(x, posterior)
 
 \item{posterior}{Posterior probability}
 }
+\value{
+A list with components \code{mu} (numeric) the estimated mean,
+\code{sd} (numeric) the estimated standard deviation, and \code{alpha}
+(numeric) the estimated alpha parameter.
+}
 \description{
 Internal ancillary function (see \code{\link{enve.recplot2.findPeaks.em}}).
 }

@@ -12,8 +12,11 @@ enve.recplot2.ANIr(x, range = c(0, Inf))
 \item{range}{Range of identities to be considered. By default, the full range
 is used (note that the upper boundary is \code{Inf} and not 100 because
 recruitment plots can also be built with bit-scores). To use only
-intra-population matches (with identities), use c(95,100). To use only
-inter-population values, use c(0,95).}
+intra-population matches (with identities), use \code{c(95, 100)}. To use
+only inter-population values, use \code{c(0, 95)}.}
+}
+\value{
+A numeric value indicating the ANIr (as percentage).
 }
 \description{
 Estimate the Average Nucleotide Identity from reads (ANIr) from a

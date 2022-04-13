@@ -7,13 +7,16 @@
 enve.__prune.iter(t, dist, min_dist, quiet)
 }
 \arguments{
-\item{t}{A \strong{phylo} object}
+\item{t}{A \strong{phylo} object.}
 
-\item{dist}{Cophenetic distance matrix}
+\item{dist}{Cophenetic distance matrix.}
 
-\item{min_dist}{Minimum distance}
+\item{min_dist}{Minimum distance.}
 
-\item{quiet}{If running quietly}
+\item{quiet}{If running quietly.}
+}
+\value{
+Returns a \strong{phylo} object.
 }
 \description{
 Internal function for \code{\link{enve.prune.dist}}.

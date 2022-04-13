@@ -9,6 +9,9 @@ enve.recplot2.corePeak(x)
 \arguments{
 \item{x}{\code{list} of \code{\link{enve.RecPlot2.Peak}} objects.}
 }
+\value{
+A \code{\link{enve.RecPlot2.Peak}} object.
+}
 \description{
 Finds the peak in a list of peaks that is most likely to represent the
 "core genome" of a population.

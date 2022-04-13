@@ -18,7 +18,8 @@ enve.df2dist.group(
 \enumerate{
    \item ID of the object 1, 
    \item ID of the object 2, and 
-   \item distance between the two objects.}}
+   \item distance between the two objects.
+}}
 
 \item{obj1.index}{Index of the column containing the ID of the object 1.}
 
@@ -38,6 +39,24 @@ Returns a \strong{dist} object.
 Transform a dataframe (or coercible object, like a table) into a 
 \strong{dist} object, where there are 1 or more distances between each pair 
 of objects.
+}
+\examples{
+# A sparse matrix representation of distances as data frame.
+# Note that some pairs are repeated.
+dist.df <- data.frame(
+  query    = c("A", "A", "A", "B", "C", "C", "B", "B", "B"),
+  subject  = c("A", "B", "C", "B", "C", "B", "A", "C", "C"),
+  distance = c(  0, 0.1, 0.4,   0,   0, 0.4, 0.2, 0.2, 0.1)
+)
+dist <- enve.df2dist.group(dist.df)
+print(dist)
+
+# Use the mean of all repeated occurrences instead of the median.
+dist <- enve.df2dist.group(dist.df, summary = mean)
+
+# Simply use the first occurrence for any given pair.
+dist <- enve.df2dist.group(dist.df, summary = function(x) head(x, n = 1))
+
 }
 \author{
 Luis M. Rodriguez-R [aut, cre]

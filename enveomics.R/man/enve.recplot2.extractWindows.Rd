@@ -15,9 +15,9 @@ enve.recplot2.extractWindows(
 \arguments{
 \item{rp}{Recruitment plot, a \code{\link{enve.RecPlot2}} object.}
 
-\item{peak}{Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to be a
-list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core peak is
-used (see \code{\link{enve.recplot2.corePeak}}).}
+\item{peak}{Peak, an \code{\link{enve.RecPlot2.Peak}} object. If list, it is assumed to
+be a list of \code{\link{enve.RecPlot2.Peak}} objects, in which case the core
+peak is used (see \code{\link{enve.recplot2.corePeak}}).}
 
 \item{lower.tail}{If \code{FALSE}, it returns windows significantly above the peak in
 sequencing depth.}
