@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-$VERSION = 1.0
+$VERSION = 1.01
 $:.push File.expand_path('../lib', __FILE__)
 require 'enveomics_rb/enveomics'
 
@@ -124,10 +124,10 @@ ifh.each_line do |i|
     d  = []
     ln = 0
   end
-  r.map! { |j| j.to_i } # From, To, Depth
+  r.map!(&:to_i) # From, To, Depth
   l = r[1] - r[0] # Window length: To - From
   d[ r[2] ] ||= 0
-  d[ r[2] ]  += l # Add this "l" positions with depth "Depth"
+  d[ r[2] ]  += l # Add these "l" positions with depth "Depth"
   ln += l
   pre_sq = sq
 end
