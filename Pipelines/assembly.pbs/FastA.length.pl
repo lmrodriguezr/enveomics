@@ -1,1 +1,0 @@
-../../Scripts/FastA.length.pl
