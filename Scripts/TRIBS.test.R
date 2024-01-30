@@ -8,9 +8,10 @@
 #= Load stuff
 suppressPackageStartupMessages(library(enveomics.R))
 args <- commandArgs(trailingOnly = F)  
-enveomics_R <- file.path(dirname(
-   sub("^--file=", "", args[grep("^--file=", args)])),
-   "lib", "enveomics.R")
+enveomics_R <- file.path(
+  dirname(sub("^--file=", "", args[grep("^--file=", args)])),
+  "..", "enveomics.R"
+)
 
 #= Generate interface
 opt <- suppressWarnings(enve.cliopts(enve.tribs,

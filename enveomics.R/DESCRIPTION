@@ -1,5 +1,5 @@
 Package: enveomics.R
-Version: 1.9.0
+Version: 1.9.1
 Authors@R: c(person("Luis M.", "Rodriguez-R", role = c("aut", "cre"),
 	   email = "lmrodriguezr@gmail.com"))
 Title: Various Utilities for Microbial Genomics and Metagenomics
@@ -28,4 +28,4 @@ Suggests:
 License: Artistic-2.0
 LazyData: yes
 Encoding: UTF-8
-RoxygenNote: 7.1.2
+RoxygenNote: 7.3.1

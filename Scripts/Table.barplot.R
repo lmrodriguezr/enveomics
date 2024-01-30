@@ -7,21 +7,31 @@
 
 #= Load stuff
 args <- commandArgs(trailingOnly = F)  
-enveomics_R <- file.path(dirname(
-   sub("^--file=", "", args[grep("^--file=", args)])),
-   "lib", "enveomics.R")
+enveomics_R <- file.path(
+  dirname(sub("^--file=", "", args[grep("^--file=", args)])),
+  "..", "enveomics.R"
+)
 source(file.path(enveomics_R, "R", "cliopts.R"))
 source(file.path(enveomics_R, "R", "utils.R"))
 source(file.path(enveomics_R, "R", "barplot.R"))
 
 #= Generate interface
-opt <- enve.cliopts(enve.barplot,
-   file.path(enveomics_R, "man", "enve.barplot.Rd"),
-   positional_arguments=c(1,3),
-   usage="usage: %prog [options] output.pdf [width height]",
-   mandatory=c("x"), vectorize=c("sizes","order","col"),
-   number=c("sizes","order"),
-   o_desc=list(x="A tab-delimited file containing header (first row) and row names (first column)."))
+opt <- enve.cliopts(
+  enve.barplot,
+  file.path(enveomics_R, "man", "enve.barplot.Rd"),
+  positional_arguments = c(1, 3),
+  usage     = "usage: %prog [options] output.pdf [width height]",
+  mandatory = c("x"),
+  vectorize = c("sizes", "order", "col"),
+  number    = c("sizes", "order"),
+  o_desc    = list(
+    x = paste(
+      "A tab-delimited file containing header (first row) and row names",
+      "(first column)."
+    ),
+    order = "If passed, the custom order to be used (as row indexes)"
+  )
+)
 
 #= Run it!
 args = as.list(opt$args)

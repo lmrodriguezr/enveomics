@@ -90,8 +90,8 @@ enve.cliopts <- function(
 
     optopt <- list(help = "")
     if (length(o_desc[[i]]) == 1) optopt$help <- o_desc[[i]]
-    if (!is.null(f[[i]]) && !suppressWarnings(is.na(f[[i]])) &&
-        is.logical(f[[i]])){
+    if (!is.null(f[[i]])[1] && !suppressWarnings(is.na(f[[i]]))[1] &&
+        is.logical(f[[i]])[1]){
       optopt$opt_str <- paste(ifelse(f[[i]], "--no-", "--"), flag, sep = "")
       optopt$action  <- ifelse(f[[i]], "store_false", "store_true")
     } else {
