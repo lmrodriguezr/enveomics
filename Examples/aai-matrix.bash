@@ -45,7 +45,7 @@ echo "[01/03] Calculating AAI"
 for i in "${SEQS[@]}" ; do
   for j in "${SEQS[@]}" ; do
     echo -n " o $i vs $j: "
-    AAI=$(aai.rb -1 "$i" -2 "$j" -S "$OUT.db" -t "$THR" \
+    AAI=$(aai.rb -1 "$i" -2 "$j" -S "$OUT.db" -t "$THR" -p "$PRG" \
       --no-save-rbm --auto --quiet)
     echo ${AAI:-Below detection}
     [[ "$i" == "$j" ]] && break
