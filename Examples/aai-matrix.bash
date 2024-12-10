@@ -7,10 +7,11 @@ set -e # <- So it stops if there is an error
 function exists { [[ -e "$1" ]] ; } # <- To test *any* of many files
 
 OUT=$1		# <- Output file
-[[ -n "$1" ]] && shift
-SEQS=("$@")	# <- list of all genomes
-THR=2		# <- Number or threads
+PRG=$2		# <- Chose program
+THR=$3		# <- Number or threads
 DEF_DIST=0.9	# <- Default distance when AAI cannot be reliably estimated
+[[ -n "$1" ]] && shift 3
+SEQS=("$@")	# <- list of all genomes
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
@@ -28,6 +29,8 @@ $0 <output.txt> <genomes...>
 		following columns: (1) Sequence A, (2) Sequence B, (3)
 		AAI, (4) AAI-SD, (5) Proteins used, (6) Number of proteins in
 		the smallest genome, (7) Percentage of the genome shared.
+<program> 	Select a program to use: blast, blast+, blat, diamond.
+<threads>	  Select number of threads for the script.
 <genomes...>	The list of files containing the genomes (at least 2).
 
 " >&2
