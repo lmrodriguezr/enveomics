@@ -7,10 +7,11 @@ set -e # <- So it stops if there is an error
 function exists { [[ -e "$1" ]] ; } # <- To test *any* of many files
 
 OUT=$1		# <- Output file
-[[ -n "$1" ]] && shift
+PRG=$2		# <- Chose program
+THR=$3		# <- Number or threads
+DEF_DIST=0.9	# <- Default distance when AAI cannot be reliably estimated
+[[ -n "$1" ]] && shift 3
 SEQS=("$@")	# <- list of all genomes
-THR=2		# <- Number or threads
-DEF_DIST=0.9	# <- Default distance when ANI cannot be reliably estimated
 
 # This is just the help message
 if [[ $# -lt 2 ]] ; then
@@ -28,6 +29,8 @@ $0 <output.txt> <genomes...>
 		following columns: (1) Sequence A, (2) Sequence B, (3)
 		ANI, (4) ANI-SD, (5) Fragments used, (6) Maximum number
 		of fragments, (7) Percentage of the genome shared.
+<program> 	Select a program to use: blast+, blast, blat.
+<threads>	  Select number of threads for the script.
 <genomes...>	The list of files containing the genomes (at least 2).
 
 " >&2
@@ -42,7 +45,7 @@ echo "[01/03] Calculating ANI"
 for i in "${SEQS[@]}" ; do
   for j in "${SEQS[@]}" ; do
     echo -n " o $i vs $j: "
-    ANI=$(ani.rb -1 "$i" -2 "$j" -S "$OUT.db" -t "$THR" \
+    ANI=$(ani.rb -1 "$i" -2 "$j" -S "$OUT.db" -t "$THR" -p "$PRG" \
       --no-save-rbm --no-save-regions --auto --quiet)
     echo ${ANI:-Below detection}
     [[ "$i" == "$j" ]] && break
